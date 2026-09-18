@@ -2481,8 +2481,8 @@ describe('renderActions', () => {
 
 describe('issueUrl', () => {
   it('prefills the card id and note path', () => {
-    const url = issueUrl(cloze, 'cesar/factotum');
-    expect(url).toContain('https://github.com/cesar/factotum/issues/new');
+    const url = issueUrl(cloze, 'cesar-lp/factotum');
+    expect(url).toContain('https://github.com/cesar-lp/factotum/issues/new');
     expect(decodeURIComponent(url)).toContain('card-aaaa');
     expect(decodeURIComponent(url)).toContain('vault/a.md');
   });
@@ -2746,7 +2746,7 @@ Replace the `renderDashboard` call in `boot()` with a hash router:
 import { startReview } from './ui/review.js';
 import { renderSettings } from './ui/settings.js';
 
-const REPO = 'cesar/factotum';
+const REPO = 'cesar-lp/factotum';
 
 async function route(db: FactotumDb): Promise<void> {
   const session = await currentSession(db, new Date());
