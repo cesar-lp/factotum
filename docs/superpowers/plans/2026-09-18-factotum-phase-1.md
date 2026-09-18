@@ -371,6 +371,12 @@ git commit -m "feat(pipeline): parse note frontmatter with category gate"
 **Rules this task locks in:**
 - A line may already end with an existing anchor `^card-xxxx`; it is captured into `id` and stripped from the prompt.
 - A cloze line with multiple `==highlights==` yields one card per highlight; each card blanks its own highlight and renders the others as plain text.
+- **Anchor lists.** A line that produces N cards claims N ids: its own trailing
+  anchor first, then any immediately-following lines consisting of nothing but
+  a bare `^card-xxxx`. Those bare-anchor lines are consumed, never parsed as
+  cards of their own. This is what makes ids stable across rebuilds when a
+  line carries several clozes — without it, cards 2..N are re-issued fresh ids
+  on every build and lose their review history.
 - The blank in a cloze prompt is the literal string `___`.
 
 - [ ] **Step 1: Write the failing test**
@@ -431,6 +437,18 @@ describe('parseCards — inline constructs', () => {
     const cards = parseCards('A ==b==.', 5);
     expect(cards[0]?.anchorLine).toBe(5);
   });
+
+  it('claims bare anchor lines beneath a multi-cloze line, in order', () => {
+    const body = 'TCP is ==reliable== and ==ordered==. ^card-aaaa\n^card-bbbb';
+    const cards = parseCards(body, 0);
+    expect(cards).toHaveLength(2);
+    expect(cards[0]?.id).toBe('card-aaaa');
+    expect(cards[1]?.id).toBe('card-bbbb');
+  });
+
+  it('does not parse a bare anchor line as a card', () => {
+    expect(parseCards('^card-aaaa', 0)).toEqual([]);
+  });
 });
 ```
 
@@ -446,6 +464,7 @@ Expected: FAIL — cannot resolve `../src/cards.js`.
 import type { ParsedCard } from './types.js';
 
 const ANCHOR = /\s*\^(card-[a-z0-9]{4})\s*$/;
+const BARE_ANCHOR = /^\s*\^(card-[a-z0-9]{4})\s*$/;
 const HIGHLIGHT = /==([^=]+)==/g;
 const QA = /^(.+?)\s+::\s+(.+)$/;
 
@@ -460,7 +479,7 @@ function stripAnchor(line: string): StrippedLine {
   return { text: line.replace(ANCHOR, '').trimEnd(), id: match[1] };
 }
 
-function clozeCards(text: string, id: string | null, anchorLine: number): ParsedCard[] {
+function clozeCards(text: string, ids: (string | null)[], anchorLine: number): ParsedCard[] {
   const matches = [...text.matchAll(HIGHLIGHT)];
   if (matches.length === 0) return [];
 
@@ -476,9 +495,9 @@ function clozeCards(text: string, id: string | null, anchorLine: number): Parsed
     prompt += text.slice(cursor);
 
     return {
-      // Only the first card on a line can own the line's anchor; the rest
-      // are assigned fresh ids by ids.ts.
-      id: index === 0 ? id : null,
+      // Each card on the line takes the id at its own position in the
+      // line's anchor list; missing entries are filled in by ids.ts.
+      id: ids[index] ?? null,
       format: 'cloze' as const,
       prompt,
       answer: (target[1] ?? '').trim(),
@@ -487,19 +506,35 @@ function clozeCards(text: string, id: string | null, anchorLine: number): Parsed
   });
 }
 
+/** Bare `^card-xxxx` lines immediately below `index`, in order. */
+function trailingAnchors(lines: string[], index: number): string[] {
+  const ids: string[] = [];
+  for (let j = index + 1; j < lines.length; j++) {
+    const match = (lines[j] ?? '').match(BARE_ANCHOR);
+    if (!match || !match[1]) break;
+    ids.push(match[1]);
+  }
+  return ids;
+}
+
 export function parseCards(body: string, bodyStartLine: number): ParsedCard[] {
   const cards: ParsedCard[] = [];
   const lines = body.split('\n');
 
-  lines.forEach((rawLine, offset) => {
-    const anchorLine = bodyStartLine + offset;
-    const { text, id } = stripAnchor(rawLine);
-    if (text.trim() === '') return;
+  for (let i = 0; i < lines.length; i++) {
+    const rawLine = lines[i] ?? '';
+    if (BARE_ANCHOR.test(rawLine)) continue; // claimed by the card line above
 
-    const cloze = clozeCards(text, id, anchorLine);
+    const anchorLine = bodyStartLine + i;
+    const { text, id } = stripAnchor(rawLine);
+    if (text.trim() === '') continue;
+
+    const ids: (string | null)[] = [id, ...trailingAnchors(lines, i)];
+
+    const cloze = clozeCards(text, ids, anchorLine);
     if (cloze.length > 0) {
       cards.push(...cloze);
-      return;
+      continue;
     }
 
     const qa = text.match(QA);
@@ -512,7 +547,7 @@ export function parseCards(body: string, bodyStartLine: number): ParsedCard[] {
         anchorLine
       });
     }
-  });
+  }
 
   return cards;
 }
@@ -646,7 +681,8 @@ function parseCallout(
   const promptParts: string[] = [];
   const choices: Choice[] = [];
   let id: string | null = null;
-  let anchorLine = bodyStartLine + start;
+  let anchorLine: number | null = null;
+  let lastContentLine = start;
   let i = start + 1;
 
   for (; i < lines.length; i++) {
@@ -663,6 +699,7 @@ function parseCallout(
 
     const content = stripped.text.trim();
     if (content === '') continue;
+    lastContentLine = i;
 
     const choice = content.match(CHOICE);
     if (choice && choice[2]) {
@@ -671,6 +708,11 @@ function parseCallout(
     }
     promptParts.push(content);
   }
+
+  // With no anchor of its own, the callout's LAST content line carries it, so
+  // write-back appends `^card-xxxx` inside the callout rather than corrupting
+  // the `> [!card] …` header.
+  anchorLine = anchorLine ?? bodyStartLine + lastContentLine;
 
   const prompt = promptParts.join(' ');
   if (prompt === '') {
@@ -710,11 +752,15 @@ export function parseCards(body: string, bodyStartLine: number): ParsedCard[] {
       continue;
     }
 
+    if (BARE_ANCHOR.test(rawLine)) continue; // claimed by the card line above
+
     const anchorLine = bodyStartLine + i;
     const { text, id } = stripAnchor(rawLine);
     if (text.trim() === '') continue;
 
-    const cloze = clozeCards(text, id, anchorLine);
+    const ids: (string | null)[] = [id, ...trailingAnchors(lines, i)];
+
+    const cloze = clozeCards(text, ids, anchorLine);
     if (cloze.length > 0) {
       cards.push(...cloze);
       continue;
@@ -2462,6 +2508,13 @@ describe('renderActions', () => {
     expect((html.match(/data-choice=/g) ?? [])).toHaveLength(2);
   });
 
+  it('shows citations and a continue button once an mcq is revealed', () => {
+    const html = renderActions(mcq, true);
+    expect(html).toContain('RFC 9293');
+    expect(html).toContain('data-outcome="continue"');
+    expect(html).toContain('disabled');
+  });
+
   it('renders an input and check button for cloze before reveal', () => {
     expect(renderActions(cloze, false)).toContain('data-role="cloze-input"');
   });
@@ -2548,12 +2601,18 @@ export function renderActions(card: StoredCard, revealed: boolean): string {
   if (card.format === 'mcq') {
     const choices = (card.choices ?? [])
       .map((choice, index) =>
-        `<button class="choice" data-choice="${index}" data-correct="${choice.correct}">
+        `<button class="choice" data-choice="${index}" data-correct="${choice.correct}"
+                 ${revealed ? 'disabled' : ''}>
            ${escapeHtml(choice.text)}
          </button>`
       )
       .join('');
-    return `<div class="action-area">${choices}${revealed ? tail : flagButton()}</div>`;
+    // Revealed state keeps the marked choices on screen and adds citations,
+    // so a wrong answer is seen next to its source before moving on.
+    const after = revealed
+      ? `<button class="btn" data-outcome="continue">Continue</button>${tail}`
+      : flagButton();
+    return `<div class="action-area">${choices}${after}</div>`;
   }
 
   if (card.format === 'cloze') {
@@ -2678,8 +2737,13 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
       button.addEventListener('click', () => {
         if (revealed) return;
         const correct = button.dataset['correct'] === 'true';
-        button.classList.add(correct ? 'is-correct' : 'is-wrong');
-        void submit(card, correct ? 'correct' : 'wrong', startedAt);
+        // Reveal first — the answer and its citation stay on screen until
+        // Continue, which is where the rating is actually recorded.
+        draw(true, correct ? 'correct' : 'wrong');
+        root.querySelectorAll<HTMLButtonElement>('[data-choice]').forEach((b) => {
+          if (b.dataset['correct'] === 'true') b.classList.add('is-correct');
+          else if (b.dataset['choice'] === button.dataset['choice']) b.classList.add('is-wrong');
+        });
       });
     });
 
