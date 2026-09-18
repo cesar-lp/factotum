@@ -7,9 +7,14 @@ export interface FrontmatterResult {
   bodyStartLine: number;
 }
 
-function toStringArray(value: unknown): string[] {
+function toStringArray(value: unknown, field: string): string[] {
   if (!Array.isArray(value)) return [];
-  return value.filter((v): v is string => typeof v === 'string');
+  const kept = value.filter((v): v is string => typeof v === 'string');
+  if (kept.length !== value.length) {
+    const dropped = value.filter((v) => typeof v !== 'string');
+    console.warn(`Dropped ${dropped.length} non-string ${field} entr${dropped.length === 1 ? 'y' : 'ies'}: ${JSON.stringify(dropped)}`);
+  }
+  return kept;
 }
 
 export function parseFrontmatter(raw: string): FrontmatterResult {
@@ -17,6 +22,7 @@ export function parseFrontmatter(raw: string): FrontmatterResult {
   const category = parsed.data['category'];
 
   if (typeof category !== 'string' || category.trim() === '') {
+    // bodyStartLine is meaningless when meta is null; callers must not treat 0 as a real line number.
     return { meta: null, body: parsed.content, bodyStartLine: 0 };
   }
 
@@ -26,8 +32,8 @@ export function parseFrontmatter(raw: string): FrontmatterResult {
   return {
     meta: {
       category: category.trim(),
-      tags: toStringArray(parsed.data['tags']),
-      citations: toStringArray(parsed.data['citations'])
+      tags: toStringArray(parsed.data['tags'], 'tags'),
+      citations: toStringArray(parsed.data['citations'], 'citations')
     },
     body: parsed.content,
     bodyStartLine

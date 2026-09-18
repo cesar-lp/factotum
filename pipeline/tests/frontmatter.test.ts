@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { parseFrontmatter } from '../src/frontmatter.js';
 
 describe('parseFrontmatter', () => {
@@ -39,5 +39,17 @@ describe('parseFrontmatter', () => {
 
   it('returns null meta when there is no frontmatter at all', () => {
     expect(parseFrontmatter('# Just a draft').meta).toBeNull();
+  });
+
+  it('drops non-string tags and warns', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      const raw = '---\ncategory: algorithms\ntags: [1, 2, "real"]\n---\nbody';
+      const { meta } = parseFrontmatter(raw);
+      expect(meta?.tags).toEqual(['real']);
+      expect(warnSpy).toHaveBeenCalled();
+    } finally {
+      warnSpy.mockRestore();
+    }
   });
 });
