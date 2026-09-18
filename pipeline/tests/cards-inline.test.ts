@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { parseCards } from '../src/cards.js';
 
 describe('parseCards — inline constructs', () => {
@@ -63,5 +63,52 @@ describe('parseCards — inline constructs', () => {
 
   it('does not parse a bare anchor line as a card', () => {
     expect(parseCards('^card-aaaa', 0)).toEqual([]);
+  });
+
+  it('does not parse == comparisons in code as a cloze', () => {
+    expect(parseCards('a == b and c == d', 0)).toEqual([]);
+  });
+
+  it('still parses a real highlight after tightening the highlight regex', () => {
+    const cards = parseCards('Default MTU is ==1500 bytes==.', 0);
+    expect(cards).toHaveLength(1);
+    expect(cards[0]?.format).toBe('cloze');
+    expect(cards[0]?.answer).toBe('1500 bytes');
+  });
+
+  it('ignores == and :: constructs inside fenced code blocks', () => {
+    const body = [
+      'Some prose before.',
+      '```python',
+      'if (a == b && c == d):',
+      '    result :: value',
+      '```',
+      'After the fence, TCP is ==reliable==.'
+    ].join('\n');
+    const cards = parseCards(body, 0);
+    expect(cards).toHaveLength(1);
+    expect(cards[0]?.format).toBe('cloze');
+    expect(cards[0]?.answer).toBe('reliable');
+  });
+
+  it('prefers cloze over qa when a line has both constructs', () => {
+    const cards = parseCards('Is TCP ==reliable==? :: Yes, via retransmission.', 0);
+    expect(cards).toHaveLength(1);
+    expect(cards[0]?.format).toBe('cloze');
+    expect(cards[0]?.answer).toBe('reliable');
+  });
+
+  it('warns and assigns null ids when bare anchors follow a line with no anchor of its own', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      const body = 'TCP is ==reliable==.\n^card-aaaa';
+      const cards = parseCards(body, 0);
+      expect(cards).toHaveLength(1);
+      expect(cards[0]?.id).toBeNull();
+      expect(warnSpy).toHaveBeenCalledTimes(1);
+      expect(warnSpy.mock.calls[0]?.[0]).toContain('card-aaaa');
+    } finally {
+      warnSpy.mockRestore();
+    }
   });
 });

@@ -2,8 +2,9 @@ import type { ParsedCard } from './types.js';
 
 const ANCHOR = /\s*\^(card-[a-z0-9]{4})\s*$/;
 const BARE_ANCHOR = /^\s*\^(card-[a-z0-9]{4})\s*$/;
-const HIGHLIGHT = /==([^=]+)==/g;
+const HIGHLIGHT = /==(\S[^=]*?\S|\S)==/g;
 const QA = /^(.+?)\s+::\s+(.+)$/;
+const FENCE = /^\s*(```|~~~)/;
 
 interface StrippedLine {
   text: string;
@@ -57,16 +58,33 @@ function trailingAnchors(lines: string[], index: number): string[] {
 export function parseCards(body: string, bodyStartLine: number): ParsedCard[] {
   const cards: ParsedCard[] = [];
   const lines = body.split('\n');
+  let inFence = false;
 
   for (let i = 0; i < lines.length; i++) {
     const rawLine = lines[i] ?? '';
+
+    if (FENCE.test(rawLine)) {
+      inFence = !inFence;
+      continue;
+    }
+    if (inFence) continue;
+
     if (BARE_ANCHOR.test(rawLine)) continue; // claimed by the card line above
 
     const anchorLine = bodyStartLine + i;
     const { text, id } = stripAnchor(rawLine);
     if (text.trim() === '') continue;
 
-    const ids: (string | null)[] = [id, ...trailingAnchors(lines, i)];
+    const anchors = trailingAnchors(lines, i);
+    if (id === null && anchors.length > 0) {
+      // The line has no anchor of its own, so these bare-anchor lines are
+      // orphaned (a hand-edit inconsistency), not this line's ids. Consuming
+      // them would silently shift every subsequent card's id by one.
+      console.warn(
+        `parseCards: line ${anchorLine} has no anchor but is followed by orphaned anchors [${anchors.join(', ')}]; ignoring`
+      );
+    }
+    const ids: (string | null)[] = id === null ? [null] : [id, ...anchors];
 
     const cloze = clozeCards(text, ids, anchorLine);
     if (cloze.length > 0) {
