@@ -24,28 +24,66 @@ export interface RecordReviewArgs {
   durationMs: number;
 }
 
+/**
+ * Persists an FSRS review, its audit-log entry, and (on a card's first-ever
+ * review) the daily new-card counter as a single atomic IndexedDB
+ * transaction. All three stores commit together or none do — a failure
+ * partway through (e.g. an unclonable value reaching `reviewLog.add`) rolls
+ * every write in this call back, rather than leaving a schedule advanced
+ * with no audit trail. `prior` and the new-card counter are read from
+ * *inside* this same transaction so a concurrent recordReview can't read a
+ * stale counter and lose an increment.
+ */
 export async function recordReview(db: FactotumDb, args: RecordReviewArgs): Promise<ReviewState> {
   const { card, outcome, now, desiredRetention, durationMs } = args;
-  const prior = await db.get('reviews', card.id);
-  const isFirstReview = prior === undefined;
-
   const rating = ratingFor(card.format, outcome);
-  const next = applyRating(prior ?? initialState(card.id, now), rating, now, desiredRetention);
 
-  await db.put('reviews', next);
-  await db.add('reviewLog', { cardId: card.id, ts: now.getTime(), rating, durationMs });
+  const tx = db.transaction(['reviews', 'reviewLog', 'meta'], 'readwrite');
+  const reviewsStore = tx.objectStore('reviews');
+  const reviewLogStore = tx.objectStore('reviewLog');
+  const metaStore = tx.objectStore('meta');
 
-  if (isFirstReview) {
-    const seen = await newCardsSeenToday(db, now);
-    await db.put('meta', seen + 1, newCardsKey(now));
+  const writes: Promise<unknown>[] = [];
+
+  const abortAndRethrow = async (err: unknown): Promise<never> => {
+    // Defuse any request promises already issued so an abort-triggered
+    // rejection on them doesn't surface as an unhandled rejection.
+    for (const write of writes) write.catch(() => undefined);
+    try {
+      tx.abort();
+    } catch {
+      // Transaction may already be finishing/aborted (e.g. a request error
+      // auto-aborts it); nothing further to do.
+    }
+    await tx.done.catch(() => undefined);
+    throw err;
+  };
+
+  try {
+    const prior = await reviewsStore.get(card.id);
+    const isFirstReview = prior === undefined;
+    const next = applyRating(prior ?? initialState(card.id, now), rating, now, desiredRetention);
+    const key = newCardsKey(now);
+    const seenRaw = isFirstReview ? await metaStore.get(key) : undefined;
+    const seenCount = typeof seenRaw === 'number' ? seenRaw : 0;
+
+    writes.push(reviewsStore.put(next));
+    writes.push(reviewLogStore.add({ cardId: card.id, ts: now.getTime(), rating, durationMs }));
+    if (isFirstReview) {
+      writes.push(metaStore.put(seenCount + 1, key));
+    }
+
+    await Promise.all(writes);
+    await tx.done;
+    return next;
+  } catch (err) {
+    return abortAndRethrow(err);
   }
-
-  return next;
 }
 
-export async function flagCard(db: FactotumDb, cardId: string): Promise<void> {
+export async function flagCard(db: FactotumDb, cardId: string, now: Date): Promise<void> {
   const prior = await db.get('reviews', cardId);
-  const base = prior ?? initialState(cardId, new Date());
+  const base = prior ?? initialState(cardId, now);
   await db.put('reviews', { ...base, suspended: true, flagged: true });
 }
 
