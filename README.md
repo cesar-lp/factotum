@@ -165,9 +165,12 @@ triggers `deploy` → `deploy` builds the app and publishes to Pages.
 A third workflow, **`ci.yml`**, runs only on pull requests targeting `main`
 — it's the pre-merge gate the two above don't provide, since both only run
 after a push has already landed on `main`. It runs tests, typecheck, and
-`build:deck`, then fails the PR if the freshly built `deck/deck.json`
-differs from what the PR committed (a "deck drift" check) — telling you to
-run `npm run build:deck` and commit the result. Without this, a PR with a
+`build:deck`, then fails the PR if the rebuild changes `deck/deck.json`
+*or* any `vault/` file compared to what the PR committed (a "deck drift"
+check) — telling you to run `npm run build:deck` and commit the result.
+Both are checked because `build:deck` mints anchor ids into vault notes as
+well as regenerating the deck, so either one can go stale on its own.
+Without this, a PR with a
 broken test or a stale deck merges cleanly, `build-deck` then fails
 post-merge, its deck commit (and the `deploy` run chained off it) never
 happens, and the live site silently stops updating with no obvious signal
