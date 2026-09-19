@@ -1,4 +1,5 @@
 import type { StoredCard } from './db/schema.js';
+import { hasFocusableCards, type TopicSummary } from './topics.js';
 
 export interface DashboardState {
   /** Due cards plus new cards up to the day's remaining allowance. */
@@ -10,9 +11,47 @@ export interface DashboardState {
   extension: StoredCard[];
   /** Today's new-card count so far (includes cards taken via `extension`). */
   newCardsSeenToday: number;
+  /**
+   * The whole deck grouped topic → category, INCLUDING categories the user
+   * has disabled — this drives the picker (which must show what is muted)
+   * and validates a `#focus/...` hash. Not filtered by
+   * `disabledCategories`, unlike `session` and `extension`.
+   */
+  topics: TopicSummary[];
 }
 
-export type RouteDecision = 'review' | 'review-extend' | 'settings' | 'dashboard';
+export type RouteDecision =
+  | { kind: 'review' }
+  | { kind: 'review-extend' }
+  | { kind: 'focus'; category: string }
+  | { kind: 'topics' }
+  | { kind: 'settings' }
+  | { kind: 'dashboard' };
+
+export const FOCUS_PREFIX = '#focus/';
+
+/** Builds the hash for a focused session, encoding the free-form category name. */
+export function focusHash(category: string): string {
+  return `${FOCUS_PREFIX}${encodeURIComponent(category)}`;
+}
+
+/**
+ * Decodes the category segment of a focus hash. Returns null for a bare
+ * `#focus/` and for a malformed percent-escape — `decodeURIComponent`
+ * throws a URIError on input like `%E0%A4%A`, and a hash is plain client
+ * state that can arrive hand-edited, so it is caught rather than allowed
+ * to take down the route.
+ */
+function focusCategory(hash: string): string | null {
+  const raw = hash.slice(FOCUS_PREFIX.length);
+  if (raw === '') return null;
+  try {
+    const decoded = decodeURIComponent(raw);
+    return decoded === '' ? null : decoded;
+  } catch {
+    return null;
+  }
+}
 
 /**
  * The routing DECISION, pulled apart from main.ts's route()'s side effects
@@ -27,7 +66,7 @@ export type RouteDecision = 'review' | 'review-extend' | 'settings' | 'dashboard
  * in a plain node test environment.
  */
 export function decideRoute(hash: string, state: DashboardState): RouteDecision {
-  if (hash === '#review' && state.session.length > 0) return 'review';
+  if (hash === '#review' && state.session.length > 0) return { kind: 'review' };
 
   // Due cards always come first — this re-checks the same condition the
   // dashboard button's own visibility already enforces, because the hash is
@@ -36,10 +75,24 @@ export function decideRoute(hash: string, state: DashboardState): RouteDecision 
   // when the queue is actually empty. Never trust the route to only be
   // entered the way the UI currently intends it.
   if (hash === '#review-extend' && state.session.length === 0 && state.extension.length > 0) {
-    return 'review-extend';
+    return { kind: 'review-extend' };
   }
 
-  if (hash === '#settings') return 'settings';
+  // Focus is deliberately NOT gated on an empty session: it is an extra
+  // available whenever asked for, not a fallback for a finished day. It is
+  // still validated against the deck for the same stale-hash reasons as
+  // above — an unknown category, or one with nothing to serve, falls back.
+  if (hash.startsWith(FOCUS_PREFIX)) {
+    const category = focusCategory(hash);
+    if (category !== null && hasFocusableCards(state.topics, category)) {
+      return { kind: 'focus', category };
+    }
+    return { kind: 'dashboard' };
+  }
 
-  return 'dashboard';
+  if (hash === '#topics') return { kind: 'topics' };
+
+  if (hash === '#settings') return { kind: 'settings' };
+
+  return { kind: 'dashboard' };
 }

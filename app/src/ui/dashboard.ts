@@ -11,6 +11,7 @@ export interface DashboardProps {
   newCardsSeenToday: number;
   onStart: () => void;
   onKeepGoing: () => void;
+  onTopics: () => void;
   onSettings: () => void;
   /**
    * True when there are no cards in local storage AND the deck sync failed —
@@ -59,7 +60,13 @@ export function renderDashboard(root: HTMLElement, props: DashboardProps): void 
 
   root.innerHTML = `
     <section class="screen">
-      <div class="top"><span>factotum</span><button class="btn-quiet" id="settings">settings</button></div>
+      <div class="top">
+        <span>factotum</span>
+        <span>
+          <button class="btn-quiet" id="topics">topics</button>
+          <button class="btn-quiet" id="settings">settings</button>
+        </span>
+      </div>
       <div class="spacer"></div>
       <div style="text-align:center">
         ${message}
@@ -74,6 +81,7 @@ export function renderDashboard(root: HTMLElement, props: DashboardProps): void 
   `;
 
   root.querySelector<HTMLButtonElement>('#start')?.addEventListener('click', props.onStart);
+  root.querySelector<HTMLButtonElement>('#topics')?.addEventListener('click', props.onTopics);
   root.querySelector<HTMLButtonElement>('#settings')?.addEventListener('click', props.onSettings);
   root.querySelector<HTMLButtonElement>('#keep-going')?.addEventListener('click', props.onKeepGoing);
 }

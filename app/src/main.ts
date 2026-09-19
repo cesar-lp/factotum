@@ -1,14 +1,16 @@
 import './theme.css';
 import './styles.css';
 import { openDb, type FactotumDb, type StoredCard } from './db/schema.js';
-import { getSettings } from './db/settings.js';
+import { getSettings, saveSettings } from './db/settings.js';
 import { mergeDeck } from './db/deck.js';
 import { loadReviews, newCardsSeenToday } from './db/reviews.js';
-import { buildExtension, buildSession } from './scheduler/queue.js';
+import { buildExtension, buildFocusSession, buildSession, selectEnabled } from './scheduler/queue.js';
+import { summarizeTopics } from './topics.js';
 import { renderDashboard } from './ui/dashboard.js';
+import { renderTopics } from './ui/topics.js';
 import { startReview } from './ui/review.js';
 import { renderSettings } from './ui/settings.js';
-import { decideRoute, type DashboardState } from './route.js';
+import { decideRoute, focusHash, type DashboardState } from './route.js';
 import type { Deck } from '../../pipeline/src/types.js';
 
 const REPO = 'cesar-lp/factotum';
@@ -41,55 +43,106 @@ export async function loadDashboardState(db: FactotumDb, now: Date): Promise<Das
     newCardsSeenToday(db, now)
   ]);
 
+  // The daily queue respects the user's mutes; the topics summary does not
+  // — it has to show what is muted, and it validates focus hashes, which
+  // are allowed to target a muted category on purpose.
+  const enabled = selectEnabled(cards, new Set(settings.disabledCategories));
+
   const session = buildSession({
-    cards,
+    cards: enabled,
     reviews,
     now,
     newCardsPerDay: settings.newCardsPerDay,
     newCardsSeenToday: seen
   });
-  const extension = buildExtension({ cards, reviews });
+  const extension = buildExtension({ cards: enabled, reviews });
+  const topics = summarizeTopics(cards, reviews, now);
 
-  return { session, extension, newCardsSeenToday: seen };
+  return { session, extension, newCardsSeenToday: seen, topics };
 }
 
 async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: boolean): Promise<void> {
-  const state = await loadDashboardState(db, new Date());
+  const now = new Date();
+  const state = await loadDashboardState(db, now);
   const hash = window.location.hash;
   const decision = decideRoute(hash, state);
 
-  if (decision === 'review') {
+  if (decision.kind === 'review') {
     await startReview(appRoot, {
-      db,
-      session: state.session,
-      repo: REPO,
+      db, session: state.session, repo: REPO,
       onDone: () => { window.location.hash = ''; }
     });
     return;
   }
 
-  if (decision === 'review-extend') {
+  if (decision.kind === 'review-extend') {
     await startReview(appRoot, {
-      db,
-      session: state.extension,
-      repo: REPO,
+      db, session: state.extension, repo: REPO,
       onDone: () => { window.location.hash = ''; }
     });
     return;
   }
 
-  if (decision === 'settings') {
+  if (decision.kind === 'focus') {
+    const [cards, reviews] = await Promise.all([db.getAll('cards'), loadReviews(db)]);
+    await startReview(appRoot, {
+      db,
+      session: buildFocusSession({ cards, reviews, now, category: decision.category }),
+      repo: REPO,
+      // Back to the picker, not the dashboard — a focused session lands you
+      // where you launched it.
+      onDone: () => { window.location.hash = '#topics'; }
+    });
+    return;
+  }
+
+  if (decision.kind === 'topics') {
+    const settings = await getSettings(db);
+    const disabled = new Set(settings.disabledCategories);
+
+    const save = async (next: Set<string>): Promise<void> => {
+      // Re-read so this write carries whatever the settings form may have
+      // changed since this screen rendered.
+      const current = await getSettings(db);
+      await saveSettings(db, { ...current, disabledCategories: [...next] });
+      await route(appRoot, db, deckUnavailable);
+    };
+
+    renderTopics(appRoot, {
+      topics: state.topics,
+      disabled,
+      onToggleCategory: (category, nextDisabled) => {
+        const next = new Set(disabled);
+        if (nextDisabled) next.add(category);
+        else next.delete(category);
+        void save(next);
+      },
+      onToggleTopic: (topic, nextDisabled) => {
+        const next = new Set(disabled);
+        const summary = state.topics.find((t) => t.topic === topic);
+        for (const c of summary?.categories ?? []) {
+          if (nextDisabled) next.add(c.category);
+          else next.delete(c.category);
+        }
+        void save(next);
+      },
+      onLearn: (category) => { window.location.hash = focusHash(category); },
+      onBack: () => { window.location.hash = ''; }
+    });
+    return;
+  }
+
+  if (decision.kind === 'settings') {
     await renderSettings(appRoot, db, () => { window.location.hash = ''; });
     return;
   }
 
-  if (hash === '#review-extend') {
-    // Stale/invalid entry into the extension route (due cards exist again,
-    // or nothing left to extend into) — clear it so a subsequent reload or
-    // back/forward doesn't land here again, and so the dashboard's own
-    // "keep going" button (not a leftover hash) is what drives this route
-    // from here on. A hash mutation is a side effect, so it stays here
-    // rather than in the pure decideRoute.
+  if (hash === '#review-extend' || hash.startsWith('#focus/')) {
+    // Stale/invalid entry into a session route (due cards exist again,
+    // nothing left to extend into, or a focus hash whose category is gone)
+    // — clear it so a subsequent reload or back/forward doesn't land here
+    // again. A hash mutation is a side effect, so it stays here rather than
+    // in the pure decideRoute.
     window.location.hash = '';
   }
 
@@ -100,6 +153,7 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
     deckUnavailable,
     onStart: () => { window.location.hash = '#review'; },
     onKeepGoing: () => { window.location.hash = '#review-extend'; },
+    onTopics: () => { window.location.hash = '#topics'; },
     onSettings: () => { window.location.hash = '#settings'; }
   });
 }
