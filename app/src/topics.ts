@@ -24,8 +24,13 @@ export interface TopicSummary {
  * due), so a category's counts always match what a focused session over it
  * would actually serve.
  *
- * A category whose cards are all tombstoned disappears entirely — there is
- * nothing to offer and nothing to toggle.
+ * A category appears as soon as it has any live (non-tombstoned) card,
+ * even when nothing of it is due or new right now — such a category shows
+ * `0 due / 0 new` rather than vanishing. It has to: the picker is also
+ * where a category is muted, and being caught up on a topic is exactly
+ * when you would want to mute it before it comes due again. Only a
+ * category whose every card is tombstoned disappears, because then there
+ * is genuinely nothing to offer and nothing to toggle.
  */
 export function summarizeTopics(
   cards: StoredCard[],
@@ -36,18 +41,23 @@ export function summarizeTopics(
 
   for (const card of cards) {
     if (card.tombstoned) continue;
+
+    // Register the category before any counting guard, so a caught-up or
+    // fully-suspended category still renders (with zero counts) and stays
+    // toggleable.
+    const categories = byTopic.get(card.topic) ?? new Map<string, CategorySummary>();
+    const summary = categories.get(card.category) ?? { category: card.category, dueCount: 0, newCount: 0 };
+    categories.set(card.category, summary);
+    byTopic.set(card.topic, categories);
+
     const state = reviews.get(card.id);
     if (state?.suspended) continue;
 
     const isNew = !state;
     if (!isNew && !isDue(state, now)) continue;
 
-    const categories = byTopic.get(card.topic) ?? new Map<string, CategorySummary>();
-    const summary = categories.get(card.category) ?? { category: card.category, dueCount: 0, newCount: 0 };
     if (isNew) summary.newCount += 1;
     else summary.dueCount += 1;
-    categories.set(card.category, summary);
-    byTopic.set(card.topic, categories);
   }
 
   return [...byTopic.entries()]

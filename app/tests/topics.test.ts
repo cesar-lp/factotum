@@ -56,6 +56,29 @@ describe('summarizeTopics', () => {
     expect(topic?.categories[0]).toEqual({ category: 'amp', dueCount: 1, newCount: 0 });
   });
 
+  it('keeps a caught-up category, with zero counts, so it stays toggleable', () => {
+    // Regression: a category used to vanish from the picker the moment
+    // nothing in it was due or new — taking its mute toggle with it, at
+    // exactly the point you would want to mute it.
+    const cards = [card('c-future', 'concurrency', 'amp'), card('c-due', 'concurrency', 'os-concurrency')];
+    const reviews = new Map([
+      ['c-future', notYetDue('c-future')],
+      ['c-due', due('c-due')]
+    ]);
+    const [topic] = summarizeTopics(cards, reviews, now);
+    expect(topic?.categories).toEqual([
+      { category: 'amp', dueCount: 0, newCount: 0 },
+      { category: 'os-concurrency', dueCount: 1, newCount: 0 }
+    ]);
+  });
+
+  it('keeps a category whose every card is suspended', () => {
+    const cards = [card('c-susp', 'concurrency', 'amp')];
+    const reviews = new Map([['c-susp', { ...due('c-susp'), suspended: true }]]);
+    const [topic] = summarizeTopics(cards, reviews, now);
+    expect(topic?.categories).toEqual([{ category: 'amp', dueCount: 0, newCount: 0 }]);
+  });
+
   it('omits a category whose only cards are tombstoned', () => {
     const cards = [{ ...card('c-tomb', 'concurrency', 'amp'), tombstoned: true }];
     expect(summarizeTopics(cards, new Map(), now)).toEqual([]);
