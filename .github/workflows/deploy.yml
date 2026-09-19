@@ -1,9 +1,24 @@
 # .github/workflows/deploy.yml
 name: Deploy app
 
+# Chains off build-deck instead of racing it, two layers:
+# 1. build-deck.yml rebuilds deck/deck.json and commits it back using the
+#    default GITHUB_TOKEN, which by GitHub's rules does not trigger further
+#    workflow runs. Without the workflow_run trigger below, a vault/pipeline
+#    push would deploy immediately from the `push` trigger, before build-deck
+#    has run — shipping a stale deck (new cards with no ids yet) until some
+#    unrelated push or a manual workflow_dispatch happened to deploy again.
+# 2. `paths-ignore: [vault/**, pipeline/**]` on the `push` trigger stops that
+#    stale immediate deploy: a vault or pipeline push no longer deploys
+#    directly, it waits for the `workflow_run` below to fire once build-deck
+#    completes. An app-only push is unaffected and still deploys immediately.
 on:
   push:
     branches: [main]
+    paths-ignore: ['vault/**', 'pipeline/**']
+  workflow_run:
+    workflows: ["Build deck"]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -18,7 +33,17 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Skip when build-deck itself failed, so a broken deck build is never
+    # deployed. Always run for ordinary push / workflow_dispatch events.
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     steps:
+      # No `ref:` here — deliberately. On a workflow_run event,
+      # github.event.workflow_run.head_sha is the commit that TRIGGERED
+      # build-deck, i.e. BEFORE build-deck's own rebuild commit. Pinning to
+      # it would check out and deploy the stale deck, defeating this whole
+      # chain. The default behavior (checkout the branch tip) is correct
+      # here because by the time this job runs, build-deck's commit is the
+      # tip of main. Do not "fix" this by adding a ref:.
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
