@@ -63,3 +63,31 @@ export function buildSession(input: SessionInput): StoredCard[] {
   const allowance = Math.max(0, newCardsPerDay - newCardsSeenToday);
   return [...interleave(dueCards), ...interleave(newCards).slice(0, allowance)];
 }
+
+export interface ExtensionInput {
+  cards: StoredCard[];
+  reviews: Map<string, ReviewState>;
+}
+
+/**
+ * The "keep going" extension: every remaining new card (unbounded, no
+ * `newCardsPerDay` slice), interleaved the same way `buildSession` does.
+ * A card counts as "new" purely by having no review state yet — the same
+ * test `buildSession` uses — so a card already reviewed today (whether
+ * inside the capped allowance or a prior extension) already has a state
+ * entry and is naturally excluded, with no separate day-scoped bookkeeping
+ * needed here. Due cards are deliberately left out: they were already
+ * served first by the session this extension continues.
+ */
+export function buildExtension(input: ExtensionInput): StoredCard[] {
+  const { cards, reviews } = input;
+
+  const newCards: StoredCard[] = [];
+  for (const card of cards) {
+    if (card.tombstoned) continue;
+    if (reviews.has(card.id)) continue;
+    newCards.push(card);
+  }
+
+  return interleave(newCards);
+}

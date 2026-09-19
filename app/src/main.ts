@@ -4,7 +4,7 @@ import { openDb, type FactotumDb, type StoredCard } from './db/schema.js';
 import { getSettings } from './db/settings.js';
 import { mergeDeck } from './db/deck.js';
 import { loadReviews, newCardsSeenToday } from './db/reviews.js';
-import { buildSession } from './scheduler/queue.js';
+import { buildExtension, buildSession } from './scheduler/queue.js';
 import { renderDashboard } from './ui/dashboard.js';
 import { startReview } from './ui/review.js';
 import { renderSettings } from './ui/settings.js';
@@ -32,7 +32,19 @@ async function syncDeck(db: FactotumDb): Promise<boolean> {
   }
 }
 
-export async function currentSession(db: FactotumDb, now: Date): Promise<StoredCard[]> {
+export interface DashboardState {
+  /** Due cards plus new cards up to the day's remaining allowance. */
+  session: StoredCard[];
+  /**
+   * New cards left over once `session` is exhausted — unbounded, only ever
+   * served via the opt-in "keep going" extension, never automatically.
+   */
+  extension: StoredCard[];
+  /** Today's new-card count so far (includes cards taken via `extension`). */
+  newCardsSeenToday: number;
+}
+
+export async function loadDashboardState(db: FactotumDb, now: Date): Promise<DashboardState> {
   const [cards, reviews, settings, seen] = await Promise.all([
     db.getAll('cards'),
     loadReviews(db),
@@ -40,22 +52,35 @@ export async function currentSession(db: FactotumDb, now: Date): Promise<StoredC
     newCardsSeenToday(db, now)
   ]);
 
-  return buildSession({
+  const session = buildSession({
     cards,
     reviews,
     now,
     newCardsPerDay: settings.newCardsPerDay,
     newCardsSeenToday: seen
   });
+  const extension = buildExtension({ cards, reviews });
+
+  return { session, extension, newCardsSeenToday: seen };
 }
 
 async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: boolean): Promise<void> {
-  const session = await currentSession(db, new Date());
+  const state = await loadDashboardState(db, new Date());
 
-  if (window.location.hash === '#review' && session.length > 0) {
+  if (window.location.hash === '#review' && state.session.length > 0) {
     await startReview(appRoot, {
       db,
-      session,
+      session: state.session,
+      repo: REPO,
+      onDone: () => { window.location.hash = ''; }
+    });
+    return;
+  }
+
+  if (window.location.hash === '#review-extend' && state.extension.length > 0) {
+    await startReview(appRoot, {
+      db,
+      session: state.extension,
       repo: REPO,
       onDone: () => { window.location.hash = ''; }
     });
@@ -68,9 +93,12 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
   }
 
   renderDashboard(appRoot, {
-    dueCount: session.length,
+    dueCount: state.session.length,
+    newCardsRemaining: state.extension.length,
+    newCardsSeenToday: state.newCardsSeenToday,
     deckUnavailable,
     onStart: () => { window.location.hash = '#review'; },
+    onKeepGoing: () => { window.location.hash = '#review-extend'; },
     onSettings: () => { window.location.hash = '#settings'; }
   });
 }
