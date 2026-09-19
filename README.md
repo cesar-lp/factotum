@@ -1,1 +1,155 @@
 # factotum
+
+A personal spaced-repetition app for retaining technical knowledge —
+programming syntax, computer networking, algorithms, data structures, system
+design. Notes live as Obsidian markdown in this repo; a CI pipeline compiles
+them into a deck; an offline-first PWA reviews the deck on iPhone with FSRS
+scheduling. Single user, no servers, no App Store — GitHub Actions and GitHub
+Pages are the only infrastructure.
+
+This README covers Phase 1 (what's built and shipped). Later phases
+(notification push, automated note generation) are noted below as **not yet
+built** where relevant — see `docs/superpowers/specs/2026-09-18-factotum-design.md`
+for the full design, including those phases.
+
+## Vault and authoring
+
+`vault/` is a real Obsidian vault — open that folder directly in Obsidian to
+write and edit notes.
+
+Only notes with a `category` key in their YAML frontmatter are scanned for
+cards. Notes without one (drafts, daily notes) are ignored entirely by the
+build.
+
+```markdown
+---
+category: networking
+tags: [tcp, transport-layer]
+---
+```
+
+### Card constructs
+
+Four constructs, three grading modes. Each example below is verified against
+what `pipeline/src/cards.ts` actually parses today, not just the spec.
+
+**Cloze** — `==term==`, typed answer, exact match (case/whitespace-insensitive):
+
+```markdown
+Default Ethernet MTU is ==1500 bytes==.
+```
+
+The `==` must hug non-whitespace on both sides — `== 1500 bytes ==` (padded)
+is *not* recognized as a highlight and produces no card. Write `==1500
+bytes==`, not `== 1500 bytes ==`.
+
+**QA** — `Question :: Answer`, self-graded with four rating buttons:
+
+```markdown
+What does the TIME_WAIT state protect against? :: Delayed duplicate segments
+from a previous connection being accepted by a new one.
+```
+
+**MCQ callout** — `> [!card] mcq`, tap a choice, `- [x]` marks the correct one:
+
+```markdown
+> [!card] mcq
+> At which OSI layer does TCP operate?
+> - [x] Transport (4)
+> - [ ] Network (3)
+> - [ ] Session (5)
+```
+
+**Recall callout** — `> [!card] recall`, self-graded, no answer key:
+
+```markdown
+> [!card] recall
+> Explain why TCP's congestion control makes it a poor fit for real-time
+> video, and what QUIC changes.
+```
+
+### Parser behavior worth knowing
+
+- **A run of plain prose lines wraps and joins.** A sentence you hard-wrap
+  across two source lines is treated as one block — the `==...==` or `::`
+  can land anywhere in the joined text, not just on a single physical line.
+  Blank lines, headings, list items, and blockquotes each break the join.
+- **Fenced code blocks (` ``` ` or `~~~`) are skipped entirely.** `==` and
+  `::` inside a code fence are never parsed as card syntax.
+- **Whitespace-padded highlights are rejected**, as above — `==term==` only,
+  no space just inside the `==`.
+
+Syntax deliberately overlaps the Obsidian Spaced Repetition plugin, so notes
+stay useful outside this app too.
+
+## Stable ids
+
+Every card gets a `^card-xxxx` block-reference anchor. The build Action
+assigns ids to any card that lacks one and **commits them back to the vault
+automatically** — you will see `^card-xxxx` appear in your notes after a
+push. Do not hand-edit or delete these anchors: review history (FSRS
+state — stability, due date, lapses, etc.) is keyed by card id, and deleting
+or changing an anchor permanently orphans that card's history on the next
+deck rebuild.
+
+## Scripts
+
+Run with `npm run <script>` from the repo root.
+
+- `test` — runs the full test suite once (`vitest run`).
+- `test:watch` — runs the test suite in watch mode.
+- `typecheck` — type-checks the app and the service worker (two separate
+  `tsc` invocations, since the service worker needs the `WebWorker` lib and
+  the rest of the app needs `DOM`).
+- `build:deck` — runs the pipeline over `vault/`, writing `deck/deck.json`
+  and rewriting vault notes in place with any newly assigned `^card-xxxx`
+  anchors.
+- `predev` — copies `deck/deck.json` into `app/public/deck.json`; runs
+  automatically before `dev`, not meant to be invoked directly.
+- `dev` — starts the Vite dev server for the app.
+- `prebuild:app` — copies `deck/deck.json` into `app/public/deck.json`; runs
+  automatically before `build:app`, not meant to be invoked directly.
+- `build:app` — builds the production app bundle into `dist/`.
+
+## How the CI loop works
+
+Two GitHub Actions chain together:
+
+1. **`build-deck.yml`** fires on a push to `main` touching `vault/**`,
+   `pipeline/**`, or `package.json`. It runs the tests, runs `build:deck`
+   (assigning ids and regenerating `deck/deck.json`), and — if anything
+   changed — commits vault + deck changes back to `main` using the default
+   `GITHUB_TOKEN`. Pushes made with `GITHUB_TOKEN` don't trigger further
+   workflow runs, which is what stops this from looping on itself.
+2. **`deploy.yml`** builds the app and deploys it to GitHub Pages. It runs
+   on an app-only push to `main` (paths outside `vault/**`/`pipeline/**`
+   deploy immediately), and it also runs whenever `build-deck.yml`
+   completes, via a `workflow_run` trigger — so a vault edit's rebuilt deck
+   reaches the live site without a second, unrelated push being needed to
+   nudge it along. A failed `build-deck` run does not trigger a deploy.
+
+So the loop, end to end: edit a note in Obsidian → push → `build-deck`
+assigns ids, rebuilds the deck, commits back → that commit's completion
+triggers `deploy` → `deploy` builds the app and publishes to Pages.
+
+## One-time setup
+
+1. **Enable GitHub Pages**: repo Settings → Pages → Source: **GitHub
+   Actions**. (The `deploy.yml` workflow handles the rest; there is nothing
+   else to configure here.)
+2. **Install to the iPhone Home Screen**: open the deployed Pages URL in
+   Safari, tap Share → **Add to Home Screen**. This is not optional
+   polish — it's a hard prerequisite for two things:
+   - Web Push notifications (Phase 2, **not yet built**) only work for
+     Home Screen–installed PWAs on iOS.
+   - Home Screen installation is what exempts the app's local storage
+     (IndexedDB — review history, scheduling state) from Safari's 7-day
+     script-writable storage eviction. Without it, review history can be
+     silently wiped by Safari itself.
+
+## Backup
+
+**Settings → Export** is the only copy of your review history. There is no
+server-side copy — losing the phone (or Safari evicting storage) without
+having exported means losing that history. Export periodically and keep the
+file somewhere durable (e.g. iCloud Drive).
