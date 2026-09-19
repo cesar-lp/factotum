@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildSession, dayKey } from '../src/scheduler/queue.js';
+import { buildExtension, buildSession, dayKey } from '../src/scheduler/queue.js';
 import { initialState } from '../src/scheduler/fsrs.js';
 import type { StoredCard, ReviewState } from '../src/db/schema.js';
 
@@ -61,5 +61,51 @@ describe('buildSession', () => {
     ]);
     const session = buildSession({ cards, reviews, now, newCardsPerDay: 10, newCardsSeenToday: 0 });
     expect(session.map((c) => c.id)).toEqual(['card-ok']);
+  });
+});
+
+describe('buildExtension', () => {
+  it('returns all remaining new cards, not a capped slice', () => {
+    const cards = Array.from({ length: 25 }, (_, i) => card(`card-n${i}`, 'net'));
+    const extension = buildExtension({ cards, reviews: new Map() });
+    expect(extension).toHaveLength(25);
+  });
+
+  it('excludes suspended and tombstoned cards', () => {
+    const cards = [
+      { ...card('card-tomb', 'net'), tombstoned: true },
+      card('card-susp', 'net'),
+      card('card-new', 'net')
+    ];
+    const reviews = new Map([['card-susp', { ...due('card-susp'), suspended: true }]]);
+    const extension = buildExtension({ cards, reviews });
+    expect(extension.map((c) => c.id)).toEqual(['card-new']);
+  });
+
+  it('excludes cards already seen today (no double-serving within a day)', () => {
+    const cards = [card('card-seen', 'net'), card('card-unseen', 'net')];
+    // A card reviewed earlier today already has a review-state entry,
+    // regardless of whether it was due again yet — that's what keeps it
+    // out of the extension.
+    const reviews = new Map([['card-seen', due('card-seen')]]);
+    const extension = buildExtension({ cards, reviews });
+    expect(extension.map((c) => c.id)).toEqual(['card-unseen']);
+  });
+
+  it('returns empty when no new cards remain', () => {
+    const cards = [card('card-a', 'net')];
+    const reviews = new Map([['card-a', due('card-a')]]);
+    expect(buildExtension({ cards, reviews })).toEqual([]);
+  });
+
+  it('interleaves categories instead of blocking them', () => {
+    const cards = [
+      card('card-a1', 'algo'), card('card-a2', 'algo'),
+      card('card-n1', 'net'), card('card-n2', 'net')
+    ];
+    const extension = buildExtension({ cards, reviews: new Map() });
+    const categories = extension.map((c) => c.category);
+    expect(categories[0]).not.toBe(categories[1]);
+    expect(categories[2]).not.toBe(categories[3]);
   });
 });
