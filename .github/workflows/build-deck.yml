@@ -1,0 +1,41 @@
+# .github/workflows/build-deck.yml
+name: Build deck
+
+on:
+  push:
+    branches: [main]
+    paths: ['vault/**', 'pipeline/**', 'package.json']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-deck
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build:deck
+      - name: Commit generated ids and deck
+        run: |
+          git config user.name  "factotum-bot"
+          git config user.email "factotum-bot@users.noreply.github.com"
+          paths="deck"
+          [ -d vault ] && paths="vault deck"
+          if [[ -n "$(git status --porcelain $paths)" ]]; then
+            git add $paths
+            git commit -m "chore: rebuild deck [skip ci]"
+            git push
+          else
+            echo "No deck changes"
+          fi
