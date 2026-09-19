@@ -55,4 +55,48 @@ describe('mergeDeck', () => {
     await mergeDeck(db, deck([card('card-aaaa', 'first')]));
     expect((await db.get('cards', 'card-aaaa'))?.tombstoned).toBe(false);
   });
+
+  it('does not report an update when only key insertion order differs', async () => {
+    const db = await openDb();
+    // Same content, deliberately different key order than `card()` produces.
+    const reordered = {
+      citations: [] as string[],
+      source: { block: 'card-aaaa', path: 'vault/a.md' },
+      answer: 'x',
+      prompt: 'first',
+      tags: [] as string[],
+      category: 'networking',
+      format: 'cloze' as const,
+      id: 'card-aaaa'
+    };
+
+    await mergeDeck(db, deck([card('card-aaaa', 'first')]));
+    const result = await mergeDeck(db, deck([reordered]));
+
+    expect(result.updated).toBe(0);
+  });
+
+  it('still reports an update for a genuine prompt change', async () => {
+    const db = await openDb();
+    await mergeDeck(db, deck([card('card-aaaa', 'first')]));
+    const result = await mergeDeck(db, deck([card('card-aaaa', 'corrected')]));
+    expect(result.updated).toBe(1);
+  });
+
+  it('still reports an update when only choices order changes', async () => {
+    const db = await openDb();
+    const mcqCard = (choices: { text: string; correct: boolean }[]) => ({
+      id: 'card-cccc', format: 'mcq' as const, category: 'networking', tags: [],
+      prompt: 'pick one', answer: 'a', choices,
+      source: { path: 'vault/a.md', block: 'card-cccc' }, citations: []
+    });
+
+    await mergeDeck(db, deck([mcqCard([{ text: 'a', correct: true }, { text: 'b', correct: false }])]));
+    const result = await mergeDeck(
+      db,
+      deck([mcqCard([{ text: 'b', correct: false }, { text: 'a', correct: true }])])
+    );
+
+    expect(result.updated).toBe(1);
+  });
 });

@@ -7,6 +7,19 @@ export interface MergeResult {
   tombstoned: number;
 }
 
+/**
+ * JSON.stringify with object keys sorted so two objects with identical
+ * content but different key insertion order compare equal. Array order is
+ * left untouched since it can be semantically meaningful (e.g. `choices`).
+ */
+function stableStringify(value: unknown): string {
+  return JSON.stringify(value, (_key, val) =>
+    val && typeof val === 'object' && !Array.isArray(val)
+      ? Object.fromEntries(Object.entries(val as Record<string, unknown>).sort(([a], [b]) => a.localeCompare(b)))
+      : val
+  );
+}
+
 export async function mergeDeck(db: FactotumDb, deck: Deck): Promise<MergeResult> {
   const tx = db.transaction('cards', 'readwrite');
   const store = tx.objectStore('cards');
@@ -23,7 +36,7 @@ export async function mergeDeck(db: FactotumDb, deck: Deck): Promise<MergeResult
     await store.put(next);
     if (!prior) {
       result.added += 1;
-    } else if (prior.tombstoned || JSON.stringify(prior) !== JSON.stringify(next)) {
+    } else if (prior.tombstoned || stableStringify(prior) !== stableStringify(next)) {
       result.updated += 1;
     }
   }
