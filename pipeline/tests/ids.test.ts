@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { generateId, assignIds, writeBackIds } from '../src/ids.js';
 import { parseCards } from '../src/cards.js';
 import type { ParsedCard } from '../src/types.js';
@@ -113,5 +113,43 @@ describe('ids', () => {
 
     const writtenAgain = writeBackIds(written, reparsed);
     expect(writtenAgain).toBe(written);
+  });
+
+  describe('stale anchors (fix round 2)', () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('leaves orphaned bare-anchor lines in place and warns, instead of deleting them', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const source =
+        'A ==x==. ^card-aaaa\n^card-bbbb\n^card-cccc\nAnother line with ==z==. ^card-dddd\n';
+      const out = writeBackIds(source, [cloze('card-aaaa', 0), cloze('card-dddd', 3)]);
+
+      expect(out).toContain('^card-bbbb');
+      expect(out).toContain('^card-cccc');
+      expect(out).toBe(source);
+      expect(warn).toHaveBeenCalledTimes(1);
+      expect(warn.mock.calls[0]?.[0]).toContain('^card-bbbb');
+      expect(warn.mock.calls[0]?.[0]).toContain('^card-cccc');
+    });
+
+    it('is idempotent even with stale anchors present (warn may fire each run)', () => {
+      vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const source =
+        'A ==x==. ^card-aaaa\n^card-bbbb\n^card-cccc\nAnother line with ==z==. ^card-dddd\n';
+      const cards = [cloze('card-aaaa', 0), cloze('card-dddd', 3)];
+      const once = writeBackIds(source, cards);
+      const twice = writeBackIds(once, cards);
+      expect(twice).toBe(once);
+    });
+
+    it('consumes exactly as many bare-anchor lines as needed, as a clean no-op (bounding regression guard)', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const source = 'A ==x== and ==y==. ^card-aaaa\n^card-bbbb\n';
+      const out = writeBackIds(source, [cloze('card-aaaa', 0), cloze('card-bbbb', 0)]);
+      expect(out).toBe(source);
+      expect(warn).not.toHaveBeenCalled();
+    });
   });
 });

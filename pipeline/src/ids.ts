@@ -27,7 +27,7 @@ export function assignIds(cards: ParsedCard[], taken: Set<string>): ParsedCard[]
 }
 
 const TRAILING_ANCHOR = /\s*\^card-[a-z0-9]{4}\s*$/;
-const BARE_ANCHOR_LINE = /^\s*\^card-[a-z0-9]{4}\s*$/;
+const BARE_ANCHOR_LINE = /^\s*\^(card-[a-z0-9]{4})\s*$/;
 
 /**
  * Rebuilds the anchor layout of every card line from `cards`, rather than
@@ -71,15 +71,39 @@ export function writeBackIds(source: string, cards: ParsedCard[]): string {
     out.push(`${stripped} ^${first}${eol}`);
     for (const extra of rest) out.push(`^${extra}${eol}`);
 
-    // Consume any existing bare-anchor lines immediately below: the loop
-    // above just regenerated them, so the old copies would otherwise
-    // linger unchanged (stale ids, or duplicates of the new ones).
+    // Consume existing bare-anchor lines immediately below, but AT MOST as
+    // many as `rest` regenerates. Consuming more than that would silently
+    // delete anchors that belong to no card here anymore (e.g. a highlight
+    // was deleted by hand without removing its anchor) — data loss in a
+    // file the user owns.
     index++;
-    while (index < lines.length) {
+    let consumed = 0;
+    while (index < lines.length && consumed < rest.length) {
       const candidate = lines[index] ?? '';
       const candidateBody = candidate.endsWith('\r') ? candidate.slice(0, -1) : candidate;
       if (!BARE_ANCHOR_LINE.test(candidateBody)) break;
       index++;
+      consumed++;
+    }
+
+    // Anything left over is orphaned: leave it untouched (do not advance
+    // `index` past it — the next loop iteration will emit it verbatim) and
+    // warn so the user notices it in the build log instead of it silently
+    // vanishing or silently persisting unexplained.
+    const staleIds: string[] = [];
+    let peek = index;
+    while (peek < lines.length) {
+      const candidate = lines[peek] ?? '';
+      const candidateBody = candidate.endsWith('\r') ? candidate.slice(0, -1) : candidate;
+      const match = candidateBody.match(BARE_ANCHOR_LINE);
+      if (!match || !match[1]) break;
+      staleIds.push(match[1]);
+      peek++;
+    }
+    if (staleIds.length > 0) {
+      console.warn(
+        `Stale card anchors at line ${index}: ${staleIds.map((id) => `^${id}`).join(', ')} (no matching card on the line above)`
+      );
     }
   }
 
