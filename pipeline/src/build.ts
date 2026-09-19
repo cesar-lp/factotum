@@ -38,8 +38,9 @@ function cardsEqual(a: DeckCard[], b: DeckCard[]): boolean {
 
 /**
  * Reads `path` and returns its parsed Deck, or null if the file does not
- * exist or is not valid JSON (e.g. the first build, or a corrupted commit) —
- * either way we should rebuild fresh rather than crash.
+ * exist, is not valid JSON, or does not have the shape of a Deck (e.g. the
+ * first build, a corrupted commit, or a bad merge resolution) — in every
+ * case we should rebuild fresh rather than crash.
  */
 export function readExistingDeck(path: string): Deck | null {
   let raw: string;
@@ -48,12 +49,18 @@ export function readExistingDeck(path: string): Deck | null {
   } catch {
     return null;
   }
+  let parsed: unknown;
   try {
-    return JSON.parse(raw) as Deck;
+    parsed = JSON.parse(raw);
   } catch {
     console.warn(`${path} exists but is not valid JSON; rebuilding fresh`);
     return null;
   }
+  if (!parsed || typeof parsed !== 'object' || !Array.isArray((parsed as { cards?: unknown }).cards)) {
+    console.warn(`${path} exists but is not a valid deck (missing cards array); rebuilding fresh`);
+    return null;
+  }
+  return parsed as Deck;
 }
 
 /**

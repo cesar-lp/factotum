@@ -27,7 +27,7 @@ jobs:
       - run: npm test
       - run: npm run build:deck
       # Loop safety, two layers:
-      # 1. Primary: checkout@v4 wires the remote with GITHUB_TOKEN, and pushes
+      # 1. Primary: actions/checkout wires the remote with GITHUB_TOKEN, and pushes
       #    made with GITHUB_TOKEN do not trigger new workflow runs (GitHub docs).
       #    This holds even though the commit touches vault/**, which matches
       #    our own paths: filter above.
