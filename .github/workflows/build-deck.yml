@@ -25,6 +25,12 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      # Defence in depth: this is the only non-PR path that can land on
+      # main (ci.yml's typecheck only runs pre-merge on PRs, and the
+      # branch-protection ruleset still permits direct pushes to main).
+      # build:deck below is a tsx/ts-node run, not a type check, so without
+      # this a type error could reach main undetected via a direct push.
+      - run: npm run typecheck
       - run: npm run build:deck
       # Loop safety, two layers:
       # 1. Primary: actions/checkout wires the remote with GITHUB_TOKEN, and pushes

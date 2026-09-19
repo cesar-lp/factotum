@@ -1,0 +1,80 @@
+name: PR checks
+
+# Runs on every pull request targeting main. This is the only place tests
+# and typecheck run BEFORE a merge — build-deck.yml and deploy.yml only run
+# AFTER a push lands on main, so without this workflow a broken PR merges
+# cleanly, build-deck then fails post-merge, its deck-commit (and the
+# deploy.yml run chained off it) never fires, and the live site silently
+# stops updating. See README's CI section for the full failure mode this
+# closes.
+#
+# Deliberately NOT also triggered on `push` to main: build-deck.yml and
+# deploy.yml already run the same test/build steps post-merge, and a
+# post-merge push here would just be a second, redundant report of the same
+# result — a red X on this workflow wouldn't be actionable (main is already
+# merged), whereas build-deck's own failure is already visible and specific.
+# Keeping this PR-only avoids duplicate runs and keeps its job names
+# meaningful as *pre-merge gate* checks in the branch protection UI.
+on:
+  pull_request:
+    branches: [main]
+
+# Read-only: this workflow only builds and checks, it never writes to the
+# repo (unlike build-deck.yml, which pushes deck commits with `contents:
+# write`). Keeping this read-only means it needs no bypass consideration
+# when branch protection is enabled on main — it only ever reads the PR's
+# code.
+permissions:
+  contents: read
+
+# Cancel superseded runs from new pushes to the same PR branch, so stacked
+# pushes don't queue up redundant runs.
+concurrency:
+  group: pr-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Job id and name are chosen to read unambiguously in the branch
+  # protection "required status checks" picker, where a vague name like
+  # "build" is easy to confuse with an unrelated workflow's job.
+  pr-checks:
+    name: PR checks (test, typecheck, deck drift)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      # Runs tsc twice: once for the app config, once for the service
+      # worker's separate tsconfig.sw.json (different lib/globals). Matches
+      # what `npm run typecheck` does locally.
+      - run: npm run typecheck
+      - run: npm run build:deck
+      # Deck-drift check: a PR that changes vault/pipeline but doesn't ship
+      # a freshly rebuilt deck/deck.json is otherwise invisible until
+      # build-deck.yml runs post-merge on main and either silently fixes it
+      # (fine) or fails outright (deploy never fires, site goes stale). This
+      # catches it pre-merge instead. `npm run build:deck` above already
+      # regenerated deck/deck.json from this PR's vault/pipeline; if that
+      # output differs from what's committed, the deck is stale.
+      #
+      # Checks vault/ as well as deck/deck.json, not deck.json alone:
+      # build:deck's assignIds/writeBackIds (pipeline/src/build.ts) mint
+      # anchor ids for unanchored cards and write them back into the source
+      # markdown, exactly like build-deck.yml's own commit step does (it
+      # commits `vault deck` together, see its comment). If this check only
+      # looked at deck.json, a PR could pass with a deck that references
+      # anchor ids not present in the committed vault — and post-merge,
+      # build-deck would mint *different* ids for those cards and produce
+      # an unwanted drift commit. Checking both keeps "up to date" honest.
+      - name: Check deck is up to date
+        run: |
+          if ! git diff --quiet -- deck/deck.json vault/; then
+            echo "::error::deck/deck.json and/or vault/ files are out of date with this PR's changes (build:deck mints anchor ids into vault notes as well as regenerating the deck)."
+            echo "Run 'npm run build:deck' locally and commit the resulting changes to deck/deck.json and any vault/ files it modified (card id anchors)."
+            git diff --stat -- deck/deck.json vault/
+            exit 1
+          fi
