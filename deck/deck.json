@@ -1,4 +1,1789 @@
 {
-  "generatedAt": "2026-09-19T00:28:09.456Z",
-  "cards": []
+  "generatedAt": "2026-09-19T00:41:19.011Z",
+  "cards": [
+    {
+      "id": "card-uprv",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "congestion-control",
+        "tcp",
+        "transport-layer"
+      ],
+      "prompt": "___ signal.",
+      "source": {
+        "path": "vault/networking/congestion-control.md",
+        "block": "card-uprv"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.6-3.7"
+      ],
+      "answer": "congestion"
+    },
+    {
+      "id": "card-iwku",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "congestion-control",
+        "tcp",
+        "transport-layer"
+      ],
+      "prompt": "___. This sawtooth pattern keeps senders probing for more bandwidth",
+      "source": {
+        "path": "vault/networking/congestion-control.md",
+        "block": "card-iwku"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.6-3.7"
+      ],
+      "answer": "in half"
+    },
+    {
+      "id": "card-sbuh",
+      "format": "qa",
+      "category": "networking",
+      "tags": [
+        "congestion-control",
+        "tcp",
+        "transport-layer"
+      ],
+      "prompt": "Slow start",
+      "source": {
+        "path": "vault/networking/congestion-control.md",
+        "block": "card-sbuh"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.6-3.7"
+      ],
+      "answer": "The initial phase after a connection starts (or after a timeout), where the congestion window doubles every round trip until it reaches a threshold or a loss occurs, growing far faster than AIMD's linear increase."
+    },
+    {
+      "id": "card-3mgt",
+      "format": "qa",
+      "category": "networking",
+      "tags": [
+        "congestion-control",
+        "tcp",
+        "transport-layer"
+      ],
+      "prompt": "Fast retransmit",
+      "source": {
+        "path": "vault/networking/congestion-control.md",
+        "block": "card-3mgt"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.6-3.7"
+      ],
+      "answer": "A sender that receives three duplicate ACKs for the same segment infers that segment was lost and retransmits it immediately, without waiting for the retransmission timer to expire."
+    },
+    {
+      "id": "card-z816",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "congestion-control",
+        "tcp",
+        "transport-layer"
+      ],
+      "prompt": "trip instead of waiting a full ___ interval, which is much longer",
+      "source": {
+        "path": "vault/networking/congestion-control.md",
+        "block": "card-z816"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.6-3.7"
+      ],
+      "answer": "timeout"
+    },
+    {
+      "id": "card-st5f",
+      "format": "qa",
+      "category": "networking",
+      "tags": [
+        "congestion-control",
+        "tcp",
+        "transport-layer"
+      ],
+      "prompt": "Why does TCP reduce its window more aggressively after a timeout than after fast retransmit (three duplicate ACKs)?",
+      "source": {
+        "path": "vault/networking/congestion-control.md",
+        "block": "card-st5f"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.6-3.7"
+      ],
+      "answer": "A timeout suggests a more severe congestion event with no ACKs getting through at all, so TCP resets the window to its minimum and re-enters slow start, whereas duplicate ACKs mean segments are still arriving and only one was lost, so TCP can halve the window and continue."
+    },
+    {
+      "id": "card-5zh2",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "congestion-control",
+        "tcp",
+        "transport-layer"
+      ],
+      "prompt": "___-style AIMD does.",
+      "source": {
+        "path": "vault/networking/congestion-control.md",
+        "block": "card-5zh2"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.6-3.7"
+      ],
+      "answer": "Reno"
+    },
+    {
+      "id": "card-88gi",
+      "format": "mcq",
+      "category": "networking",
+      "tags": [
+        "congestion-control",
+        "tcp",
+        "transport-layer"
+      ],
+      "prompt": "A TCP sender's window is 20 segments when it experiences a timeout. What does it do?",
+      "source": {
+        "path": "vault/networking/congestion-control.md",
+        "block": "card-88gi"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.6-3.7"
+      ],
+      "choices": [
+        {
+          "text": "Resets the window to 1 segment and re-enters slow start",
+          "correct": true
+        },
+        {
+          "text": "Halves the window to 10 and continues in congestion avoidance",
+          "correct": false
+        },
+        {
+          "text": "Leaves the window unchanged and retransmits the lost segment",
+          "correct": false
+        },
+        {
+          "text": "Doubles the window to probe for more bandwidth",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-q28g",
+      "format": "recall",
+      "category": "networking",
+      "tags": [
+        "congestion-control",
+        "tcp",
+        "transport-layer"
+      ],
+      "prompt": "Explain what \"congestion avoidance\" means as a TCP Reno phase, and how it differs in growth rate from slow start.",
+      "source": {
+        "path": "vault/networking/congestion-control.md",
+        "block": "card-q28g"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.6-3.7"
+      ]
+    },
+    {
+      "id": "card-h7jf",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "delay",
+        "queuing",
+        "throughput"
+      ],
+      "prompt": "equal to packet length divided by ___. Propagation delay is",
+      "source": {
+        "path": "vault/networking/delay-loss-throughput.md",
+        "block": "card-h7jf"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 1.4"
+      ],
+      "answer": "link bandwidth"
+    },
+    {
+      "id": "card-jwnf",
+      "format": "qa",
+      "category": "networking",
+      "tags": [
+        "delay",
+        "queuing",
+        "throughput"
+      ],
+      "prompt": "Queuing delay",
+      "source": {
+        "path": "vault/networking/delay-loss-throughput.md",
+        "block": "card-jwnf"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 1.4"
+      ],
+      "answer": "The time a packet waits in a router's output buffer before it can be transmitted, and it depends on how many other packets are already queued ahead of it."
+    },
+    {
+      "id": "card-1kkn",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "delay",
+        "queuing",
+        "throughput"
+      ],
+      "prompt": "the link's transmission rate. As traffic intensity approaches ___, average",
+      "source": {
+        "path": "vault/networking/delay-loss-throughput.md",
+        "block": "card-1kkn"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 1.4"
+      ],
+      "answer": "1"
+    },
+    {
+      "id": "card-bn79",
+      "format": "qa",
+      "category": "networking",
+      "tags": [
+        "delay",
+        "queuing",
+        "throughput"
+      ],
+      "prompt": "Why can two routers with the same average load see very different queuing delay?",
+      "source": {
+        "path": "vault/networking/delay-loss-throughput.md",
+        "block": "card-bn79"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 1.4"
+      ],
+      "answer": "Delay depends on the burstiness of arrivals, not just the average rate; bursty traffic causes queues to build even when the long-run average utilization is well below 1."
+    },
+    {
+      "id": "card-n9op",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "delay",
+        "queuing",
+        "throughput"
+      ],
+      "prompt": "___ — the link along the path with the smallest available",
+      "source": {
+        "path": "vault/networking/delay-loss-throughput.md",
+        "block": "card-n9op"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 1.4"
+      ],
+      "answer": "bottleneck link"
+    },
+    {
+      "id": "card-95b6",
+      "format": "mcq",
+      "category": "networking",
+      "tags": [
+        "delay",
+        "queuing",
+        "throughput"
+      ],
+      "prompt": "A path has links of capacity 10 Mbps, 100 Mbps, and 1 Gbps in series. What is the maximum achievable end-to-end throughput?",
+      "source": {
+        "path": "vault/networking/delay-loss-throughput.md",
+        "block": "card-95b6"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 1.4"
+      ],
+      "choices": [
+        {
+          "text": "10 Mbps",
+          "correct": true
+        },
+        {
+          "text": "100 Mbps",
+          "correct": false
+        },
+        {
+          "text": "1 Gbps",
+          "correct": false
+        },
+        {
+          "text": "The average of the three, about 370 Mbps",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-yjam",
+      "format": "recall",
+      "category": "networking",
+      "tags": [
+        "delay",
+        "queuing",
+        "throughput"
+      ],
+      "prompt": "Explain why queuing delay, unlike transmission and propagation delay, cannot be computed from static link properties alone.",
+      "source": {
+        "path": "vault/networking/delay-loss-throughput.md",
+        "block": "card-yjam"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 1.4"
+      ]
+    },
+    {
+      "id": "card-67w2",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "dns",
+        "application-layer"
+      ],
+      "prompt": "The hierarchy has three main levels: ___ servers at the top, which",
+      "source": {
+        "path": "vault/networking/dns.md",
+        "block": "card-67w2"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 2.4",
+        "RFC 1035"
+      ],
+      "answer": "root"
+    },
+    {
+      "id": "card-vikl",
+      "format": "qa",
+      "category": "networking",
+      "tags": [
+        "dns",
+        "application-layer"
+      ],
+      "prompt": "Iterative query",
+      "source": {
+        "path": "vault/networking/dns.md",
+        "block": "card-vikl"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 2.4",
+        "RFC 1035"
+      ],
+      "answer": "A DNS server responds with the address of the next server to ask, rather than the final answer, leaving the requester to follow the chain itself."
+    },
+    {
+      "id": "card-70hq",
+      "format": "qa",
+      "category": "networking",
+      "tags": [
+        "dns",
+        "application-layer"
+      ],
+      "prompt": "Recursive query",
+      "source": {
+        "path": "vault/networking/dns.md",
+        "block": "card-70hq"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 2.4",
+        "RFC 1035"
+      ],
+      "answer": "A DNS server takes on the work of contacting other servers on the requester's behalf and returns only the final answer."
+    },
+    {
+      "id": "card-vqne",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "dns",
+        "application-layer"
+      ],
+      "prompt": "A local DNS resolver typically issues ___ queries to itself on",
+      "source": {
+        "path": "vault/networking/dns.md",
+        "block": "card-vqne"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 2.4",
+        "RFC 1035"
+      ],
+      "answer": "recursive"
+    },
+    {
+      "id": "card-z181",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "dns",
+        "application-layer"
+      ],
+      "prompt": "behalf of the client, while it issues ___ queries when walking",
+      "source": {
+        "path": "vault/networking/dns.md",
+        "block": "card-z181"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 2.4",
+        "RFC 1035"
+      ],
+      "answer": "iterative"
+    },
+    {
+      "id": "card-4xz1",
+      "format": "qa",
+      "category": "networking",
+      "tags": [
+        "dns",
+        "application-layer"
+      ],
+      "prompt": "Why does a DNS record carry a TTL, and what happens when it expires?",
+      "source": {
+        "path": "vault/networking/dns.md",
+        "block": "card-4xz1"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 2.4",
+        "RFC 1035"
+      ],
+      "answer": "The TTL tells resolvers how long they may cache the record before it must be discarded and re-fetched, letting operators trade off staleness against reducing repeated lookups at the authoritative server."
+    },
+    {
+      "id": "card-8fw7",
+      "format": "mcq",
+      "category": "networking",
+      "tags": [
+        "dns",
+        "application-layer"
+      ],
+      "prompt": "A resolver's cache holds an `A` record with TTL 300 seconds, cached 400 seconds ago. What should the resolver do on the next lookup?",
+      "source": {
+        "path": "vault/networking/dns.md",
+        "block": "card-8fw7"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 2.4",
+        "RFC 1035"
+      ],
+      "choices": [
+        {
+          "text": "Discard the cached entry and query again, since the TTL has expired",
+          "correct": true
+        },
+        {
+          "text": "Serve the cached entry, since DNS records never truly expire",
+          "correct": false
+        },
+        {
+          "text": "Serve the cached entry but flag it as insecure",
+          "correct": false
+        },
+        {
+          "text": "Contact the root servers directly, bypassing the authoritative server",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-nur3",
+      "format": "recall",
+      "category": "networking",
+      "tags": [
+        "dns",
+        "application-layer"
+      ],
+      "prompt": "Explain why caching DNS results at local resolvers is important for the scalability of the whole DNS system.",
+      "source": {
+        "path": "vault/networking/dns.md",
+        "block": "card-nur3"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 2.4",
+        "RFC 1035"
+      ]
+    },
+    {
+      "id": "card-3sgk",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "http",
+        "application-layer",
+        "web"
+      ],
+      "prompt": "requests by default — HTTP is a ___ protocol.",
+      "source": {
+        "path": "vault/networking/http.md",
+        "block": "card-3sgk"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 2.2",
+        "RFC 9110"
+      ],
+      "answer": "stateless"
+    },
+    {
+      "id": "card-8cyf",
+      "format": "qa",
+      "category": "networking",
+      "tags": [
+        "http",
+        "application-layer",
+        "web"
+      ],
+      "prompt": "Non-persistent HTTP",
+      "source": {
+        "path": "vault/networking/http.md",
+        "block": "card-8cyf"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 2.2",
+        "RFC 9110"
+      ],
+      "answer": "Each object is fetched over its own new TCP connection, which is opened, used once, and closed, adding a full connection setup delay per object."
+    },
+    {
+      "id": "card-1jwg",
+      "format": "qa",
+      "category": "networking",
+      "tags": [
+        "http",
+        "application-layer",
+        "web"
+      ],
+      "prompt": "Persistent HTTP",
+      "source": {
+        "path": "vault/networking/http.md",
+        "block": "card-1jwg"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 2.2",
+        "RFC 9110"
+      ],
+      "answer": "Multiple requests and responses can be sent over the same open TCP connection, avoiding repeated handshake overhead for objects on the same server."
+    },
+    {
+      "id": "card-47oq",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "http",
+        "application-layer",
+        "web"
+      ],
+      "prompt": "given URL. A status code in the ___ range indicates success, while a",
+      "source": {
+        "path": "vault/networking/http.md",
+        "block": "card-47oq"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 2.2",
+        "RFC 9110"
+      ],
+      "answer": "2xx"
+    },
+    {
+      "id": "card-nm6o",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "http",
+        "application-layer",
+        "web"
+      ],
+      "prompt": "___ code means the problem was with the client's request rather than",
+      "source": {
+        "path": "vault/networking/http.md",
+        "block": "card-nm6o"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 2.2",
+        "RFC 9110"
+      ],
+      "answer": "4xx"
+    },
+    {
+      "id": "card-im70",
+      "format": "qa",
+      "category": "networking",
+      "tags": [
+        "http",
+        "application-layer",
+        "web"
+      ],
+      "prompt": "How does a server use a cookie to recognize a returning client?",
+      "source": {
+        "path": "vault/networking/http.md",
+        "block": "card-im70"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 2.2",
+        "RFC 9110"
+      ],
+      "answer": "The server sets a unique identifier in a Set-Cookie response header; the browser stores it and automatically resends it in the Cookie header on later requests to that domain, letting the server look up state associated with that identifier."
+    },
+    {
+      "id": "card-pgfv",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "http",
+        "application-layer",
+        "web"
+      ],
+      "prompt": "replies ___ if it has not.",
+      "source": {
+        "path": "vault/networking/http.md",
+        "block": "card-pgfv"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 2.2",
+        "RFC 9110"
+      ],
+      "answer": "304 Not Modified"
+    },
+    {
+      "id": "card-2b24",
+      "format": "mcq",
+      "category": "networking",
+      "tags": [
+        "http",
+        "application-layer",
+        "web"
+      ],
+      "prompt": "Which HTTP status code tells a browser that a cached copy of a resource is still valid?",
+      "source": {
+        "path": "vault/networking/http.md",
+        "block": "card-2b24"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 2.2",
+        "RFC 9110"
+      ],
+      "choices": [
+        {
+          "text": "304 Not Modified",
+          "correct": true
+        },
+        {
+          "text": "204 No Content",
+          "correct": false
+        },
+        {
+          "text": "404 Not Found",
+          "correct": false
+        },
+        {
+          "text": "200 OK",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-i5lj",
+      "format": "recall",
+      "category": "networking",
+      "tags": [
+        "http",
+        "application-layer",
+        "web"
+      ],
+      "prompt": "Explain why persistent HTTP connections reduce page load latency compared to non-persistent connections, especially for pages with many small objects.",
+      "source": {
+        "path": "vault/networking/http.md",
+        "block": "card-i5lj"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 2.2",
+        "RFC 9110"
+      ]
+    },
+    {
+      "id": "card-ftnu",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "internet-structure",
+        "access-networks",
+        "switching"
+      ],
+      "prompt": "first router on its path, sometimes called the ___. Common",
+      "source": {
+        "path": "vault/networking/internet-structure.md",
+        "block": "card-ftnu"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 1"
+      ],
+      "answer": "edge router"
+    },
+    {
+      "id": "card-g80b",
+      "format": "qa",
+      "category": "networking",
+      "tags": [
+        "internet-structure",
+        "access-networks",
+        "switching"
+      ],
+      "prompt": "Circuit switching",
+      "source": {
+        "path": "vault/networking/internet-structure.md",
+        "block": "card-g80b"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 1"
+      ],
+      "answer": "A network reserves a fixed slice of link capacity (a circuit) for the entire duration of a connection, whether or not data is being sent."
+    },
+    {
+      "id": "card-49sc",
+      "format": "qa",
+      "category": "networking",
+      "tags": [
+        "internet-structure",
+        "access-networks",
+        "switching"
+      ],
+      "prompt": "Packet switching",
+      "source": {
+        "path": "vault/networking/internet-structure.md",
+        "block": "card-49sc"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 1"
+      ],
+      "answer": "Data is split into packets that share link bandwidth on demand, each queued and forwarded independently based on store-and-forward transmission."
+    },
+    {
+      "id": "card-cml7",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "internet-structure",
+        "access-networks",
+        "switching"
+      ],
+      "prompt": "Packet switching is more efficient for bursty traffic than circuit switching because unused capacity during silent periods can ___ instead of sitting idle.",
+      "source": {
+        "path": "vault/networking/internet-structure.md",
+        "block": "card-cml7"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 1"
+      ],
+      "answer": "be given to other flows"
+    },
+    {
+      "id": "card-kzzj",
+      "format": "mcq",
+      "category": "networking",
+      "tags": [
+        "internet-structure",
+        "access-networks",
+        "switching"
+      ],
+      "prompt": "Why can packet-switched networks experience congestion that circuit-switched networks cannot?",
+      "source": {
+        "path": "vault/networking/internet-structure.md",
+        "block": "card-kzzj"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 1"
+      ],
+      "choices": [
+        {
+          "text": "Packets from many flows statistically share link capacity, so aggregate demand can exceed it",
+          "correct": true
+        },
+        {
+          "text": "Packets are always larger than the reserved circuit capacity",
+          "correct": false
+        },
+        {
+          "text": "Circuit switching uses more bandwidth per connection",
+          "correct": false
+        },
+        {
+          "text": "Packet switching requires a dedicated end-to-end path",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-ubb3",
+      "format": "mcq",
+      "category": "networking",
+      "tags": [
+        "internet-structure",
+        "access-networks",
+        "switching"
+      ],
+      "prompt": "What is a tier-1 ISP?",
+      "source": {
+        "path": "vault/networking/internet-structure.md",
+        "block": "card-ubb3"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 1"
+      ],
+      "choices": [
+        {
+          "text": "A network that peers with other tier-1 networks to form the global backbone, with no ISP above it",
+          "correct": true
+        },
+        {
+          "text": "The ISP that directly serves residential customers",
+          "correct": false
+        },
+        {
+          "text": "A regional network that only connects to one upstream provider",
+          "correct": false
+        },
+        {
+          "text": "A content delivery network embedded inside access networks",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-27or",
+      "format": "recall",
+      "category": "networking",
+      "tags": [
+        "internet-structure",
+        "access-networks",
+        "switching"
+      ],
+      "prompt": "Describe the store-and-forward transmission behavior of a packet switch and why it adds delay proportional to packet size.",
+      "source": {
+        "path": "vault/networking/internet-structure.md",
+        "block": "card-27or"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 1"
+      ]
+    },
+    {
+      "id": "card-e2gi",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "network-layer",
+        "ip",
+        "nat",
+        "dhcp"
+      ],
+      "prompt": "32-bit source and destination addresses. When TTL reaches ___, a router",
+      "source": {
+        "path": "vault/networking/network-layer.md",
+        "block": "card-e2gi"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 4",
+        "RFC 791",
+        "RFC 2131"
+      ],
+      "answer": "0"
+    },
+    {
+      "id": "card-7a3g",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "network-layer",
+        "ip",
+        "nat",
+        "dhcp"
+      ],
+      "prompt": "Ethernet MTU is ___.",
+      "source": {
+        "path": "vault/networking/network-layer.md",
+        "block": "card-7a3g"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 4",
+        "RFC 791",
+        "RFC 2131"
+      ],
+      "answer": "1500 bytes"
+    },
+    {
+      "id": "card-w4yg",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "network-layer",
+        "ip",
+        "nat",
+        "dhcp"
+      ],
+      "prompt": "using a mask; ___ notation (e.g. `/24`) expresses how many leading bits",
+      "source": {
+        "path": "vault/networking/network-layer.md",
+        "block": "card-w4yg"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 4",
+        "RFC 791",
+        "RFC 2131"
+      ],
+      "answer": "CIDR"
+    },
+    {
+      "id": "card-s1qp",
+      "format": "qa",
+      "category": "networking",
+      "tags": [
+        "network-layer",
+        "ip",
+        "nat",
+        "dhcp"
+      ],
+      "prompt": "NAT (Network Address Translation)",
+      "source": {
+        "path": "vault/networking/network-layer.md",
+        "block": "card-s1qp"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 4",
+        "RFC 791",
+        "RFC 2131"
+      ],
+      "answer": "A NAT-enabled router rewrites the source IP and port of outgoing packets from a private address to its own public address and a chosen port, keeping a translation table so replies can be routed back to the correct internal host."
+    },
+    {
+      "id": "card-7yxi",
+      "format": "qa",
+      "category": "networking",
+      "tags": [
+        "network-layer",
+        "ip",
+        "nat",
+        "dhcp"
+      ],
+      "prompt": "Why can NAT make it difficult for two hosts behind separate NATs to establish a direct peer-to-peer connection?",
+      "source": {
+        "path": "vault/networking/network-layer.md",
+        "block": "card-7yxi"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 4",
+        "RFC 791",
+        "RFC 2131"
+      ],
+      "answer": "Neither host has a public address that the other can dial directly; a connection has to be initiated from inside each NAT (or use techniques like hole punching or a relay) because an unsolicited inbound packet has no translation table entry to match against."
+    },
+    {
+      "id": "card-isly",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "network-layer",
+        "ip",
+        "nat",
+        "dhcp"
+      ],
+      "prompt": "exchange commonly remembered as ___: discover, offer, request, and",
+      "source": {
+        "path": "vault/networking/network-layer.md",
+        "block": "card-isly"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 4",
+        "RFC 791",
+        "RFC 2131"
+      ],
+      "answer": "DORA"
+    },
+    {
+      "id": "card-b5wl",
+      "format": "mcq",
+      "category": "networking",
+      "tags": [
+        "network-layer",
+        "ip",
+        "nat",
+        "dhcp"
+      ],
+      "prompt": "A router receives an IPv4 packet with TTL = 1. After decrementing it, what does the router do?",
+      "source": {
+        "path": "vault/networking/network-layer.md",
+        "block": "card-b5wl"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 4",
+        "RFC 791",
+        "RFC 2131"
+      ],
+      "choices": [
+        {
+          "text": "Drops the packet, since TTL reached 0, and typically sends an ICMP time-exceeded message",
+          "correct": true
+        },
+        {
+          "text": "Forwards the packet normally and resets TTL to 255",
+          "correct": false
+        },
+        {
+          "text": "Fragments the packet to extend its lifetime",
+          "correct": false
+        },
+        {
+          "text": "Sends the packet back to its source unmodified",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-f91a",
+      "format": "recall",
+      "category": "networking",
+      "tags": [
+        "network-layer",
+        "ip",
+        "nat",
+        "dhcp"
+      ],
+      "prompt": "Explain why NAT breaks the original end-to-end connectivity model of IP, where any two hosts could address each other directly.",
+      "source": {
+        "path": "vault/networking/network-layer.md",
+        "block": "card-f91a"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 4",
+        "RFC 791",
+        "RFC 2131"
+      ]
+    },
+    {
+      "id": "card-d1vp",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "reliable-transfer",
+        "sliding-window",
+        "transport-layer"
+      ],
+      "prompt": "unacknowledged packets in flight at once, bounded by a ___. The",
+      "source": {
+        "path": "vault/networking/reliable-transfer.md",
+        "block": "card-d1vp"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.4"
+      ],
+      "answer": "window size"
+    },
+    {
+      "id": "card-4gu6",
+      "format": "qa",
+      "category": "networking",
+      "tags": [
+        "reliable-transfer",
+        "sliding-window",
+        "transport-layer"
+      ],
+      "prompt": "Go-Back-N",
+      "source": {
+        "path": "vault/networking/reliable-transfer.md",
+        "block": "card-4gu6"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.4"
+      ],
+      "answer": "On detecting a lost or out-of-order segment (via a timeout or an out-of-order ACK), the sender retransmits that segment and every segment sent after it, even ones the receiver already got correctly."
+    },
+    {
+      "id": "card-n2ae",
+      "format": "qa",
+      "category": "networking",
+      "tags": [
+        "reliable-transfer",
+        "sliding-window",
+        "transport-layer"
+      ],
+      "prompt": "Selective repeat",
+      "source": {
+        "path": "vault/networking/reliable-transfer.md",
+        "block": "card-n2ae"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.4"
+      ],
+      "answer": "Both sender and receiver maintain a window and buffer out-of-order segments; only the specific lost segment is retransmitted, and the receiver individually acknowledges each correctly received segment."
+    },
+    {
+      "id": "card-jhpu",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "reliable-transfer",
+        "sliding-window",
+        "transport-layer"
+      ],
+      "prompt": "receiver ___ any out-of-order segment instead of buffering it,",
+      "source": {
+        "path": "vault/networking/reliable-transfer.md",
+        "block": "card-jhpu"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.4"
+      ],
+      "answer": "discards"
+    },
+    {
+      "id": "card-7ghf",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "reliable-transfer",
+        "sliding-window",
+        "transport-layer"
+      ],
+      "prompt": "tell a genuinely new packet from a ___ of an old one.",
+      "source": {
+        "path": "vault/networking/reliable-transfer.md",
+        "block": "card-7ghf"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.4"
+      ],
+      "answer": "retransmission"
+    },
+    {
+      "id": "card-3ea6",
+      "format": "mcq",
+      "category": "networking",
+      "tags": [
+        "reliable-transfer",
+        "sliding-window",
+        "transport-layer"
+      ],
+      "prompt": "Under Go-Back-N, a receiver gets segments 0, 1, 3, 4 (segment 2 is lost). What does the receiver do with segments 3 and 4?",
+      "source": {
+        "path": "vault/networking/reliable-transfer.md",
+        "block": "card-3ea6"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.4"
+      ],
+      "choices": [
+        {
+          "text": "Discards them, since they arrived out of order, and re-ACKs segment 1",
+          "correct": true
+        },
+        {
+          "text": "Buffers them and waits for segment 2 to arrive before delivering any",
+          "correct": false
+        },
+        {
+          "text": "Delivers them to the application immediately, out of order",
+          "correct": false
+        },
+        {
+          "text": "Sends a NAK for segment 2 and buffers 3 and 4 for later delivery",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-u35o",
+      "format": "recall",
+      "category": "networking",
+      "tags": [
+        "reliable-transfer",
+        "sliding-window",
+        "transport-layer"
+      ],
+      "prompt": "Explain the main tradeoff between Go-Back-N and selective repeat in terms of receiver complexity versus retransmission efficiency.",
+      "source": {
+        "path": "vault/networking/reliable-transfer.md",
+        "block": "card-u35o"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.4"
+      ]
+    },
+    {
+      "id": "card-ooah",
+      "format": "qa",
+      "category": "networking",
+      "tags": [
+        "routing",
+        "link-layer",
+        "ethernet",
+        "arp",
+        "bgp",
+        "ospf"
+      ],
+      "prompt": "Link-state routing",
+      "source": {
+        "path": "vault/networking/routing-and-link.md",
+        "block": "card-ooah"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 5-6"
+      ],
+      "answer": "Every router floods information about its directly connected links to all other routers in the network, so each router independently builds a complete map of the topology and computes shortest paths itself, typically with Dijkstra's algorithm."
+    },
+    {
+      "id": "card-6abb",
+      "format": "qa",
+      "category": "networking",
+      "tags": [
+        "routing",
+        "link-layer",
+        "ethernet",
+        "arp",
+        "bgp",
+        "ospf"
+      ],
+      "prompt": "Distance-vector routing",
+      "source": {
+        "path": "vault/networking/routing-and-link.md",
+        "block": "card-6abb"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 5-6"
+      ],
+      "answer": "Each router only knows the distance to each destination as reported by its immediate neighbors, and iteratively recomputes its own distances by combining a neighbor's reported distance with the cost to reach that neighbor, using a form of the Bellman-Ford algorithm."
+    },
+    {
+      "id": "card-bob5",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "routing",
+        "link-layer",
+        "ethernet",
+        "arp",
+        "bgp",
+        "ospf"
+      ],
+      "prompt": "___: when a link fails, routers can keep telling each",
+      "source": {
+        "path": "vault/networking/routing-and-link.md",
+        "block": "card-bob5"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 5-6"
+      ],
+      "answer": "count-to-infinity"
+    },
+    {
+      "id": "card-j2vr",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "routing",
+        "link-layer",
+        "ethernet",
+        "arp",
+        "bgp",
+        "ospf"
+      ],
+      "prompt": "common ___ intra-domain protocol. Between autonomous systems, BGP",
+      "source": {
+        "path": "vault/networking/routing-and-link.md",
+        "block": "card-j2vr"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 5-6"
+      ],
+      "answer": "link-state"
+    },
+    {
+      "id": "card-yvcz",
+      "format": "qa",
+      "category": "networking",
+      "tags": [
+        "routing",
+        "link-layer",
+        "ethernet",
+        "arp",
+        "bgp",
+        "ospf"
+      ],
+      "prompt": "Why does BGP use policy rather than shortest-path selection between autonomous systems?",
+      "source": {
+        "path": "vault/networking/routing-and-link.md",
+        "block": "card-yvcz"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 5-6"
+      ],
+      "answer": "Different autonomous systems are independent businesses with their own commercial relationships (customer, provider, peer), so route selection has to respect contracts and business interests, not just technical distance, which shortest-path metrics alone cannot express."
+    },
+    {
+      "id": "card-8c10",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "routing",
+        "link-layer",
+        "ethernet",
+        "arp",
+        "bgp",
+        "ospf"
+      ],
+      "prompt": "At the link layer, Ethernet frames are addressed using ___ MAC",
+      "source": {
+        "path": "vault/networking/routing-and-link.md",
+        "block": "card-8c10"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 5-6"
+      ],
+      "answer": "48-bit"
+    },
+    {
+      "id": "card-4uve",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "routing",
+        "link-layer",
+        "ethernet",
+        "arp",
+        "bgp",
+        "ospf"
+      ],
+      "prompt": "A switch is a link-layer device that is ___: it builds its",
+      "source": {
+        "path": "vault/networking/routing-and-link.md",
+        "block": "card-4uve"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 5-6"
+      ],
+      "answer": "self-learning"
+    },
+    {
+      "id": "card-7u3r",
+      "format": "qa",
+      "category": "networking",
+      "tags": [
+        "routing",
+        "link-layer",
+        "ethernet",
+        "arp",
+        "bgp",
+        "ospf"
+      ],
+      "prompt": "ARP",
+      "source": {
+        "path": "vault/networking/routing-and-link.md",
+        "block": "card-7u3r"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 5-6"
+      ],
+      "answer": "A host broadcasts a request asking \"who has this IP address\" on the local network, and the host owning that IP replies directly with its MAC address, which the requester then caches for future frames to that IP."
+    },
+    {
+      "id": "card-t2r2",
+      "format": "mcq",
+      "category": "networking",
+      "tags": [
+        "routing",
+        "link-layer",
+        "ethernet",
+        "arp",
+        "bgp",
+        "ospf"
+      ],
+      "prompt": "How does a router fundamentally differ from a switch in how it forwards traffic?",
+      "source": {
+        "path": "vault/networking/routing-and-link.md",
+        "block": "card-t2r2"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 5-6"
+      ],
+      "choices": [
+        {
+          "text": "A router forwards based on IP addresses and participates in routing protocols across networks, while a switch forwards based on MAC addresses within a single local network",
+          "correct": true
+        },
+        {
+          "text": "A router only works with wireless links, while a switch only works with wired links",
+          "correct": false
+        },
+        {
+          "text": "A switch can connect different IP subnets, while a router cannot",
+          "correct": false
+        },
+        {
+          "text": "A router requires no configuration, while a switch must be manually configured",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-gai5",
+      "format": "recall",
+      "category": "networking",
+      "tags": [
+        "routing",
+        "link-layer",
+        "ethernet",
+        "arp",
+        "bgp",
+        "ospf"
+      ],
+      "prompt": "Explain why link-state routing is generally more resistant to the count-to-infinity problem than distance-vector routing.",
+      "source": {
+        "path": "vault/networking/routing-and-link.md",
+        "block": "card-gai5"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 5-6"
+      ]
+    },
+    {
+      "id": "card-rcsz",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "tcp",
+        "transport-layer"
+      ],
+      "prompt": "Connection teardown is a ___ exchange, because each direction is",
+      "source": {
+        "path": "vault/networking/tcp.md",
+        "block": "card-rcsz"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.5",
+        "RFC 9293"
+      ],
+      "answer": "four-way"
+    },
+    {
+      "id": "card-mdle",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "tcp",
+        "transport-layer"
+      ],
+      "prompt": "The side that closes first enters ___ and waits 2·MSL before",
+      "source": {
+        "path": "vault/networking/tcp.md",
+        "block": "card-mdle"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.5",
+        "RFC 9293"
+      ],
+      "answer": "TIME_WAIT"
+    },
+    {
+      "id": "card-btcf",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "tcp",
+        "transport-layer"
+      ],
+      "prompt": "The side that closes first enters TIME_WAIT and waits ___ before",
+      "source": {
+        "path": "vault/networking/tcp.md",
+        "block": "card-btcf"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.5",
+        "RFC 9293"
+      ],
+      "answer": "2·MSL"
+    },
+    {
+      "id": "card-ixx9",
+      "format": "qa",
+      "category": "networking",
+      "tags": [
+        "tcp",
+        "transport-layer"
+      ],
+      "prompt": "What does the TIME_WAIT state protect against?",
+      "source": {
+        "path": "vault/networking/tcp.md",
+        "block": "card-ixx9"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.5",
+        "RFC 9293"
+      ],
+      "answer": "Delayed duplicate segments from the old connection being delivered to a new connection reusing the same four-tuple, and the loss of the final ACK."
+    },
+    {
+      "id": "card-ng8b",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "tcp",
+        "transport-layer"
+      ],
+      "prompt": "four times the RTT ___.",
+      "source": {
+        "path": "vault/networking/tcp.md",
+        "block": "card-ng8b"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.5",
+        "RFC 9293"
+      ],
+      "answer": "deviation"
+    },
+    {
+      "id": "card-ulbl",
+      "format": "mcq",
+      "category": "networking",
+      "tags": [
+        "tcp",
+        "transport-layer"
+      ],
+      "prompt": "A TCP receiver advertises a window of 0. What does the sender do?",
+      "source": {
+        "path": "vault/networking/tcp.md",
+        "block": "card-ulbl"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.5",
+        "RFC 9293"
+      ],
+      "choices": [
+        {
+          "text": "Sends periodic window-probe segments until the window reopens",
+          "correct": true
+        },
+        {
+          "text": "Retransmits the last segment until acknowledged",
+          "correct": false
+        },
+        {
+          "text": "Closes the connection after the retransmission timeout",
+          "correct": false
+        },
+        {
+          "text": "Switches to slow start and continues sending",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-zq3q",
+      "format": "mcq",
+      "category": "networking",
+      "tags": [
+        "tcp",
+        "transport-layer"
+      ],
+      "prompt": "Which field makes a TCP connection uniquely identifiable on a host?",
+      "source": {
+        "path": "vault/networking/tcp.md",
+        "block": "card-zq3q"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.5",
+        "RFC 9293"
+      ],
+      "choices": [
+        {
+          "text": "The four-tuple of source IP, source port, destination IP, destination port",
+          "correct": true
+        },
+        {
+          "text": "The destination port alone",
+          "correct": false
+        },
+        {
+          "text": "The initial sequence number",
+          "correct": false
+        },
+        {
+          "text": "The socket file descriptor",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-yaqy",
+      "format": "recall",
+      "category": "networking",
+      "tags": [
+        "tcp",
+        "transport-layer"
+      ],
+      "prompt": "Explain why TCP's head-of-line blocking hurts a multiplexed protocol like HTTP/2, and how QUIC avoids it.",
+      "source": {
+        "path": "vault/networking/tcp.md",
+        "block": "card-yaqy"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.5",
+        "RFC 9293"
+      ]
+    },
+    {
+      "id": "card-d82i",
+      "format": "qa",
+      "category": "networking",
+      "tags": [
+        "transport-layer",
+        "udp",
+        "multiplexing"
+      ],
+      "prompt": "Multiplexing",
+      "source": {
+        "path": "vault/networking/transport-basics.md",
+        "block": "card-d82i"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.1-3.3",
+        "RFC 768"
+      ],
+      "answer": "The sending-side task of gathering data from multiple sockets, wrapping each chunk with header information, and passing the resulting segments down to the network layer."
+    },
+    {
+      "id": "card-xoi1",
+      "format": "qa",
+      "category": "networking",
+      "tags": [
+        "transport-layer",
+        "udp",
+        "multiplexing"
+      ],
+      "prompt": "Demultiplexing",
+      "source": {
+        "path": "vault/networking/transport-basics.md",
+        "block": "card-xoi1"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.1-3.3",
+        "RFC 768"
+      ],
+      "answer": "The receiving-side task of using header fields to deliver each arriving segment's data to the correct socket."
+    },
+    {
+      "id": "card-l423",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "transport-layer",
+        "udp",
+        "multiplexing"
+      ],
+      "prompt": "destination port, length, and checksum, each occupying ___. This",
+      "source": {
+        "path": "vault/networking/transport-basics.md",
+        "block": "card-l423"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.1-3.3",
+        "RFC 768"
+      ],
+      "answer": "16 bits"
+    },
+    {
+      "id": "card-2uba",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "transport-layer",
+        "udp",
+        "multiplexing"
+      ],
+      "prompt": "lets the application deal with loss or reordering ___.",
+      "source": {
+        "path": "vault/networking/transport-basics.md",
+        "block": "card-2uba"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.1-3.3",
+        "RFC 768"
+      ],
+      "answer": "itself"
+    },
+    {
+      "id": "card-w4ol",
+      "format": "cloze",
+      "category": "networking",
+      "tags": [
+        "transport-layer",
+        "udp",
+        "multiplexing"
+      ],
+      "prompt": "computed value does not match, the receiver ___ the segment.",
+      "source": {
+        "path": "vault/networking/transport-basics.md",
+        "block": "card-w4ol"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.1-3.3",
+        "RFC 768"
+      ],
+      "answer": "discards"
+    },
+    {
+      "id": "card-eud5",
+      "format": "mcq",
+      "category": "networking",
+      "tags": [
+        "transport-layer",
+        "udp",
+        "multiplexing"
+      ],
+      "prompt": "Why might a real-time voice application prefer UDP over TCP?",
+      "source": {
+        "path": "vault/networking/transport-basics.md",
+        "block": "card-eud5"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.1-3.3",
+        "RFC 768"
+      ],
+      "choices": [
+        {
+          "text": "TCP's retransmission and reordering can add delay that is worse for real-time audio than simply dropping a late packet",
+          "correct": true
+        },
+        {
+          "text": "UDP guarantees in-order delivery, which voice requires",
+          "correct": false
+        },
+        {
+          "text": "UDP has a larger header, giving more room for timestamps",
+          "correct": false
+        },
+        {
+          "text": "TCP cannot be used for audio data at all",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-p61e",
+      "format": "recall",
+      "category": "networking",
+      "tags": [
+        "transport-layer",
+        "udp",
+        "multiplexing"
+      ],
+      "prompt": "Explain how a socket's (source IP, source port, destination IP, destination port) tuple is used differently by UDP demultiplexing versus TCP demultiplexing.",
+      "source": {
+        "path": "vault/networking/transport-basics.md",
+        "block": "card-p61e"
+      },
+      "citations": [
+        "Kurose & Ross, Computer Networking 8e, Ch. 3.1-3.3",
+        "RFC 768"
+      ]
+    }
+  ]
 }
