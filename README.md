@@ -162,12 +162,49 @@ So the loop, end to end: edit a note in Obsidian → push → `build-deck`
 assigns ids, rebuilds the deck, commits back → that commit's completion
 triggers `deploy` → `deploy` builds the app and publishes to Pages.
 
+A third workflow, **`ci.yml`**, runs only on pull requests targeting `main`
+— it's the pre-merge gate the two above don't provide, since both only run
+after a push has already landed on `main`. It runs tests, typecheck, and
+`build:deck`, then fails the PR if the rebuild changes `deck/deck.json`
+*or* any `vault/` file compared to what the PR committed (a "deck drift"
+check) — telling you to run `npm run build:deck` and commit the result.
+Both are checked because `build:deck` mints anchor ids into vault notes as
+well as regenerating the deck, so either one can go stale on its own.
+Without this, a PR with a
+broken test or a stale deck merges cleanly, `build-deck` then fails
+post-merge, its deck commit (and the `deploy` run chained off it) never
+happens, and the live site silently stops updating with no obvious signal
+why. `ci.yml` is read-only (`permissions: contents: read`) — it never
+pushes or commits, unlike `build-deck.yml`.
+
 ## One-time setup
 
 1. **Enable GitHub Pages**: repo Settings → Pages → Source: **GitHub
    Actions**. (The `deploy.yml` workflow handles the rest; there is nothing
    else to configure here.)
-2. **Install to the iPhone Home Screen**: open the deployed Pages URL in
+2. **Require the PR check, without breaking `build-deck`'s push to main**:
+   `build-deck.yml` pushes its deck-rebuild commit directly to `main` using
+   the default `GITHUB_TOKEN`. Enabling branch protection on `main` without
+   an exemption for that push will make `build-deck` start failing on every
+   run. GitHub only lists a status check in a ruleset's "Add checks" picker
+   once it has reported at least one run on the repo, so open (or already
+   have open) a pull request that runs `ci.yml` to completion **before**
+   creating the ruleset below — otherwise the check won't be there to
+   select. To require `ci.yml` on PRs while keeping that push working:
+   - Go to repo **Settings → Rules → Rulesets → New ruleset → New branch
+     ruleset**.
+   - **Target branches**: add `main` (or use the default branch target).
+   - Under **Rules**, enable **Require status checks to pass**, then **Add
+     checks** and select **`PR checks (test, typecheck, deck drift)`** —
+     that's the job name `ci.yml` reports (not the workflow name `PR
+     checks`, which won't appear as a selectable check itself).
+   - Under **Bypass list**, click **Add bypass** and add the **GitHub
+     Actions** app (not a specific user or team). This is the step that
+     keeps `build-deck.yml`'s direct push to `main` working; without it,
+     that push starts failing the moment the ruleset is enforced, exactly
+     as `build-deck.yml`'s own comment warns.
+   - Set **Enforcement status** to **Active** and save.
+3. **Install to the iPhone Home Screen**: open the deployed Pages URL in
    Safari, tap Share → **Add to Home Screen**. This is not optional
    polish — it's a hard prerequisite for two things:
    - Web Push notifications (Phase 2, **not yet built**) only work for
