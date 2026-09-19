@@ -28,7 +28,7 @@ different values because another transaction committed in between.
 > - [x] Non-repeatable reads (read skew) — reading the same row twice within one transaction and getting different values
 > - [ ] Dirty reads of uncommitted data
 > - [ ] Dirty writes overwriting uncommitted data
-> - [ ] Lost updates from two transactions writing the same row concurrently unnoticed ^card-o88h
+> - [ ] Write skew, where concurrent transactions each make a locally valid decision that together violate an invariant (this can still occur under snapshot isolation, so it isn't specific to read committed) ^card-o88h
 
 **Snapshot isolation** gives each transaction a consistent point-in-time
 view of the database (as of when the transaction started), typically
@@ -73,4 +73,12 @@ at a time, feasible when each is short), two-phase locking, and
 serializable snapshot isolation (SSI), which detects at commit time
 whether a transaction's premise was invalidated by a concurrent commit.
 
-What does serializable snapshot isolation (SSI) do differently from plain snapshot isolation to prevent write skew, without giving up the performance of not blocking on reads? :: SSI runs transactions optimistically on a snapshot as usual, but tracks which rows each transaction read and detects, at commit time, whether any of those rows were concurrently modified by a transaction that has since committed; if so it aborts one transaction rather than letting the anomaly through, avoiding the need to take locks upfront. ^card-fpzw
+What does serializable snapshot isolation (SSI) do differently from plain snapshot isolation to prevent write skew, without giving up the performance of not blocking on reads? :: SSI runs transactions optimistically on a snapshot as usual, but tracks which rows each transaction read and detects, at commit time, whether any of those rows were concurrently modified by a transaction that has since committed; if so it aborts one transaction rather than letting the anomaly through, avoiding the need to take locks upfront. ^card-z6bb
+
+> [!card] recall
+> Snapshot isolation, as a bare definition, does not prevent the classic
+> lost-update anomaly (two transactions read-modify-write the same object
+> concurrently and one overwrite silently vanishes). Explain why this
+> nuance is still vendor-dependent in practice, and name a concurrency
+> control technique a database can layer on top of snapshot isolation to
+> detect lost updates without giving up MVCC's non-blocking reads. ^card-fpzw

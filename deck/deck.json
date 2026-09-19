@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-19T00:48:34.073Z",
+  "generatedAt": "2026-09-19T00:54:20.317Z",
   "cards": [
     {
       "id": "card-rb57",
@@ -709,7 +709,7 @@
       ]
     },
     {
-      "id": "card-9nhl",
+      "id": "card-qgdf",
       "format": "qa",
       "category": "data-systems",
       "tags": [
@@ -719,7 +719,28 @@
         "protobuf",
         "compatibility"
       ],
-      "prompt": "What problem do a \"schema registry\" and dataflow through a database (rather than only through service APIs) both illustrate about forward compatibility?",
+      "prompt": "What problem do a \"schema registry\" and dataflow through a database (rather than only through service APIs) both illustrate about backward compatibility?",
+      "source": {
+        "path": "vault/data-systems/encoding-evolution.md",
+        "block": "card-qgdf"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 4"
+      ],
+      "answer": "A value written once (to a database, or a message queue) may be read much later by code that didn't exist yet when it was written — so it is the newer code doing the reading of older data, the classic backward-compatibility direction, just stretched across an arbitrarily long time gap instead of a single rolling deployment window."
+    },
+    {
+      "id": "card-9nhl",
+      "format": "mcq",
+      "category": "data-systems",
+      "tags": [
+        "encoding",
+        "schema-evolution",
+        "avro",
+        "protobuf",
+        "compatibility"
+      ],
+      "prompt": "Old (v1) code reads a record that was written by newer (v2) code, which added a field v1 has never seen. What must v1 do to stay forward compatible?",
       "source": {
         "path": "vault/data-systems/encoding-evolution.md",
         "block": "card-9nhl"
@@ -727,7 +748,24 @@
       "citations": [
         "Kleppmann, Designing Data-Intensive Applications, Ch. 4"
       ],
-      "answer": "A value written once (to a database, or a message queue) may be read much later by code that didn't exist yet when it was written, so the encoding format must tolerate schemas evolving over the interval between write and read, not just between two versions deployed at the same moment."
+      "choices": [
+        {
+          "text": "Ignore the unknown field, but preserve it unchanged if it later rewrites the record, rather than silently dropping it",
+          "correct": true
+        },
+        {
+          "text": "Reject the record because its schema doesn't match exactly",
+          "correct": false
+        },
+        {
+          "text": "Automatically upgrade itself to understand the new field before proceeding",
+          "correct": false
+        },
+        {
+          "text": "Convert the unknown field into a required field using a generated default",
+          "correct": false
+        }
+      ]
     },
     {
       "id": "card-hbdp",
@@ -1191,7 +1229,7 @@
       ]
     },
     {
-      "id": "card-9zi8",
+      "id": "card-x5bt",
       "format": "cloze",
       "category": "data-systems",
       "tags": [
@@ -1200,15 +1238,52 @@
         "read-your-writes",
         "consistency"
       ],
-      "prompt": "prior writes; it does NOT guarantee that ___ observe",
+      "prompt": "Monotonic reads constrains one ___’s own sequence of reads over",
       "source": {
         "path": "vault/data-systems/replication.md",
-        "block": "card-9zi8"
+        "block": "card-x5bt"
       },
       "citations": [
         "Kleppmann, Designing Data-Intensive Applications, Ch. 5"
       ],
-      "answer": "different users"
+      "answer": "user"
+    },
+    {
+      "id": "card-4nsx",
+      "format": "mcq",
+      "category": "data-systems",
+      "tags": [
+        "replication",
+        "leader-election",
+        "read-your-writes",
+        "consistency"
+      ],
+      "prompt": "Which replication-lag guarantee ensures that if one write causally depends on (comes after) another, no reader ever observes the two in reverse order?",
+      "source": {
+        "path": "vault/data-systems/replication.md",
+        "block": "card-4nsx"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 5"
+      ],
+      "choices": [
+        {
+          "text": "Consistent prefix reads",
+          "correct": true
+        },
+        {
+          "text": "Read-your-writes",
+          "correct": false
+        },
+        {
+          "text": "Monotonic reads",
+          "correct": false
+        },
+        {
+          "text": "Eventual consistency",
+          "correct": false
+        }
+      ]
     },
     {
       "id": "card-5xzp",
@@ -1521,7 +1596,7 @@
           "correct": false
         },
         {
-          "text": "Lost updates from two transactions writing the same row concurrently unnoticed",
+          "text": "Write skew, where concurrent transactions each make a locally valid decision that together violate an invariant (this can still occur under snapshot isolation, so it isn't specific to read committed)",
           "correct": false
         }
       ]
@@ -1624,7 +1699,7 @@
       ]
     },
     {
-      "id": "card-fpzw",
+      "id": "card-z6bb",
       "format": "qa",
       "category": "data-systems",
       "tags": [
@@ -1637,12 +1712,32 @@
       "prompt": "What does serializable snapshot isolation (SSI) do differently from plain snapshot isolation to prevent write skew, without giving up the performance of not blocking on reads?",
       "source": {
         "path": "vault/data-systems/transactions.md",
-        "block": "card-fpzw"
+        "block": "card-z6bb"
       },
       "citations": [
         "Kleppmann, Designing Data-Intensive Applications, Ch. 7"
       ],
       "answer": "SSI runs transactions optimistically on a snapshot as usual, but tracks which rows each transaction read and detects, at commit time, whether any of those rows were concurrently modified by a transaction that has since committed; if so it aborts one transaction rather than letting the anomaly through, avoiding the need to take locks upfront."
+    },
+    {
+      "id": "card-fpzw",
+      "format": "recall",
+      "category": "data-systems",
+      "tags": [
+        "transactions",
+        "acid",
+        "isolation",
+        "write-skew",
+        "serializability"
+      ],
+      "prompt": "Snapshot isolation, as a bare definition, does not prevent the classic lost-update anomaly (two transactions read-modify-write the same object concurrently and one overwrite silently vanishes). Explain why this nuance is still vendor-dependent in practice, and name a concurrency control technique a database can layer on top of snapshot isolation to detect lost updates without giving up MVCC's non-blocking reads.",
+      "source": {
+        "path": "vault/data-systems/transactions.md",
+        "block": "card-fpzw"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 7"
+      ]
     },
     {
       "id": "card-uprv",

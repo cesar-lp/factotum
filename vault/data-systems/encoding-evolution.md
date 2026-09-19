@@ -33,7 +33,7 @@ compact since the schema (not the data) carries the field names.
 Adding a new field to a Protobuf or Thrift schema is backward and forward
 compatible only if the new field is optional (or has a default) and is
 not marked required, because old code reading new data will simply not
-know about it, and new code reading old data must ill-fall back to a
+know about it, and new code reading old data must fall back to a
 default rather than fail.
 
 Avro takes a different approach from Protobuf/Thrift: it has no per-field
@@ -50,7 +50,16 @@ between them field-by-field.
 > - [ ] Avro data is self-describing and requires no schema at all
 > - [ ] A checksum of the data must match a checksum of the schema ^card-msto
 
-What problem do a "schema registry" and dataflow through a database (rather than only through service APIs) both illustrate about forward compatibility? :: A value written once (to a database, or a message queue) may be read much later by code that didn't exist yet when it was written, so the encoding format must tolerate schemas evolving over the interval between write and read, not just between two versions deployed at the same moment. ^card-9nhl
+What problem do a "schema registry" and dataflow through a database (rather than only through service APIs) both illustrate about backward compatibility? :: A value written once (to a database, or a message queue) may be read much later by code that didn't exist yet when it was written — so it is the newer code doing the reading of older data, the classic backward-compatibility direction, just stretched across an arbitrarily long time gap instead of a single rolling deployment window. ^card-qgdf
+
+> [!card] mcq
+> Old (v1) code reads a record that was written by newer (v2) code, which
+> added a field v1 has never seen. What must v1 do to stay forward
+> compatible?
+> - [x] Ignore the unknown field, but preserve it unchanged if it later rewrites the record, rather than silently dropping it
+> - [ ] Reject the record because its schema doesn't match exactly
+> - [ ] Automatically upgrade itself to understand the new field before proceeding
+> - [ ] Convert the unknown field into a required field using a generated default ^card-9nhl
 
 Dataflow through services (REST/RPC) couples a request and response in
 time, but dataflow through a ==message broker== decouples producers and ^card-hbdp

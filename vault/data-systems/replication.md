@@ -46,10 +46,33 @@ it reflected because the read hit a follower that hasn't caught up yet.
 > - [ ] Always serve reads from the follower with the most free disk space
 > - [ ] Increase the leader's write-ahead log buffer size ^card-opfv
 
-Read-your-writes is a guarantee about a single user seeing their own
-prior writes; it does NOT guarantee that ==different users== observe ^card-9zi8
-writes in the same order, which is a separate property (monotonic reads,
-or consistent prefix reads) that read-your-writes alone does not provide.
+**Monotonic reads** is a separate, single-user guarantee: once a user has
+seen a value as of some point in time, none of that user's later reads
+may return an older value, even though those reads might land on
+different replicas with different amounts of lag. Without it, a user
+could refresh a page twice and see a comment they already saw disappear,
+because the second read happened to hit a replica lagging further behind
+than the first read's replica did.
+
+Monotonic reads constrains one ==user==’s own sequence of reads over ^card-x5bt
+time; it says nothing about whether two different users perceive writes
+in the same order as each other.
+
+**Consistent prefix reads** is the guarantee that covers multiple users:
+if one write is causally after another (e.g. an answer that responds to
+a question), no observer of either replica ever sees the effect before
+the cause. Without it, a reader could see the answer to a question
+appear before the question itself, because their reads were routed
+through partitions that applied the two writes in a different order.
+
+> [!card] mcq
+> Which replication-lag guarantee ensures that if one write causally
+> depends on (comes after) another, no reader ever observes the two in
+> reverse order?
+> - [x] Consistent prefix reads
+> - [ ] Read-your-writes
+> - [ ] Monotonic reads
+> - [ ] Eventual consistency ^card-4nsx
 
 **Multi-leader** replication allows more than one node to accept writes
 (often one leader per datacenter), which improves write availability
