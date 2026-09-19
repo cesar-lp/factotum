@@ -54,9 +54,9 @@ and was granted to another process while it was paused.
 
 A ==fencing token== is a monotonically increasing number issued alongside ^card-kg0z
 a lock or lease grant; a resource being protected can then reject any
-write tagged with a fencing token lower than the highest one it has
-already seen, protecting against a paused process that wakes up believing
-it still holds the lock.
+write carrying a number lower than the highest one it has already seen,
+protecting against a paused process that wakes up believing it still
+holds the lock.
 
 > [!card] mcq
 > A client holds a lease on a storage service, then experiences a 30-second

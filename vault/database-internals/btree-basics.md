@@ -13,9 +13,9 @@ many children at once, which is what lets the tree stay shallow even
 when it holds millions of entries.
 
 A B-tree's ==fanout== is the number of child pointers a single node can ^card-vohr
-hold; high fanout is what keeps tree height — and therefore the number of
-disk seeks needed to find a key — low, since each level of the tree can
-represent a much larger multiple of keys than in a binary tree.
+hold; a high value here is what keeps tree height — and therefore the
+number of disk seeks needed to find a key — low, since each level of the
+tree can represent a much larger multiple of keys than in a binary tree.
 
 > [!card] mcq
 > Why do B-trees favor a high fanout (many keys and children per node)?
@@ -26,7 +26,7 @@ represent a much larger multiple of keys than in a binary tree.
 
 Each node lives on one disk page, and a node's ==occupancy== is how full ^card-ih4x
 that page is relative to its capacity; B-tree implementations typically
-enforce a minimum occupancy (e.g. at least half full) so pages aren't
+enforce a minimum fill level (e.g. at least half full) so pages aren't
 mostly wasted space, while still allowing partially-filled nodes so
 inserts don't force a rewrite on every operation.
 

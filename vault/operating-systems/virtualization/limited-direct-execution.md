@@ -17,7 +17,8 @@ The hardware provides two privilege levels. In ==user mode==, code cannot ^card-
 directly issue privileged instructions (like ones that touch disk or
 reconfigure the MMU) — attempting one causes the hardware to trap into
 the OS instead. In ==kernel mode==, the OS itself runs with full access ^card-ohmn
-to the hardware. A process's normal code always runs in user mode.
+to the hardware. A process's normal code always runs at that lower
+privilege level.
 
 How does a user-mode process ask the OS to perform a privileged operation, such as reading a file? :: It executes a system call, a special trap instruction; the trap saves the caller's register state and jumps to a fixed, OS-defined entry point in kernel mode, so the process cannot jump into arbitrary kernel code, only through the sanctioned entry. ^card-wh1e
 

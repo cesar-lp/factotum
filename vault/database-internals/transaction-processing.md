@@ -44,13 +44,14 @@ redo them if a crash happens first.
 > - [ ] No-force means the write-ahead log itself is never flushed
 > - [ ] No-force means dirty pages are flushed immediately, before commit ^card-g7ek
 
-Steal and force are independent axes: a system can be steal/no-force,
-no-steal/force, or any other combination, and the choice determines
-which recovery work (redo, undo, or both) is needed after a crash. Most
-production engines use ==steal/no-force==, because pinning all of a ^card-p9kf
-transaction's pages in memory (no-steal) or flushing everything at every
-commit (force) is too costly, and instead accept the extra recovery
-complexity of needing both redo and undo logic.
+Steal and force are independent axes, so a system can combine them
+freely — steal with no-force, no-steal with force, or any other pairing
+— and the choice determines which recovery work (redo, undo, or both)
+is needed after a crash. Most production engines use ==steal/no-force==, ^card-p9kf
+because pinning all of a transaction's pages in memory (no-steal) or
+flushing everything at every commit (force) is too costly, and instead
+accept the extra recovery complexity of needing both redo and undo
+logic.
 
 What must an engine be able to do during recovery if it uses a steal policy (uncommitted pages can reach disk)? :: It must be able to undo the effects of any transaction that was stolen to disk but never committed, since a stolen page can contain changes from a transaction the crash interrupted before commit — so recovery needs an undo phase, not just redo. ^card-ug24
 

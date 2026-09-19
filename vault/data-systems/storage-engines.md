@@ -38,9 +38,9 @@ skip segments that definitely don't contain a key.
 > - [ ] LSM-trees skip the write-ahead log, trading durability for speed
 > - [ ] B-trees require a full tree rebuild on every write ^card-nvp7
 
-A B-tree stores data in fixed-size ==pages==, each of which is referenced ^card-hnpk
-by other pages the way a tree's parent references children, and updating
-a value means finding the containing page and overwriting it in place.
+A B-tree stores data in fixed-size ==pages==, referenced from a parent ^card-hnpk
+the way a tree references child nodes, and updating a value means
+finding the containing page and overwriting it in place.
 
 B-trees typically require a ==write-ahead log== so that a crash during a ^card-beza
 multi-page update (e.g. a page split) can be recovered from without

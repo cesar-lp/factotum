@@ -12,12 +12,12 @@ address space starting at zero) into a physical address in real RAM,
 on every single memory reference — so it has to be fast, which is why
 it is done in hardware, not software, on the common path.
 
-The simplest scheme is base-and-bounds (dynamic relocation): the CPU has
-a ==base== register holding where this process's memory starts in ^card-l5f7
-physical RAM, and a ==bounds== register holding the size of that ^card-nkcw
-region. A virtual address is translated by adding the base, and the
-hardware checks the address against the bounds first to catch
-out-of-range accesses.
+The simplest scheme is dynamic relocation using a pair of hardware
+registers: the CPU has a ==base== register holding where this process's ^card-l5f7
+memory starts in physical RAM, and a ==bounds== register holding the ^card-nkcw
+size of that region. A virtual address is translated by adding that
+starting offset, and the hardware checks the address against the size
+limit first to catch out-of-range accesses.
 
 Why is a bounds check needed even though the base register already relocates addresses? :: Without a bounds check, a process could generate a virtual address larger than its own address space and, after the base is added, land inside another process's memory or unallocated physical memory — the bounds check is what turns relocation into isolation. ^card-1msk
 

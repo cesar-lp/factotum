@@ -12,7 +12,7 @@ at all. That silence is what makes this failure mode dangerous: nothing
 above the device layer notices unless something explicitly checks.
 
 A ==checksum== is a small value computed from a block's data so that a ^card-ettn
-later mismatch between the stored checksum and a freshly recomputed one
+later mismatch between the stored value and a freshly recomputed one
 reveals the data changed, without needing to keep a full second copy of
 the block just to compare against.
 

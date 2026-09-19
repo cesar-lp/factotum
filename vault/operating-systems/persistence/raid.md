@@ -28,7 +28,8 @@ How does RAID-5 fix RAID-4's parity-disk bottleneck without adding disks? :: RAI
 
 RAID-5 tolerates exactly ==one== disk failure per stripe: losing a second ^card-b03p
 disk before the array finishes rebuilding from the first loses data,
-because a stripe's parity can only reconstruct one missing block, not two.
+because a stripe's parity can only reconstruct a single missing block,
+not two.
 
 What does RAID-6 add over RAID-5, and what does that buy? :: A second, independently computed parity block per stripe, so the array can reconstruct data even when any two disks fail at the same time, not just one. ^card-4sia
 
