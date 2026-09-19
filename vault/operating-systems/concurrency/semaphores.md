@@ -1,4 +1,5 @@
 ---
+topic: concurrency
 category: os-concurrency
 tags: [semaphores, synchronization, producer-consumer, locks]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 31 (Semaphores)"]

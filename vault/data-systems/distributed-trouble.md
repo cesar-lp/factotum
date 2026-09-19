@@ -1,4 +1,5 @@
 ---
+topic: data-systems
 category: data-systems
 tags: [distributed-systems, clocks, partial-failure, fencing-tokens]
 citations: ["Kleppmann, Designing Data-Intensive Applications, Ch. 8"]

@@ -1,4 +1,5 @@
 ---
+topic: database-internals
 category: database-internals
 tags: [wal, aries, steal-force, recovery, buffer-management]
 citations: ["Petrov, Database Internals, Ch. 5"]

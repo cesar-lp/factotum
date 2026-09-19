@@ -1,4 +1,5 @@
 ---
+topic: operating-systems
 category: os-virtualization
 tags: [free-space-management, malloc-internals, fragmentation, allocation-strategies]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 17 (Free-Space Management)"]

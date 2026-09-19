@@ -1,4 +1,5 @@
 ---
+topic: operating-systems
 category: os-virtualization
 tags: [limited-direct-execution, traps, mode-switch, system-calls]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 6 (Limited Direct Execution)"]

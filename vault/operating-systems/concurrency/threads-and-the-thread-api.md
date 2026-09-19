@@ -1,4 +1,5 @@
 ---
+topic: concurrency
 category: os-concurrency
 tags: [threads, thread-api, race-conditions, critical-section]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 26 (Concurrency and Threads)", "Arpaci-Dusseau, OSTEP, Ch. 27 (Thread API)"]

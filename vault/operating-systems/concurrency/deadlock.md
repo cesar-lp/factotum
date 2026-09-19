@@ -1,4 +1,5 @@
 ---
+topic: concurrency
 category: os-concurrency
 tags: [deadlock, resource-allocation, prevention, avoidance]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 32 (Concurrency Bugs)"]

@@ -1,4 +1,5 @@
 ---
+topic: operating-systems
 category: os-virtualization
 tags: [scheduling, lottery-scheduling, stride-scheduling, cfs, proportional-share]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 9 (Scheduling: Proportional Share)"]

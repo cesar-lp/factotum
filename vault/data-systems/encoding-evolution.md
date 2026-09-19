@@ -1,4 +1,5 @@
 ---
+topic: data-systems
 category: data-systems
 tags: [encoding, schema-evolution, avro, protobuf, compatibility]
 citations: ["Kleppmann, Designing Data-Intensive Applications, Ch. 4"]

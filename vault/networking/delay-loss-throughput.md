@@ -1,4 +1,5 @@
 ---
+topic: networking
 category: networking
 tags: [delay, queuing, throughput]
 citations: ["Kurose & Ross, Computer Networking 8e, Ch. 1.4"]

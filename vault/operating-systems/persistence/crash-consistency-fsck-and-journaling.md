@@ -1,4 +1,5 @@
 ---
+topic: operating-systems
 category: os-persistence
 tags: [crash-consistency, fsck, journaling, write-ahead-logging]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 42 (Crash Consistency: FSCK and Journaling)"]

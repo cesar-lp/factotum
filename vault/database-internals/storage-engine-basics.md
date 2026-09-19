@@ -1,4 +1,5 @@
 ---
+topic: database-internals
 category: database-internals
 tags: [storage-engines, row-store, column-store, buffer-pool]
 citations: ["Petrov, Database Internals, Ch. 1"]

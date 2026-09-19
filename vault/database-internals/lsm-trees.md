@@ -1,4 +1,5 @@
 ---
+topic: database-internals
 category: database-internals
 tags: [lsm-tree, compaction, amplification, sstable]
 citations: ["Petrov, Database Internals, Ch. 7"]

@@ -1,4 +1,5 @@
 ---
+topic: data-systems
 category: data-systems
 tags: [partitioning, sharding, hot-spots, rebalancing]
 citations: ["Kleppmann, Designing Data-Intensive Applications, Ch. 6"]

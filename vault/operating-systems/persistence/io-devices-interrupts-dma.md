@@ -1,4 +1,5 @@
 ---
+topic: operating-systems
 category: os-persistence
 tags: [io-devices, interrupts, polling, dma]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 36 (I/O Devices)"]

@@ -1,9 +1,10 @@
 {
-  "generatedAt": "2026-09-19T18:58:01.629Z",
+  "generatedAt": "2026-09-19T19:47:17.537Z",
   "cards": [
     {
       "id": "card-6fmp",
       "format": "qa",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "linked-lists",
@@ -25,6 +26,7 @@
     {
       "id": "card-u4kf",
       "format": "qa",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "linked-lists",
@@ -46,6 +48,7 @@
     {
       "id": "card-9o13",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "linked-lists",
@@ -67,6 +70,7 @@
     {
       "id": "card-i9jj",
       "format": "mcq",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "linked-lists",
@@ -105,6 +109,7 @@
     {
       "id": "card-o7yp",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "linked-lists",
@@ -126,6 +131,7 @@
     {
       "id": "card-ifw3",
       "format": "recall",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "linked-lists",
@@ -146,6 +152,7 @@
     {
       "id": "card-akb7",
       "format": "qa",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "linked-lists",
@@ -167,6 +174,7 @@
     {
       "id": "card-i4bf",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "treiber-stack",
@@ -188,6 +196,7 @@
     {
       "id": "card-5sev",
       "format": "qa",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "treiber-stack",
@@ -209,6 +218,7 @@
     {
       "id": "card-e6va",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "treiber-stack",
@@ -230,6 +240,7 @@
     {
       "id": "card-ffpp",
       "format": "mcq",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "treiber-stack",
@@ -268,6 +279,7 @@
     {
       "id": "card-s8fy",
       "format": "qa",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "treiber-stack",
@@ -289,6 +301,7 @@
     {
       "id": "card-iifp",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "treiber-stack",
@@ -310,6 +323,7 @@
     {
       "id": "card-p1wf",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "treiber-stack",
@@ -331,6 +345,7 @@
     {
       "id": "card-9nrz",
       "format": "recall",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "treiber-stack",
@@ -351,6 +366,7 @@
     {
       "id": "card-13y8",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "consensus",
@@ -372,6 +388,7 @@
     {
       "id": "card-7xuo",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "consensus",
@@ -393,6 +410,7 @@
     {
       "id": "card-8r5c",
       "format": "qa",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "consensus",
@@ -414,6 +432,7 @@
     {
       "id": "card-qdek",
       "format": "mcq",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "consensus",
@@ -452,6 +471,7 @@
     {
       "id": "card-qfu8",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "consensus",
@@ -473,6 +493,7 @@
     {
       "id": "card-v47a",
       "format": "recall",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "consensus",
@@ -493,6 +514,7 @@
     {
       "id": "card-2dqf",
       "format": "qa",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "consensus",
@@ -514,6 +536,7 @@
     {
       "id": "card-brcq",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "linearizability",
@@ -535,6 +558,7 @@
     {
       "id": "card-xu7g",
       "format": "qa",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "linearizability",
@@ -556,6 +580,7 @@
     {
       "id": "card-6yx3",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "linearizability",
@@ -577,6 +602,7 @@
     {
       "id": "card-phex",
       "format": "mcq",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "linearizability",
@@ -615,6 +641,7 @@
     {
       "id": "card-heil",
       "format": "qa",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "linearizability",
@@ -636,6 +663,7 @@
     {
       "id": "card-pncp",
       "format": "recall",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "linearizability",
@@ -656,6 +684,7 @@
     {
       "id": "card-2lyk",
       "format": "qa",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "linearizability",
@@ -677,6 +706,7 @@
     {
       "id": "card-qfvk",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "memory-models",
@@ -699,6 +729,7 @@
     {
       "id": "card-6aje",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "memory-models",
@@ -721,6 +752,7 @@
     {
       "id": "card-qivj",
       "format": "qa",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "memory-models",
@@ -743,6 +775,7 @@
     {
       "id": "card-rd9p",
       "format": "mcq",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "memory-models",
@@ -782,6 +815,7 @@
     {
       "id": "card-tavd",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "memory-models",
@@ -804,6 +838,7 @@
     {
       "id": "card-cllz",
       "format": "qa",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "memory-models",
@@ -826,6 +861,7 @@
     {
       "id": "card-kqed",
       "format": "recall",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "memory-models",
@@ -847,6 +883,7 @@
     {
       "id": "card-z6jo",
       "format": "qa",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "memory-models",
@@ -869,6 +906,7 @@
     {
       "id": "card-10hs",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "mutual-exclusion",
@@ -891,6 +929,7 @@
     {
       "id": "card-mxuv",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "mutual-exclusion",
@@ -913,6 +952,7 @@
     {
       "id": "card-yk7k",
       "format": "qa",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "mutual-exclusion",
@@ -935,6 +975,7 @@
     {
       "id": "card-ztgh",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "mutual-exclusion",
@@ -957,6 +998,7 @@
     {
       "id": "card-u9dt",
       "format": "mcq",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "mutual-exclusion",
@@ -996,6 +1038,7 @@
     {
       "id": "card-8ehs",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "mutual-exclusion",
@@ -1018,6 +1061,7 @@
     {
       "id": "card-yj3r",
       "format": "qa",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "mutual-exclusion",
@@ -1040,6 +1084,7 @@
     {
       "id": "card-wn01",
       "format": "recall",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "mutual-exclusion",
@@ -1061,6 +1106,7 @@
     {
       "id": "card-z353",
       "format": "qa",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "mutual-exclusion",
@@ -1083,6 +1129,7 @@
     {
       "id": "card-pyae",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "progress-conditions",
@@ -1104,6 +1151,7 @@
     {
       "id": "card-33z6",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "progress-conditions",
@@ -1125,6 +1173,7 @@
     {
       "id": "card-arxs",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "progress-conditions",
@@ -1146,6 +1195,7 @@
     {
       "id": "card-epcj",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "progress-conditions",
@@ -1167,6 +1217,7 @@
     {
       "id": "card-8fma",
       "format": "mcq",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "progress-conditions",
@@ -1205,6 +1256,7 @@
     {
       "id": "card-apj6",
       "format": "qa",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "progress-conditions",
@@ -1226,6 +1278,7 @@
     {
       "id": "card-7yd3",
       "format": "qa",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "progress-conditions",
@@ -1247,6 +1300,7 @@
     {
       "id": "card-5blv",
       "format": "recall",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "progress-conditions",
@@ -1267,6 +1321,7 @@
     {
       "id": "card-wnbg",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "registers",
@@ -1288,6 +1343,7 @@
     {
       "id": "card-x113",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "registers",
@@ -1309,6 +1365,7 @@
     {
       "id": "card-hs9w",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "registers",
@@ -1330,6 +1387,7 @@
     {
       "id": "card-qrnb",
       "format": "qa",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "registers",
@@ -1351,6 +1409,7 @@
     {
       "id": "card-wd8z",
       "format": "mcq",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "registers",
@@ -1389,6 +1448,7 @@
     {
       "id": "card-ep3c",
       "format": "recall",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "registers",
@@ -1409,6 +1469,7 @@
     {
       "id": "card-fgs1",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "spin-locks",
@@ -1432,6 +1493,7 @@
     {
       "id": "card-utst",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "spin-locks",
@@ -1455,6 +1517,7 @@
     {
       "id": "card-jhoy",
       "format": "qa",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "spin-locks",
@@ -1478,6 +1541,7 @@
     {
       "id": "card-a1jd",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "spin-locks",
@@ -1501,6 +1565,7 @@
     {
       "id": "card-kvv8",
       "format": "mcq",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "spin-locks",
@@ -1541,6 +1606,7 @@
     {
       "id": "card-nrac",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "spin-locks",
@@ -1564,6 +1630,7 @@
     {
       "id": "card-zhfa",
       "format": "qa",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "spin-locks",
@@ -1587,6 +1654,7 @@
     {
       "id": "card-05oh",
       "format": "recall",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "spin-locks",
@@ -1609,6 +1677,7 @@
     {
       "id": "card-gtzo",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "work-stealing",
@@ -1630,6 +1699,7 @@
     {
       "id": "card-7y7y",
       "format": "qa",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "work-stealing",
@@ -1651,6 +1721,7 @@
     {
       "id": "card-d612",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "work-stealing",
@@ -1672,6 +1743,7 @@
     {
       "id": "card-7vjx",
       "format": "mcq",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "work-stealing",
@@ -1710,6 +1782,7 @@
     {
       "id": "card-76qo",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "work-stealing",
@@ -1731,6 +1804,7 @@
     {
       "id": "card-40lf",
       "format": "qa",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "work-stealing",
@@ -1752,6 +1826,7 @@
     {
       "id": "card-d6za",
       "format": "recall",
+      "topic": "concurrency",
       "category": "amp",
       "tags": [
         "work-stealing",
@@ -1772,6 +1847,7 @@
     {
       "id": "card-rb57",
       "format": "mcq",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "linearizability",
@@ -1810,6 +1886,7 @@
     {
       "id": "card-4n76",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "linearizability",
@@ -1831,6 +1908,7 @@
     {
       "id": "card-lgbl",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "linearizability",
@@ -1852,6 +1930,7 @@
     {
       "id": "card-1t7n",
       "format": "qa",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "linearizability",
@@ -1873,6 +1952,7 @@
     {
       "id": "card-a6s2",
       "format": "mcq",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "linearizability",
@@ -1911,6 +1991,7 @@
     {
       "id": "card-9e5b",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "linearizability",
@@ -1932,6 +2013,7 @@
     {
       "id": "card-vh3s",
       "format": "mcq",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "linearizability",
@@ -1970,6 +2052,7 @@
     {
       "id": "card-1f46",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "linearizability",
@@ -1991,6 +2074,7 @@
     {
       "id": "card-08ed",
       "format": "recall",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "linearizability",
@@ -2011,6 +2095,7 @@
     {
       "id": "card-cazy",
       "format": "mcq",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "data-models",
@@ -2049,6 +2134,7 @@
     {
       "id": "card-r1ey",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "data-models",
@@ -2070,6 +2156,7 @@
     {
       "id": "card-rpf9",
       "format": "recall",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "data-models",
@@ -2090,6 +2177,7 @@
     {
       "id": "card-3ue1",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "data-models",
@@ -2111,6 +2199,7 @@
     {
       "id": "card-4bxu",
       "format": "mcq",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "data-models",
@@ -2149,6 +2238,7 @@
     {
       "id": "card-of38",
       "format": "qa",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "data-models",
@@ -2170,6 +2260,7 @@
     {
       "id": "card-o751",
       "format": "mcq",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "distributed-systems",
@@ -2207,6 +2298,7 @@
     {
       "id": "card-9uv8",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "distributed-systems",
@@ -2227,6 +2319,7 @@
     {
       "id": "card-fr76",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "distributed-systems",
@@ -2247,6 +2340,7 @@
     {
       "id": "card-c10m",
       "format": "mcq",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "distributed-systems",
@@ -2284,6 +2378,7 @@
     {
       "id": "card-kg0z",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "distributed-systems",
@@ -2304,6 +2399,7 @@
     {
       "id": "card-fp4c",
       "format": "mcq",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "distributed-systems",
@@ -2341,6 +2437,7 @@
     {
       "id": "card-h16i",
       "format": "qa",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "distributed-systems",
@@ -2361,6 +2458,7 @@
     {
       "id": "card-i6zu",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "encoding",
@@ -2382,6 +2480,7 @@
     {
       "id": "card-gec1",
       "format": "mcq",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "encoding",
@@ -2420,6 +2519,7 @@
     {
       "id": "card-s36d",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "encoding",
@@ -2441,6 +2541,7 @@
     {
       "id": "card-msto",
       "format": "mcq",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "encoding",
@@ -2479,6 +2580,7 @@
     {
       "id": "card-qgdf",
       "format": "qa",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "encoding",
@@ -2500,6 +2602,7 @@
     {
       "id": "card-9nhl",
       "format": "mcq",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "encoding",
@@ -2538,6 +2641,7 @@
     {
       "id": "card-hbdp",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "encoding",
@@ -2559,6 +2663,7 @@
     {
       "id": "card-gpne",
       "format": "recall",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "encoding",
@@ -2579,6 +2684,7 @@
     {
       "id": "card-dhrr",
       "format": "mcq",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "partitioning",
@@ -2616,6 +2722,7 @@
     {
       "id": "card-0tbb",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "partitioning",
@@ -2636,6 +2743,7 @@
     {
       "id": "card-7j2l",
       "format": "mcq",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "partitioning",
@@ -2673,6 +2781,7 @@
     {
       "id": "card-34m1",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "partitioning",
@@ -2693,6 +2802,7 @@
     {
       "id": "card-rt9a",
       "format": "recall",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "partitioning",
@@ -2712,6 +2822,7 @@
     {
       "id": "card-3fqf",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "partitioning",
@@ -2732,6 +2843,7 @@
     {
       "id": "card-rnvy",
       "format": "mcq",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "reliability",
@@ -2769,6 +2881,7 @@
     {
       "id": "card-e79p",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "reliability",
@@ -2789,6 +2902,7 @@
     {
       "id": "card-ms4h",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "reliability",
@@ -2809,6 +2923,7 @@
     {
       "id": "card-1b1b",
       "format": "qa",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "reliability",
@@ -2829,6 +2944,7 @@
     {
       "id": "card-0oja",
       "format": "mcq",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "reliability",
@@ -2866,6 +2982,7 @@
     {
       "id": "card-nu5j",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "reliability",
@@ -2886,6 +3003,7 @@
     {
       "id": "card-xcne",
       "format": "recall",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "reliability",
@@ -2905,6 +3023,7 @@
     {
       "id": "card-hf3l",
       "format": "mcq",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "replication",
@@ -2942,6 +3061,7 @@
     {
       "id": "card-b8zh",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "replication",
@@ -2962,6 +3082,7 @@
     {
       "id": "card-opfv",
       "format": "mcq",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "replication",
@@ -2999,6 +3120,7 @@
     {
       "id": "card-x5bt",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "replication",
@@ -3019,6 +3141,7 @@
     {
       "id": "card-4nsx",
       "format": "mcq",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "replication",
@@ -3056,6 +3179,7 @@
     {
       "id": "card-5xzp",
       "format": "mcq",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "replication",
@@ -3093,6 +3217,7 @@
     {
       "id": "card-ous0",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "replication",
@@ -3113,6 +3238,7 @@
     {
       "id": "card-b7db",
       "format": "qa",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "replication",
@@ -3133,6 +3259,7 @@
     {
       "id": "card-ocbt",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "storage-engines",
@@ -3154,6 +3281,7 @@
     {
       "id": "card-nvp7",
       "format": "mcq",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "storage-engines",
@@ -3192,6 +3320,7 @@
     {
       "id": "card-hnpk",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "storage-engines",
@@ -3213,6 +3342,7 @@
     {
       "id": "card-beza",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "storage-engines",
@@ -3234,6 +3364,7 @@
     {
       "id": "card-5y1x",
       "format": "mcq",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "storage-engines",
@@ -3272,6 +3403,7 @@
     {
       "id": "card-9cp1",
       "format": "qa",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "storage-engines",
@@ -3293,6 +3425,7 @@
     {
       "id": "card-vx7b",
       "format": "recall",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "storage-engines",
@@ -3313,6 +3446,7 @@
     {
       "id": "card-aj12",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "transactions",
@@ -3334,6 +3468,7 @@
     {
       "id": "card-o88h",
       "format": "mcq",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "transactions",
@@ -3372,6 +3507,7 @@
     {
       "id": "card-65vf",
       "format": "mcq",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "transactions",
@@ -3410,6 +3546,7 @@
     {
       "id": "card-p56w",
       "format": "cloze",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "transactions",
@@ -3431,6 +3568,7 @@
     {
       "id": "card-fvqy",
       "format": "mcq",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "transactions",
@@ -3469,6 +3607,7 @@
     {
       "id": "card-z6bb",
       "format": "qa",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "transactions",
@@ -3490,6 +3629,7 @@
     {
       "id": "card-fpzw",
       "format": "recall",
+      "topic": "data-systems",
       "category": "data-systems",
       "tags": [
         "transactions",
@@ -3510,6 +3650,7 @@
     {
       "id": "card-vohr",
       "format": "cloze",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "b-tree",
@@ -3529,6 +3670,7 @@
     {
       "id": "card-35d6",
       "format": "mcq",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "b-tree",
@@ -3565,6 +3707,7 @@
     {
       "id": "card-ih4x",
       "format": "cloze",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "b-tree",
@@ -3584,6 +3727,7 @@
     {
       "id": "card-q0pz",
       "format": "cloze",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "b-tree",
@@ -3603,6 +3747,7 @@
     {
       "id": "card-br0l",
       "format": "mcq",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "b-tree",
@@ -3639,6 +3784,7 @@
     {
       "id": "card-hpz9",
       "format": "qa",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "b-tree",
@@ -3658,6 +3804,7 @@
     {
       "id": "card-wmnd",
       "format": "recall",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "b-tree",
@@ -3676,6 +3823,7 @@
     {
       "id": "card-p6nd",
       "format": "cloze",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "b-tree",
@@ -3695,6 +3843,7 @@
     {
       "id": "card-o7ft",
       "format": "mcq",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "b-tree",
@@ -3731,6 +3880,7 @@
     {
       "id": "card-3gkw",
       "format": "cloze",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "b-tree",
@@ -3751,6 +3901,7 @@
     {
       "id": "card-4yv2",
       "format": "mcq",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "b-tree",
@@ -3788,6 +3939,7 @@
     {
       "id": "card-l6ji",
       "format": "mcq",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "b-tree",
@@ -3825,6 +3977,7 @@
     {
       "id": "card-3aqg",
       "format": "cloze",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "b-tree",
@@ -3845,6 +3998,7 @@
     {
       "id": "card-5zry",
       "format": "qa",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "b-tree",
@@ -3865,6 +4019,7 @@
     {
       "id": "card-ly3c",
       "format": "recall",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "b-tree",
@@ -3884,6 +4039,7 @@
     {
       "id": "card-uyyw",
       "format": "mcq",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "b-tree",
@@ -3921,6 +4077,7 @@
     {
       "id": "card-ubdh",
       "format": "cloze",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "paxos",
@@ -3942,6 +4099,7 @@
     {
       "id": "card-tfl3",
       "format": "mcq",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "paxos",
@@ -3980,6 +4138,7 @@
     {
       "id": "card-tl1c",
       "format": "cloze",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "paxos",
@@ -4001,6 +4160,7 @@
     {
       "id": "card-ejvd",
       "format": "mcq",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "paxos",
@@ -4039,6 +4199,7 @@
     {
       "id": "card-mnci",
       "format": "cloze",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "paxos",
@@ -4060,6 +4221,7 @@
     {
       "id": "card-7e8t",
       "format": "qa",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "paxos",
@@ -4081,6 +4243,7 @@
     {
       "id": "card-mxxf",
       "format": "cloze",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "paxos",
@@ -4102,6 +4265,7 @@
     {
       "id": "card-br12",
       "format": "mcq",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "paxos",
@@ -4140,6 +4304,7 @@
     {
       "id": "card-hphb",
       "format": "recall",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "paxos",
@@ -4160,6 +4325,7 @@
     {
       "id": "card-eia3",
       "format": "mcq",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "paxos",
@@ -4198,6 +4364,7 @@
     {
       "id": "card-uoqr",
       "format": "cloze",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "failure-detection",
@@ -4218,6 +4385,7 @@
     {
       "id": "card-ttsw",
       "format": "mcq",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "failure-detection",
@@ -4255,6 +4423,7 @@
     {
       "id": "card-uffu",
       "format": "cloze",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "failure-detection",
@@ -4275,6 +4444,7 @@
     {
       "id": "card-8ei4",
       "format": "mcq",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "failure-detection",
@@ -4312,6 +4482,7 @@
     {
       "id": "card-l9iu",
       "format": "qa",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "failure-detection",
@@ -4332,6 +4503,7 @@
     {
       "id": "card-l4nm",
       "format": "mcq",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "failure-detection",
@@ -4369,6 +4541,7 @@
     {
       "id": "card-ggdw",
       "format": "recall",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "failure-detection",
@@ -4388,6 +4561,7 @@
     {
       "id": "card-drcz",
       "format": "cloze",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "lsm-tree",
@@ -4408,6 +4582,7 @@
     {
       "id": "card-7a0i",
       "format": "mcq",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "lsm-tree",
@@ -4445,6 +4620,7 @@
     {
       "id": "card-9k1r",
       "format": "cloze",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "lsm-tree",
@@ -4465,6 +4641,7 @@
     {
       "id": "card-w9id",
       "format": "mcq",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "lsm-tree",
@@ -4502,6 +4679,7 @@
     {
       "id": "card-ugwk",
       "format": "cloze",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "lsm-tree",
@@ -4522,6 +4700,7 @@
     {
       "id": "card-hcmf",
       "format": "qa",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "lsm-tree",
@@ -4542,6 +4721,7 @@
     {
       "id": "card-unnd",
       "format": "recall",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "lsm-tree",
@@ -4561,6 +4741,7 @@
     {
       "id": "card-830u",
       "format": "mcq",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "lsm-tree",
@@ -4598,6 +4779,7 @@
     {
       "id": "card-72wa",
       "format": "cloze",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "quorums",
@@ -4619,6 +4801,7 @@
     {
       "id": "card-w8zx",
       "format": "mcq",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "quorums",
@@ -4657,6 +4840,7 @@
     {
       "id": "card-4itb",
       "format": "qa",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "quorums",
@@ -4678,6 +4862,7 @@
     {
       "id": "card-cmhr",
       "format": "mcq",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "quorums",
@@ -4716,6 +4901,7 @@
     {
       "id": "card-xvyt",
       "format": "cloze",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "quorums",
@@ -4737,6 +4923,7 @@
     {
       "id": "card-9vow",
       "format": "mcq",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "quorums",
@@ -4775,6 +4962,7 @@
     {
       "id": "card-r1j7",
       "format": "recall",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "quorums",
@@ -4795,6 +4983,7 @@
     {
       "id": "card-nm0x",
       "format": "recall",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "quorums",
@@ -4815,6 +5004,7 @@
     {
       "id": "card-4u9i",
       "format": "mcq",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "storage-engines",
@@ -4852,6 +5042,7 @@
     {
       "id": "card-if86",
       "format": "cloze",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "storage-engines",
@@ -4872,6 +5063,7 @@
     {
       "id": "card-se4z",
       "format": "cloze",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "storage-engines",
@@ -4892,6 +5084,7 @@
     {
       "id": "card-4bcw",
       "format": "mcq",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "storage-engines",
@@ -4929,6 +5122,7 @@
     {
       "id": "card-579l",
       "format": "qa",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "storage-engines",
@@ -4949,6 +5143,7 @@
     {
       "id": "card-tssx",
       "format": "recall",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "storage-engines",
@@ -4968,6 +5163,7 @@
     {
       "id": "card-ysmq",
       "format": "cloze",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "wal",
@@ -4989,6 +5185,7 @@
     {
       "id": "card-4491",
       "format": "mcq",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "wal",
@@ -5027,6 +5224,7 @@
     {
       "id": "card-g7ek",
       "format": "mcq",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "wal",
@@ -5065,6 +5263,7 @@
     {
       "id": "card-p9kf",
       "format": "cloze",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "wal",
@@ -5086,6 +5285,7 @@
     {
       "id": "card-ug24",
       "format": "qa",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "wal",
@@ -5107,6 +5307,7 @@
     {
       "id": "card-dcuk",
       "format": "mcq",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "wal",
@@ -5145,6 +5346,7 @@
     {
       "id": "card-37fc",
       "format": "recall",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "wal",
@@ -5165,6 +5367,7 @@
     {
       "id": "card-bwmp",
       "format": "cloze",
+      "topic": "database-internals",
       "category": "database-internals",
       "tags": [
         "wal",
@@ -5186,6 +5389,7 @@
     {
       "id": "card-uprv",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "congestion-control",
@@ -5205,6 +5409,7 @@
     {
       "id": "card-iwku",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "congestion-control",
@@ -5224,6 +5429,7 @@
     {
       "id": "card-sbuh",
       "format": "qa",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "congestion-control",
@@ -5243,6 +5449,7 @@
     {
       "id": "card-3mgt",
       "format": "qa",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "congestion-control",
@@ -5262,6 +5469,7 @@
     {
       "id": "card-z816",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "congestion-control",
@@ -5281,6 +5489,7 @@
     {
       "id": "card-st5f",
       "format": "qa",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "congestion-control",
@@ -5300,6 +5509,7 @@
     {
       "id": "card-5zh2",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "congestion-control",
@@ -5319,6 +5529,7 @@
     {
       "id": "card-88gi",
       "format": "mcq",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "congestion-control",
@@ -5355,6 +5566,7 @@
     {
       "id": "card-q28g",
       "format": "recall",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "congestion-control",
@@ -5373,6 +5585,7 @@
     {
       "id": "card-h7jf",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "delay",
@@ -5392,6 +5605,7 @@
     {
       "id": "card-jwnf",
       "format": "qa",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "delay",
@@ -5411,6 +5625,7 @@
     {
       "id": "card-1kkn",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "delay",
@@ -5430,6 +5645,7 @@
     {
       "id": "card-bn79",
       "format": "qa",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "delay",
@@ -5449,6 +5665,7 @@
     {
       "id": "card-n9op",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "delay",
@@ -5468,6 +5685,7 @@
     {
       "id": "card-95b6",
       "format": "mcq",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "delay",
@@ -5504,6 +5722,7 @@
     {
       "id": "card-yjam",
       "format": "recall",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "delay",
@@ -5522,6 +5741,7 @@
     {
       "id": "card-67w2",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "dns",
@@ -5541,6 +5761,7 @@
     {
       "id": "card-vikl",
       "format": "qa",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "dns",
@@ -5560,6 +5781,7 @@
     {
       "id": "card-70hq",
       "format": "qa",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "dns",
@@ -5579,6 +5801,7 @@
     {
       "id": "card-vqne",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "dns",
@@ -5598,6 +5821,7 @@
     {
       "id": "card-z181",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "dns",
@@ -5617,6 +5841,7 @@
     {
       "id": "card-4xz1",
       "format": "qa",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "dns",
@@ -5636,6 +5861,7 @@
     {
       "id": "card-8fw7",
       "format": "mcq",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "dns",
@@ -5672,6 +5898,7 @@
     {
       "id": "card-nur3",
       "format": "recall",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "dns",
@@ -5690,6 +5917,7 @@
     {
       "id": "card-3sgk",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "http",
@@ -5710,6 +5938,7 @@
     {
       "id": "card-8cyf",
       "format": "qa",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "http",
@@ -5730,6 +5959,7 @@
     {
       "id": "card-1jwg",
       "format": "qa",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "http",
@@ -5750,6 +5980,7 @@
     {
       "id": "card-47oq",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "http",
@@ -5770,6 +6001,7 @@
     {
       "id": "card-nm6o",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "http",
@@ -5790,6 +6022,7 @@
     {
       "id": "card-im70",
       "format": "qa",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "http",
@@ -5810,6 +6043,7 @@
     {
       "id": "card-pgfv",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "http",
@@ -5830,6 +6064,7 @@
     {
       "id": "card-2b24",
       "format": "mcq",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "http",
@@ -5867,6 +6102,7 @@
     {
       "id": "card-i5lj",
       "format": "recall",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "http",
@@ -5886,6 +6122,7 @@
     {
       "id": "card-ftnu",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "internet-structure",
@@ -5905,6 +6142,7 @@
     {
       "id": "card-g80b",
       "format": "qa",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "internet-structure",
@@ -5924,6 +6162,7 @@
     {
       "id": "card-49sc",
       "format": "qa",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "internet-structure",
@@ -5943,6 +6182,7 @@
     {
       "id": "card-cml7",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "internet-structure",
@@ -5962,6 +6202,7 @@
     {
       "id": "card-kzzj",
       "format": "mcq",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "internet-structure",
@@ -5998,6 +6239,7 @@
     {
       "id": "card-ubb3",
       "format": "mcq",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "internet-structure",
@@ -6034,6 +6276,7 @@
     {
       "id": "card-27or",
       "format": "recall",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "internet-structure",
@@ -6052,6 +6295,7 @@
     {
       "id": "card-e2gi",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "network-layer",
@@ -6074,6 +6318,7 @@
     {
       "id": "card-7a3g",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "network-layer",
@@ -6096,6 +6341,7 @@
     {
       "id": "card-w4yg",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "network-layer",
@@ -6118,6 +6364,7 @@
     {
       "id": "card-s1qp",
       "format": "qa",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "network-layer",
@@ -6140,6 +6387,7 @@
     {
       "id": "card-7yxi",
       "format": "qa",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "network-layer",
@@ -6162,6 +6410,7 @@
     {
       "id": "card-isly",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "network-layer",
@@ -6184,6 +6433,7 @@
     {
       "id": "card-b5wl",
       "format": "mcq",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "network-layer",
@@ -6223,6 +6473,7 @@
     {
       "id": "card-f91a",
       "format": "recall",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "network-layer",
@@ -6244,6 +6495,7 @@
     {
       "id": "card-d1vp",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "reliable-transfer",
@@ -6263,6 +6515,7 @@
     {
       "id": "card-4gu6",
       "format": "qa",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "reliable-transfer",
@@ -6282,6 +6535,7 @@
     {
       "id": "card-n2ae",
       "format": "qa",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "reliable-transfer",
@@ -6301,6 +6555,7 @@
     {
       "id": "card-jhpu",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "reliable-transfer",
@@ -6320,6 +6575,7 @@
     {
       "id": "card-7ghf",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "reliable-transfer",
@@ -6339,6 +6595,7 @@
     {
       "id": "card-3ea6",
       "format": "mcq",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "reliable-transfer",
@@ -6375,6 +6632,7 @@
     {
       "id": "card-u35o",
       "format": "recall",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "reliable-transfer",
@@ -6393,6 +6651,7 @@
     {
       "id": "card-ooah",
       "format": "qa",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "routing",
@@ -6415,6 +6674,7 @@
     {
       "id": "card-6abb",
       "format": "qa",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "routing",
@@ -6437,6 +6697,7 @@
     {
       "id": "card-bob5",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "routing",
@@ -6459,6 +6720,7 @@
     {
       "id": "card-j2vr",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "routing",
@@ -6481,6 +6743,7 @@
     {
       "id": "card-yvcz",
       "format": "qa",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "routing",
@@ -6503,6 +6766,7 @@
     {
       "id": "card-8c10",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "routing",
@@ -6525,6 +6789,7 @@
     {
       "id": "card-4uve",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "routing",
@@ -6547,6 +6812,7 @@
     {
       "id": "card-7u3r",
       "format": "qa",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "routing",
@@ -6569,6 +6835,7 @@
     {
       "id": "card-t2r2",
       "format": "mcq",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "routing",
@@ -6608,6 +6875,7 @@
     {
       "id": "card-gai5",
       "format": "recall",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "routing",
@@ -6629,6 +6897,7 @@
     {
       "id": "card-rcsz",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "tcp",
@@ -6648,6 +6917,7 @@
     {
       "id": "card-mdle",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "tcp",
@@ -6667,6 +6937,7 @@
     {
       "id": "card-btcf",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "tcp",
@@ -6686,6 +6957,7 @@
     {
       "id": "card-ixx9",
       "format": "qa",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "tcp",
@@ -6705,6 +6977,7 @@
     {
       "id": "card-ng8b",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "tcp",
@@ -6724,6 +6997,7 @@
     {
       "id": "card-ulbl",
       "format": "mcq",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "tcp",
@@ -6760,6 +7034,7 @@
     {
       "id": "card-zq3q",
       "format": "mcq",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "tcp",
@@ -6796,6 +7071,7 @@
     {
       "id": "card-yaqy",
       "format": "recall",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "tcp",
@@ -6814,6 +7090,7 @@
     {
       "id": "card-d82i",
       "format": "qa",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "transport-layer",
@@ -6834,6 +7111,7 @@
     {
       "id": "card-xoi1",
       "format": "qa",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "transport-layer",
@@ -6854,6 +7132,7 @@
     {
       "id": "card-l423",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "transport-layer",
@@ -6874,6 +7153,7 @@
     {
       "id": "card-2uba",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "transport-layer",
@@ -6894,6 +7174,7 @@
     {
       "id": "card-w4ol",
       "format": "cloze",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "transport-layer",
@@ -6914,6 +7195,7 @@
     {
       "id": "card-eud5",
       "format": "mcq",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "transport-layer",
@@ -6951,6 +7233,7 @@
     {
       "id": "card-p61e",
       "format": "recall",
+      "topic": "networking",
       "category": "networking",
       "tags": [
         "transport-layer",
@@ -6970,6 +7253,7 @@
     {
       "id": "card-94ci",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "concurrency-bugs",
@@ -6990,6 +7274,7 @@
     {
       "id": "card-gsy8",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "concurrency-bugs",
@@ -7010,6 +7295,7 @@
     {
       "id": "card-dkba",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "concurrency-bugs",
@@ -7030,6 +7316,7 @@
     {
       "id": "card-nllm",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "concurrency-bugs",
@@ -7050,6 +7337,7 @@
     {
       "id": "card-f10t",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "concurrency-bugs",
@@ -7070,6 +7358,7 @@
     {
       "id": "card-p6pj",
       "format": "mcq",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "concurrency-bugs",
@@ -7107,6 +7396,7 @@
     {
       "id": "card-zuuj",
       "format": "recall",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "concurrency-bugs",
@@ -7126,6 +7416,7 @@
     {
       "id": "card-z1pd",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "performance",
@@ -7147,6 +7438,7 @@
     {
       "id": "card-0yx4",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "performance",
@@ -7168,6 +7460,7 @@
     {
       "id": "card-qjw6",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "performance",
@@ -7189,6 +7482,7 @@
     {
       "id": "card-o2rg",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "performance",
@@ -7210,6 +7504,7 @@
     {
       "id": "card-ydip",
       "format": "mcq",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "performance",
@@ -7248,6 +7543,7 @@
     {
       "id": "card-2rb2",
       "format": "recall",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "performance",
@@ -7268,6 +7564,7 @@
     {
       "id": "card-bjep",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "condition-variables",
@@ -7288,6 +7585,7 @@
     {
       "id": "card-48we",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "condition-variables",
@@ -7308,6 +7606,7 @@
     {
       "id": "card-10rs",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "condition-variables",
@@ -7328,6 +7627,7 @@
     {
       "id": "card-orsq",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "condition-variables",
@@ -7348,6 +7648,7 @@
     {
       "id": "card-23ws",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "condition-variables",
@@ -7368,6 +7669,7 @@
     {
       "id": "card-ts29",
       "format": "mcq",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "condition-variables",
@@ -7405,6 +7707,7 @@
     {
       "id": "card-zlrj",
       "format": "recall",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "condition-variables",
@@ -7424,6 +7727,7 @@
     {
       "id": "card-ypoe",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "deadlock",
@@ -7444,6 +7748,7 @@
     {
       "id": "card-zl35",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "deadlock",
@@ -7464,6 +7769,7 @@
     {
       "id": "card-sljt",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "deadlock",
@@ -7484,6 +7790,7 @@
     {
       "id": "card-3qs7",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "deadlock",
@@ -7504,6 +7811,7 @@
     {
       "id": "card-h29s",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "deadlock",
@@ -7524,6 +7832,7 @@
     {
       "id": "card-o6hx",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "deadlock",
@@ -7544,6 +7853,7 @@
     {
       "id": "card-b26q",
       "format": "mcq",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "deadlock",
@@ -7581,6 +7891,7 @@
     {
       "id": "card-i2jz",
       "format": "recall",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "deadlock",
@@ -7600,6 +7911,7 @@
     {
       "id": "card-u5hp",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "event-based-concurrency",
@@ -7620,6 +7932,7 @@
     {
       "id": "card-tven",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "event-based-concurrency",
@@ -7640,6 +7953,7 @@
     {
       "id": "card-odtu",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "event-based-concurrency",
@@ -7660,6 +7974,7 @@
     {
       "id": "card-xkxb",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "event-based-concurrency",
@@ -7680,6 +7995,7 @@
     {
       "id": "card-msrl",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "event-based-concurrency",
@@ -7700,6 +8016,7 @@
     {
       "id": "card-glb0",
       "format": "mcq",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "event-based-concurrency",
@@ -7737,6 +8054,7 @@
     {
       "id": "card-ocav",
       "format": "recall",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "event-based-concurrency",
@@ -7756,6 +8074,7 @@
     {
       "id": "card-ztae",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "data-structures",
@@ -7776,6 +8095,7 @@
     {
       "id": "card-8gfx",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "data-structures",
@@ -7796,6 +8116,7 @@
     {
       "id": "card-czxy",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "data-structures",
@@ -7816,6 +8137,7 @@
     {
       "id": "card-dc1d",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "data-structures",
@@ -7836,6 +8158,7 @@
     {
       "id": "card-0ygh",
       "format": "mcq",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "data-structures",
@@ -7873,6 +8196,7 @@
     {
       "id": "card-kuo4",
       "format": "recall",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "data-structures",
@@ -7892,6 +8216,7 @@
     {
       "id": "card-n6y5",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "locks",
@@ -7913,6 +8238,7 @@
     {
       "id": "card-e46q",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "locks",
@@ -7934,6 +8260,7 @@
     {
       "id": "card-ag76",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "locks",
@@ -7955,6 +8282,7 @@
     {
       "id": "card-li16",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "locks",
@@ -7976,6 +8304,7 @@
     {
       "id": "card-1oce",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "locks",
@@ -7997,6 +8326,7 @@
     {
       "id": "card-tutg",
       "format": "mcq",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "locks",
@@ -8035,6 +8365,7 @@
     {
       "id": "card-v7ve",
       "format": "recall",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "locks",
@@ -8055,6 +8386,7 @@
     {
       "id": "card-d8gj",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "semaphores",
@@ -8075,6 +8407,7 @@
     {
       "id": "card-j2oa",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "semaphores",
@@ -8095,6 +8428,7 @@
     {
       "id": "card-nv37",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "semaphores",
@@ -8115,6 +8449,7 @@
     {
       "id": "card-g1z3",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "semaphores",
@@ -8135,6 +8470,7 @@
     {
       "id": "card-hoa4",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "semaphores",
@@ -8155,6 +8491,7 @@
     {
       "id": "card-vduf",
       "format": "mcq",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "semaphores",
@@ -8192,6 +8529,7 @@
     {
       "id": "card-6pr4",
       "format": "recall",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "semaphores",
@@ -8211,6 +8549,7 @@
     {
       "id": "card-h2gk",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "threads",
@@ -8232,6 +8571,7 @@
     {
       "id": "card-7r4a",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "threads",
@@ -8253,6 +8593,7 @@
     {
       "id": "card-994h",
       "format": "cloze",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "threads",
@@ -8274,6 +8615,7 @@
     {
       "id": "card-69sk",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "threads",
@@ -8295,6 +8637,7 @@
     {
       "id": "card-kd1f",
       "format": "qa",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "threads",
@@ -8316,6 +8659,7 @@
     {
       "id": "card-ty1u",
       "format": "mcq",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "threads",
@@ -8354,6 +8698,7 @@
     {
       "id": "card-7b5g",
       "format": "recall",
+      "topic": "concurrency",
       "category": "os-concurrency",
       "tags": [
         "threads",
@@ -8374,6 +8719,7 @@
     {
       "id": "card-x8pz",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "crash-consistency",
@@ -8394,6 +8740,7 @@
     {
       "id": "card-fi5x",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "crash-consistency",
@@ -8414,6 +8761,7 @@
     {
       "id": "card-24kn",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "crash-consistency",
@@ -8434,6 +8782,7 @@
     {
       "id": "card-xatv",
       "format": "recall",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "crash-consistency",
@@ -8453,6 +8802,7 @@
     {
       "id": "card-7igb",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "crash-consistency",
@@ -8473,6 +8823,7 @@
     {
       "id": "card-5f5f",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "crash-consistency",
@@ -8493,6 +8844,7 @@
     {
       "id": "card-zosc",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "crash-consistency",
@@ -8513,6 +8865,7 @@
     {
       "id": "card-jjel",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "crash-consistency",
@@ -8533,6 +8886,7 @@
     {
       "id": "card-ddml",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "crash-consistency",
@@ -8553,6 +8907,7 @@
     {
       "id": "card-b8mq",
       "format": "mcq",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "crash-consistency",
@@ -8590,6 +8945,7 @@
     {
       "id": "card-ettn",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "data-integrity",
@@ -8610,6 +8966,7 @@
     {
       "id": "card-nuu5",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "data-integrity",
@@ -8630,6 +8987,7 @@
     {
       "id": "card-3w7u",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "data-integrity",
@@ -8650,6 +9008,7 @@
     {
       "id": "card-knul",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "data-integrity",
@@ -8670,6 +9029,7 @@
     {
       "id": "card-t47o",
       "format": "recall",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "data-integrity",
@@ -8689,6 +9049,7 @@
     {
       "id": "card-9486",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "data-integrity",
@@ -8709,6 +9070,7 @@
     {
       "id": "card-kcsy",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "data-integrity",
@@ -8729,6 +9091,7 @@
     {
       "id": "card-gond",
       "format": "mcq",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "data-integrity",
@@ -8766,6 +9129,7 @@
     {
       "id": "card-eavj",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "ffs",
@@ -8786,6 +9150,7 @@
     {
       "id": "card-4teo",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "ffs",
@@ -8806,6 +9171,7 @@
     {
       "id": "card-6v35",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "ffs",
@@ -8826,6 +9192,7 @@
     {
       "id": "card-4v22",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "ffs",
@@ -8846,6 +9213,7 @@
     {
       "id": "card-kmy0",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "ffs",
@@ -8866,6 +9234,7 @@
     {
       "id": "card-swgs",
       "format": "mcq",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "ffs",
@@ -8903,6 +9272,7 @@
     {
       "id": "card-5yzd",
       "format": "recall",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "ffs",
@@ -8922,6 +9292,7 @@
     {
       "id": "card-8428",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "file-system-implementation",
@@ -8942,6 +9313,7 @@
     {
       "id": "card-ahgj",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "file-system-implementation",
@@ -8962,6 +9334,7 @@
     {
       "id": "card-c1si",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "file-system-implementation",
@@ -8982,6 +9355,7 @@
     {
       "id": "card-b4a1",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "file-system-implementation",
@@ -9002,6 +9376,7 @@
     {
       "id": "card-5lpc",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "file-system-implementation",
@@ -9022,6 +9397,7 @@
     {
       "id": "card-ujja",
       "format": "mcq",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "file-system-implementation",
@@ -9059,6 +9435,7 @@
     {
       "id": "card-t4f0",
       "format": "recall",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "file-system-implementation",
@@ -9078,6 +9455,7 @@
     {
       "id": "card-fhwm",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "file-api",
@@ -9098,6 +9476,7 @@
     {
       "id": "card-rmkq",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "file-api",
@@ -9118,6 +9497,7 @@
     {
       "id": "card-j6ku",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "file-api",
@@ -9138,6 +9518,7 @@
     {
       "id": "card-7938",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "file-api",
@@ -9158,6 +9539,7 @@
     {
       "id": "card-0gb9",
       "format": "mcq",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "file-api",
@@ -9195,6 +9577,7 @@
     {
       "id": "card-ilzf",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "file-api",
@@ -9215,6 +9598,7 @@
     {
       "id": "card-io2y",
       "format": "recall",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "file-api",
@@ -9234,6 +9618,7 @@
     {
       "id": "card-3t2z",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "ssd",
@@ -9254,6 +9639,7 @@
     {
       "id": "card-yc4w",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "ssd",
@@ -9274,6 +9660,7 @@
     {
       "id": "card-5vfk",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "ssd",
@@ -9294,6 +9681,7 @@
     {
       "id": "card-hwid",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "ssd",
@@ -9314,6 +9702,7 @@
     {
       "id": "card-a37s",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "ssd",
@@ -9334,6 +9723,7 @@
     {
       "id": "card-tcde",
       "format": "recall",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "ssd",
@@ -9353,6 +9743,7 @@
     {
       "id": "card-3syc",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "ssd",
@@ -9373,6 +9764,7 @@
     {
       "id": "card-43o1",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "ssd",
@@ -9393,6 +9785,7 @@
     {
       "id": "card-oegf",
       "format": "mcq",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "ssd",
@@ -9430,6 +9823,7 @@
     {
       "id": "card-5nz4",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "hard-disk-drives",
@@ -9450,6 +9844,7 @@
     {
       "id": "card-b2fc",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "hard-disk-drives",
@@ -9470,6 +9865,7 @@
     {
       "id": "card-vo0a",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "hard-disk-drives",
@@ -9490,6 +9886,7 @@
     {
       "id": "card-58v1",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "hard-disk-drives",
@@ -9510,6 +9907,7 @@
     {
       "id": "card-noag",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "hard-disk-drives",
@@ -9530,6 +9928,7 @@
     {
       "id": "card-wdue",
       "format": "mcq",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "hard-disk-drives",
@@ -9567,6 +9966,7 @@
     {
       "id": "card-mt3s",
       "format": "recall",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "hard-disk-drives",
@@ -9586,6 +9986,7 @@
     {
       "id": "card-cfps",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "io-devices",
@@ -9606,6 +10007,7 @@
     {
       "id": "card-1j36",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "io-devices",
@@ -9626,6 +10028,7 @@
     {
       "id": "card-vnsi",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "io-devices",
@@ -9646,6 +10049,7 @@
     {
       "id": "card-4msq",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "io-devices",
@@ -9666,6 +10070,7 @@
     {
       "id": "card-0c25",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "io-devices",
@@ -9686,6 +10091,7 @@
     {
       "id": "card-kn62",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "io-devices",
@@ -9706,6 +10112,7 @@
     {
       "id": "card-o8sb",
       "format": "mcq",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "io-devices",
@@ -9743,6 +10150,7 @@
     {
       "id": "card-sz2h",
       "format": "recall",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "io-devices",
@@ -9762,6 +10170,7 @@
     {
       "id": "card-z8mg",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "log-structured-file-systems",
@@ -9782,6 +10191,7 @@
     {
       "id": "card-r2iu",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "log-structured-file-systems",
@@ -9802,6 +10212,7 @@
     {
       "id": "card-g77u",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "log-structured-file-systems",
@@ -9822,6 +10233,7 @@
     {
       "id": "card-c6te",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "log-structured-file-systems",
@@ -9842,6 +10254,7 @@
     {
       "id": "card-r4n1",
       "format": "recall",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "log-structured-file-systems",
@@ -9861,6 +10274,7 @@
     {
       "id": "card-jch1",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "log-structured-file-systems",
@@ -9881,6 +10295,7 @@
     {
       "id": "card-d210",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "log-structured-file-systems",
@@ -9901,6 +10316,7 @@
     {
       "id": "card-xnl4",
       "format": "mcq",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "log-structured-file-systems",
@@ -9938,6 +10354,7 @@
     {
       "id": "card-3pa9",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "raid",
@@ -9958,6 +10375,7 @@
     {
       "id": "card-kk4h",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "raid",
@@ -9978,6 +10396,7 @@
     {
       "id": "card-rkei",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "raid",
@@ -9998,6 +10417,7 @@
     {
       "id": "card-wfji",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "raid",
@@ -10018,6 +10438,7 @@
     {
       "id": "card-b03p",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "raid",
@@ -10038,6 +10459,7 @@
     {
       "id": "card-4sia",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "raid",
@@ -10058,6 +10480,7 @@
     {
       "id": "card-bey7",
       "format": "mcq",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "raid",
@@ -10095,6 +10518,7 @@
     {
       "id": "card-4m5t",
       "format": "recall",
+      "topic": "operating-systems",
       "category": "os-persistence",
       "tags": [
         "raid",
@@ -10114,6 +10538,7 @@
     {
       "id": "card-qnak",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "address-space",
@@ -10135,6 +10560,7 @@
     {
       "id": "card-5adu",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "address-space",
@@ -10156,6 +10582,7 @@
     {
       "id": "card-4voc",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "address-space",
@@ -10177,6 +10604,7 @@
     {
       "id": "card-9u13",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "address-space",
@@ -10198,6 +10626,7 @@
     {
       "id": "card-r8jn",
       "format": "mcq",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "address-space",
@@ -10236,6 +10665,7 @@
     {
       "id": "card-pvlh",
       "format": "recall",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "address-space",
@@ -10256,6 +10686,7 @@
     {
       "id": "card-l5f7",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "address-translation",
@@ -10277,6 +10708,7 @@
     {
       "id": "card-nkcw",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "address-translation",
@@ -10298,6 +10730,7 @@
     {
       "id": "card-1msk",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "address-translation",
@@ -10319,6 +10752,7 @@
     {
       "id": "card-9r1a",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "address-translation",
@@ -10340,6 +10774,7 @@
     {
       "id": "card-zdkf",
       "format": "mcq",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "address-translation",
@@ -10378,6 +10813,7 @@
     {
       "id": "card-aif1",
       "format": "recall",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "address-translation",
@@ -10398,6 +10834,7 @@
     {
       "id": "card-zpzd",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "free-space-management",
@@ -10418,6 +10855,7 @@
     {
       "id": "card-nnoj",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "free-space-management",
@@ -10438,6 +10876,7 @@
     {
       "id": "card-nbxt",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "free-space-management",
@@ -10458,6 +10897,7 @@
     {
       "id": "card-klpp",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "free-space-management",
@@ -10478,6 +10918,7 @@
     {
       "id": "card-bw5h",
       "format": "mcq",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "free-space-management",
@@ -10515,6 +10956,7 @@
     {
       "id": "card-mgdb",
       "format": "recall",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "free-space-management",
@@ -10534,6 +10976,7 @@
     {
       "id": "card-zjlo",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "limited-direct-execution",
@@ -10554,6 +10997,7 @@
     {
       "id": "card-ohmn",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "limited-direct-execution",
@@ -10574,6 +11018,7 @@
     {
       "id": "card-wh1e",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "limited-direct-execution",
@@ -10594,6 +11039,7 @@
     {
       "id": "card-pryn",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "limited-direct-execution",
@@ -10614,6 +11060,7 @@
     {
       "id": "card-amid",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "limited-direct-execution",
@@ -10634,6 +11081,7 @@
     {
       "id": "card-mm2u",
       "format": "mcq",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "limited-direct-execution",
@@ -10671,6 +11119,7 @@
     {
       "id": "card-qh6j",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "limited-direct-execution",
@@ -10691,6 +11140,7 @@
     {
       "id": "card-efqj",
       "format": "recall",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "limited-direct-execution",
@@ -10710,6 +11160,7 @@
     {
       "id": "card-sf97",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "scheduling",
@@ -10729,6 +11180,7 @@
     {
       "id": "card-vuab",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "scheduling",
@@ -10748,6 +11200,7 @@
     {
       "id": "card-o4yf",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "scheduling",
@@ -10767,6 +11220,7 @@
     {
       "id": "card-6jpq",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "scheduling",
@@ -10786,6 +11240,7 @@
     {
       "id": "card-46fc",
       "format": "mcq",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "scheduling",
@@ -10822,6 +11277,7 @@
     {
       "id": "card-ch7q",
       "format": "recall",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "scheduling",
@@ -10840,6 +11296,7 @@
     {
       "id": "card-eiiq",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "multi-level-page-tables",
@@ -10862,6 +11319,7 @@
     {
       "id": "card-oisa",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "multi-level-page-tables",
@@ -10884,6 +11342,7 @@
     {
       "id": "card-oy1r",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "multi-level-page-tables",
@@ -10906,6 +11365,7 @@
     {
       "id": "card-116z",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "multi-level-page-tables",
@@ -10928,6 +11388,7 @@
     {
       "id": "card-bxwb",
       "format": "mcq",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "multi-level-page-tables",
@@ -10967,6 +11428,7 @@
     {
       "id": "card-r4yi",
       "format": "recall",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "multi-level-page-tables",
@@ -10988,6 +11450,7 @@
     {
       "id": "card-zac3",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "paging",
@@ -11009,6 +11472,7 @@
     {
       "id": "card-01nc",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "paging",
@@ -11030,6 +11494,7 @@
     {
       "id": "card-f9rs",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "paging",
@@ -11051,6 +11516,7 @@
     {
       "id": "card-2h1g",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "paging",
@@ -11072,6 +11538,7 @@
     {
       "id": "card-ttzh",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "paging",
@@ -11093,6 +11560,7 @@
     {
       "id": "card-33qt",
       "format": "mcq",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "paging",
@@ -11131,6 +11599,7 @@
     {
       "id": "card-udid",
       "format": "recall",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "paging",
@@ -11151,6 +11620,7 @@
     {
       "id": "card-etmx",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "processes",
@@ -11173,6 +11643,7 @@
     {
       "id": "card-zs5v",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "processes",
@@ -11195,6 +11666,7 @@
     {
       "id": "card-g1h4",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "processes",
@@ -11217,6 +11689,7 @@
     {
       "id": "card-0ifj",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "processes",
@@ -11239,6 +11712,7 @@
     {
       "id": "card-cb78",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "processes",
@@ -11261,6 +11735,7 @@
     {
       "id": "card-hczt",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "processes",
@@ -11283,6 +11758,7 @@
     {
       "id": "card-4p96",
       "format": "mcq",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "processes",
@@ -11322,6 +11798,7 @@
     {
       "id": "card-xox5",
       "format": "recall",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "processes",
@@ -11343,6 +11820,7 @@
     {
       "id": "card-178l",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "scheduling",
@@ -11364,6 +11842,7 @@
     {
       "id": "card-adbt",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "scheduling",
@@ -11385,6 +11864,7 @@
     {
       "id": "card-d6ti",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "scheduling",
@@ -11406,6 +11886,7 @@
     {
       "id": "card-kae7",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "scheduling",
@@ -11427,6 +11908,7 @@
     {
       "id": "card-o1j1",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "scheduling",
@@ -11448,6 +11930,7 @@
     {
       "id": "card-577n",
       "format": "mcq",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "scheduling",
@@ -11486,6 +11969,7 @@
     {
       "id": "card-eap6",
       "format": "recall",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "scheduling",
@@ -11506,6 +11990,7 @@
     {
       "id": "card-yk72",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "scheduling",
@@ -11529,6 +12014,7 @@
     {
       "id": "card-n52o",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "scheduling",
@@ -11552,6 +12038,7 @@
     {
       "id": "card-terk",
       "format": "cloze",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "scheduling",
@@ -11575,6 +12062,7 @@
     {
       "id": "card-wfas",
       "format": "qa",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "scheduling",
@@ -11598,6 +12086,7 @@
     {
       "id": "card-ihhj",
       "format": "mcq",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "scheduling",
@@ -11638,6 +12127,7 @@
     {
       "id": "card-6wdi",
       "format": "recall",
+      "topic": "operating-systems",
       "category": "os-virtualization",
       "tags": [
         "scheduling",

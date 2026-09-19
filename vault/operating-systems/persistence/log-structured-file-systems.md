@@ -1,4 +1,5 @@
 ---
+topic: operating-systems
 category: os-persistence
 tags: [log-structured-file-systems, lfs, cleaning, imap]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 43 (Log-structured File Systems)"]

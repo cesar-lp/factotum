@@ -1,4 +1,5 @@
 ---
+topic: concurrency
 category: amp
 tags: [spin-locks, cache-coherence, backoff, queue-locks, mcs-lock, clh-lock]
 citations: ["Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 7 (Spin Locks and Contention)", "Mellor-Crummey & Scott, \"Algorithms for Scalable Synchronization on Shared-Memory Multiprocessors\" (1991)"]

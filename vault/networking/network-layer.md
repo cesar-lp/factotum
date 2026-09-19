@@ -1,4 +1,5 @@
 ---
+topic: networking
 category: networking
 tags: [network-layer, ip, nat, dhcp]
 citations: ["Kurose & Ross, Computer Networking 8e, Ch. 4", "RFC 791", "RFC 2131"]

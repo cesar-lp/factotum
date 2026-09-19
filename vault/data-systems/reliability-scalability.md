@@ -1,4 +1,5 @@
 ---
+topic: data-systems
 category: data-systems
 tags: [reliability, scalability, latency, load]
 citations: ["Kleppmann, Designing Data-Intensive Applications, Ch. 1"]

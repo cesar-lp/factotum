@@ -1,4 +1,5 @@
 ---
+topic: operating-systems
 category: os-virtualization
 tags: [scheduling, fifo, sjf, stcf, round-robin, turnaround-time, response-time]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 7 (Scheduling: Introduction)"]

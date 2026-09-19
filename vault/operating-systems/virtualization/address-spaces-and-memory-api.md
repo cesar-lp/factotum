@@ -1,4 +1,5 @@
 ---
+topic: operating-systems
 category: os-virtualization
 tags: [address-space, memory-api, malloc, memory-bugs]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 13 (Address Spaces)", "Arpaci-Dusseau, OSTEP, Ch. 14 (Interlude: Memory API)"]

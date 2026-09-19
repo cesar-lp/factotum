@@ -1,4 +1,5 @@
 ---
+topic: operating-systems
 category: os-persistence
 tags: [data-integrity, checksums, corruption, scrubbing]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 45 (Data Integrity and Protection)"]

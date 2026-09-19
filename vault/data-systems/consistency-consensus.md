@@ -1,4 +1,5 @@
 ---
+topic: data-systems
 category: data-systems
 tags: [linearizability, serializability, cap, consensus, total-order-broadcast]
 citations: ["Kleppmann, Designing Data-Intensive Applications, Ch. 9"]

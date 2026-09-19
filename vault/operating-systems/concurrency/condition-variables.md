@@ -1,4 +1,5 @@
 ---
+topic: concurrency
 category: os-concurrency
 tags: [condition-variables, synchronization, producer-consumer, locks]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 30 (Condition Variables)"]

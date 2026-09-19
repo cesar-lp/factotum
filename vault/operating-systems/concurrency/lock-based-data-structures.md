@@ -1,4 +1,5 @@
 ---
+topic: concurrency
 category: os-concurrency
 tags: [data-structures, locks, concurrency, hand-over-hand-locking]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 29 (Lock-based Concurrent Data Structures)"]

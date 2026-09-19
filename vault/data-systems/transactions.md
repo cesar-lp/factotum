@@ -1,4 +1,5 @@
 ---
+topic: data-systems
 category: data-systems
 tags: [transactions, acid, isolation, write-skew, serializability]
 citations: ["Kleppmann, Designing Data-Intensive Applications, Ch. 7"]

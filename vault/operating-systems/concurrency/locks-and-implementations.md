@@ -1,4 +1,5 @@
 ---
+topic: concurrency
 category: os-concurrency
 tags: [locks, mutexes, spin-locks, test-and-set, ticket-locks]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 28 (Locks)"]

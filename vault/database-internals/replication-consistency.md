@@ -1,4 +1,5 @@
 ---
+topic: database-internals
 category: database-internals
 tags: [quorums, read-repair, hinted-handoff, crdt, tunable-consistency]
 citations: ["Petrov, Database Internals, Ch. 11-12"]
