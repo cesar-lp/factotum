@@ -91,3 +91,17 @@ async function boot(appRoot: HTMLElement): Promise<void> {
 const appRoot = document.querySelector<HTMLElement>('#app');
 if (!appRoot) throw new Error('#app missing');
 void boot(appRoot);
+
+// Registered as './sw.js' (the production bundle emitted by vite.config.ts's
+// `sw` rollup entry), not as `new URL('./sw.ts', import.meta.url)`: Vite only
+// special-cases that pattern inside `new Worker(...)`/`new SharedWorker(...)`
+// calls, so passed to `serviceWorker.register` it would just copy the raw,
+// untranspiled .ts file into dist as a static asset instead of bundling it.
+// In dev this 404s harmlessly (caught below) since no build has run yet.
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js', { type: 'module' }).catch(() => {
+      // Offline-first is a production concern; a missing dev-server sw.js is not an error.
+    });
+  });
+}

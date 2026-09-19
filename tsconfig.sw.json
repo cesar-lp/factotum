@@ -6,9 +6,8 @@
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "skipLibCheck": true,
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "types": ["vitest/globals"]
+    "lib": ["ES2022"],
+    "noEmit": true
   },
-  "include": ["pipeline", "app", "*.ts"],
-  "exclude": ["app/src/sw.ts"]
+  "include": ["app/src/sw.ts"]
 }

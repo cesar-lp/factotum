@@ -8,7 +8,7 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.sw.json",
     "build:deck": "tsx pipeline/src/cli.ts vault deck/deck.json",
     "predev": "cp deck/deck.json app/public/deck.json",
     "dev": "vite --config vite.config.ts",
