@@ -197,6 +197,45 @@ describe('readExistingDeck', () => {
     }
   });
 
+  it('returns null and warns when generatedAt is missing', () => {
+    const root = mkdtempSync(join(tmpdir(), 'factotum-deck-'));
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      const path = join(root, 'deck.json');
+      writeFileSync(path, JSON.stringify({ cards: [] }), 'utf8');
+      expect(readExistingDeck(path)).toBeNull();
+      expect(warn).toHaveBeenCalledTimes(1);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('returns null and warns when generatedAt is present but not a string', () => {
+    const root = mkdtempSync(join(tmpdir(), 'factotum-deck-'));
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      const path = join(root, 'deck.json');
+      writeFileSync(path, JSON.stringify({ generatedAt: 123, cards: [] }), 'utf8');
+      expect(readExistingDeck(path)).toBeNull();
+      expect(warn).toHaveBeenCalledTimes(1);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('returns null and warns when cards contains a null element', () => {
+    const root = mkdtempSync(join(tmpdir(), 'factotum-deck-'));
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      const path = join(root, 'deck.json');
+      writeFileSync(path, JSON.stringify({ generatedAt: '2020-01-01T00:00:00.000Z', cards: [null] }), 'utf8');
+      expect(readExistingDeck(path)).toBeNull();
+      expect(warn).toHaveBeenCalledTimes(1);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
   it('parses a well-formed deck file', () => {
     const root = mkdtempSync(join(tmpdir(), 'factotum-deck-'));
     try {
@@ -278,6 +317,24 @@ describe('withStableGeneratedAt', () => {
     try {
       const path = join(root, 'deck.json');
       writeFileSync(path, '{}', 'utf8');
+      const built: Deck = { generatedAt: '2026-09-19T14:19:23.949Z', cards: [cardA] };
+      expect(() => withStableGeneratedAt(built, readExistingDeck(path))).not.toThrow();
+      expect(withStableGeneratedAt(built, readExistingDeck(path)).generatedAt).toBe('2026-09-19T14:19:23.949Z');
+    } finally {
+      vi.restoreAllMocks();
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('rebuilds fresh instead of throwing when cards contains a null element at a matching length', () => {
+    const root = mkdtempSync(join(tmpdir(), 'factotum-deck-'));
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      const path = join(root, 'deck.json');
+      // One existing "card" (null) matching the built deck's one card — a length
+      // mismatch would short-circuit cardsEqual before ever touching the element,
+      // so the guard would go untested without this.
+      writeFileSync(path, JSON.stringify({ generatedAt: 'OLD', cards: [null] }), 'utf8');
       const built: Deck = { generatedAt: '2026-09-19T14:19:23.949Z', cards: [cardA] };
       expect(() => withStableGeneratedAt(built, readExistingDeck(path))).not.toThrow();
       expect(withStableGeneratedAt(built, readExistingDeck(path)).generatedAt).toBe('2026-09-19T14:19:23.949Z');

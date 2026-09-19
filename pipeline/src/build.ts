@@ -56,8 +56,17 @@ export function readExistingDeck(path: string): Deck | null {
     console.warn(`${path} exists but is not valid JSON; rebuilding fresh`);
     return null;
   }
-  if (!parsed || typeof parsed !== 'object' || !Array.isArray((parsed as { cards?: unknown }).cards)) {
-    console.warn(`${path} exists but is not a valid deck (missing cards array); rebuilding fresh`);
+  if (!parsed || typeof parsed !== 'object') {
+    console.warn(`${path} exists but is not a valid deck (not an object); rebuilding fresh`);
+    return null;
+  }
+  const candidate = parsed as { generatedAt?: unknown; cards?: unknown };
+  if (typeof candidate.generatedAt !== 'string') {
+    console.warn(`${path} exists but is not a valid deck (generatedAt is not a string); rebuilding fresh`);
+    return null;
+  }
+  if (!Array.isArray(candidate.cards) || candidate.cards.some((card) => !card || typeof card !== 'object')) {
+    console.warn(`${path} exists but is not a valid deck (cards is not an array of objects); rebuilding fresh`);
     return null;
   }
   return parsed as Deck;
