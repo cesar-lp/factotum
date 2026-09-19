@@ -71,7 +71,7 @@ case-sensitive, matching how `category` is already treated.
 
 ### 3.2 Backfill
 
-The existing 68 notes are backfilled so the picker groups sensibly from the
+The existing 66 notes are backfilled so the picker groups sensibly from the
 first run. This is mechanical and content-free:
 
 | category | topic |
