@@ -77,7 +77,13 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
     return;
   }
 
-  if (window.location.hash === '#review-extend' && state.extension.length > 0) {
+  // Due cards always come first — this re-checks the same condition the
+  // dashboard button's own visibility already enforces, because the hash is
+  // plain client state: reachable by a stale back/forward history entry, a
+  // reload, or a bookmark, not just a click on a button that only renders
+  // when the queue is actually empty. Never trust the route to only be
+  // entered the way the UI currently intends it.
+  if (window.location.hash === '#review-extend' && state.session.length === 0 && state.extension.length > 0) {
     await startReview(appRoot, {
       db,
       session: state.extension,
@@ -90,6 +96,15 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
   if (window.location.hash === '#settings') {
     await renderSettings(appRoot, db, () => { window.location.hash = ''; });
     return;
+  }
+
+  if (window.location.hash === '#review-extend') {
+    // Stale/invalid entry into the extension route (due cards exist again,
+    // or nothing left to extend into) — clear it so a subsequent reload or
+    // back/forward doesn't land here again, and so the dashboard's own
+    // "keep going" button (not a leftover hash) is what drives this route
+    // from here on.
+    window.location.hash = '';
   }
 
   renderDashboard(appRoot, {

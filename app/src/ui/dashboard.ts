@@ -30,7 +30,16 @@ export function renderDashboard(root: HTMLElement, props: DashboardProps): void 
   const canKeepGoing = !deckUnavailable && queueEmpty && props.newCardsRemaining > 0;
 
   const startDisabled = deckUnavailable || queueEmpty;
-  const startLabel = deckUnavailable ? 'Start review' : queueEmpty ? 'All clear' : 'Start review';
+  // "All clear" is reserved for genuinely nothing left to do. When new
+  // cards are still sitting there for the taking (canKeepGoing), saying
+  // "All clear" directly above a "Keep going — N new cards left" button
+  // reads as a contradiction, so this state gets its own accurate label —
+  // the due queue specifically is clear, not the day.
+  const startLabel = deckUnavailable
+    ? 'Start review'
+    : queueEmpty
+      ? (canKeepGoing ? 'Due queue clear' : 'All clear')
+      : 'Start review';
 
   const message = deckUnavailable
     ? '<div class="due-count">--</div><div style="color:var(--dim)">couldn’t load the deck &mdash; check your connection</div>'
