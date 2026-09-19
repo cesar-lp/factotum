@@ -50,6 +50,15 @@ base write, so a GSI query can only ever be eventually consistent.
 
 What causes a GSI to be eventually consistent while an LSI can be read strongly consistent? :: An LSI shares its partition with the base item, so both are updated together in the same write; a GSI's entry generally lives on a different partition, reached by a separate, asynchronous propagation step after the base write completes, leaving a window where the GSI has not yet caught up. ^card-yt84
 
+Capacity ownership follows the same split. A GSI has provisioned ^card-e0v2
+throughput settings ==separate== from the base table's, so a GSI whose ^card-l1e0
+capacity is exhausted can throttle its queries — and its writes — while
+the base table is entirely healthy.
+
+An LSI has no separate capacity of its own; it draws on the base table's
+throughput, so indexing this way consumes the table's budget rather than
+a budget you size independently.
+
 > [!card] recall
 > A team needs a new query pattern on a table that already has significant
 > production traffic and cannot tolerate a migration. Explain which

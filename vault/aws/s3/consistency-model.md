@@ -13,9 +13,10 @@ overwriting an object could return stale data to some readers for a
 while. AWS changed the underlying guarantee, and a surprising number of
 architectures and blog posts still assume the old behavior.
 
-S3 now provides ==strong read-after-write consistency== for every ^card-6s48
-operation, including new object PUTs, overwrites of existing objects,
-and DELETEs.
+S3 now provides ==strong read-after-write consistency== for object-level ^card-6s48
+data operations — new PUTs, overwrites, DELETEs, GET, and LIST — though
+bucket-level configuration changes (such as enabling versioning for the
+first time, or deleting the bucket) remain eventually consistent.
 
 Under the model this replaced, a GET issued immediately after a PUT to a
 new key could return a "key not found" response, and readers could see

@@ -15,8 +15,12 @@ policy you're staring at.
 
 A **bucket policy** is attached to the bucket itself and grants or denies
 access to whoever the policy names as a ==principal== — including, ^card-llxv
-unusually for AWS, principals outside your own account, which is what
-makes cross-account and public access possible from a policy alone.
+unusually for AWS, principals outside your own account — public
+(anonymous) access really can be granted by the bucket policy alone,
+since there's no identity policy to consult; cross-account access still
+needs the external account's own identity policy to also grant the
+action, so naming that account in the bucket policy is necessary but not
+sufficient on its own.
 
 An **IAM identity policy**, by contrast, is attached to a user or role
 and describes what that identity can do across services; a request only
@@ -24,11 +28,11 @@ succeeds if neither the identity policy nor the resource-side (bucket)
 policy ==denies== it, and at least one of them grants it. ^card-26l3
 
 > [!card] mcq
-> A bucket policy grants read access to IAM role `App`, and that role's
-> own IAM identity policy has no S3 permissions at all. Can the role
-> read the object?
-> - [x] No — an explicit grant on one side does not substitute for a needed grant on the other side unless the request is cross-account, in which case the resource-side grant alone can suffice
-> - [ ] Yes, a bucket policy grant always overrides the identity's own permissions
+> A bucket policy grants read access to IAM role `App`, a role in the
+> same account as the bucket, and that role's own IAM identity policy
+> has no S3 permissions at all. Can the role read the object?
+> - [x] Yes — for a same-account request, a grant from either side (the identity policy or the bucket policy) is enough as long as neither side has an explicit deny
+> - [ ] No, an identity policy must independently grant the action too, or the request is denied regardless of what the bucket policy says
 > - [ ] Yes, because IAM identity policies only matter for services other than S3
 > - [ ] No — bucket policies can never grant access to IAM roles, only to users ^card-bahd
 

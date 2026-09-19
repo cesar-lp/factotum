@@ -40,10 +40,16 @@ simply never routes that event anywhere.
 Why can one EventBridge event end up invoking several completely different targets, in a way plain SNS fan-out cannot replicate without filter policies on every subscription? :: Because EventBridge evaluates the event's actual structure against each rule's pattern independently, and any number of rules can match the same event — routing is a function of what's inside the event, not of a fixed subscriber list, so adding a new rule that matches existing events doesn't require touching the publisher or any existing subscriber at all. ^card-b8i3
 
 EventBridge's pattern matching can inspect nested fields inside an
-event's `detail` payload, not just top-level metadata like source —
-which is the main structural difference from an SNS filter policy, whose
-matching is aimed at flatter message attributes set at publish time
-rather than an arbitrarily nested event body.
+event's `detail` payload, not just top-level metadata like source. SNS
+filter policies can also match against nested body content when body
+filtering is enabled, so nested-field matching by itself isn't the sharp
+line between the two. The sharper difference is upstream of matching:
+EventBridge is built to receive events that many independent AWS
+services and SaaS partners publish to a shared bus without any of them
+addressing a specific topic, and a rule matches purely against what's
+already in the event — whereas an SNS filter policy only narrows an
+existing, explicit subscription to a topic a publisher chose to send to
+in the first place.
 
 > [!card] recall
 > SNS fan-out and EventBridge rule-based routing both let a single

@@ -39,9 +39,13 @@ outright, even though the rest of the index is untouched.
 Why can't OpenSearch simply move a document from one primary shard to another to rebalance load, the way it moves whole shards between nodes? :: A document's shard assignment is derived by hashing its ID at index time, and that hash-to-shard mapping is fixed by the index's primary shard count; changing which shard a document belongs to would mean rehashing against a different shard count, which is exactly the operation that forces reindexing rather than a cheap rebalance. ^card-asnv
 
 The number of ==primary shards== is set when an index is created and, on ^card-413h
-the current generation of the engine, cannot be changed in place afterward
-— growing or shrinking it requires creating a new index with the desired
-count and reindexing all documents into it.
+the current generation of the engine, cannot be changed in place afterward.
+The actual remedies are all variants of moving to a new index: the `split`
+API increases the count (the source index must be made read-only first,
+and the new count must be a multiple of the old one), the `shrink` API
+decreases it (also from a read-only source), and a full `reindex` into a
+freshly created index with the desired count works for any change,
+including ones split/shrink can't express.
 
 > [!card] recall
 > A team creates an index with a small, fixed primary shard count expecting

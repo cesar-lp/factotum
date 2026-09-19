@@ -47,14 +47,19 @@ attributes to the "A" in ACID.
 
 What DynamoDB transactions do NOT provide, unlike the serializable
 isolation `data-systems/transactions.md` describes as the strongest
-relational isolation level, is a table-wide guarantee covering every
-read and write that touches the table. The atomicity and isolation
-guarantee holds only among the operations named in that one ==transactional ^card-lmwe
-call== — a plain `GetItem` issued concurrently by some unrelated caller is
-not guaranteed to see the transaction's writes as a single indivisible
-unit the way a read made through `TransactGetItems` would.
+relational isolation level, is a guarantee that extends to every kind of
+read against the table. A single `GetItem` (or `PutItem`, `UpdateItem`,
+`DeleteItem`) issued concurrently by an unrelated caller does get
+serializable isolation against a ==transactional ^card-lmwe
+call== — it sees the affected items either wholly before or wholly after
+the transaction, never a partial result. What breaks that guarantee is a
+multi-item read like `Query`, `Scan`, or `BatchGetItem`: each individual
+item it touches is still serializable against the transaction, but the
+operation as a whole is only read-committed, so it can return some items
+from before the transaction and some from after, because it isn't
+executed as one atomic point-in-time snapshot.
 
-Why is it inaccurate to describe DynamoDB transactions as giving the whole table serializable isolation? :: Serializable isolation (as in the relational sense) requires every transaction in the system to be provably equivalent to some serial order; DynamoDB's transaction API guarantees atomicity and isolation only among the items and operations explicitly included in that specific TransactWriteItems/TransactGetItems call, not with respect to every other read or write happening elsewhere in the table at the same time. ^card-r3hy
+Why is it inaccurate to describe DynamoDB transactions as giving the whole table serializable isolation? :: A single standard operation (GetItem, PutItem, UpdateItem, or DeleteItem) elsewhere in the table does get serializable isolation against a concurrent transaction. The gap is at multi-item operations — a Query, Scan, or BatchGetItem/BatchWriteItem is only serializable item-by-item; taken as a whole it gets just read-committed isolation, so it can observe some items from before the transaction and others from after, which a true table-wide serializable guarantee would rule out. ^card-r3hy
 
 > [!card] recall
 > A team assumes that wrapping several related writes in

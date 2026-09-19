@@ -51,6 +51,16 @@ logical entity's traffic across several physical partition key values.
 
 What technique lets a single logical entity's traffic spread across multiple physical partitions when its natural key has too few distinct values? :: Appending a calculated suffix to the natural key — for example a random or hashed value — so requests that would otherwise all target one partition key value are distributed across several, then fanning out reads across those suffixed values and merging the results in the application. ^card-7kpl
 
+DynamoDB does absorb some of this for you. ==Adaptive capacity== is ^card-g1xn
+always on, needs no opt-in, and can shift throughput toward a struggling
+partition — even isolating a single very hot item onto a partition of its
+own.
+
+It is not a substitute for key design, though: it can only lift a
+partition up to the per-partition ceiling, so an access pattern that
+concentrates hard enough on one key value still throttles. Treat it as
+headroom that buys time, not as a fix.
+
 > [!card] recall
 > `data-systems/partitioning.md` notes that key-range partitioning risks
 > hot spots from sequential keys while hash partitioning avoids that

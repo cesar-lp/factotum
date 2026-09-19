@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-19T21:11:14.681Z",
+  "generatedAt": "2026-09-19T21:18:32.600Z",
   "cards": [
     {
       "id": "card-6fmp",
@@ -2462,6 +2462,27 @@
       "answer": "Appending a calculated suffix to the natural key — for example a random or hashed value — so requests that would otherwise all target one partition key value are distributed across several, then fanning out reads across those suffixed values and merging the results in the application."
     },
     {
+      "id": "card-g1xn",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-dynamodb",
+      "tags": [
+        "dynamodb",
+        "partitioning",
+        "hot-partition",
+        "key-design"
+      ],
+      "prompt": "DynamoDB does absorb some of this for you. ___ is always on, needs no opt-in, and can shift throughput toward a struggling partition — even isolating a single very hot item onto a partition of its own.",
+      "source": {
+        "path": "vault/aws/dynamodb/partitioning-and-hot-keys.md",
+        "block": "card-g1xn"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon DynamoDB, 'Partitions and data distribution'"
+      ],
+      "answer": "Adaptive capacity"
+    },
+    {
       "id": "card-z8t6",
       "format": "recall",
       "topic": "aws",
@@ -2799,6 +2820,28 @@
         "AWS Developer Guide — Amazon DynamoDB, 'Improving data access with secondary indexes'"
       ],
       "answer": "An LSI shares its partition with the base item, so both are updated together in the same write; a GSI's entry generally lives on a different partition, reached by a separate, asynchronous propagation step after the base write completes, leaving a window where the GSI has not yet caught up."
+    },
+    {
+      "id": "card-l1e0",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-dynamodb",
+      "tags": [
+        "dynamodb",
+        "gsi",
+        "lsi",
+        "secondary-index",
+        "projections"
+      ],
+      "prompt": "Capacity ownership follows the same split. A GSI has provisioned throughput settings ___ from the base table's, so a GSI whose capacity is exhausted can throttle its queries — and its writes — while the base table is entirely healthy.",
+      "source": {
+        "path": "vault/aws/dynamodb/secondary-indexes.md",
+        "block": "card-l1e0"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon DynamoDB, 'Improving data access with secondary indexes'"
+      ],
+      "answer": "separate"
     },
     {
       "id": "card-hhkd",
@@ -3259,7 +3302,7 @@
         "conditional-writes",
         "optimistic-concurrency"
       ],
-      "prompt": "What DynamoDB transactions do NOT provide, unlike the serializable isolation `data-systems/transactions.md` describes as the strongest relational isolation level, is a table-wide guarantee covering every read and write that touches the table. The atomicity and isolation guarantee holds only among the operations named in that one ___ — a plain `GetItem` issued concurrently by some unrelated caller is not guaranteed to see the transaction's writes as a single indivisible unit the way a read made through `TransactGetItems` would.",
+      "prompt": "What DynamoDB transactions do NOT provide, unlike the serializable isolation `data-systems/transactions.md` describes as the strongest relational isolation level, is a guarantee that extends to every kind of read against the table. A single `GetItem` (or `PutItem`, `UpdateItem`, `DeleteItem`) issued concurrently by an unrelated caller does get serializable isolation against a ___ — it sees the affected items either wholly before or wholly after the transaction, never a partial result. What breaks that guarantee is a multi-item read like `Query`, `Scan`, or `BatchGetItem`: each individual item it touches is still serializable against the transaction, but the operation as a whole is only read-committed, so it can return some items from before the transaction and some from after, because it isn't executed as one atomic point-in-time snapshot.",
       "source": {
         "path": "vault/aws/dynamodb/transactions-and-conditional-writes.md",
         "block": "card-lmwe"
@@ -3288,7 +3331,7 @@
       "citations": [
         "AWS Developer Guide — Amazon DynamoDB, 'Managing complex workflows with transactions'"
       ],
-      "answer": "Serializable isolation (as in the relational sense) requires every transaction in the system to be provably equivalent to some serial order; DynamoDB's transaction API guarantees atomicity and isolation only among the items and operations explicitly included in that specific TransactWriteItems/TransactGetItems call, not with respect to every other read or write happening elsewhere in the table at the same time."
+      "answer": "A single standard operation (GetItem, PutItem, UpdateItem, or DeleteItem) elsewhere in the table does get serializable isolation against a concurrent transaction. The gap is at multi-item operations — a Query, Scan, or BatchGetItem/BatchWriteItem is only serializable item-by-item; taken as a whole it gets just read-committed isolation, so it can observe some items from before the transaction and others from after, which a true table-wide serializable guarantee would rule out."
     },
     {
       "id": "card-tumx",
@@ -6096,7 +6139,7 @@
         "deduplication",
         "throughput"
       ],
-      "prompt": "A **FIFO queue** preserves order and deduplicates sends, but only within a ___ — a set of related messages sharing one `MessageGroupId`. Order is guaranteed within a group, but messages belonging to different groups can still be delivered interleaved with each other, so a FIFO queue's ordering guarantee is per-group, not queue-wide.",
+      "prompt": "A **FIFO queue** preserves order, but only within a ___ — a set of related messages sharing one `MessageGroupId`. Order is guaranteed within a group, but messages belonging to different groups can still be delivered interleaved with each other, so a FIFO queue's ordering guarantee is per-group, not queue-wide.",
       "source": {
         "path": "vault/aws/messaging/standard-vs-fifo-queues.md",
         "block": "card-8q1s"
@@ -6223,7 +6266,7 @@
           "correct": false
         },
         {
-          "text": "Deduplication applies queue-wide regardless of message group",
+          "text": "Deduplication only suppresses a duplicate within the same message group; a duplicate sent under a different MessageGroupId is delivered as a new message",
           "correct": false
         }
       ]
@@ -6938,7 +6981,7 @@
         "cluster-model",
         "sharding"
       ],
-      "prompt": "The number of ___ is set when an index is created and, on the current generation of the engine, cannot be changed in place afterward — growing or shrinking it requires creating a new index with the desired count and reindexing all documents into it.",
+      "prompt": "The number of ___ is set when an index is created and, on the current generation of the engine, cannot be changed in place afterward. The actual remedies are all variants of moving to a new index: the `split` API increases the count (the source index must be made read-only first, and the new count must be a multiple of the old one), the `shrink` API decreases it (also from a read-only source), and a full `reindex` into a freshly created index with the desired count works for any change, including ones split/shrink can't express.",
       "source": {
         "path": "vault/aws/opensearch/index-shard-and-cluster-model.md",
         "block": "card-413h"
@@ -9321,7 +9364,7 @@
         "bucket-policy",
         "presigned-url"
       ],
-      "prompt": "A **bucket policy** is attached to the bucket itself and grants or denies access to whoever the policy names as a ___ — including, unusually for AWS, principals outside your own account, which is what makes cross-account and public access possible from a policy alone.",
+      "prompt": "A **bucket policy** is attached to the bucket itself and grants or denies access to whoever the policy names as a ___ — including, unusually for AWS, principals outside your own account — public (anonymous) access really can be granted by the bucket policy alone, since there's no identity policy to consult; cross-account access still needs the external account's own identity policy to also grant the action, so naming that account in the bucket policy is necessary but not sufficient on its own.",
       "source": {
         "path": "vault/aws/s3/access-control-and-presigned-urls.md",
         "block": "card-llxv"
@@ -9363,7 +9406,7 @@
         "bucket-policy",
         "presigned-url"
       ],
-      "prompt": "A bucket policy grants read access to IAM role `App`, and that role's own IAM identity policy has no S3 permissions at all. Can the role read the object?",
+      "prompt": "A bucket policy grants read access to IAM role `App`, a role in the same account as the bucket, and that role's own IAM identity policy has no S3 permissions at all. Can the role read the object?",
       "source": {
         "path": "vault/aws/s3/access-control-and-presigned-urls.md",
         "block": "card-bahd"
@@ -9373,11 +9416,11 @@
       ],
       "choices": [
         {
-          "text": "No — an explicit grant on one side does not substitute for a needed grant on the other side unless the request is cross-account, in which case the resource-side grant alone can suffice",
+          "text": "Yes — for a same-account request, a grant from either side (the identity policy or the bucket policy) is enough as long as neither side has an explicit deny",
           "correct": true
         },
         {
-          "text": "Yes, a bucket policy grant always overrides the identity's own permissions",
+          "text": "No, an identity policy must independently grant the action too, or the request is denied regardless of what the bucket policy says",
           "correct": false
         },
         {
@@ -9526,7 +9569,7 @@
         "linearizability",
         "eventual-consistency"
       ],
-      "prompt": "S3 now provides ___ for every operation, including new object PUTs, overwrites of existing objects, and DELETEs.",
+      "prompt": "S3 now provides ___ for object-level data operations — new PUTs, overwrites, DELETEs, GET, and LIST — though bucket-level configuration changes (such as enabling versioning for the first time, or deleting the bucket) remain eventually consistent.",
       "source": {
         "path": "vault/aws/s3/consistency-model.md",
         "block": "card-6s48"

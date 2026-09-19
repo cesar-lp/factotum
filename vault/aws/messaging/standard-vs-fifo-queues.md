@@ -18,12 +18,18 @@ deduplicate: the same logical send can occasionally show up as more than
 one message, on top of the at-least-once redelivery every SQS queue
 already has from visibility timeout expiry.
 
-A **FIFO queue** preserves order and deduplicates sends, but only within
-a ==message group== — a set of related messages sharing one ^card-8q1s
-`MessageGroupId`. Order is guaranteed within a group, but messages
-belonging to different groups can still be delivered interleaved with
-each other, so a FIFO queue's ordering guarantee is per-group, not
-queue-wide.
+A **FIFO queue** preserves order, but only within a ==message group== — ^card-8q1s
+a set of related messages sharing one `MessageGroupId`. Order is
+guaranteed within a group, but messages belonging to different groups
+can still be delivered interleaved with each other, so a FIFO queue's
+ordering guarantee is per-group, not queue-wide.
+
+Deduplication is scoped differently from ordering: by default SQS
+deduplicates against the whole queue, not per group, so a duplicate send
+is suppressed even if it carries a different `MessageGroupId`. A queue
+can opt into deduplicating only within each message group as part of
+enabling FIFO high-throughput mode, but that is a separate, explicit
+setting — not FIFO's default behavior.
 
 > [!card] mcq
 > A FIFO queue receives messages from two different `MessageGroupId`
@@ -54,7 +60,7 @@ it will still see that message again, exactly as in a Standard queue.
 > - [x] It suppresses duplicate enqueues from resends within the deduplication window; it does not prevent a consumer from ever receiving the same message twice if its own visibility timeout lapses
 > - [ ] A message can never be delivered to a consumer more than once, under any circumstance
 > - [ ] The consumer is exempt from needing to call DeleteMessage
-> - [ ] Deduplication applies queue-wide regardless of message group ^card-31ja
+> - [ ] Deduplication only suppresses a duplicate within the same message group; a duplicate sent under a different MessageGroupId is delivered as a new message ^card-31ja
 
 Why would an application deliberately give every message the same `MessageGroupId`, even though that serializes all processing to effectively one consumer at a time? :: Because ordering is only guaranteed within a group — if the application's correctness depends on strict global order across all its messages, a single group is the only way to get that, accepting the throughput cost as the price of the guarantee. ^card-ie9s
 

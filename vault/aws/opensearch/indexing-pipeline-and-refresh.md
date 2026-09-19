@@ -24,6 +24,12 @@ A ==refresh== periodically writes the in-memory buffer's contents into a ^card-f
 new, immutable Lucene segment and opens that segment for search, which is
 what actually makes recently indexed documents show up in query results.
 
+That operation is not the same as a **flush**: a flush is what fsyncs
+segments to disk and clears the translog entries they made redundant,
+while making a segment searchable can happen without any fsync at all —
+durability in that window still comes from the translog, not from the
+newly opened segment itself.
+
 > [!card] mcq
 > Why is OpenSearch described as "near-real-time" rather than real-time
 > search?
