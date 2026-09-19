@@ -16,9 +16,9 @@ An access network is the link that physically connects an end system to the
 first router on its path, sometimes called the ==edge router==. Common ^card-ftnu
 examples include DSL, cable, fiber-to-the-home, and cellular.
 
-Circuit switching :: A network reserves a fixed slice of link capacity (a circuit) for the entire duration of a connection, whether or not data is being sent. ^card-g80b
+In circuit switching, for how long is a connection's link capacity reserved, and does that depend on whether data is actually flowing? :: A network reserves a fixed slice of link capacity (a circuit) for the entire duration of a connection, whether or not data is being sent. ^card-g80b
 
-Packet switching :: Data is split into packets that share link bandwidth on demand, each queued and forwarded independently based on store-and-forward transmission. ^card-49sc
+In packet switching, how do packets share a link's bandwidth, and how is each one forwarded? :: Data is split into packets that share link bandwidth on demand, each queued and forwarded independently based on store-and-forward transmission. ^card-49sc
 
 Packet switching is more efficient for bursty traffic than circuit switching because unused capacity during silent periods can ==be given to other flows== instead of sitting idle. ^card-cml7
 

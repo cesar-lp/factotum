@@ -23,7 +23,7 @@ using a mask; ==CIDR== notation (e.g. `/24`) expresses how many leading bits ^ca
 belong to the network portion, letting routers aggregate many addresses
 under one routing table entry.
 
-NAT (Network Address Translation) :: A NAT-enabled router rewrites the source IP and port of outgoing packets from a private address to its own public address and a chosen port, keeping a translation table so replies can be routed back to the correct internal host. ^card-s1qp
+What does a NAT-enabled router rewrite in an outgoing packet, and what lets it route the reply back to the right internal host? :: A NAT-enabled router rewrites the source IP and port of outgoing packets from a private address to its own public address and a chosen port, keeping a translation table so replies can be routed back to the correct internal host. ^card-s1qp
 
 Why can NAT make it difficult for two hosts behind separate NATs to establish a direct peer-to-peer connection? :: Neither host has a public address that the other can dial directly; a connection has to be initiated from inside each NAT (or use techniques like hole punching or a relay) because an unsolicited inbound packet has no translation table entry to match against. ^card-7yxi
 
