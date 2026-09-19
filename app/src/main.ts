@@ -11,14 +11,23 @@ import type { Deck } from '../../pipeline/src/types.js';
 const root = document.querySelector<HTMLElement>('#app');
 if (!root) throw new Error('#app missing');
 
-async function syncDeck(db: FactotumDb): Promise<void> {
+/**
+ * Fetches and merges the deck. Never throws: a failed fetch/parse is a
+ * normal offline condition, and the previously merged deck in IndexedDB
+ * (if any) stays authoritative. Returns whether the sync succeeded so the
+ * caller can tell a genuine "no deck ever loaded" state apart from a
+ * merely stale-but-present cached deck.
+ */
+async function syncDeck(db: FactotumDb): Promise<boolean> {
   try {
     const response = await fetch('./deck.json', { cache: 'no-cache' });
-    if (!response.ok) return;
+    if (!response.ok) return false;
     const deck = (await response.json()) as Deck;
     await mergeDeck(db, deck);
+    return true;
   } catch {
     // Offline: the previously merged deck in IndexedDB is authoritative.
+    return false;
   }
 }
 
@@ -44,11 +53,14 @@ async function boot(): Promise<void> {
   const settings = await getSettings(db);
   if (settings.theme !== 'auto') document.documentElement.dataset['theme'] = settings.theme;
 
-  await syncDeck(db);
+  const syncOk = await syncDeck(db);
+  const cardCount = await db.count('cards');
   const session = await currentSession(db, new Date());
+  const deckUnavailable = cardCount === 0 && !syncOk;
 
   renderDashboard(root!, {
     dueCount: session.length,
+    deckUnavailable,
     onStart: () => { window.location.hash = '#review'; },
     onSettings: () => { window.location.hash = '#settings'; }
   });

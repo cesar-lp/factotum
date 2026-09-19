@@ -16,13 +16,20 @@ body {
 .due-count { font-size: 56px; font-weight: 600; line-height: 1; }
 .spacer { flex: 1; }
 
-.btn {
-  display: block; width: 100%; padding: 16px; border: 0; border-radius: 12px;
-  background: var(--accent); color: var(--on-accent); font-size: 17px; font-weight: 600;
+.btn, .btn-quiet {
+  border: 0;
   cursor: pointer;
 }
+
+.btn {
+  display: block; width: 100%; padding: 16px; border-radius: 12px;
+  background: var(--accent); color: var(--on-accent); font-size: 17px; font-weight: 600;
+}
 .btn:disabled { opacity: 0.5; }
-.btn-quiet { background: transparent; color: var(--dim); font-weight: 400; font-size: 14px; }
+.btn-quiet {
+  background: transparent; color: var(--dim); font-weight: 400; font-size: 14px;
+  padding: 12px 4px; border-radius: 8px; min-height: 44px;
+}
 
 .chip {
   display: inline-block; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
