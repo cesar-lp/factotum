@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-19T17:06:53.850Z",
+  "generatedAt": "2026-09-19T17:13:13.646Z",
   "cards": [
     {
       "id": "card-rb57",
@@ -9281,6 +9281,27 @@
       "answer": "The TLB (translation lookaside buffer), a small hardware cache of recently used virtual-to-physical page translations sitting inside (or next to) the CPU; a TLB hit supplies the frame number in one cycle, skipping the memory access to the page table entirely."
     },
     {
+      "id": "card-2h1g",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "paging",
+        "page-tables",
+        "tlb",
+        "address-translation"
+      ],
+      "prompt": "Who refills a TLB entry after a miss on a software-managed TLB, and how?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/paging-and-tlbs.md",
+        "block": "card-2h1g"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 18 (Paging: Introduction)",
+        "Arpaci-Dusseau, OSTEP, Ch. 19 (Paging: Faster Translations (TLBs))"
+      ],
+      "answer": "The OS does: the hardware traps into a miss handler, which walks the OS's own page-table structure and installs the new translation using privileged instructions, then the faulting instruction is retried."
+    },
+    {
       "id": "card-ttzh",
       "format": "qa",
       "category": "os-virtualization",
@@ -9773,7 +9794,7 @@
         "turnaround-time",
         "response-time"
       ],
-      "prompt": "STCF optimizes for turnaround time but is bad for ___ under a mix of short and long jobs, because a long job that is not yet finished can still be picked over a job that has been waiting a while, if a still-shorter job keeps arriving.",
+      "prompt": "STCF optimizes for turnaround time but is bad for ___ under a steady stream of arrivals, because it always favors whichever job has the least remaining time — so a job still waiting for its first turn can keep getting bumped by newer, shorter jobs. Its response time balloons, and it can starve outright, even while STCF's average turnaround time looks excellent.",
       "source": {
         "path": "vault/operating-systems/virtualization/scheduling-basics.md",
         "block": "card-terk"

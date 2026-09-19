@@ -33,6 +33,18 @@ stored in memory) to find the frame number, then access the actual data
 
 What hardware structure avoids a full page-table walk on every memory access? :: The TLB (translation lookaside buffer), a small hardware cache of recently used virtual-to-physical page translations sitting inside (or next to) the CPU; a TLB hit supplies the frame number in one cycle, skipping the memory access to the page table entirely. ^card-f9rs
 
+Who refills the TLB on a miss depends on the design. A hardware-managed
+TLB has the CPU's own memory-management unit walk the page table and
+install the new entry itself, entirely without OS involvement — fast,
+but only workable if the hardware is built to understand the page
+table's exact format. A software-managed TLB instead traps to the OS on
+a miss; the OS walks whatever page-table structure it chooses and
+installs the entry with privileged instructions before retrying. This
+is slower per miss, but frees the OS to use any page-table layout it
+likes, since the hardware never has to parse it.
+
+Who refills a TLB entry after a miss on a software-managed TLB, and how? :: The OS does: the hardware traps into a miss handler, which walks the OS's own page-table structure and installs the new translation using privileged instructions, then the faulting instruction is retried. ^card-2h1g
+
 TLB performance depends heavily on locality: programs that repeatedly
 touch a small set of pages (temporal locality) or access nearby
 addresses in sequence (spatial locality) get high TLB hit rates, while
