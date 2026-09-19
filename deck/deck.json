@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-19T18:33:06.558Z",
+  "generatedAt": "2026-09-19T18:53:59.559Z",
   "cards": [
     {
       "id": "card-rb57",
@@ -6732,7 +6732,7 @@
         "journaling",
         "write-ahead-logging"
       ],
-      "prompt": "Journaling comes in two common flavors. ___ writes both a block's content and its metadata to the journal before writing them again to their home locations, doubling I/O for every changed block but protecting file content itself against a crash. Metadata-only journaling (also called ordered journaling) logs only metadata, writing data blocks directly to their home locations once, before the commit record — much cheaper, at the cost of a smaller window where a crash can leave stale (but not corrupt) data behind a valid pointer.",
+      "prompt": "Journaling comes in two common flavors. ___ writes both a block's content and its metadata to the journal before writing them again to their home locations, doubling I/O for every changed block but protecting file content itself against a crash. Metadata-only journaling logs only metadata, writing data blocks directly to their home locations once, before the commit record — much cheaper, at the cost of a smaller window where a crash can leave stale (but not corrupt) data behind a valid pointer.",
       "source": {
         "path": "vault/operating-systems/persistence/crash-consistency-fsck-and-journaling.md",
         "block": "card-zosc"
@@ -6752,7 +6752,7 @@
         "journaling",
         "write-ahead-logging"
       ],
-      "prompt": "Journaling comes in two common flavors. Data journaling writes both a block's content and its metadata to the journal before writing them again to their home locations, doubling I/O for every changed block but protecting file content itself against a crash. ___ (also called ordered journaling) logs only metadata, writing data blocks directly to their home locations once, before the commit record — much cheaper, at the cost of a smaller window where a crash can leave stale (but not corrupt) data behind a valid pointer.",
+      "prompt": "Journaling comes in two common flavors. Data journaling writes both a block's content and its metadata to the journal before writing them again to their home locations, doubling I/O for every changed block but protecting file content itself against a crash. ___ logs only metadata, writing data blocks directly to their home locations once, before the commit record — much cheaper, at the cost of a smaller window where a crash can leave stale (but not corrupt) data behind a valid pointer.",
       "source": {
         "path": "vault/operating-systems/persistence/crash-consistency-fsck-and-journaling.md",
         "block": "card-jjel"
