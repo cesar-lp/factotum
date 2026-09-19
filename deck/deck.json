@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-19T16:47:52.565Z",
+  "generatedAt": "2026-09-19T16:56:36.296Z",
   "cards": [
     {
       "id": "card-rb57",
@@ -5197,6 +5197,1410 @@
       "citations": [
         "Kurose & Ross, Computer Networking 8e, Ch. 3.1-3.3",
         "RFC 768"
+      ]
+    },
+    {
+      "id": "card-94ci",
+      "format": "cloze",
+      "category": "os-concurrency",
+      "tags": [
+        "concurrency-bugs",
+        "atomicity-violation",
+        "order-violation",
+        "debugging"
+      ],
+      "prompt": "An ___ happens when a sequence of memory accesses that was intended to be treated as one indivisible unit is instead interrupted by another thread partway through, because no lock (or the wrong lock) protects the whole sequence.",
+      "source": {
+        "path": "vault/operating-systems/concurrency/common-concurrency-bugs.md",
+        "block": "card-94ci"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 32 (Concurrency Bugs)"
+      ],
+      "answer": "atomicity violation"
+    },
+    {
+      "id": "card-gsy8",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "concurrency-bugs",
+        "atomicity-violation",
+        "order-violation",
+        "debugging"
+      ],
+      "prompt": "Why does checking a pointer for NULL, then using it separately, risk an atomicity violation?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/common-concurrency-bugs.md",
+        "block": "card-gsy8"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 32 (Concurrency Bugs)"
+      ],
+      "answer": "Another thread can run between the check and the use and change or clear the pointer, so the use no longer sees the value the check verified — the check and use needed to be one atomic, lock-protected unit but were not."
+    },
+    {
+      "id": "card-dkba",
+      "format": "cloze",
+      "category": "os-concurrency",
+      "tags": [
+        "concurrency-bugs",
+        "atomicity-violation",
+        "order-violation",
+        "debugging"
+      ],
+      "prompt": "An ___ happens when code assumes a particular happens before relationship between two pieces of code in different threads — for example, that some setup thread always initializes a value before a second thread reads it — but nothing actually enforces that ordering, so the second thread can run first.",
+      "source": {
+        "path": "vault/operating-systems/concurrency/common-concurrency-bugs.md",
+        "block": "card-dkba"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 32 (Concurrency Bugs)"
+      ],
+      "answer": "order violation"
+    },
+    {
+      "id": "card-nllm",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "concurrency-bugs",
+        "atomicity-violation",
+        "order-violation",
+        "debugging"
+      ],
+      "prompt": "Why can't an unsynchronized boolean flag reliably make thread B wait for thread A to finish?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/common-concurrency-bugs.md",
+        "block": "card-nllm"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 32 (Concurrency Bugs)"
+      ],
+      "answer": "An unsynchronized flag read/write is itself subject to reordering and to the reader simply checking before the writer runs, so nothing guarantees B observes the flag's final value at the right time; a condition variable or similarly synchronized primitive is needed to make the ordering itself an enforced fact, not an assumption."
+    },
+    {
+      "id": "card-f10t",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "concurrency-bugs",
+        "atomicity-violation",
+        "order-violation",
+        "debugging"
+      ],
+      "prompt": "Which fix distinguishes an order violation from an atomicity violation?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/common-concurrency-bugs.md",
+        "block": "card-f10t"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 32 (Concurrency Bugs)"
+      ],
+      "answer": "An atomicity violation is fixed by making a sequence of accesses exclusive (a lock); an order violation is fixed by making one thread's action wait for another thread's prior action (a condition variable or ordering semaphore) — exclusion alone does not force a particular order between two threads."
+    },
+    {
+      "id": "card-p6pj",
+      "format": "mcq",
+      "category": "os-concurrency",
+      "tags": [
+        "concurrency-bugs",
+        "atomicity-violation",
+        "order-violation",
+        "debugging"
+      ],
+      "prompt": "A thread checks `if (ptr != NULL)` and then dereferences `ptr` two lines later, with no lock held across both steps, while another thread can set `ptr = NULL`. What category of bug is this?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/common-concurrency-bugs.md",
+        "block": "card-p6pj"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 32 (Concurrency Bugs)"
+      ],
+      "choices": [
+        {
+          "text": "Atomicity violation",
+          "correct": true
+        },
+        {
+          "text": "Order violation",
+          "correct": false
+        },
+        {
+          "text": "Deadlock",
+          "correct": false
+        },
+        {
+          "text": "Starvation",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-zuuj",
+      "format": "recall",
+      "category": "os-concurrency",
+      "tags": [
+        "concurrency-bugs",
+        "atomicity-violation",
+        "order-violation",
+        "debugging"
+      ],
+      "prompt": "Explain why simply adding one lock around each individual access (the check, and separately the use) does NOT fix the atomicity-violation example above, even though each access is now individually protected.",
+      "source": {
+        "path": "vault/operating-systems/concurrency/common-concurrency-bugs.md",
+        "block": "card-zuuj"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 32 (Concurrency Bugs)"
+      ]
+    },
+    {
+      "id": "card-z1pd",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "performance",
+        "scalability",
+        "lock-contention",
+        "amdahls-law"
+      ],
+      "prompt": "Why does even a small serial (locked) fraction cap a program's speedup as cores are added?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/concurrency-performance.md",
+        "block": "card-z1pd"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 29 (Lock-based Concurrent Data Structures)",
+        "Arpaci-Dusseau, OSTEP, Ch. 28 (Locks)"
+      ],
+      "answer": "The serial fraction cannot be parallelized regardless of core count, so as cores increase, the parallel portion's time shrinks toward zero while the fixed serial portion's time stays constant, and total runtime approaches a floor set entirely by that serial fraction — this is the intuition behind Amdahl's Law."
+    },
+    {
+      "id": "card-0yx4",
+      "format": "cloze",
+      "category": "os-concurrency",
+      "tags": [
+        "performance",
+        "scalability",
+        "lock-contention",
+        "amdahls-law"
+      ],
+      "prompt": "___ is what happens when multiple threads frequently try to acquire the same lock at the same time; heavy contention means most of the waiting threads' time goes to blocking or spinning rather than useful work, and adding threads under high contention for one lock can make things worse instead of better.",
+      "source": {
+        "path": "vault/operating-systems/concurrency/concurrency-performance.md",
+        "block": "card-0yx4"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 29 (Lock-based Concurrent Data Structures)",
+        "Arpaci-Dusseau, OSTEP, Ch. 28 (Locks)"
+      ],
+      "answer": "Lock contention"
+    },
+    {
+      "id": "card-qjw6",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "performance",
+        "scalability",
+        "lock-contention",
+        "amdahls-law"
+      ],
+      "prompt": "Why doesn't finer-grained locking (many small locks instead of one big one) come for free?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/concurrency-performance.md",
+        "block": "card-qjw6"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 29 (Lock-based Concurrent Data Structures)",
+        "Arpaci-Dusseau, OSTEP, Ch. 28 (Locks)"
+      ],
+      "answer": "Each additional lock adds its own acquire/release overhead on every operation, and correctness gets harder to reason about (e.g. avoiding deadlock across multiple locks now matters), so finer-grained locking is a deliberate trade of extra per-operation cost and complexity for reduced contention — worthwhile only when contention was actually the bottleneck."
+    },
+    {
+      "id": "card-o2rg",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "performance",
+        "scalability",
+        "lock-contention",
+        "amdahls-law"
+      ],
+      "prompt": "Why can more threads hurt throughput against one already-saturated shared resource, like a disk?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/concurrency-performance.md",
+        "block": "card-o2rg"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 29 (Lock-based Concurrent Data Structures)",
+        "Arpaci-Dusseau, OSTEP, Ch. 28 (Locks)"
+      ],
+      "answer": "When the resource itself, not the CPU-side critical section, is the bottleneck, extra threads just add queuing and coordination overhead in front of a resource that cannot serve requests any faster, so throughput plateaus or falls while latency for each request climbs."
+    },
+    {
+      "id": "card-ydip",
+      "format": "mcq",
+      "category": "os-concurrency",
+      "tags": [
+        "performance",
+        "scalability",
+        "lock-contention",
+        "amdahls-law"
+      ],
+      "prompt": "A program spends 20% of its total work in an unavoidable serial critical section and 80% in perfectly parallelizable work. What best describes its scalability?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/concurrency-performance.md",
+        "block": "card-ydip"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 29 (Lock-based Concurrent Data Structures)",
+        "Arpaci-Dusseau, OSTEP, Ch. 28 (Locks)"
+      ],
+      "choices": [
+        {
+          "text": "Speedup is bounded well below the number of cores added, because the 20% serial portion cannot shrink",
+          "correct": true
+        },
+        {
+          "text": "Speedup scales linearly with the number of cores with no ceiling",
+          "correct": false
+        },
+        {
+          "text": "The program cannot run correctly with more than one thread",
+          "correct": false
+        },
+        {
+          "text": "Adding cores always reduces the serial portion's absolute time as well",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-2rb2",
+      "format": "recall",
+      "category": "os-concurrency",
+      "tags": [
+        "performance",
+        "scalability",
+        "lock-contention",
+        "amdahls-law"
+      ],
+      "prompt": "Explain why measuring lock contention (not just correctness) matters when choosing between a single coarse lock and a finer-grained locking scheme, and what evidence would tell you the coarse lock is actually the bottleneck.",
+      "source": {
+        "path": "vault/operating-systems/concurrency/concurrency-performance.md",
+        "block": "card-2rb2"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 29 (Lock-based Concurrent Data Structures)",
+        "Arpaci-Dusseau, OSTEP, Ch. 28 (Locks)"
+      ]
+    },
+    {
+      "id": "card-bjep",
+      "format": "cloze",
+      "category": "os-concurrency",
+      "tags": [
+        "condition-variables",
+        "synchronization",
+        "producer-consumer",
+        "locks"
+      ],
+      "prompt": "`pthread_cond_wait(cond, mutex)` requires the caller to already hold `mutex`. Its critical behavior: it ___, so no other thread can slip in and change the shared state in the gap between \"release the lock\" and \"start sleeping.\" When the thread is later woken, `wait` re-acquires the mutex before returning, so the caller resumes still holding the lock it started with.",
+      "source": {
+        "path": "vault/operating-systems/concurrency/condition-variables.md",
+        "block": "card-bjep"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 30 (Condition Variables)"
+      ],
+      "answer": "atomically releases the mutex and puts the calling thread to sleep"
+    },
+    {
+      "id": "card-48we",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "condition-variables",
+        "synchronization",
+        "producer-consumer",
+        "locks"
+      ],
+      "prompt": "Why must wait() release the mutex and sleep as one atomic step, not two separate calls?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/condition-variables.md",
+        "block": "card-48we"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 30 (Condition Variables)"
+      ],
+      "answer": "If a thread unlocked and then slept as two separate steps, another thread could run in the gap between them, change the shared state, and call signal before the first thread was actually asleep to receive it — the wakeup would be lost and the sleeping thread could wait forever."
+    },
+    {
+      "id": "card-10rs",
+      "format": "cloze",
+      "category": "os-concurrency",
+      "tags": [
+        "condition-variables",
+        "synchronization",
+        "producer-consumer",
+        "locks"
+      ],
+      "prompt": "Every wait must be guarded by a ___ loop re-checking the condition, never a bare `if`, because a thread that wakes from wait is not guaranteed the condition it cared about still holds: another thread may have run first (Mesa-style semantics let that happen) and already consumed whatever changed, or the platform may deliver spurious wakeups.",
+      "source": {
+        "path": "vault/operating-systems/concurrency/condition-variables.md",
+        "block": "card-10rs"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 30 (Condition Variables)"
+      ],
+      "answer": "while"
+    },
+    {
+      "id": "card-orsq",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "condition-variables",
+        "synchronization",
+        "producer-consumer",
+        "locks"
+      ],
+      "prompt": "Why guard every condition-variable wait with `while`, never a bare `if`?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/condition-variables.md",
+        "block": "card-orsq"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 30 (Condition Variables)"
+      ],
+      "answer": "Because between a thread being woken and actually running, some other thread can grab the lock first and re-invalidate the condition (or the wakeup can be spurious), so the condition must be re-tested after wait returns, not just once before sleeping."
+    },
+    {
+      "id": "card-23ws",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "condition-variables",
+        "synchronization",
+        "producer-consumer",
+        "locks"
+      ],
+      "prompt": "What real problem does a condition variable solve that a lock by itself cannot?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/condition-variables.md",
+        "block": "card-23ws"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 30 (Condition Variables)"
+      ],
+      "answer": "A lock only guarantees exclusive access to a critical section; a condition variable additionally lets a thread sleep, without wasting CPU, until some other thread's action makes a specific state true, then be woken to recheck it."
+    },
+    {
+      "id": "card-ts29",
+      "format": "mcq",
+      "category": "os-concurrency",
+      "tags": [
+        "condition-variables",
+        "synchronization",
+        "producer-consumer",
+        "locks"
+      ],
+      "prompt": "Thread A calls `pthread_cond_wait(&cv, &m)` while holding `m`. What happens to `m` for the duration that A is actually asleep?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/condition-variables.md",
+        "block": "card-ts29"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 30 (Condition Variables)"
+      ],
+      "choices": [
+        {
+          "text": "`m` is unlocked, so other threads may acquire it and change shared state",
+          "correct": true
+        },
+        {
+          "text": "`m` stays locked by A until A is woken and wait() returns",
+          "correct": false
+        },
+        {
+          "text": "`m` is destroyed and must be re-initialized before use",
+          "correct": false
+        },
+        {
+          "text": "`m` is transferred to whichever thread calls signal() next",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-zlrj",
+      "format": "recall",
+      "category": "os-concurrency",
+      "tags": [
+        "condition-variables",
+        "synchronization",
+        "producer-consumer",
+        "locks"
+      ],
+      "prompt": "Explain, in terms of the mutex, exactly what makes `pthread_cond_wait` different from simply calling `pthread_mutex_unlock` followed by some separate sleep call — why does the atomicity of \"release and sleep\" matter for correctness?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/condition-variables.md",
+        "block": "card-zlrj"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 30 (Condition Variables)"
+      ]
+    },
+    {
+      "id": "card-ypoe",
+      "format": "cloze",
+      "category": "os-concurrency",
+      "tags": [
+        "deadlock",
+        "resource-allocation",
+        "prevention",
+        "avoidance"
+      ],
+      "prompt": "Four conditions are ___ for deadlock: mutual exclusion (a resource can be held by only one thread at a time), hold-and-wait (a thread holds one resource while waiting for another), no preemption (a resource cannot be forcibly taken from the thread holding it), and circular wait (a cycle of threads, each waiting on a resource the next one in the cycle holds).",
+      "source": {
+        "path": "vault/operating-systems/concurrency/deadlock.md",
+        "block": "card-ypoe"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 32 (Concurrency Bugs)"
+      ],
+      "answer": "jointly necessary"
+    },
+    {
+      "id": "card-zl35",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "deadlock",
+        "resource-allocation",
+        "prevention",
+        "avoidance"
+      ],
+      "prompt": "Why is it wrong to say any single one of the four conditions \"causes\" deadlock on its own?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/deadlock.md",
+        "block": "card-zl35"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 32 (Concurrency Bugs)"
+      ],
+      "answer": "The four conditions are jointly necessary, not individually sufficient — deadlock requires all four to hold at once, so a system with mutual exclusion, hold-and-wait, and no preemption but no circular dependency chain among the specific threads involved will still not deadlock; breaking just one of the four is enough to rule deadlock out."
+    },
+    {
+      "id": "card-sljt",
+      "format": "cloze",
+      "category": "os-concurrency",
+      "tags": [
+        "deadlock",
+        "resource-allocation",
+        "prevention",
+        "avoidance"
+      ],
+      "prompt": "Prevention attacks one condition so it can never arise. Hold-and-wait is broken by requiring a thread to acquire all the locks it will ever need in one atomic step up front, before doing any work — simple, but it sacrifices concurrency since it demands knowing all needs in advance and locking early. Circular wait is broken by imposing a total, agreed-on ___ across the whole program: if every thread that needs locks A and B always acquires A before B, the opposite-order interleaving above becomes impossible.",
+      "source": {
+        "path": "vault/operating-systems/concurrency/deadlock.md",
+        "block": "card-sljt"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 32 (Concurrency Bugs)"
+      ],
+      "answer": "lock ordering"
+    },
+    {
+      "id": "card-3qs7",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "deadlock",
+        "resource-allocation",
+        "prevention",
+        "avoidance"
+      ],
+      "prompt": "Why does a program-wide total lock ordering rule out circular wait specifically?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/deadlock.md",
+        "block": "card-3qs7"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 32 (Concurrency Bugs)"
+      ],
+      "answer": "If every thread acquires locks in the same fixed order, no thread can be holding a later lock in that order while waiting on an earlier one, which is exactly what a cycle in the wait-for graph would require; without a cycle, circular wait cannot occur."
+    },
+    {
+      "id": "card-h29s",
+      "format": "cloze",
+      "category": "os-concurrency",
+      "tags": [
+        "deadlock",
+        "resource-allocation",
+        "prevention",
+        "avoidance"
+      ],
+      "prompt": "Deadlock ___ takes a different approach from prevention: rather than making deadlock structurally impossible, it uses global knowledge of which resources each thread might ever need (as in the banker's algorithm) to refuse any individual resource request that would move the system into a state from which deadlock becomes possible, even if that request would not deadlock immediately.",
+      "source": {
+        "path": "vault/operating-systems/concurrency/deadlock.md",
+        "block": "card-h29s"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 32 (Concurrency Bugs)"
+      ],
+      "answer": "avoidance"
+    },
+    {
+      "id": "card-o6hx",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "deadlock",
+        "resource-allocation",
+        "prevention",
+        "avoidance"
+      ],
+      "prompt": "How does deadlock avoidance differ from deadlock prevention in what it actually guarantees?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/deadlock.md",
+        "block": "card-o6hx"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 32 (Concurrency Bugs)"
+      ],
+      "answer": "Prevention removes one of the four necessary conditions so deadlock cannot structurally occur, using only local rules (like a fixed lock order); avoidance instead requires advance, global knowledge of every thread's maximum resource needs and dynamically refuses requests that would enter an unsafe state, even without a specific cycle yet existing."
+    },
+    {
+      "id": "card-b26q",
+      "format": "mcq",
+      "category": "os-concurrency",
+      "tags": [
+        "deadlock",
+        "resource-allocation",
+        "prevention",
+        "avoidance"
+      ],
+      "prompt": "A system has mutual exclusion, hold-and-wait, and circular wait present among its threads, but resources CAN be forcibly preempted from a holding thread when needed. Does deadlock occur?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/deadlock.md",
+        "block": "card-b26q"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 32 (Concurrency Bugs)"
+      ],
+      "choices": [
+        {
+          "text": "No — breaking the no-preemption condition alone is enough to prevent deadlock, even with the other three present",
+          "correct": true
+        },
+        {
+          "text": "Yes — three of the four conditions being present is sufficient",
+          "correct": false
+        },
+        {
+          "text": "Yes, but only if more than two threads are involved",
+          "correct": false
+        },
+        {
+          "text": "It depends on the scheduler's time-slice length",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-i2jz",
+      "format": "recall",
+      "category": "os-concurrency",
+      "tags": [
+        "deadlock",
+        "resource-allocation",
+        "prevention",
+        "avoidance"
+      ],
+      "prompt": "Explain why requiring every thread to acquire all its locks atomically up front (breaking hold-and-wait) is correct but often impractical compared to a total lock-ordering rule (breaking circular wait).",
+      "source": {
+        "path": "vault/operating-systems/concurrency/deadlock.md",
+        "block": "card-i2jz"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 32 (Concurrency Bugs)"
+      ]
+    },
+    {
+      "id": "card-u5hp",
+      "format": "cloze",
+      "category": "os-concurrency",
+      "tags": [
+        "event-based-concurrency",
+        "event-loop",
+        "non-blocking-io",
+        "select"
+      ],
+      "prompt": "Thread-based concurrency hands each unit of work its own thread and relies on the scheduler and locks to keep things correct, but that comes with real costs: thread creation and context-switch overhead, and the constant risk of races and deadlock whenever threads share state. Event-based concurrency is a different model built around a single thread running an ___: wait for an event, handle it to completion, then wait for the next one.",
+      "source": {
+        "path": "vault/operating-systems/concurrency/event-based-concurrency.md",
+        "block": "card-u5hp"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 33 (Event-based Concurrency)"
+      ],
+      "answer": "event loop"
+    },
+    {
+      "id": "card-tven",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "event-based-concurrency",
+        "event-loop",
+        "non-blocking-io",
+        "select"
+      ],
+      "prompt": "Why does a single-threaded event loop avoid races over shared state without locks?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/event-based-concurrency.md",
+        "block": "card-tven"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 33 (Event-based Concurrency)"
+      ],
+      "answer": "Only one event handler executes at any instant and each one runs uninterrupted to completion before the loop dispatches the next, so no two handlers ever interleave their accesses to shared state — mutual exclusion falls out of the model rather than needing explicit locks."
+    },
+    {
+      "id": "card-odtu",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "event-based-concurrency",
+        "event-loop",
+        "non-blocking-io",
+        "select"
+      ],
+      "prompt": "What is the central risk of using a blocking system call inside an event handler?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/event-based-concurrency.md",
+        "block": "card-odtu"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 33 (Event-based Concurrency)"
+      ],
+      "answer": "Because only one thread runs the loop, a handler that blocks (on disk I/O, a slow lock, or any blocking call) stalls the entire loop — no other event, however ready, can be handled until that call returns, defeating the model's whole purpose."
+    },
+    {
+      "id": "card-xkxb",
+      "format": "cloze",
+      "category": "os-concurrency",
+      "tags": [
+        "event-based-concurrency",
+        "event-loop",
+        "non-blocking-io",
+        "select"
+      ],
+      "prompt": "To avoid that trap, event-based systems push I/O through ___ variants of system calls, which return immediately with an error code (rather than blocking) if the operation is not ready yet, so the loop can move on and retry later instead of stalling.",
+      "source": {
+        "path": "vault/operating-systems/concurrency/event-based-concurrency.md",
+        "block": "card-xkxb"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 33 (Event-based Concurrency)"
+      ],
+      "answer": "non-blocking"
+    },
+    {
+      "id": "card-msrl",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "event-based-concurrency",
+        "event-loop",
+        "non-blocking-io",
+        "select"
+      ],
+      "prompt": "Why is blocking disk I/O more troublesome for an event loop than blocking network I/O?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/event-based-concurrency.md",
+        "block": "card-msrl"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 33 (Event-based Concurrency)"
+      ],
+      "answer": "Most operating systems lack a general non-blocking interface for disk I/O the way they have one for sockets, so a handler that needs to read from disk has few good options besides blocking the whole loop or offloading the work to a helper thread, which reintroduces some of the concurrency concerns event-based design was meant to avoid."
+    },
+    {
+      "id": "card-glb0",
+      "format": "mcq",
+      "category": "os-concurrency",
+      "tags": [
+        "event-based-concurrency",
+        "event-loop",
+        "non-blocking-io",
+        "select"
+      ],
+      "prompt": "Why does an event-based server typically avoid ordinary blocking `read()` calls inside its handlers?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/event-based-concurrency.md",
+        "block": "card-glb0"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 33 (Event-based Concurrency)"
+      ],
+      "choices": [
+        {
+          "text": "A blocking call stalls the single event loop thread, delaying every other pending event",
+          "correct": true
+        },
+        {
+          "text": "Blocking calls are not allowed by the C standard library",
+          "correct": false
+        },
+        {
+          "text": "Blocking calls always corrupt shared state without a lock",
+          "correct": false
+        },
+        {
+          "text": "`select()` cannot be used at all once any blocking call exists in the program",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-ocav",
+      "format": "recall",
+      "category": "os-concurrency",
+      "tags": [
+        "event-based-concurrency",
+        "event-loop",
+        "non-blocking-io",
+        "select"
+      ],
+      "prompt": "Explain what problem manual state management (turning \"the rest of this handler\" into an explicit continuation) is solving in event-based code, and why a thread-based program does not need it.",
+      "source": {
+        "path": "vault/operating-systems/concurrency/event-based-concurrency.md",
+        "block": "card-ocav"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 33 (Event-based Concurrency)"
+      ]
+    },
+    {
+      "id": "card-ztae",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "data-structures",
+        "locks",
+        "concurrency",
+        "hand-over-hand-locking"
+      ],
+      "prompt": "Why can more threads on a coarsely-locked shared counter fail to raise throughput?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/lock-based-data-structures.md",
+        "block": "card-ztae"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 29 (Lock-based Concurrent Data Structures)"
+      ],
+      "answer": "Every increment must pass through the same single lock, so beyond a small number of threads the added threads mostly wait for the lock rather than doing useful work, and the extra contention and context-switching overhead can make total throughput worse, not better."
+    },
+    {
+      "id": "card-8gfx",
+      "format": "cloze",
+      "category": "os-concurrency",
+      "tags": [
+        "data-structures",
+        "locks",
+        "concurrency",
+        "hand-over-hand-locking"
+      ],
+      "prompt": "A linked list can do better than one lock for the whole list by using ___: a thread holds the lock on a node only long enough to grab the lock on the next node before releasing the first, letting different threads work on different parts of the list at once.",
+      "source": {
+        "path": "vault/operating-systems/concurrency/lock-based-data-structures.md",
+        "block": "card-8gfx"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 29 (Lock-based Concurrent Data Structures)"
+      ],
+      "answer": "hand-over-hand locking"
+    },
+    {
+      "id": "card-czxy",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "data-structures",
+        "locks",
+        "concurrency",
+        "hand-over-hand-locking"
+      ],
+      "prompt": "Why does hand-over-hand list locking trade more overhead for real parallelism?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/lock-based-data-structures.md",
+        "block": "card-czxy"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 29 (Lock-based Concurrent Data Structures)"
+      ],
+      "answer": "Every step down the list now costs an extra lock acquire and release (more overhead than one list-wide lock), but because no single lock covers the whole structure, threads operating on distant parts of the list can genuinely run in parallel instead of queuing behind one another."
+    },
+    {
+      "id": "card-dc1d",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "data-structures",
+        "locks",
+        "concurrency",
+        "hand-over-hand-locking"
+      ],
+      "prompt": "Why lock a concurrent hash table per bucket instead of with one table-wide lock?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/lock-based-data-structures.md",
+        "block": "card-dc1d"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 29 (Lock-based Concurrent Data Structures)"
+      ],
+      "answer": "Operations that hash to different buckets touch entirely disjoint state, so per-bucket locks let those operations run fully in parallel, while a single table-wide lock would serialize every operation regardless of which bucket it targets."
+    },
+    {
+      "id": "card-0ygh",
+      "format": "mcq",
+      "category": "os-concurrency",
+      "tags": [
+        "data-structures",
+        "locks",
+        "concurrency",
+        "hand-over-hand-locking"
+      ],
+      "prompt": "A concurrent linked list uses one lock for the entire list. What is the main downside compared to hand-over-hand locking, assuming both are implemented correctly?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/lock-based-data-structures.md",
+        "block": "card-0ygh"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 29 (Lock-based Concurrent Data Structures)"
+      ],
+      "choices": [
+        {
+          "text": "Every operation serializes behind the single lock, even ones touching disjoint parts of the list",
+          "correct": true
+        },
+        {
+          "text": "The single-lock version is not correct under concurrent access",
+          "correct": false
+        },
+        {
+          "text": "The single-lock version requires more lock acquire/release calls per traversal",
+          "correct": false
+        },
+        {
+          "text": "Hand-over-hand locking eliminates the need for locks entirely",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-kuo4",
+      "format": "recall",
+      "category": "os-concurrency",
+      "tags": [
+        "data-structures",
+        "locks",
+        "concurrency",
+        "hand-over-hand-locking"
+      ],
+      "prompt": "Explain the general strategy behind making a data structure \"more concurrent\" once a single coarse lock becomes a bottleneck: what is being traded for what, and why finer-grained locking is not free.",
+      "source": {
+        "path": "vault/operating-systems/concurrency/lock-based-data-structures.md",
+        "block": "card-kuo4"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 29 (Lock-based Concurrent Data Structures)"
+      ]
+    },
+    {
+      "id": "card-n6y5",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "locks",
+        "mutexes",
+        "spin-locks",
+        "test-and-set",
+        "ticket-locks"
+      ],
+      "prompt": "Why does disabling interrupts fail as a general lock on a multicore machine?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/locks-and-implementations.md",
+        "block": "card-n6y5"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 28 (Locks)"
+      ],
+      "answer": "Disabling interrupts only stops the scheduler on the one CPU that executed the instruction; it has no effect on other cores, which can still enter the same critical section concurrently."
+    },
+    {
+      "id": "card-e46q",
+      "format": "cloze",
+      "category": "os-concurrency",
+      "tags": [
+        "locks",
+        "mutexes",
+        "spin-locks",
+        "test-and-set",
+        "ticket-locks"
+      ],
+      "prompt": "A hardware ___ instruction reads a memory location's old value and unconditionally writes a new value into it, both as one indivisible step the CPU guarantees cannot be interrupted or split between threads.",
+      "source": {
+        "path": "vault/operating-systems/concurrency/locks-and-implementations.md",
+        "block": "card-e46q"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 28 (Locks)"
+      ],
+      "answer": "test-and-set"
+    },
+    {
+      "id": "card-ag76",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "locks",
+        "mutexes",
+        "spin-locks",
+        "test-and-set",
+        "ticket-locks"
+      ],
+      "prompt": "Why must test-and-set be one hardware-atomic instruction, not a separate load then store?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/locks-and-implementations.md",
+        "block": "card-ag76"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 28 (Locks)"
+      ],
+      "answer": "A plain load-then-store has a gap between reading the flag and writing it, during which another thread can also read the still-unset flag, so both threads believe they got the lock; hardware performs the check-and-set as one step precisely to close that gap."
+    },
+    {
+      "id": "card-li16",
+      "format": "cloze",
+      "category": "os-concurrency",
+      "tags": [
+        "locks",
+        "mutexes",
+        "spin-locks",
+        "test-and-set",
+        "ticket-locks"
+      ],
+      "prompt": "A ___ hands out an ever-increasing ticket number via fetch-and-add on arrival, and a separate \"now serving\" counter advances by one on every release; a thread spins until its own ticket matches the counter.",
+      "source": {
+        "path": "vault/operating-systems/concurrency/locks-and-implementations.md",
+        "block": "card-li16"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 28 (Locks)"
+      ],
+      "answer": "ticket lock"
+    },
+    {
+      "id": "card-1oce",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "locks",
+        "mutexes",
+        "spin-locks",
+        "test-and-set",
+        "ticket-locks"
+      ],
+      "prompt": "Why does a ticket lock guarantee no starvation, unlike a plain test-and-set spin lock?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/locks-and-implementations.md",
+        "block": "card-1oce"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 28 (Locks)"
+      ],
+      "answer": "Because tickets are handed out in arrival order and the lock is granted strictly in that order, every waiting thread is guaranteed to be served eventually; a test-and-set lock lets any spinning thread win the race on release, so an unlucky thread can in principle be skipped indefinitely."
+    },
+    {
+      "id": "card-tutg",
+      "format": "mcq",
+      "category": "os-concurrency",
+      "tags": [
+        "locks",
+        "mutexes",
+        "spin-locks",
+        "test-and-set",
+        "ticket-locks"
+      ],
+      "prompt": "A test-and-set spin lock and a ticket lock both provide mutual exclusion correctly. What does the ticket lock add that the plain test-and-set lock does not guarantee?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/locks-and-implementations.md",
+        "block": "card-tutg"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 28 (Locks)"
+      ],
+      "choices": [
+        {
+          "text": "FIFO fairness: threads acquire the lock in the order they arrived",
+          "correct": true
+        },
+        {
+          "text": "Atomicity of the critical section's own instructions",
+          "correct": false
+        },
+        {
+          "text": "The ability to work correctly on a single CPU",
+          "correct": false
+        },
+        {
+          "text": "Zero CPU cost while a thread waits for the lock",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-v7ve",
+      "format": "recall",
+      "category": "os-concurrency",
+      "tags": [
+        "locks",
+        "mutexes",
+        "spin-locks",
+        "test-and-set",
+        "ticket-locks"
+      ],
+      "prompt": "Explain what \"spinning\" costs on a single-CPU system specifically, and why an OS that puts a waiting thread to sleep instead (rather than spinning) can do better once more than a couple of threads contend for the same lock.",
+      "source": {
+        "path": "vault/operating-systems/concurrency/locks-and-implementations.md",
+        "block": "card-v7ve"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 28 (Locks)"
+      ]
+    },
+    {
+      "id": "card-d8gj",
+      "format": "cloze",
+      "category": "os-concurrency",
+      "tags": [
+        "semaphores",
+        "synchronization",
+        "producer-consumer",
+        "locks"
+      ],
+      "prompt": "Used as a ___, a semaphore is initialized to 1: the first `sem_wait()` decrements it to 0 and proceeds, a second thread's `sem_wait()` decrements it to -1 and blocks, and `sem_post()` on release brings it back to 0, waking the waiter. This is exactly binary mutual-exclusion behavior, just expressed as a counting primitive.",
+      "source": {
+        "path": "vault/operating-systems/concurrency/semaphores.md",
+        "block": "card-d8gj"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 31 (Semaphores)"
+      ],
+      "answer": "lock"
+    },
+    {
+      "id": "card-j2oa",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "semaphores",
+        "synchronization",
+        "producer-consumer",
+        "locks"
+      ],
+      "prompt": "Why does starting a semaphore at 1 make wait/post behave like a lock's acquire/release?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/semaphores.md",
+        "block": "card-j2oa"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 31 (Semaphores)"
+      ],
+      "answer": "With an initial value of 1, exactly one thread's wait() can decrement it to 0 and proceed; any other thread's wait() drives the value negative and blocks, so only one thread is ever \"inside,\" which is precisely mutual exclusion."
+    },
+    {
+      "id": "card-nv37",
+      "format": "cloze",
+      "category": "os-concurrency",
+      "tags": [
+        "semaphores",
+        "synchronization",
+        "producer-consumer",
+        "locks"
+      ],
+      "prompt": "Used as a ___, a semaphore is initialized to 0: a thread that must wait for some event calls `sem_wait()` and blocks immediately (since the value starts at 0 or below), while the thread that produces the event calls `sem_post()` when it happens. Whichever order the two threads actually run in, the semaphore itself records whether the event has already occurred.",
+      "source": {
+        "path": "vault/operating-systems/concurrency/semaphores.md",
+        "block": "card-nv37"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 31 (Semaphores)"
+      ],
+      "answer": "condition variable / ordering primitive"
+    },
+    {
+      "id": "card-g1z3",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "semaphores",
+        "synchronization",
+        "producer-consumer",
+        "locks"
+      ],
+      "prompt": "Why start an ordering semaphore at 0 rather than 1, when signaling one event?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/semaphores.md",
+        "block": "card-g1z3"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 31 (Semaphores)"
+      ],
+      "answer": "Starting at 0 means a waiter that arrives before the event blocks immediately, and a poster that arrives first leaves the semaphore at a positive count so a later waiter proceeds without blocking — either arrival order is handled correctly, which is what \"ordering\" rather than \"exclusion\" requires."
+    },
+    {
+      "id": "card-hoa4",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "semaphores",
+        "synchronization",
+        "producer-consumer",
+        "locks"
+      ],
+      "prompt": "Why must a producer wait on the empty-slots semaphore before waiting on the mutex, not after?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/semaphores.md",
+        "block": "card-hoa4"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 31 (Semaphores)"
+      ],
+      "answer": "Waiting on mutex first while empty is 0 would hold the buffer's lock while blocked, so a consumer could never acquire mutex to remove an item and free a slot — the two threads would deadlock waiting on each other."
+    },
+    {
+      "id": "card-vduf",
+      "format": "mcq",
+      "category": "os-concurrency",
+      "tags": [
+        "semaphores",
+        "synchronization",
+        "producer-consumer",
+        "locks"
+      ],
+      "prompt": "A semaphore used purely as a mutual-exclusion lock is initialized to what value?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/semaphores.md",
+        "block": "card-vduf"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 31 (Semaphores)"
+      ],
+      "choices": [
+        {
+          "text": "1",
+          "correct": true
+        },
+        {
+          "text": "0",
+          "correct": false
+        },
+        {
+          "text": "The number of threads that will contend for it",
+          "correct": false
+        },
+        {
+          "text": "-1",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-6pr4",
+      "format": "recall",
+      "category": "os-concurrency",
+      "tags": [
+        "semaphores",
+        "synchronization",
+        "producer-consumer",
+        "locks"
+      ],
+      "prompt": "Explain why a semaphore, unlike a condition variable, does not lose a signal that happens before anyone is waiting — and why that matters for the producer/consumer pattern specifically.",
+      "source": {
+        "path": "vault/operating-systems/concurrency/semaphores.md",
+        "block": "card-6pr4"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 31 (Semaphores)"
+      ]
+    },
+    {
+      "id": "card-h2gk",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "threads",
+        "thread-api",
+        "race-conditions",
+        "critical-section"
+      ],
+      "prompt": "Why is the order in which a preemptive scheduler runs two threads unpredictable?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/threads-and-the-thread-api.md",
+        "block": "card-h2gk"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 26 (Concurrency and Threads)",
+        "Arpaci-Dusseau, OSTEP, Ch. 27 (Thread API)"
+      ],
+      "answer": "The scheduler (or a second CPU core) can switch between threads at almost any instruction boundary, so nothing guarantees that a thread's next line of code runs before another thread gets a turn once more than one thread is active."
+    },
+    {
+      "id": "card-7r4a",
+      "format": "cloze",
+      "category": "os-concurrency",
+      "tags": [
+        "threads",
+        "thread-api",
+        "race-conditions",
+        "critical-section"
+      ],
+      "prompt": "A ___ exists whenever a program's result depends on the timing or interleaving of multiple threads, rather than on the program's logic alone.",
+      "source": {
+        "path": "vault/operating-systems/concurrency/threads-and-the-thread-api.md",
+        "block": "card-7r4a"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 26 (Concurrency and Threads)",
+        "Arpaci-Dusseau, OSTEP, Ch. 27 (Thread API)"
+      ],
+      "answer": "race condition"
+    },
+    {
+      "id": "card-994h",
+      "format": "cloze",
+      "category": "os-concurrency",
+      "tags": [
+        "threads",
+        "thread-api",
+        "race-conditions",
+        "critical-section"
+      ],
+      "prompt": "The instructions that touch the shared resource — here, the three instructions around `counter` — form a ___: code that must not run in more than one thread at a time if the result is to stay correct.",
+      "source": {
+        "path": "vault/operating-systems/concurrency/threads-and-the-thread-api.md",
+        "block": "card-994h"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 26 (Concurrency and Threads)",
+        "Arpaci-Dusseau, OSTEP, Ch. 27 (Thread API)"
+      ],
+      "answer": "critical section"
+    },
+    {
+      "id": "card-69sk",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "threads",
+        "thread-api",
+        "race-conditions",
+        "critical-section"
+      ],
+      "prompt": "What single property must a critical section guarantee to be safe under concurrent execution?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/threads-and-the-thread-api.md",
+        "block": "card-69sk"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 26 (Concurrency and Threads)",
+        "Arpaci-Dusseau, OSTEP, Ch. 27 (Thread API)"
+      ],
+      "answer": "Mutual exclusion — at most one thread executes the section at a time, so its reads and writes to the shared resource can never interleave with another thread's."
+    },
+    {
+      "id": "card-kd1f",
+      "format": "qa",
+      "category": "os-concurrency",
+      "tags": [
+        "threads",
+        "thread-api",
+        "race-conditions",
+        "critical-section"
+      ],
+      "prompt": "Besides waiting for a thread to finish, what else can `pthread_join()` give the caller?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/threads-and-the-thread-api.md",
+        "block": "card-kd1f"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 26 (Concurrency and Threads)",
+        "Arpaci-Dusseau, OSTEP, Ch. 27 (Thread API)"
+      ],
+      "answer": "The finished thread's return value, passed back through an output parameter the caller supplies."
+    },
+    {
+      "id": "card-ty1u",
+      "format": "mcq",
+      "category": "os-concurrency",
+      "tags": [
+        "threads",
+        "thread-api",
+        "race-conditions",
+        "critical-section"
+      ],
+      "prompt": "Two threads each run unsynchronized `counter++` once on a shared counter starting at 0. What are the possible final values?",
+      "source": {
+        "path": "vault/operating-systems/concurrency/threads-and-the-thread-api.md",
+        "block": "card-ty1u"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 26 (Concurrency and Threads)",
+        "Arpaci-Dusseau, OSTEP, Ch. 27 (Thread API)"
+      ],
+      "choices": [
+        {
+          "text": "1 or 2, depending on how the three underlying instructions interleave",
+          "correct": true
+        },
+        {
+          "text": "Always 2, because both increments are eventually applied in full",
+          "correct": false
+        },
+        {
+          "text": "Always 1, because the second thread's write is always discarded",
+          "correct": false
+        },
+        {
+          "text": "0, because the compiler serializes access to shared globals automatically",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-7b5g",
+      "format": "recall",
+      "category": "os-concurrency",
+      "tags": [
+        "threads",
+        "thread-api",
+        "race-conditions",
+        "critical-section"
+      ],
+      "prompt": "Explain why running the exact same multi-threaded program twice can produce two different, each individually plausible, outputs, and why that makes concurrency bugs hard to reproduce and debug.",
+      "source": {
+        "path": "vault/operating-systems/concurrency/threads-and-the-thread-api.md",
+        "block": "card-7b5g"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 26 (Concurrency and Threads)",
+        "Arpaci-Dusseau, OSTEP, Ch. 27 (Thread API)"
       ]
     },
     {
