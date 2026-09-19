@@ -1,6 +1,1649 @@
 {
-  "generatedAt": "2026-09-19T00:41:19.011Z",
+  "generatedAt": "2026-09-19T00:48:34.073Z",
   "cards": [
+    {
+      "id": "card-rb57",
+      "format": "mcq",
+      "category": "data-systems",
+      "tags": [
+        "linearizability",
+        "serializability",
+        "cap",
+        "consensus",
+        "total-order-broadcast"
+      ],
+      "prompt": "A database is serializable but not linearizable. What can still go wrong?",
+      "source": {
+        "path": "vault/data-systems/consistency-consensus.md",
+        "block": "card-rb57"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 9"
+      ],
+      "choices": [
+        {
+          "text": "A client can read stale data from a replica even though it was written moments ago by another client, because serializability doesn't constrain recency",
+          "correct": true
+        },
+        {
+          "text": "Transactions can leave the database in an inconsistent state",
+          "correct": false
+        },
+        {
+          "text": "Two transactions can both read and write the same row without any isolation",
+          "correct": false
+        },
+        {
+          "text": "The database can lose committed data on a crash",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-4n76",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "linearizability",
+        "serializability",
+        "cap",
+        "consensus",
+        "total-order-broadcast"
+      ],
+      "prompt": "Linearizability is a ___ guarantee on single objects;",
+      "source": {
+        "path": "vault/data-systems/consistency-consensus.md",
+        "block": "card-4n76"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 9"
+      ],
+      "answer": "recency"
+    },
+    {
+      "id": "card-lgbl",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "linearizability",
+        "serializability",
+        "cap",
+        "consensus",
+        "total-order-broadcast"
+      ],
+      "prompt": "serializability is an ___ guarantee across transactions.",
+      "source": {
+        "path": "vault/data-systems/consistency-consensus.md",
+        "block": "card-lgbl"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 9"
+      ],
+      "answer": "isolation"
+    },
+    {
+      "id": "card-1t7n",
+      "format": "qa",
+      "category": "data-systems",
+      "tags": [
+        "linearizability",
+        "serializability",
+        "cap",
+        "consensus",
+        "total-order-broadcast"
+      ],
+      "prompt": "What does the P in CAP actually mean, and why is \"pick two of three\" a misleading framing?",
+      "source": {
+        "path": "vault/data-systems/consistency-consensus.md",
+        "block": "card-1t7n"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 9"
+      ],
+      "answer": "Network partitions are not a choice but a fact about deploying over an unreliable network — they will happen. The real decision a system designer faces is how the system behaves when a partition occurs: either remain available and risk returning inconsistent (stale or conflicting) data, or refuse to serve some requests to preserve consistency. \"Pick two of three\" wrongly implies you can choose to avoid P, when in fact CA (consistent and available) is only achievable in the absence of any partition at all."
+    },
+    {
+      "id": "card-a6s2",
+      "format": "mcq",
+      "category": "data-systems",
+      "tags": [
+        "linearizability",
+        "serializability",
+        "cap",
+        "consensus",
+        "total-order-broadcast"
+      ],
+      "prompt": "Which statement about CAP is accurate?",
+      "source": {
+        "path": "vault/data-systems/consistency-consensus.md",
+        "block": "card-a6s2"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 9"
+      ],
+      "choices": [
+        {
+          "text": "During a network partition, a system must choose between remaining available (possibly inconsistent) or consistent (possibly unavailable); it cannot choose to avoid partitions",
+          "correct": true
+        },
+        {
+          "text": "A well-engineered system can be simultaneously consistent, available, and partition-tolerant at all times",
+          "correct": false
+        },
+        {
+          "text": "CAP proves that all distributed databases are equally unreliable",
+          "correct": false
+        },
+        {
+          "text": "Partition tolerance is an optional feature that most production systems disable",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-9e5b",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "linearizability",
+        "serializability",
+        "cap",
+        "consensus",
+        "total-order-broadcast"
+      ],
+      "prompt": "delivered to every node in the ___, reliably (no message is",
+      "source": {
+        "path": "vault/data-systems/consistency-consensus.md",
+        "block": "card-9e5b"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 9"
+      ],
+      "answer": "same order"
+    },
+    {
+      "id": "card-vh3s",
+      "format": "mcq",
+      "category": "data-systems",
+      "tags": [
+        "linearizability",
+        "serializability",
+        "cap",
+        "consensus",
+        "total-order-broadcast"
+      ],
+      "prompt": "Why is implementing linearizable compare-and-set storage considered equivalent in difficulty to solving consensus?",
+      "source": {
+        "path": "vault/data-systems/consistency-consensus.md",
+        "block": "card-vh3s"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 9"
+      ],
+      "choices": [
+        {
+          "text": "Both require all nodes to agree on a single, totally ordered sequence of operations despite failures and network delays — solving one lets you build the other",
+          "correct": true
+        },
+        {
+          "text": "Linearizability requires no coordination between nodes at all",
+          "correct": false
+        },
+        {
+          "text": "Consensus algorithms cannot tolerate any node failures, unlike linearizable storage",
+          "correct": false
+        },
+        {
+          "text": "Compare-and-set operations do not require ordering, only atomicity",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-1f46",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "linearizability",
+        "serializability",
+        "cap",
+        "consensus",
+        "total-order-broadcast"
+      ],
+      "prompt": "___ (every node that doesn't crash eventually decides some",
+      "source": {
+        "path": "vault/data-systems/consistency-consensus.md",
+        "block": "card-1f46"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 9"
+      ],
+      "answer": "termination"
+    },
+    {
+      "id": "card-08ed",
+      "format": "recall",
+      "category": "data-systems",
+      "tags": [
+        "linearizability",
+        "serializability",
+        "cap",
+        "consensus",
+        "total-order-broadcast"
+      ],
+      "prompt": "Two nodes in a leaderless quorum system use w + r > n for reads and writes. Explain a scenario where this inequality still fails to return the most recent write, despite being satisfied.",
+      "source": {
+        "path": "vault/data-systems/consistency-consensus.md",
+        "block": "card-08ed"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 9"
+      ]
+    },
+    {
+      "id": "card-cazy",
+      "format": "mcq",
+      "category": "data-systems",
+      "tags": [
+        "data-models",
+        "relational",
+        "document",
+        "graph",
+        "schema"
+      ],
+      "prompt": "Which situation favors a document model over a normalized relational schema?",
+      "source": {
+        "path": "vault/data-systems/data-models.md",
+        "block": "card-cazy"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 2"
+      ],
+      "choices": [
+        {
+          "text": "Data with a tree-like structure that is almost always loaded and updated as one self-contained unit",
+          "correct": true
+        },
+        {
+          "text": "Data with many-to-many relationships requiring frequent joins across entities",
+          "correct": false
+        },
+        {
+          "text": "Data requiring multi-object transactions spanning many collections",
+          "correct": false
+        },
+        {
+          "text": "Data whose schema must be enforced strictly at write time",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-r1ey",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "data-models",
+        "relational",
+        "document",
+        "graph",
+        "schema"
+      ],
+      "prompt": "Document databases are typically described as ___, meaning",
+      "source": {
+        "path": "vault/data-systems/data-models.md",
+        "block": "card-r1ey"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 2"
+      ],
+      "answer": "schema-on-read"
+    },
+    {
+      "id": "card-rpf9",
+      "format": "recall",
+      "category": "data-systems",
+      "tags": [
+        "data-models",
+        "relational",
+        "document",
+        "graph",
+        "schema"
+      ],
+      "prompt": "Explain why schema-on-read is often compared to dynamic typing in programming languages, and name one advantage this style has when an application's data structure changes frequently.",
+      "source": {
+        "path": "vault/data-systems/data-models.md",
+        "block": "card-rpf9"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 2"
+      ]
+    },
+    {
+      "id": "card-3ue1",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "data-models",
+        "relational",
+        "document",
+        "graph",
+        "schema"
+      ],
+      "prompt": "Vertices in a ___ can have arbitrary key-value properties",
+      "source": {
+        "path": "vault/data-systems/data-models.md",
+        "block": "card-3ue1"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 2"
+      ],
+      "answer": "property graph"
+    },
+    {
+      "id": "card-4bxu",
+      "format": "mcq",
+      "category": "data-systems",
+      "tags": [
+        "data-models",
+        "relational",
+        "document",
+        "graph",
+        "schema"
+      ],
+      "prompt": "Why are recursive many-hop relationship queries (e.g. \"friends of friends of friends\") typically awkward in a relational database but natural in a graph database?",
+      "source": {
+        "path": "vault/data-systems/data-models.md",
+        "block": "card-4bxu"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 2"
+      ],
+      "choices": [
+        {
+          "text": "SQL requires repeated joins or recursive CTEs for variable-depth traversal, while graph query languages traverse edges directly regardless of depth",
+          "correct": true
+        },
+        {
+          "text": "Relational databases cannot store relationships between rows at all",
+          "correct": false
+        },
+        {
+          "text": "Graph databases do not use disk-based storage, so traversal is always faster",
+          "correct": false
+        },
+        {
+          "text": "SQL does not support the WHERE clause needed to filter friends",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-of38",
+      "format": "qa",
+      "category": "data-systems",
+      "tags": [
+        "data-models",
+        "relational",
+        "document",
+        "graph",
+        "schema"
+      ],
+      "prompt": "databases) require that the relational model does not?",
+      "source": {
+        "path": "vault/data-systems/data-models.md",
+        "block": "card-of38"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 2"
+      ],
+      "answer": "The network model requires the application to navigate data by following explicit access paths (pointers between records) chosen in advance, whereas the relational model lets a query optimizer choose the access path automatically based on declarative queries."
+    },
+    {
+      "id": "card-o751",
+      "format": "mcq",
+      "category": "data-systems",
+      "tags": [
+        "distributed-systems",
+        "clocks",
+        "partial-failure",
+        "fencing-tokens"
+      ],
+      "prompt": "A client sends a write request and gets no response within its timeout. Why can't the client safely conclude the write did not happen?",
+      "source": {
+        "path": "vault/data-systems/distributed-trouble.md",
+        "block": "card-o751"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 8"
+      ],
+      "choices": [
+        {
+          "text": "The request, the processing, or the response could each have been delayed or lost independently — the write may have succeeded and only the acknowledgment was lost",
+          "correct": true
+        },
+        {
+          "text": "TCP guarantees that a timeout always means the request was never received",
+          "correct": false
+        },
+        {
+          "text": "Timeouts only occur when the server explicitly rejects a request",
+          "correct": false
+        },
+        {
+          "text": "The client can always tell success from failure by checking its local clock",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-9uv8",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "distributed-systems",
+        "clocks",
+        "partial-failure",
+        "fencing-tokens"
+      ],
+      "prompt": "increasing the window of ___.",
+      "source": {
+        "path": "vault/data-systems/distributed-trouble.md",
+        "block": "card-9uv8"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 8"
+      ],
+      "answer": "unavailability"
+    },
+    {
+      "id": "card-fr76",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "distributed-systems",
+        "clocks",
+        "partial-failure",
+        "fencing-tokens"
+      ],
+      "prompt": "ordering events; ___ only ever move forward and are",
+      "source": {
+        "path": "vault/data-systems/distributed-trouble.md",
+        "block": "card-fr76"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 8"
+      ],
+      "answer": "monotonic clocks"
+    },
+    {
+      "id": "card-c10m",
+      "format": "mcq",
+      "category": "data-systems",
+      "tags": [
+        "distributed-systems",
+        "clocks",
+        "partial-failure",
+        "fencing-tokens"
+      ],
+      "prompt": "Why is it unsafe to use time-of-day clock timestamps from two different machines to determine which of two writes happened first?",
+      "source": {
+        "path": "vault/data-systems/distributed-trouble.md",
+        "block": "card-c10m"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 8"
+      ],
+      "choices": [
+        {
+          "text": "Clocks on different machines drift and are only approximately synchronized, and a clock can even jump backward after NTP resync, so the timestamp order may not match the real causal order",
+          "correct": true
+        },
+        {
+          "text": "Time-of-day clocks are not available on server hardware",
+          "correct": false
+        },
+        {
+          "text": "Monotonic clocks must be used instead, and they are comparable across machines",
+          "correct": false
+        },
+        {
+          "text": "Timestamps are always accurate to the nanosecond on modern hardware",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-kg0z",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "distributed-systems",
+        "clocks",
+        "partial-failure",
+        "fencing-tokens"
+      ],
+      "prompt": "A ___ is a monotonically increasing number issued alongside",
+      "source": {
+        "path": "vault/data-systems/distributed-trouble.md",
+        "block": "card-kg0z"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 8"
+      ],
+      "answer": "fencing token"
+    },
+    {
+      "id": "card-fp4c",
+      "format": "mcq",
+      "category": "data-systems",
+      "tags": [
+        "distributed-systems",
+        "clocks",
+        "partial-failure",
+        "fencing-tokens"
+      ],
+      "prompt": "A client holds a lease on a storage service, then experiences a 30-second GC pause during which its lease expires and is granted to another client. Both clients then try to write. What prevents the stale client's write from corrupting data?",
+      "source": {
+        "path": "vault/data-systems/distributed-trouble.md",
+        "block": "card-fp4c"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 8"
+      ],
+      "choices": [
+        {
+          "text": "A fencing token: the storage service rejects the write carrying the older (lower) token, since a newer token has already been seen",
+          "correct": true
+        },
+        {
+          "text": "The stale client's write is automatically delayed until its lease is valid again",
+          "correct": false
+        },
+        {
+          "text": "TCP guarantees the stale client's connection is closed during the pause",
+          "correct": false
+        },
+        {
+          "text": "The storage service trusts whichever write arrives first, regardless of token",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-h16i",
+      "format": "qa",
+      "category": "data-systems",
+      "tags": [
+        "distributed-systems",
+        "clocks",
+        "partial-failure",
+        "fencing-tokens"
+      ],
+      "prompt": "Why can't a distributed system simply ask \"is this node still alive?\" and get a reliable answer?",
+      "source": {
+        "path": "vault/data-systems/distributed-trouble.md",
+        "block": "card-h16i"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 8"
+      ],
+      "answer": "Because the only way to ask is over the same asynchronous network that might be the thing failing — a lack of response is ambiguous between \"the node is dead,\" \"the node is just slow,\" and \"the network dropped the request or response,\" so liveness can only ever be inferred via timeouts, never known for certain."
+    },
+    {
+      "id": "card-i6zu",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "encoding",
+        "schema-evolution",
+        "avro",
+        "protobuf",
+        "compatibility"
+      ],
+      "prompt": "Protocol Buffers and Thrift both encode fields using a numeric ___",
+      "source": {
+        "path": "vault/data-systems/encoding-evolution.md",
+        "block": "card-i6zu"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 4"
+      ],
+      "answer": "tag"
+    },
+    {
+      "id": "card-gec1",
+      "format": "mcq",
+      "category": "data-systems",
+      "tags": [
+        "encoding",
+        "schema-evolution",
+        "avro",
+        "protobuf",
+        "compatibility"
+      ],
+      "prompt": "In Protocol Buffers, why must an existing field's tag number never be reused for a different field, even after the old field is removed?",
+      "source": {
+        "path": "vault/data-systems/encoding-evolution.md",
+        "block": "card-gec1"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 4"
+      ],
+      "choices": [
+        {
+          "text": "Old encoded data or old code still refers to that tag number, so reusing it would cause new code to misinterpret old data as the new field",
+          "correct": true
+        },
+        {
+          "text": "Tag numbers are used to compute a checksum and must be globally unique across all schemas ever written",
+          "correct": false
+        },
+        {
+          "text": "Protocol Buffers does not allow more than 100 tag numbers per message",
+          "correct": false
+        },
+        {
+          "text": "Reusing a tag number would break the human-readable field names",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-s36d",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "encoding",
+        "schema-evolution",
+        "avro",
+        "protobuf",
+        "compatibility"
+      ],
+      "prompt": "___ and its own reader's schema, resolving differences",
+      "source": {
+        "path": "vault/data-systems/encoding-evolution.md",
+        "block": "card-s36d"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 4"
+      ],
+      "answer": "writer's schema"
+    },
+    {
+      "id": "card-msto",
+      "format": "mcq",
+      "category": "data-systems",
+      "tags": [
+        "encoding",
+        "schema-evolution",
+        "avro",
+        "protobuf",
+        "compatibility"
+      ],
+      "prompt": "Avro readers resolve schema differences by comparing the writer's schema to the reader's schema. What must accompany Avro-encoded data for this to work?",
+      "source": {
+        "path": "vault/data-systems/encoding-evolution.md",
+        "block": "card-msto"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 4"
+      ],
+      "choices": [
+        {
+          "text": "Some way for the reader to obtain the exact schema the writer used (e.g. embedded, versioned in a registry, or negotiated per connection)",
+          "correct": true
+        },
+        {
+          "text": "The reader's own schema must be sent alongside every record",
+          "correct": false
+        },
+        {
+          "text": "Avro data is self-describing and requires no schema at all",
+          "correct": false
+        },
+        {
+          "text": "A checksum of the data must match a checksum of the schema",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-9nhl",
+      "format": "qa",
+      "category": "data-systems",
+      "tags": [
+        "encoding",
+        "schema-evolution",
+        "avro",
+        "protobuf",
+        "compatibility"
+      ],
+      "prompt": "What problem do a \"schema registry\" and dataflow through a database (rather than only through service APIs) both illustrate about forward compatibility?",
+      "source": {
+        "path": "vault/data-systems/encoding-evolution.md",
+        "block": "card-9nhl"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 4"
+      ],
+      "answer": "A value written once (to a database, or a message queue) may be read much later by code that didn't exist yet when it was written, so the encoding format must tolerate schemas evolving over the interval between write and read, not just between two versions deployed at the same moment."
+    },
+    {
+      "id": "card-hbdp",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "encoding",
+        "schema-evolution",
+        "avro",
+        "protobuf",
+        "compatibility"
+      ],
+      "prompt": "time, but dataflow through a ___ decouples producers and",
+      "source": {
+        "path": "vault/data-systems/encoding-evolution.md",
+        "block": "card-hbdp"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 4"
+      ],
+      "answer": "message broker"
+    },
+    {
+      "id": "card-gpne",
+      "format": "recall",
+      "category": "data-systems",
+      "tags": [
+        "encoding",
+        "schema-evolution",
+        "avro",
+        "protobuf",
+        "compatibility"
+      ],
+      "prompt": "A REST API adds a required (non-nullable, no default) new field to its JSON response. Explain which compatibility guarantee this breaks and for whom.",
+      "source": {
+        "path": "vault/data-systems/encoding-evolution.md",
+        "block": "card-gpne"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 4"
+      ]
+    },
+    {
+      "id": "card-dhrr",
+      "format": "mcq",
+      "category": "data-systems",
+      "tags": [
+        "partitioning",
+        "sharding",
+        "hot-spots",
+        "rebalancing"
+      ],
+      "prompt": "A table partitioned by key range uses an ever-increasing timestamp as its partition key. What problem does this cause?",
+      "source": {
+        "path": "vault/data-systems/partitioning.md",
+        "block": "card-dhrr"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 6"
+      ],
+      "choices": [
+        {
+          "text": "All writes for \"now\" land on the same partition, creating a hot spot even though the cluster has many nodes",
+          "correct": true
+        },
+        {
+          "text": "Range queries become impossible because timestamps cannot be compared",
+          "correct": false
+        },
+        {
+          "text": "The database refuses to accept timestamp keys",
+          "correct": false
+        },
+        {
+          "text": "Storage usage decreases because timestamps compress extremely well",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-0tbb",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "partitioning",
+        "sharding",
+        "hot-spots",
+        "rebalancing"
+      ],
+      "prompt": "efficient ___, because adjacent keys in the original key",
+      "source": {
+        "path": "vault/data-systems/partitioning.md",
+        "block": "card-0tbb"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 6"
+      ],
+      "answer": "range queries"
+    },
+    {
+      "id": "card-7j2l",
+      "format": "mcq",
+      "category": "data-systems",
+      "tags": [
+        "partitioning",
+        "sharding",
+        "hot-spots",
+        "rebalancing"
+      ],
+      "prompt": "Why might a system deliberately use a compound key of (hashed portion, range portion) rather than hashing the entire key?",
+      "source": {
+        "path": "vault/data-systems/partitioning.md",
+        "block": "card-7j2l"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 6"
+      ],
+      "choices": [
+        {
+          "text": "It spreads unrelated records across partitions while still allowing efficient range scans within one logical group, e.g. all of one user's records sorted by timestamp",
+          "correct": true
+        },
+        {
+          "text": "It eliminates the need for replication",
+          "correct": false
+        },
+        {
+          "text": "It guarantees perfectly equal partition sizes at all times",
+          "correct": false
+        },
+        {
+          "text": "It removes the need for a partitioning scheme entirely",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-34m1",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "partitioning",
+        "sharding",
+        "hot-spots",
+        "rebalancing"
+      ],
+      "prompt": "usually doesn't align with the primary partitioning key. A ___",
+      "source": {
+        "path": "vault/data-systems/partitioning.md",
+        "block": "card-34m1"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 6"
+      ],
+      "answer": "document-partitioned"
+    },
+    {
+      "id": "card-rt9a",
+      "format": "recall",
+      "category": "data-systems",
+      "tags": [
+        "partitioning",
+        "sharding",
+        "hot-spots",
+        "rebalancing"
+      ],
+      "prompt": "Explain why hashing a key modulo the number of nodes (`hash(key) % N`) is a poor rebalancing strategy when nodes are added or removed.",
+      "source": {
+        "path": "vault/data-systems/partitioning.md",
+        "block": "card-rt9a"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 6"
+      ]
+    },
+    {
+      "id": "card-3fqf",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "partitioning",
+        "sharding",
+        "hot-spots",
+        "rebalancing"
+      ],
+      "prompt": "changes, keeping the assignment ___ consistent across the",
+      "source": {
+        "path": "vault/data-systems/partitioning.md",
+        "block": "card-3fqf"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 6"
+      ],
+      "answer": "metadata"
+    },
+    {
+      "id": "card-rnvy",
+      "format": "mcq",
+      "category": "data-systems",
+      "tags": [
+        "reliability",
+        "scalability",
+        "latency",
+        "load"
+      ],
+      "prompt": "Why do engineers report the p99 or p999 latency instead of the mean?",
+      "source": {
+        "path": "vault/data-systems/reliability-scalability.md",
+        "block": "card-rnvy"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 1"
+      ],
+      "choices": [
+        {
+          "text": "The mean hides tail behavior that a meaningful fraction of users actually experience",
+          "correct": true
+        },
+        {
+          "text": "The mean is mathematically impossible to compute for skewed data",
+          "correct": false
+        },
+        {
+          "text": "Percentiles are always lower than the mean, so they look better in reports",
+          "correct": false
+        },
+        {
+          "text": "Regulatory standards require percentile reporting for all APIs",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-e79p",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "reliability",
+        "scalability",
+        "latency",
+        "load"
+      ],
+      "prompt": "A fault is a component deviating from spec; a ___ is the system as",
+      "source": {
+        "path": "vault/data-systems/reliability-scalability.md",
+        "block": "card-e79p"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 1"
+      ],
+      "answer": "failure"
+    },
+    {
+      "id": "card-ms4h",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "reliability",
+        "scalability",
+        "latency",
+        "load"
+      ],
+      "prompt": "of how a system's performance responds as a specific ___",
+      "source": {
+        "path": "vault/data-systems/reliability-scalability.md",
+        "block": "card-ms4h"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 1"
+      ],
+      "answer": "load parameter"
+    },
+    {
+      "id": "card-1b1b",
+      "format": "qa",
+      "category": "data-systems",
+      "tags": [
+        "reliability",
+        "scalability",
+        "latency",
+        "load"
+      ],
+      "prompt": "What is the difference between scaling up and scaling out?",
+      "source": {
+        "path": "vault/data-systems/reliability-scalability.md",
+        "block": "card-1b1b"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 1"
+      ],
+      "answer": "Scaling up (vertical) moves the workload to a more powerful single machine; scaling out (horizontal) distributes the workload across many smaller machines. Shared-nothing horizontal scaling is more common for very large workloads but introduces distributed-systems complexity that a single powerful machine avoids."
+    },
+    {
+      "id": "card-0oja",
+      "format": "mcq",
+      "category": "data-systems",
+      "tags": [
+        "reliability",
+        "scalability",
+        "latency",
+        "load"
+      ],
+      "prompt": "A service that was fast with 10 requests/second becomes unusably slow at 10,000 requests/second even though the machine has spare CPU. Which load parameter most likely explains this?",
+      "source": {
+        "path": "vault/data-systems/reliability-scalability.md",
+        "block": "card-0oja"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 1"
+      ],
+      "choices": [
+        {
+          "text": "A parameter the original design didn't account for, e.g. fan-out per request or a shared lock's contention",
+          "correct": true
+        },
+        {
+          "text": "The service is simply CPU-bound and needs a faster processor",
+          "correct": false
+        },
+        {
+          "text": "HTTP itself cannot handle more than a few thousand requests per second",
+          "correct": false
+        },
+        {
+          "text": "The percentile latency metric is being miscalculated",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-nu5j",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "reliability",
+        "scalability",
+        "latency",
+        "load"
+      ],
+      "prompt": "engineers can understand it), and ___ (making it easy to",
+      "source": {
+        "path": "vault/data-systems/reliability-scalability.md",
+        "block": "card-nu5j"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 1"
+      ],
+      "answer": "evolvability"
+    },
+    {
+      "id": "card-xcne",
+      "format": "recall",
+      "category": "data-systems",
+      "tags": [
+        "reliability",
+        "scalability",
+        "latency",
+        "load"
+      ],
+      "prompt": "A team says their system is \"reliable\" because it hasn't gone down in six months. Explain why this claim, on its own, says little about whether the system is actually fault-tolerant.",
+      "source": {
+        "path": "vault/data-systems/reliability-scalability.md",
+        "block": "card-xcne"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 1"
+      ]
+    },
+    {
+      "id": "card-hf3l",
+      "format": "mcq",
+      "category": "data-systems",
+      "tags": [
+        "replication",
+        "leader-election",
+        "read-your-writes",
+        "consistency"
+      ],
+      "prompt": "What is the main risk of allowing followers to serve reads in a single-leader system?",
+      "source": {
+        "path": "vault/data-systems/replication.md",
+        "block": "card-hf3l"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 5"
+      ],
+      "choices": [
+        {
+          "text": "A follower may lag behind the leader and return stale data (replication lag)",
+          "correct": true
+        },
+        {
+          "text": "Followers cannot serve reads under any circumstances",
+          "correct": false
+        },
+        {
+          "text": "Follower reads always corrupt the underlying data file",
+          "correct": false
+        },
+        {
+          "text": "The leader stops accepting writes whenever a follower serves a read",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-b8zh",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "replication",
+        "leader-election",
+        "read-your-writes",
+        "consistency"
+      ],
+      "prompt": "Replication can be ___ (the leader waits for a follower to",
+      "source": {
+        "path": "vault/data-systems/replication.md",
+        "block": "card-b8zh"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 5"
+      ],
+      "answer": "synchronous"
+    },
+    {
+      "id": "card-opfv",
+      "format": "mcq",
+      "category": "data-systems",
+      "tags": [
+        "replication",
+        "leader-election",
+        "read-your-writes",
+        "consistency"
+      ],
+      "prompt": "Which technique can provide read-your-writes consistency in a single-leader system with asynchronous followers?",
+      "source": {
+        "path": "vault/data-systems/replication.md",
+        "block": "card-opfv"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 5"
+      ],
+      "choices": [
+        {
+          "text": "Route reads for recently-written data (e.g. the user's own record) to the leader, or track a version/timestamp and wait for the follower to catch up to it",
+          "correct": true
+        },
+        {
+          "text": "Disable replication entirely so only one copy of the data exists",
+          "correct": false
+        },
+        {
+          "text": "Always serve reads from the follower with the most free disk space",
+          "correct": false
+        },
+        {
+          "text": "Increase the leader's write-ahead log buffer size",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-9zi8",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "replication",
+        "leader-election",
+        "read-your-writes",
+        "consistency"
+      ],
+      "prompt": "prior writes; it does NOT guarantee that ___ observe",
+      "source": {
+        "path": "vault/data-systems/replication.md",
+        "block": "card-9zi8"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 5"
+      ],
+      "answer": "different users"
+    },
+    {
+      "id": "card-5xzp",
+      "format": "mcq",
+      "category": "data-systems",
+      "tags": [
+        "replication",
+        "leader-election",
+        "read-your-writes",
+        "consistency"
+      ],
+      "prompt": "What distinguishes leaderless replication (as in Dynamo-style systems) from single-leader or multi-leader replication?",
+      "source": {
+        "path": "vault/data-systems/replication.md",
+        "block": "card-5xzp"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 5"
+      ],
+      "choices": [
+        {
+          "text": "Clients (or a coordinator) send writes to several replicas directly, with no designated leader deciding write order",
+          "correct": true
+        },
+        {
+          "text": "There is no replication at all; only a single copy of the data exists",
+          "correct": false
+        },
+        {
+          "text": "Leaderless systems never allow concurrent writes to different keys",
+          "correct": false
+        },
+        {
+          "text": "Leaderless systems require all replicas to be perfectly synchronous",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-ous0",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "replication",
+        "leader-election",
+        "read-your-writes",
+        "consistency"
+      ],
+      "prompt": "several replicas and considers the write successful once a ___ of",
+      "source": {
+        "path": "vault/data-systems/replication.md",
+        "block": "card-ous0"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 5"
+      ],
+      "answer": "quorum"
+    },
+    {
+      "id": "card-b7db",
+      "format": "qa",
+      "category": "data-systems",
+      "tags": [
+        "replication",
+        "leader-election",
+        "read-your-writes",
+        "consistency"
+      ],
+      "prompt": "What does \"conflict resolution\" have to address specifically in multi-leader or leaderless replication that single-leader replication avoids by construction?",
+      "source": {
+        "path": "vault/data-systems/replication.md",
+        "block": "card-b7db"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 5"
+      ],
+      "answer": "Two writes to the same key made concurrently at different leaders (or different replicas), where neither logically \"happened after\" the other, so the system must decide how to merge or pick a winner — single-leader avoids this because all writes are serialized through one leader."
+    },
+    {
+      "id": "card-ocbt",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "storage-engines",
+        "lsm-tree",
+        "b-tree",
+        "ssm",
+        "compaction"
+      ],
+      "prompt": "An LSM-tree keeps recent writes in an in-memory ___ (backed by a",
+      "source": {
+        "path": "vault/data-systems/storage-engines.md",
+        "block": "card-ocbt"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 3"
+      ],
+      "answer": "memtable"
+    },
+    {
+      "id": "card-nvp7",
+      "format": "mcq",
+      "category": "data-systems",
+      "tags": [
+        "storage-engines",
+        "lsm-tree",
+        "b-tree",
+        "ssm",
+        "compaction"
+      ],
+      "prompt": "Why do LSM-tree storage engines typically achieve higher sustained write throughput than B-tree storage engines?",
+      "source": {
+        "path": "vault/data-systems/storage-engines.md",
+        "block": "card-nvp7"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 3"
+      ],
+      "choices": [
+        {
+          "text": "Writes are sequential appends to an in-memory structure and log, deferring random-access disk work to background compaction",
+          "correct": true
+        },
+        {
+          "text": "LSM-trees never write to disk at all",
+          "correct": false
+        },
+        {
+          "text": "LSM-trees skip the write-ahead log, trading durability for speed",
+          "correct": false
+        },
+        {
+          "text": "B-trees require a full tree rebuild on every write",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-hnpk",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "storage-engines",
+        "lsm-tree",
+        "b-tree",
+        "ssm",
+        "compaction"
+      ],
+      "prompt": "A B-tree stores data in fixed-size ___, each of which is referenced",
+      "source": {
+        "path": "vault/data-systems/storage-engines.md",
+        "block": "card-hnpk"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 3"
+      ],
+      "answer": "pages"
+    },
+    {
+      "id": "card-beza",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "storage-engines",
+        "lsm-tree",
+        "b-tree",
+        "ssm",
+        "compaction"
+      ],
+      "prompt": "B-trees typically require a ___ so that a crash during a",
+      "source": {
+        "path": "vault/data-systems/storage-engines.md",
+        "block": "card-beza"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 3"
+      ],
+      "answer": "write-ahead log"
+    },
+    {
+      "id": "card-5y1x",
+      "format": "mcq",
+      "category": "data-systems",
+      "tags": [
+        "storage-engines",
+        "lsm-tree",
+        "b-tree",
+        "ssm",
+        "compaction"
+      ],
+      "prompt": "Which statement about write amplification is accurate?",
+      "source": {
+        "path": "vault/data-systems/storage-engines.md",
+        "block": "card-5y1x"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 3"
+      ],
+      "choices": [
+        {
+          "text": "LSM-trees can suffer high write amplification from repeated compaction rewrites, while B-trees can suffer it from rewriting a whole page for a small change",
+          "correct": true
+        },
+        {
+          "text": "Only B-trees experience write amplification; LSM-trees are immune to it",
+          "correct": false
+        },
+        {
+          "text": "Only LSM-trees experience write amplification; B-trees write each byte exactly once",
+          "correct": false
+        },
+        {
+          "text": "Write amplification only affects read-heavy workloads, not writes",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-9cp1",
+      "format": "qa",
+      "category": "data-systems",
+      "tags": [
+        "storage-engines",
+        "lsm-tree",
+        "b-tree",
+        "ssm",
+        "compaction"
+      ],
+      "prompt": "What is \"read amplification\" in the context of an LSM-tree, and how do Bloom filters mitigate it?",
+      "source": {
+        "path": "vault/data-systems/storage-engines.md",
+        "block": "card-9cp1"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 3"
+      ],
+      "answer": "Read amplification is the number of underlying disk reads (segments checked) needed to answer one logical read, which can be high because a key might exist in several unmerged segments. A Bloom filter lets the engine skip segments that provably do not contain the key, cutting the number of segments actually read."
+    },
+    {
+      "id": "card-vx7b",
+      "format": "recall",
+      "category": "data-systems",
+      "tags": [
+        "storage-engines",
+        "lsm-tree",
+        "b-tree",
+        "ssm",
+        "compaction"
+      ],
+      "prompt": "A team chooses a B-tree-based database for a workload with heavy random point updates and needs predictable read latency with a bounded number of disk seeks per read. Explain why a B-tree suits this better than an LSM-tree, and name the tradeoff they are accepting.",
+      "source": {
+        "path": "vault/data-systems/storage-engines.md",
+        "block": "card-vx7b"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 3"
+      ]
+    },
+    {
+      "id": "card-aj12",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "transactions",
+        "acid",
+        "isolation",
+        "write-skew",
+        "serializability"
+      ],
+      "prompt": "Read committed does NOT prevent a ___ (also called a",
+      "source": {
+        "path": "vault/data-systems/transactions.md",
+        "block": "card-aj12"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 7"
+      ],
+      "answer": "non-repeatable read"
+    },
+    {
+      "id": "card-o88h",
+      "format": "mcq",
+      "category": "data-systems",
+      "tags": [
+        "transactions",
+        "acid",
+        "isolation",
+        "write-skew",
+        "serializability"
+      ],
+      "prompt": "Which anomaly can occur under read committed isolation but not under snapshot isolation?",
+      "source": {
+        "path": "vault/data-systems/transactions.md",
+        "block": "card-o88h"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 7"
+      ],
+      "choices": [
+        {
+          "text": "Non-repeatable reads (read skew) — reading the same row twice within one transaction and getting different values",
+          "correct": true
+        },
+        {
+          "text": "Dirty reads of uncommitted data",
+          "correct": false
+        },
+        {
+          "text": "Dirty writes overwriting uncommitted data",
+          "correct": false
+        },
+        {
+          "text": "Lost updates from two transactions writing the same row concurrently unnoticed",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-65vf",
+      "format": "mcq",
+      "category": "data-systems",
+      "tags": [
+        "transactions",
+        "acid",
+        "isolation",
+        "write-skew",
+        "serializability"
+      ],
+      "prompt": "Which guarantee does snapshot isolation NOT provide?",
+      "source": {
+        "path": "vault/data-systems/transactions.md",
+        "block": "card-65vf"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 7"
+      ],
+      "choices": [
+        {
+          "text": "Protection against write skew",
+          "correct": true
+        },
+        {
+          "text": "Reads from a consistent point-in-time snapshot",
+          "correct": false
+        },
+        {
+          "text": "Readers never block writers",
+          "correct": false
+        },
+        {
+          "text": "Protection against dirty reads",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-p56w",
+      "format": "cloze",
+      "category": "data-systems",
+      "tags": [
+        "transactions",
+        "acid",
+        "isolation",
+        "write-skew",
+        "serializability"
+      ],
+      "prompt": "Write skew is a generalization of the ___ anomaly to cases",
+      "source": {
+        "path": "vault/data-systems/transactions.md",
+        "block": "card-p56w"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 7"
+      ],
+      "answer": "lost-update"
+    },
+    {
+      "id": "card-fvqy",
+      "format": "mcq",
+      "category": "data-systems",
+      "tags": [
+        "transactions",
+        "acid",
+        "isolation",
+        "write-skew",
+        "serializability"
+      ],
+      "prompt": "Which technique can prevent write skew under snapshot isolation when the database doesn't offer true serializable isolation?",
+      "source": {
+        "path": "vault/data-systems/transactions.md",
+        "block": "card-fvqy"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 7"
+      ],
+      "choices": [
+        {
+          "text": "Explicitly lock the rows the transaction's decision depends on (e.g. SELECT ... FOR UPDATE) so a conflicting concurrent transaction is forced to wait",
+          "correct": true
+        },
+        {
+          "text": "Increase the transaction timeout",
+          "correct": false
+        },
+        {
+          "text": "Switch to read committed isolation, which prevents write skew by default",
+          "correct": false
+        },
+        {
+          "text": "Disable multi-version concurrency control",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-fpzw",
+      "format": "qa",
+      "category": "data-systems",
+      "tags": [
+        "transactions",
+        "acid",
+        "isolation",
+        "write-skew",
+        "serializability"
+      ],
+      "prompt": "What does serializable snapshot isolation (SSI) do differently from plain snapshot isolation to prevent write skew, without giving up the performance of not blocking on reads?",
+      "source": {
+        "path": "vault/data-systems/transactions.md",
+        "block": "card-fpzw"
+      },
+      "citations": [
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 7"
+      ],
+      "answer": "SSI runs transactions optimistically on a snapshot as usual, but tracks which rows each transaction read and detects, at commit time, whether any of those rows were concurrently modified by a transaction that has since committed; if so it aborts one transaction rather than letting the anomaly through, avoiding the need to take locks upfront."
+    },
     {
       "id": "card-uprv",
       "format": "cloze",
