@@ -12,9 +12,6 @@ import type { Deck } from '../../pipeline/src/types.js';
 
 const REPO = 'cesar-lp/factotum';
 
-const root = document.querySelector<HTMLElement>('#app');
-if (!root) throw new Error('#app missing');
-
 /**
  * Fetches and merges the deck. Never throws: a failed fetch/parse is a
  * normal offline condition, and the previously merged deck in IndexedDB
@@ -52,11 +49,11 @@ export async function currentSession(db: FactotumDb, now: Date): Promise<StoredC
   });
 }
 
-async function route(db: FactotumDb, deckUnavailable: boolean): Promise<void> {
+async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: boolean): Promise<void> {
   const session = await currentSession(db, new Date());
 
   if (window.location.hash === '#review' && session.length > 0) {
-    await startReview(root!, {
+    await startReview(appRoot, {
       db,
       session,
       repo: REPO,
@@ -66,11 +63,11 @@ async function route(db: FactotumDb, deckUnavailable: boolean): Promise<void> {
   }
 
   if (window.location.hash === '#settings') {
-    await renderSettings(root!, db, () => { window.location.hash = ''; });
+    await renderSettings(appRoot, db, () => { window.location.hash = ''; });
     return;
   }
 
-  renderDashboard(root!, {
+  renderDashboard(appRoot, {
     dueCount: session.length,
     deckUnavailable,
     onStart: () => { window.location.hash = '#review'; },
@@ -78,7 +75,7 @@ async function route(db: FactotumDb, deckUnavailable: boolean): Promise<void> {
   });
 }
 
-async function boot(): Promise<void> {
+async function boot(appRoot: HTMLElement): Promise<void> {
   const db = await openDb();
   const settings = await getSettings(db);
   if (settings.theme !== 'auto') document.documentElement.dataset['theme'] = settings.theme;
@@ -87,8 +84,10 @@ async function boot(): Promise<void> {
   const cardCount = await db.count('cards');
   const deckUnavailable = cardCount === 0 && !syncOk;
 
-  window.addEventListener('hashchange', () => { void route(db, deckUnavailable); });
-  await route(db, deckUnavailable);
+  window.addEventListener('hashchange', () => { void route(appRoot, db, deckUnavailable); });
+  await route(appRoot, db, deckUnavailable);
 }
 
-void boot();
+const appRoot = document.querySelector<HTMLElement>('#app');
+if (!appRoot) throw new Error('#app missing');
+void boot(appRoot);

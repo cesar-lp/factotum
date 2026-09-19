@@ -17,6 +17,22 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
   let index = 0;
   let reviewed = 0;
 
+  // Guards against double-taps (and any other re-entrant handler firing)
+  // recording a card more than once. A rendered card sets this true the
+  // instant any handler starts down a path that ends in submit()/advance(),
+  // and it is only ever reset back to false when the NEXT card is drawn —
+  // never inside a handler — so a second tap on the same card, no matter
+  // how fast, finds it already true and returns immediately.
+  let submitting = false;
+
+  // Visual feedback for the guard: once a tap is accepted, every button on
+  // the current card looks inert rather than silently ignoring further taps.
+  const lockControls = (): void => {
+    root.querySelectorAll<HTMLButtonElement>('button').forEach((button) => {
+      button.disabled = true;
+    });
+  };
+
   const advance = (): void => {
     index += 1;
     if (index >= deps.session.length) deps.onDone(reviewed);
@@ -39,6 +55,10 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
     const card = deps.session[index];
     if (!card) return deps.onDone(reviewed);
 
+    // A fresh render always starts unlocked, whether this is a new card or
+    // the same card re-rendered after a reveal.
+    submitting = false;
+
     const startedAt = Date.now();
     root.innerHTML = `
       <section class="screen review">
@@ -50,6 +70,9 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
     `;
 
     root.querySelector('[data-role="flag"]')?.addEventListener('click', () => {
+      if (submitting) return;
+      submitting = true;
+      lockControls();
       const now = new Date();
       void flagCard(deps.db, card.id, now).then(() => {
         window.open(issueUrl(card, deps.repo), '_blank');
@@ -61,10 +84,13 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
 
     root.querySelectorAll<HTMLButtonElement>('[data-choice]').forEach((button) => {
       button.addEventListener('click', () => {
-        if (revealed) return;
+        if (revealed || submitting) return;
+        submitting = true;
+        lockControls();
         const correct = button.dataset['correct'] === 'true';
         // Reveal first — the answer and its citation stay on screen until
-        // Continue, which is where the rating is actually recorded.
+        // Continue, which is where the rating is actually recorded. draw()
+        // resets `submitting` for the revealed render, so Continue works.
         draw(true, correct ? 'correct' : 'wrong');
         root.querySelectorAll<HTMLButtonElement>('[data-choice]').forEach((b) => {
           if (b.dataset['correct'] === 'true') b.classList.add('is-correct');
@@ -74,6 +100,9 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
     });
 
     root.querySelector('[data-role="check"]')?.addEventListener('click', () => {
+      if (submitting) return;
+      submitting = true;
+      lockControls();
       const input = root.querySelector<HTMLInputElement>('[data-role="cloze-input"]');
       const correct = checkCloze(input?.value ?? '', card.answer ?? '');
       if (correct) void submit(card, 'correct', startedAt);
@@ -82,6 +111,9 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
 
     root.querySelectorAll<HTMLButtonElement>('[data-outcome]').forEach((button) => {
       button.addEventListener('click', () => {
+        if (submitting) return;
+        submitting = true;
+        lockControls();
         const value = button.dataset['outcome'];
         if (value === 'continue') return void submit(card, pendingOutcome ?? 'wrong', startedAt);
         if (value === 'override') return void submit(card, 'correct', startedAt);

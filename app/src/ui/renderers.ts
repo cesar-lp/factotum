@@ -59,7 +59,7 @@ export function renderActions(card: StoredCard, revealed: boolean): string {
     const after = revealed
       ? `<button class="btn" data-outcome="continue">Continue</button>${tail}`
       : flagButton();
-    return `<div class="action-area">${choices}${after}</div>`;
+    return `<div class="action-area action-area--mcq">${choices}${after}</div>`;
   }
 
   if (card.format === 'cloze') {
