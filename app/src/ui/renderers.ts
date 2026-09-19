@@ -146,11 +146,26 @@ export function renderActions(
   }
 
   if (!revealed) {
-    return `<div class="action-area"><button class="btn" data-role="reveal">Show answer</button>${flagButton()}</div>`;
+    // qa has an answer key to show; recall is self-graded with none (spec
+    // 3.2), so its pre-reveal label must not promise one — "Show answer"
+    // on a recall card that then shows nothing reads as broken.
+    const label = card.format === 'recall' ? 'Rate yourself' : 'Show answer';
+    return `<div class="action-area"><button class="btn" data-role="reveal">${label}</button>${flagButton()}</div>`;
   }
+  // A recall card with no answer key would otherwise reveal into just a
+  // rating row, which can read as empty rather than as the self-graded
+  // format working as designed. The hint is skipped whenever an answer
+  // paragraph is already rendering (keyed off card.answer, not format, so
+  // a qa card that happens to be missing its answer still degrades safely
+  // instead of double-hinting).
+  const recallHint =
+    card.format === 'recall' && !card.answer
+      ? `<p class="citation">How did you do? Rate yourself below.</p>`
+      : '';
   return `
     <div class="action-area">
       ${card.answer ? `<p class="expected">${escapeHtml(card.answer)}</p>` : ''}
+      ${recallHint}
       ${ratingRow()}
       ${tail}
     </div>
