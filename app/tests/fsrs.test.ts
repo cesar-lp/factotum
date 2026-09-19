@@ -1,6 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import { Rating } from 'ts-fsrs';
-import { ratingFor, initialState, applyRating, isDue, LEECH_THRESHOLD, type Outcome } from '../src/scheduler/fsrs.js';
+import {
+  ratingFor,
+  initialState,
+  applyRating,
+  isDue,
+  isStillLearning,
+  LEECH_THRESHOLD,
+  type Outcome
+} from '../src/scheduler/fsrs.js';
 import type { CardFormat } from '../../pipeline/src/types.js';
 
 const now = new Date('2026-09-18T09:00:00Z');
@@ -96,5 +104,46 @@ describe('isDue', () => {
     const state = { ...initialState('card-aaaa', now), due: now.getTime() - 1000 };
     expect(isDue(state, now)).toBe(true);
     expect(isDue({ ...state, suspended: true }, now)).toBe(false);
+  });
+});
+
+describe('isStillLearning', () => {
+  // State numbering per ts-fsrs: New=0, Learning=1, Review=2, Relearning=3.
+  it('is true for a brand-new card rated Again/Hard/Good (stays in Learning)', () => {
+    for (const rating of [Rating.Again, Rating.Hard, Rating.Good]) {
+      const next = applyRating(initialState('card-aaaa', now), rating, now, 0.9);
+      expect(next.state).toBe(1);
+      expect(isStillLearning(next)).toBe(true);
+    }
+  });
+
+  it('is false for a brand-new card rated Easy (graduates straight to Review)', () => {
+    const next = applyRating(initialState('card-aaaa', now), Rating.Easy, now, 0.9);
+    expect(next.state).toBe(2);
+    expect(isStillLearning(next)).toBe(false);
+  });
+
+  it('is true for a graduated card that lapses back into Relearning', () => {
+    let state = applyRating(initialState('card-aaaa', now), Rating.Easy, now, 0.9);
+    state = applyRating(state, Rating.Again, new Date(state.due), 0.9);
+    expect(state.state).toBe(3);
+    expect(isStillLearning(state)).toBe(true);
+  });
+
+  it('is false once a card is fully graduated (Review) and not lapsing', () => {
+    const state = { ...initialState('card-aaaa', now), state: 2 };
+    expect(isStillLearning(state)).toBe(false);
+  });
+
+  it('repeated Again on a fresh card never trips the leech/lapses counter (documents why a separate session cap is needed)', () => {
+    let state = initialState('card-aaaa', now);
+    let now2 = now;
+    for (let i = 0; i < 15; i++) {
+      state = applyRating(state, Rating.Again, now2, 0.9);
+      now2 = new Date(state.due);
+    }
+    expect(state.lapses).toBe(0);
+    expect(state.suspended).toBe(false);
+    expect(isStillLearning(state)).toBe(true);
   });
 });

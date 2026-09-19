@@ -1,10 +1,59 @@
-import type { FactotumDb, StoredCard } from '../db/schema.js';
+import type { FactotumDb, ReviewState, StoredCard } from '../db/schema.js';
 import type { Choice } from '../../../pipeline/src/types.js';
 import type { Outcome } from '../scheduler/fsrs.js';
+import { isStillLearning } from '../scheduler/fsrs.js';
 import { recordReview, flagCard } from '../db/reviews.js';
 import { getSettings } from '../db/settings.js';
 import { checkCloze, renderActions, renderPrompt, shuffle } from './renderers.js';
 import { issueUrl } from './flag.js';
+
+// How many OTHER cards must be shown before a learning-step card (Again/
+// Hard/Good on a card that hasn't graduated to FSRS state Review) reappears
+// in the same session. Re-showing it as the very next card defeats the
+// point of a learning step (no chance to forget in the meantime); the
+// interval itself is only 1-10 minutes (see the wrapper's measured
+// values), so making the user wait for it on a phone is worse. This
+// mirrors Anki's "insert behind a few other cards" policy. When fewer than
+// REQUEUE_GAP cards remain, the card is appended to the end of the session
+// instead -- i.e. served slightly ahead of its actual due time once
+// nothing else is left, rather than making the user wait or ending the
+// session with a learning card still pending.
+export const REQUEUE_GAP = 3;
+
+// Per-card cap on how many times a single card can be re-queued within one
+// session. FSRS's `lapses` counter (the leech backstop that auto-suspends a
+// card after LEECH_THRESHOLD, see fsrs.ts) does NOT increment while a card
+// is repeatedly rated Again during its INITIAL learning steps -- only a
+// graduated card lapsing back out of Review increments it (verified against
+// ts-fsrs directly: 15 consecutive Agains on a fresh card stay at
+// lapses=0). So the leech backstop is not a sufficient guard against a
+// single session looping forever on one stubborn card, and this cap exists
+// to bound it independently. Once hit, the card simply stops re-queueing
+// for the rest of THIS session -- it keeps its FSRS-scheduled due time and
+// will be picked up by the normal due-cards path (this session's later
+// passes, or the next session) like any other due card.
+export const MAX_REQUEUES_PER_CARD = 5;
+
+/**
+ * Whether a just-reviewed card should be re-queued into the current
+ * session rather than considered done. Pure and DOM-free for unit testing.
+ */
+export function shouldRequeue(state: ReviewState, priorRequeues: number): boolean {
+  if (state.suspended) return false;
+  if (!isStillLearning(state)) return false;
+  return priorRequeues < MAX_REQUEUES_PER_CARD;
+}
+
+/**
+ * Where to splice a re-queued card back into the session array. `Math.min`
+ * against `sessionLength` means: when fewer than `gap` cards remain after
+ * the current one, the card lands at the very end (append) instead of
+ * overflowing past it -- the "serve it slightly early once nothing else is
+ * left" half of the policy above.
+ */
+export function requeueIndex(currentIndex: number, sessionLength: number, gap: number = REQUEUE_GAP): number {
+  return Math.min(currentIndex + 1 + gap, sessionLength);
+}
 
 /**
  * Returns the mcq choice order to present for `index`, reusing `cache`
@@ -62,6 +111,12 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
   // how fast, finds it already true and returns immediately.
   let submitting = false;
 
+  // How many times each card has already been re-queued in THIS session
+  // (see shouldRequeue / MAX_REQUEUES_PER_CARD). Keyed by card id rather
+  // than array position since a re-queued card occupies a NEW position
+  // each time it reappears.
+  const requeueCounts = new Map<string, number>();
+
   // Shuffled mcq choice order for the card currently on screen. Computed
   // once per card presentation (see getPresentationChoices) and reused
   // across both the unrevealed render and the revealed re-render that
@@ -83,7 +138,7 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
   };
 
   const submit = async (card: StoredCard, outcome: Outcome, startedAt: number): Promise<void> => {
-    await recordReview(deps.db, {
+    const next = await recordReview(deps.db, {
       card,
       outcome,
       now: new Date(),
@@ -91,6 +146,19 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
       durationMs: Date.now() - startedAt
     });
     reviewed += 1;
+
+    // Every rating still reaches FSRS exactly as above, unchanged; this
+    // only decides whether the SAME card comes back later in this session
+    // (deps.session is a plain array, mutated by reference -- splicing it
+    // here is visible to the `advance`/`draw` closures below without any
+    // extra state threading). `index` is the position just reviewed, so
+    // insertion is relative to it, before `advance()` below moves past it.
+    const priorRequeues = requeueCounts.get(card.id) ?? 0;
+    if (shouldRequeue(next, priorRequeues)) {
+      requeueCounts.set(card.id, priorRequeues + 1);
+      deps.session.splice(requeueIndex(index, deps.session.length), 0, card);
+    }
+
     advance();
   };
 
