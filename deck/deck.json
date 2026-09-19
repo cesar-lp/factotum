@@ -1,6 +1,1774 @@
 {
-  "generatedAt": "2026-09-19T17:44:02.215Z",
+  "generatedAt": "2026-09-19T18:10:14.746Z",
   "cards": [
+    {
+      "id": "card-6fmp",
+      "format": "qa",
+      "category": "amp",
+      "tags": [
+        "linked-lists",
+        "optimistic-synchronization",
+        "lazy-synchronization",
+        "lock-free"
+      ],
+      "prompt": "When does optimistic synchronization lock nodes, compared to hand-over-hand?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/concurrent-linked-lists.md",
+        "block": "card-6fmp"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 9 (Linked Lists: The Role of Locking)",
+        "Heller et al., \"A Lazy Concurrent List-Based Set Algorithm\" (2005)"
+      ],
+      "answer": "Hand-over-hand acquires a lock on every node as it is visited, one at a time chained down the list, so the path already walked can never change concurrently. Optimistic synchronization traverses the entire path with no locks at all, and only locks the (typically two) nodes it believes it needs once the search is done."
+    },
+    {
+      "id": "card-u4kf",
+      "format": "qa",
+      "category": "amp",
+      "tags": [
+        "linked-lists",
+        "optimistic-synchronization",
+        "lazy-synchronization",
+        "lock-free"
+      ],
+      "prompt": "What does optimistic sync's validation step catch that hand-over-hand rules out?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/concurrent-linked-lists.md",
+        "block": "card-u4kf"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 9 (Linked Lists: The Role of Locking)",
+        "Heller et al., \"A Lazy Concurrent List-Based Set Algorithm\" (2005)"
+      ],
+      "answer": "A stale traversal: because optimistic synchronization walked the list with no lock held anywhere, another thread could have inserted, removed, or reordered nodes in the meantime, so before committing, it must explicitly re-check that the remembered predecessor and successor are still adjacent and unmarked — a check hand-over-hand never needs, since it never lets go of a node before securing the next."
+    },
+    {
+      "id": "card-9o13",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "linked-lists",
+        "optimistic-synchronization",
+        "lazy-synchronization",
+        "lock-free"
+      ],
+      "prompt": "___ adds a boolean \"marked\" field to each node for logical deletion: a remove first marks the node as logically deleted (under the same brief locking and validation as optimistic synchronization) and only unlinks it physically afterward, as a separate step.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/concurrent-linked-lists.md",
+        "block": "card-9o13"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 9 (Linked Lists: The Role of Locking)",
+        "Heller et al., \"A Lazy Concurrent List-Based Set Algorithm\" (2005)"
+      ],
+      "answer": "Lazy synchronization"
+    },
+    {
+      "id": "card-i9jj",
+      "format": "mcq",
+      "category": "amp",
+      "tags": [
+        "linked-lists",
+        "optimistic-synchronization",
+        "lazy-synchronization",
+        "lock-free"
+      ],
+      "prompt": "In lazy synchronization, what is the main benefit of adding a \"marked\" field for logical deletion?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/concurrent-linked-lists.md",
+        "block": "card-i9jj"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 9 (Linked Lists: The Role of Locking)",
+        "Heller et al., \"A Lazy Concurrent List-Based Set Algorithm\" (2005)"
+      ],
+      "choices": [
+        {
+          "text": "Lookup operations can traverse the list without acquiring any lock and never need to retry",
+          "correct": true
+        },
+        {
+          "text": "It removes the need for locks during insert and remove as well",
+          "correct": false
+        },
+        {
+          "text": "It eliminates the need to ever physically unlink a removed node",
+          "correct": false
+        },
+        {
+          "text": "It makes the whole list wait-free",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-o7yp",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "linked-lists",
+        "optimistic-synchronization",
+        "lazy-synchronization",
+        "lock-free"
+      ],
+      "prompt": "A ___ linked list typically deletes a node by atomically marking its next-pointer's low bit via compare-and-swap at the same time as (or immediately before) unlinking it, so a thread concurrently inserting right after that node sees the mark and retries instead of splicing its new node onto one that is already being removed.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/concurrent-linked-lists.md",
+        "block": "card-o7yp"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 9 (Linked Lists: The Role of Locking)",
+        "Heller et al., \"A Lazy Concurrent List-Based Set Algorithm\" (2005)"
+      ],
+      "answer": "lock-free"
+    },
+    {
+      "id": "card-ifw3",
+      "format": "recall",
+      "category": "amp",
+      "tags": [
+        "linked-lists",
+        "optimistic-synchronization",
+        "lazy-synchronization",
+        "lock-free"
+      ],
+      "prompt": "Explain why lazy synchronization's lookups being lock-free is a bigger practical win than making insert or remove lock-free, for a typical workload on a set-like data structure.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/concurrent-linked-lists.md",
+        "block": "card-ifw3"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 9 (Linked Lists: The Role of Locking)",
+        "Heller et al., \"A Lazy Concurrent List-Based Set Algorithm\" (2005)"
+      ]
+    },
+    {
+      "id": "card-akb7",
+      "format": "qa",
+      "category": "amp",
+      "tags": [
+        "linked-lists",
+        "optimistic-synchronization",
+        "lazy-synchronization",
+        "lock-free"
+      ],
+      "prompt": "What does optimistic sync give up vs hand-over-hand under heavy contention?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/concurrent-linked-lists.md",
+        "block": "card-akb7"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 9 (Linked Lists: The Role of Locking)",
+        "Heller et al., \"A Lazy Concurrent List-Based Set Algorithm\" (2005)"
+      ],
+      "answer": "Its guaranteed-once traversal cost becomes probabilistic: heavy concurrent modification near the target nodes can repeatedly fail validation, forcing a full retraversal from scratch, whereas hand-over-hand's per-node locking never needs to redo work it already completed."
+    },
+    {
+      "id": "card-i4bf",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "treiber-stack",
+        "michael-scott-queue",
+        "aba-problem",
+        "hazard-pointers"
+      ],
+      "prompt": "A ___ is a lock-free singly-linked stack: push reads the current top, links the new node's next-pointer to it, then attempts a compare-and-swap from the old top to the new node, retrying from a fresh read whenever another thread's push or pop won the race first.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/concurrent-stacks-and-queues.md",
+        "block": "card-i4bf"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and the ABA Problem; Concurrent Stacks and Elimination)",
+        "Michael & Scott, \"Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms\" (1996)"
+      ],
+      "answer": "Treiber stack"
+    },
+    {
+      "id": "card-5sev",
+      "format": "qa",
+      "category": "amp",
+      "tags": [
+        "treiber-stack",
+        "michael-scott-queue",
+        "aba-problem",
+        "hazard-pointers"
+      ],
+      "prompt": "Why must a Treiber stack's push retry with a fresh top pointer after a failed CAS?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/concurrent-stacks-and-queues.md",
+        "block": "card-5sev"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and the ABA Problem; Concurrent Stacks and Elimination)",
+        "Michael & Scott, \"Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms\" (1996)"
+      ],
+      "answer": "A failed CAS only means another thread's push or pop changed the top since it was read, not that the caller's own operation was invalid; retrying with the current top keeps the operation attempting until it succeeds, which is exactly what gives the algorithm lock-free, system-wide progress instead of abandoning the caller."
+    },
+    {
+      "id": "card-e6va",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "treiber-stack",
+        "michael-scott-queue",
+        "aba-problem",
+        "hazard-pointers"
+      ],
+      "prompt": "The Michael-Scott queue keeps separate head and tail pointers, each updated by its own compare-and-swap; if a thread notices the tail lags one node behind (because an earlier enqueuer was preempted between linking its node and advancing tail), it ___ before doing its own work, rather than waiting for the delayed thread to resume.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/concurrent-stacks-and-queues.md",
+        "block": "card-e6va"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and the ABA Problem; Concurrent Stacks and Elimination)",
+        "Michael & Scott, \"Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms\" (1996)"
+      ],
+      "answer": "helps by CAS-ing tail forward itself"
+    },
+    {
+      "id": "card-ffpp",
+      "format": "mcq",
+      "category": "amp",
+      "tags": [
+        "treiber-stack",
+        "michael-scott-queue",
+        "aba-problem",
+        "hazard-pointers"
+      ],
+      "prompt": "What does the ABA problem describe?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/concurrent-stacks-and-queues.md",
+        "block": "card-ffpp"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and the ABA Problem; Concurrent Stacks and Elimination)",
+        "Michael & Scott, \"Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms\" (1996)"
+      ],
+      "choices": [
+        {
+          "text": "A compare-and-swap succeeds because a location holds the same value it started with, even though it changed away and back in between, invalidating the assumption that \"unchanged\" means \"untouched\"",
+          "correct": true
+        },
+        {
+          "text": "A deadlock caused by two threads acquiring the same two locks in reverse order",
+          "correct": false
+        },
+        {
+          "text": "A CAS that always fails whenever two threads race for the same location",
+          "correct": false
+        },
+        {
+          "text": "A memory leak caused by never freeing removed nodes",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-s8fy",
+      "format": "qa",
+      "category": "amp",
+      "tags": [
+        "treiber-stack",
+        "michael-scott-queue",
+        "aba-problem",
+        "hazard-pointers"
+      ],
+      "prompt": "Why is the ABA problem dangerous for pointers into freed memory, not plain integers?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/concurrent-stacks-and-queues.md",
+        "block": "card-s8fy"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and the ABA Problem; Concurrent Stacks and Elimination)",
+        "Michael & Scott, \"Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms\" (1996)"
+      ],
+      "answer": "With a plain value, 5 really is 5 again — no hidden state was lost in between. With a pointer, the same address can now refer to an entirely different node after being freed and reallocated, so a CAS that only compares the address believes nothing changed while the object actually behind it is completely different."
+    },
+    {
+      "id": "card-iifp",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "treiber-stack",
+        "michael-scott-queue",
+        "aba-problem",
+        "hazard-pointers"
+      ],
+      "prompt": "___ a pointer with a monotonically increasing version counter, packed alongside the address bits and updated atomically by the same compare-and-swap, defeats the ABA problem because two different generations of \"the same address\" now compare as different values even when the raw pointer bits match.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/concurrent-stacks-and-queues.md",
+        "block": "card-iifp"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and the ABA Problem; Concurrent Stacks and Elimination)",
+        "Michael & Scott, \"Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms\" (1996)"
+      ],
+      "answer": "Tagging"
+    },
+    {
+      "id": "card-p1wf",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "treiber-stack",
+        "michael-scott-queue",
+        "aba-problem",
+        "hazard-pointers"
+      ],
+      "prompt": "___ take a different approach: before touching a node, a thread publishes that node's address into a per-thread slot that other threads must check before freeing anything, so a node can never be freed and reallocated while any thread still holds a hazard pointer to it.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/concurrent-stacks-and-queues.md",
+        "block": "card-p1wf"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and the ABA Problem; Concurrent Stacks and Elimination)",
+        "Michael & Scott, \"Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms\" (1996)"
+      ],
+      "answer": "Hazard pointers"
+    },
+    {
+      "id": "card-9nrz",
+      "format": "recall",
+      "category": "amp",
+      "tags": [
+        "treiber-stack",
+        "michael-scott-queue",
+        "aba-problem",
+        "hazard-pointers"
+      ],
+      "prompt": "Explain, in terms of what a Michael-Scott enqueue does when it notices `tail.next` is already non-null, why that helping step is necessary for the algorithm's progress guarantee to be lock-free rather than blocking.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/concurrent-stacks-and-queues.md",
+        "block": "card-9nrz"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and the ABA Problem; Concurrent Stacks and Elimination)",
+        "Michael & Scott, \"Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms\" (1996)"
+      ]
+    },
+    {
+      "id": "card-13y8",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "consensus",
+        "compare-and-swap",
+        "universal-construction",
+        "wait-free"
+      ],
+      "prompt": "In the consensus problem, n threads each propose a value and all of them must agree on a single one of the proposed values, using a protocol that is itself wait-free — every thread decides in a bounded number of its own steps regardless of the others' speed or failures. The ___ of an object type is the largest n for which instances of that type, plus any number of atomic read/write registers, can solve consensus for n threads.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/consensus-and-universality.md",
+        "block": "card-13y8"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 5-6 (The Relative Power of Primitive Synchronization Operations; Universality of Consensus)",
+        "Herlihy, \"Wait-Free Synchronization\" (1991)"
+      ],
+      "answer": "consensus number"
+    },
+    {
+      "id": "card-7xuo",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "consensus",
+        "compare-and-swap",
+        "universal-construction",
+        "wait-free"
+      ],
+      "prompt": "Atomic read/write registers alone have ___: no protocol built only from registers can solve wait-free consensus for two or more threads, no matter how many registers it uses or how cleverly they are arranged.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/consensus-and-universality.md",
+        "block": "card-7xuo"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 5-6 (The Relative Power of Primitive Synchronization Operations; Universality of Consensus)",
+        "Herlihy, \"Wait-Free Synchronization\" (1991)"
+      ],
+      "answer": "consensus number one"
+    },
+    {
+      "id": "card-8r5c",
+      "format": "qa",
+      "category": "amp",
+      "tags": [
+        "consensus",
+        "compare-and-swap",
+        "universal-construction",
+        "wait-free"
+      ],
+      "prompt": "Why doesn't Peterson's lock contradict registers having consensus number one?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/consensus-and-universality.md",
+        "block": "card-8r5c"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 5-6 (The Relative Power of Primitive Synchronization Operations; Universality of Consensus)",
+        "Herlihy, \"Wait-Free Synchronization\" (1991)"
+      ],
+      "answer": "Peterson's lock is a blocking construction — a thread can wait indefinitely for another to release it — not a wait-free one; the consensus-number-one impossibility is specifically about wait-free protocols, so a blocking mutual-exclusion algorithm built from registers doesn't fall under it at all."
+    },
+    {
+      "id": "card-qdek",
+      "format": "mcq",
+      "category": "amp",
+      "tags": [
+        "consensus",
+        "compare-and-swap",
+        "universal-construction",
+        "wait-free"
+      ],
+      "prompt": "Test-and-set, fetch-and-add, and swap all have consensus number 2. What does that mean?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/consensus-and-universality.md",
+        "block": "card-qdek"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 5-6 (The Relative Power of Primitive Synchronization Operations; Universality of Consensus)",
+        "Herlihy, \"Wait-Free Synchronization\" (1991)"
+      ],
+      "choices": [
+        {
+          "text": "Those objects, plus registers, can solve wait-free consensus for exactly 2 threads, but not for 3 or more",
+          "correct": true
+        },
+        {
+          "text": "They can solve consensus for any number of threads, just more slowly than CAS",
+          "correct": false
+        },
+        {
+          "text": "They cannot solve consensus for any number of threads at all",
+          "correct": false
+        },
+        {
+          "text": "Their consensus number depends on how many registers are made available to the protocol",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-qfu8",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "consensus",
+        "compare-and-swap",
+        "universal-construction",
+        "wait-free"
+      ],
+      "prompt": "Because compare-and-swap has an ___, it is called universal: any concurrent object's operations can be implemented in a wait-free manner for any number of threads using CAS together with ordinary registers, typically via a construction where each thread tries to append its intended operation to a shared, agreed-on log of every operation applied so far.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/consensus-and-universality.md",
+        "block": "card-qfu8"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 5-6 (The Relative Power of Primitive Synchronization Operations; Universality of Consensus)",
+        "Herlihy, \"Wait-Free Synchronization\" (1991)"
+      ],
+      "answer": "unbounded consensus number"
+    },
+    {
+      "id": "card-v47a",
+      "format": "recall",
+      "category": "amp",
+      "tags": [
+        "consensus",
+        "compare-and-swap",
+        "universal-construction",
+        "wait-free"
+      ],
+      "prompt": "Explain what it would mean, structurally, for the consensus hierarchy to collapse at some finite level k instead of being genuinely infinite — and why the existence of a universal (infinite-consensus-number) object like compare-and-swap rules that out.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/consensus-and-universality.md",
+        "block": "card-v47a"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 5-6 (The Relative Power of Primitive Synchronization Operations; Universality of Consensus)",
+        "Herlihy, \"Wait-Free Synchronization\" (1991)"
+      ]
+    },
+    {
+      "id": "card-2dqf",
+      "format": "qa",
+      "category": "amp",
+      "tags": [
+        "consensus",
+        "compare-and-swap",
+        "universal-construction",
+        "wait-free"
+      ],
+      "prompt": "Why did CAS, not test-and-set, become the primitive for building concurrent data structures?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/consensus-and-universality.md",
+        "block": "card-2dqf"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 5-6 (The Relative Power of Primitive Synchronization Operations; Universality of Consensus)",
+        "Herlihy, \"Wait-Free Synchronization\" (1991)"
+      ],
+      "answer": "CAS's unbounded consensus number makes it universal by itself, together with registers, for implementing any wait-free object regardless of how many threads contend; test-and-set's consensus number of two caps what it alone can wait-free-implement once more than two threads are involved, however it is combined with registers."
+    },
+    {
+      "id": "card-brcq",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "linearizability",
+        "sequential-consistency",
+        "quiescent-consistency",
+        "correctness-conditions"
+      ],
+      "prompt": "An object is ___ if every operation appears to take effect instantaneously at some single point between its invocation and its response — its linearization point — such that the resulting total order across every operation on the object is consistent with real time: if operation A finished before operation B started, A's linearization point must come first.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/linearizability-and-consistency.md",
+        "block": "card-brcq"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 3 (Concurrent Objects)",
+        "Herlihy & Wing, \"Linearizability: A Correctness Condition for Concurrent Objects\" (1990)"
+      ],
+      "answer": "linearizable"
+    },
+    {
+      "id": "card-xu7g",
+      "format": "qa",
+      "category": "amp",
+      "tags": [
+        "linearizability",
+        "sequential-consistency",
+        "quiescent-consistency",
+        "correctness-conditions"
+      ],
+      "prompt": "What must a sequentially consistent history preserve, and what is it explicitly free to ignore?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/linearizability-and-consistency.md",
+        "block": "card-xu7g"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 3 (Concurrent Objects)",
+        "Herlihy & Wing, \"Linearizability: A Correctness Condition for Concurrent Objects\" (1990)"
+      ],
+      "answer": "It must preserve each individual thread's own program order — the order that thread issued its own operations in; it is free to ignore real time entirely, so an operation from one thread can be placed after a later-starting operation from another thread in the overall total order, as long as no single thread's own order is violated."
+    },
+    {
+      "id": "card-6yx3",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "linearizability",
+        "sequential-consistency",
+        "quiescent-consistency",
+        "correctness-conditions"
+      ],
+      "prompt": "___ only constrains operations separated by a quiescent point — a moment when no operation is in flight anywhere on the object: anything before quiescence must precede anything after it in the total order, but operations that overlap within a busy stretch may be reordered freely, which is what lets a quiescently consistent implementation (such as a batching counter) outperform a linearizable one.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/linearizability-and-consistency.md",
+        "block": "card-6yx3"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 3 (Concurrent Objects)",
+        "Herlihy & Wing, \"Linearizability: A Correctness Condition for Concurrent Objects\" (1990)"
+      ],
+      "answer": "Quiescent consistency"
+    },
+    {
+      "id": "card-phex",
+      "format": "mcq",
+      "category": "amp",
+      "tags": [
+        "linearizability",
+        "sequential-consistency",
+        "quiescent-consistency",
+        "correctness-conditions"
+      ],
+      "prompt": "Which of these correctness conditions does NOT compose — meaning every individual object satisfying it does not guarantee the whole multi-object system also satisfies it?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/linearizability-and-consistency.md",
+        "block": "card-phex"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 3 (Concurrent Objects)",
+        "Herlihy & Wing, \"Linearizability: A Correctness Condition for Concurrent Objects\" (1990)"
+      ],
+      "choices": [
+        {
+          "text": "Sequential consistency",
+          "correct": true
+        },
+        {
+          "text": "Linearizability",
+          "correct": false
+        },
+        {
+          "text": "Quiescent consistency",
+          "correct": false
+        },
+        {
+          "text": "None of the above — all three compose",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-heil",
+      "format": "qa",
+      "category": "amp",
+      "tags": [
+        "linearizability",
+        "sequential-consistency",
+        "quiescent-consistency",
+        "correctness-conditions"
+      ],
+      "prompt": "Why can sequential consistency reorder threads' operations relative to real time?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/linearizability-and-consistency.md",
+        "block": "card-heil"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 3 (Concurrent Objects)",
+        "Herlihy & Wing, \"Linearizability: A Correctness Condition for Concurrent Objects\" (1990)"
+      ],
+      "answer": "Sequential consistency only has to find a single total order respecting each thread's own program order, with no constraint tying that order to when operations actually overlapped in real time; linearizability adds exactly that real-time constraint, which is also what lets each object's linearization order be picked independently of any other object and still combine consistently."
+    },
+    {
+      "id": "card-pncp",
+      "format": "recall",
+      "category": "amp",
+      "tags": [
+        "linearizability",
+        "sequential-consistency",
+        "quiescent-consistency",
+        "correctness-conditions"
+      ],
+      "prompt": "Using the definition of a linearization point, explain why every linearizable history is automatically sequentially consistent, but a sequentially consistent history need not be linearizable.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/linearizability-and-consistency.md",
+        "block": "card-pncp"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 3 (Concurrent Objects)",
+        "Herlihy & Wing, \"Linearizability: A Correctness Condition for Concurrent Objects\" (1990)"
+      ]
+    },
+    {
+      "id": "card-2lyk",
+      "format": "qa",
+      "category": "amp",
+      "tags": [
+        "linearizability",
+        "sequential-consistency",
+        "quiescent-consistency",
+        "correctness-conditions"
+      ],
+      "prompt": "Why does linearizability's composability matter in practice, beyond the definition itself?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/linearizability-and-consistency.md",
+        "block": "card-2lyk"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 3 (Concurrent Objects)",
+        "Herlihy & Wing, \"Linearizability: A Correctness Condition for Concurrent Objects\" (1990)"
+      ],
+      "answer": "It lets you verify one concurrent object at a time and then combine already-verified objects into a larger system without re-checking their interaction — a program built from a linearizable queue and a linearizable stack is guaranteed linearizable as a whole automatically, a guarantee sequential consistency cannot offer."
+    },
+    {
+      "id": "card-qfvk",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "memory-models",
+        "reordering",
+        "fences",
+        "atomics",
+        "volatile"
+      ],
+      "prompt": "A compiler is free to reorder, merge, or eliminate memory accesses so long as the ___ behavior of the code it is compiling is preserved — it has no way to know that a reordering invisible within one thread might break an invariant a second thread depends on, because it reasons about one thread's code at a time.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/memory-models-and-fences.md",
+        "block": "card-qfvk"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Appendix A (Software Basics, Java Memory Model); Appendix B (Hardware Basics, Relaxed Memory Consistency)",
+        "Adve & Gharachorloo, \"Shared Memory Consistency Models: A Tutorial\" (1996)"
+      ],
+      "answer": "single-threaded, as-if-serial"
+    },
+    {
+      "id": "card-6aje",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "memory-models",
+        "reordering",
+        "fences",
+        "atomics",
+        "volatile"
+      ],
+      "prompt": "Modern CPUs use per-core store buffers and out-of-order execution, so a core's own writes can become ___ that issued them, unless something explicitly constrains that visibility.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/memory-models-and-fences.md",
+        "block": "card-6aje"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Appendix A (Software Basics, Java Memory Model); Appendix B (Hardware Basics, Relaxed Memory Consistency)",
+        "Adve & Gharachorloo, \"Shared Memory Consistency Models: A Tutorial\" (1996)"
+      ],
+      "answer": "visible to other cores in an order different from the program order"
+    },
+    {
+      "id": "card-qivj",
+      "format": "qa",
+      "category": "amp",
+      "tags": [
+        "memory-models",
+        "reordering",
+        "fences",
+        "atomics",
+        "volatile"
+      ],
+      "prompt": "Why can x86-64 still reorder a store followed by a load to a different address?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/memory-models-and-fences.md",
+        "block": "card-qivj"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Appendix A (Software Basics, Java Memory Model); Appendix B (Hardware Basics, Relaxed Memory Consistency)",
+        "Adve & Gharachorloo, \"Shared Memory Consistency Models: A Tutorial\" (1996)"
+      ],
+      "answer": "Each core can satisfy its own later load from its local store buffer immediately, before an earlier store has actually become visible to other cores; x86-64 preserves store-store and load-load order but not a store followed by a load to a different address, which is exactly the reordering a store buffer produces."
+    },
+    {
+      "id": "card-rd9p",
+      "format": "mcq",
+      "category": "amp",
+      "tags": [
+        "memory-models",
+        "reordering",
+        "fences",
+        "atomics",
+        "volatile"
+      ],
+      "prompt": "What does a memory fence (barrier) instruction actually do?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/memory-models-and-fences.md",
+        "block": "card-rd9p"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Appendix A (Software Basics, Java Memory Model); Appendix B (Hardware Basics, Relaxed Memory Consistency)",
+        "Adve & Gharachorloo, \"Shared Memory Consistency Models: A Tutorial\" (1996)"
+      ],
+      "choices": [
+        {
+          "text": "Forbids the CPU or compiler from reordering memory operations across it, in the direction(s) it specifies",
+          "correct": true
+        },
+        {
+          "text": "Makes a single read or write of a variable atomic",
+          "correct": false
+        },
+        {
+          "text": "Acquires a lock automatically on the instruction's target address",
+          "correct": false
+        },
+        {
+          "text": "Flushes the entire CPU cache to main memory",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-tavd",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "memory-models",
+        "reordering",
+        "fences",
+        "atomics",
+        "volatile"
+      ],
+      "prompt": "In C or C++, ___ only forces the compiler to actually perform every read and write to that variable rather than caching or eliminating it; it inserts no hardware fence, provides no atomicity, and does nothing to stop another core from observing the access reordered relative to other memory operations.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/memory-models-and-fences.md",
+        "block": "card-tavd"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Appendix A (Software Basics, Java Memory Model); Appendix B (Hardware Basics, Relaxed Memory Consistency)",
+        "Adve & Gharachorloo, \"Shared Memory Consistency Models: A Tutorial\" (1996)"
+      ],
+      "answer": "`volatile`"
+    },
+    {
+      "id": "card-cllz",
+      "format": "qa",
+      "category": "amp",
+      "tags": [
+        "memory-models",
+        "reordering",
+        "fences",
+        "atomics",
+        "volatile"
+      ],
+      "prompt": "Why doesn't C/C++ `volatile` alone make a shared counter safe to increment from two threads?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/memory-models-and-fences.md",
+        "block": "card-cllz"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Appendix A (Software Basics, Java Memory Model); Appendix B (Hardware Basics, Relaxed Memory Consistency)",
+        "Adve & Gharachorloo, \"Shared Memory Consistency Models: A Tutorial\" (1996)"
+      ],
+      "answer": "It only stops the compiler from optimizing away or reordering accesses to that one variable at the source level; it neither makes a read-modify-write sequence atomic, so two threads can still interleave a read and a write, nor emits the hardware fences needed to keep the increment ordered relative to other memory."
+    },
+    {
+      "id": "card-kqed",
+      "format": "recall",
+      "category": "amp",
+      "tags": [
+        "memory-models",
+        "reordering",
+        "fences",
+        "atomics",
+        "volatile"
+      ],
+      "prompt": "Explain why Java's `volatile` and C/C++'s `volatile` are not interchangeable concepts, even though they share the same keyword.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/memory-models-and-fences.md",
+        "block": "card-kqed"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Appendix A (Software Basics, Java Memory Model); Appendix B (Hardware Basics, Relaxed Memory Consistency)",
+        "Adve & Gharachorloo, \"Shared Memory Consistency Models: A Tutorial\" (1996)"
+      ]
+    },
+    {
+      "id": "card-z6jo",
+      "format": "qa",
+      "category": "amp",
+      "tags": [
+        "memory-models",
+        "reordering",
+        "fences",
+        "atomics",
+        "volatile"
+      ],
+      "prompt": "Why do lock-free algorithms need real atomics, not a plain-looking CAS call?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/memory-models-and-fences.md",
+        "block": "card-z6jo"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Appendix A (Software Basics, Java Memory Model); Appendix B (Hardware Basics, Relaxed Memory Consistency)",
+        "Adve & Gharachorloo, \"Shared Memory Consistency Models: A Tutorial\" (1996)"
+      ],
+      "answer": "Their correctness assumes every CAS acts as a full ordering barrier — nothing before it is reordered past it, and its effect becomes immediately visible to other cores; a naive implementation gives no such guarantee under compiler optimization or real hardware reordering, so the pseudocode can be correct on paper yet silently broken once compiled, unless it uses primitives that genuinely provide that ordering."
+    },
+    {
+      "id": "card-10hs",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "mutual-exclusion",
+        "peterson-lock",
+        "bakery-algorithm",
+        "progress-conditions"
+      ],
+      "prompt": "A lock's progress guarantee splits into two properties that are easy to conflate. ___ only promises that, among threads currently competing for the lock, at least one eventually enters the critical section — some thread makes progress, but a specific unlucky thread can be passed over forever. Starvation-freedom is strictly stronger: it promises every thread that calls acquire eventually enters, so no individual thread can be starved even while the system as a whole keeps making progress.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/mutual-exclusion-correctness.md",
+        "block": "card-10hs"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 2 (Mutual Exclusion)",
+        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)",
+        "Peterson, \"Myths About the Mutual Exclusion Problem\" (1981)"
+      ],
+      "answer": "Deadlock-freedom"
+    },
+    {
+      "id": "card-mxuv",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "mutual-exclusion",
+        "peterson-lock",
+        "bakery-algorithm",
+        "progress-conditions"
+      ],
+      "prompt": "A lock's progress guarantee splits into two properties that are easy to conflate. Deadlock-freedom only promises that, among threads currently competing for the lock, at least one eventually enters the critical section — some thread makes progress, but a specific unlucky thread can be passed over forever. ___ is strictly stronger: it promises every thread that calls acquire eventually enters, so no individual thread can be starved even while the system as a whole keeps making progress.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/mutual-exclusion-correctness.md",
+        "block": "card-mxuv"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 2 (Mutual Exclusion)",
+        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)",
+        "Peterson, \"Myths About the Mutual Exclusion Problem\" (1981)"
+      ],
+      "answer": "Starvation-freedom"
+    },
+    {
+      "id": "card-yk7k",
+      "format": "qa",
+      "category": "amp",
+      "tags": [
+        "mutual-exclusion",
+        "peterson-lock",
+        "bakery-algorithm",
+        "progress-conditions"
+      ],
+      "prompt": "Why is starvation-freedom strictly stronger than deadlock-freedom, not just a different property?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/mutual-exclusion-correctness.md",
+        "block": "card-yk7k"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 2 (Mutual Exclusion)",
+        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)",
+        "Peterson, \"Myths About the Mutual Exclusion Problem\" (1981)"
+      ],
+      "answer": "Deadlock-freedom only guarantees *some* thread eventually enters, which permits one unlucky thread to be perpetually passed over forever; starvation-freedom additionally guarantees *every* thread that tries eventually enters, ruling that out — every starvation-free algorithm is deadlock-free, but not the reverse."
+    },
+    {
+      "id": "card-ztgh",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "mutual-exclusion",
+        "peterson-lock",
+        "bakery-algorithm",
+        "progress-conditions"
+      ],
+      "prompt": "Peterson's two-thread algorithm is the classic existence proof that a correct lock does not require a special hardware instruction: it achieves ___ using nothing but ordinary atomic loads and stores to a two-element flag array and a shared turn variable.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/mutual-exclusion-correctness.md",
+        "block": "card-ztgh"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 2 (Mutual Exclusion)",
+        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)",
+        "Peterson, \"Myths About the Mutual Exclusion Problem\" (1981)"
+      ],
+      "answer": "mutual exclusion and starvation-freedom"
+    },
+    {
+      "id": "card-u9dt",
+      "format": "mcq",
+      "category": "amp",
+      "tags": [
+        "mutual-exclusion",
+        "peterson-lock",
+        "bakery-algorithm",
+        "progress-conditions"
+      ],
+      "prompt": "In Peterson's two-thread lock, when both threads set their flag and want to enter at the same time, what actually decides who waits?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/mutual-exclusion-correctness.md",
+        "block": "card-u9dt"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 2 (Mutual Exclusion)",
+        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)",
+        "Peterson, \"Myths About the Mutual Exclusion Problem\" (1981)"
+      ],
+      "choices": [
+        {
+          "text": "Whichever thread wrote the shared `turn` variable last ends up yielding to the other",
+          "correct": true
+        },
+        {
+          "text": "A hardware test-and-set instruction on the flag array",
+          "correct": false
+        },
+        {
+          "text": "The thread with the lower thread ID always wins",
+          "correct": false
+        },
+        {
+          "text": "Whichever thread's flag write happened to execute first in real time",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-8ehs",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "mutual-exclusion",
+        "peterson-lock",
+        "bakery-algorithm",
+        "progress-conditions"
+      ],
+      "prompt": "The ___ generalizes Peterson's two-thread trick to n threads by having each thread climb through n − 1 levels, where each level admits all but one contender using a per-level victim variable, exactly like a chain of Peterson tournaments stacked on top of each other.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/mutual-exclusion-correctness.md",
+        "block": "card-8ehs"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 2 (Mutual Exclusion)",
+        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)",
+        "Peterson, \"Myths About the Mutual Exclusion Problem\" (1981)"
+      ],
+      "answer": "filter lock"
+    },
+    {
+      "id": "card-yj3r",
+      "format": "qa",
+      "category": "amp",
+      "tags": [
+        "mutual-exclusion",
+        "peterson-lock",
+        "bakery-algorithm",
+        "progress-conditions"
+      ],
+      "prompt": "Why does Lamport's bakery algorithm guarantee FCFS fairness that the filter lock does not?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/mutual-exclusion-correctness.md",
+        "block": "card-yj3r"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 2 (Mutual Exclusion)",
+        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)",
+        "Peterson, \"Myths About the Mutual Exclusion Problem\" (1981)"
+      ],
+      "answer": "The bakery algorithm has every waiting thread draw a strictly increasing ticket number and then enter in ticket order, so a thread that arrived earlier is always served first (bounded waiting); the filter lock only guarantees every thread eventually gets through, with no bound on how many times a given thread can be overtaken by later arrivals first."
+    },
+    {
+      "id": "card-wn01",
+      "format": "recall",
+      "category": "amp",
+      "tags": [
+        "mutual-exclusion",
+        "peterson-lock",
+        "bakery-algorithm",
+        "progress-conditions"
+      ],
+      "prompt": "Explain why proving mutual exclusion buildable from nothing but atomic read/write registers does not contradict the fact that read/write registers cannot solve consensus for more than one thread wait-free. What is different about the two problems being solved?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/mutual-exclusion-correctness.md",
+        "block": "card-wn01"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 2 (Mutual Exclusion)",
+        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)",
+        "Peterson, \"Myths About the Mutual Exclusion Problem\" (1981)"
+      ]
+    },
+    {
+      "id": "card-z353",
+      "format": "qa",
+      "category": "amp",
+      "tags": [
+        "mutual-exclusion",
+        "peterson-lock",
+        "bakery-algorithm",
+        "progress-conditions"
+      ],
+      "prompt": "Why doesn't composing two separately-atomic register accesses give an atomic pair?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/mutual-exclusion-correctness.md",
+        "block": "card-z353"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 2 (Mutual Exclusion)",
+        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)",
+        "Peterson, \"Myths About the Mutual Exclusion Problem\" (1981)"
+      ],
+      "answer": "A thread can be swapped out between the two accesses, so another thread's operations can slip into that gap even though each individual access is indivisible on its own; algorithms like Peterson's have to be built specifically to tolerate that gap, not just assume it away."
+    },
+    {
+      "id": "card-pyae",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "progress-conditions",
+        "lock-free",
+        "wait-free",
+        "obstruction-free"
+      ],
+      "prompt": "A ___ implementation can be delayed indefinitely if a thread holding a lock is preempted, delayed, or crashes, because every other thread waiting on that lock must wait for it to release, no matter how long that takes.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/progress-conditions.md",
+        "block": "card-pyae"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 3 (Concurrent Objects)",
+        "Herlihy, \"Wait-Free Synchronization\" (1991)"
+      ],
+      "answer": "blocking"
+    },
+    {
+      "id": "card-33z6",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "progress-conditions",
+        "lock-free",
+        "wait-free",
+        "obstruction-free"
+      ],
+      "prompt": "An ___ implementation guarantees a thread completes its operation in a bounded number of steps only if it eventually runs with no other thread interfering for long enough; under real contention, two threads can in principle keep interrupting each other forever, livelocking with no thread ever blocked but also none ever finishing.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/progress-conditions.md",
+        "block": "card-33z6"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 3 (Concurrent Objects)",
+        "Herlihy, \"Wait-Free Synchronization\" (1991)"
+      ],
+      "answer": "obstruction-free"
+    },
+    {
+      "id": "card-arxs",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "progress-conditions",
+        "lock-free",
+        "wait-free",
+        "obstruction-free"
+      ],
+      "prompt": "A ___ implementation guarantees system-wide progress: infinitely often, some thread's operation completes in a finite number of steps, even if other threads are delayed, preempted, or crash — but a specific thread can still be repeatedly passed over by luckier competitors.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/progress-conditions.md",
+        "block": "card-arxs"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 3 (Concurrent Objects)",
+        "Herlihy, \"Wait-Free Synchronization\" (1991)"
+      ],
+      "answer": "lock-free"
+    },
+    {
+      "id": "card-epcj",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "progress-conditions",
+        "lock-free",
+        "wait-free",
+        "obstruction-free"
+      ],
+      "prompt": "A ___ implementation is the strongest guarantee: every thread completes its own operation in a bounded number of its own steps, regardless of what any other thread does, so no thread can starve even in the worst case.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/progress-conditions.md",
+        "block": "card-epcj"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 3 (Concurrent Objects)",
+        "Herlihy, \"Wait-Free Synchronization\" (1991)"
+      ],
+      "answer": "wait-free"
+    },
+    {
+      "id": "card-8fma",
+      "format": "mcq",
+      "category": "amp",
+      "tags": [
+        "progress-conditions",
+        "lock-free",
+        "wait-free",
+        "obstruction-free"
+      ],
+      "prompt": "A lock-free queue's progress guarantee is best described as which of these?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/progress-conditions.md",
+        "block": "card-8fma"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 3 (Concurrent Objects)",
+        "Herlihy, \"Wait-Free Synchronization\" (1991)"
+      ],
+      "choices": [
+        {
+          "text": "At least one thread's operation completes within a bounded number of steps infinitely often, even if some threads are delayed or crash",
+          "correct": true
+        },
+        {
+          "text": "Every thread's operation completes within a bounded number of its own steps",
+          "correct": false
+        },
+        {
+          "text": "No thread ever needs to retry its operation",
+          "correct": false
+        },
+        {
+          "text": "The data structure never uses a compare-and-swap instruction",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-apj6",
+      "format": "qa",
+      "category": "amp",
+      "tags": [
+        "progress-conditions",
+        "lock-free",
+        "wait-free",
+        "obstruction-free"
+      ],
+      "prompt": "Why can a lock-free algorithm let one thread starve, even as the system progresses?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/progress-conditions.md",
+        "block": "card-apj6"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 3 (Concurrent Objects)",
+        "Herlihy, \"Wait-Free Synchronization\" (1991)"
+      ],
+      "answer": "The guarantee is only that *some* thread's operation succeeds on each contended step, not any particular one; an unlucky thread's compare-and-swap can keep losing the race to other threads that repeatedly win it, so throughput never stalls even while that one thread's own call never returns."
+    },
+    {
+      "id": "card-7yd3",
+      "format": "qa",
+      "category": "amp",
+      "tags": [
+        "progress-conditions",
+        "lock-free",
+        "wait-free",
+        "obstruction-free"
+      ],
+      "prompt": "What must obstruction-freedom guarantee, and what may it do under contention?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/progress-conditions.md",
+        "block": "card-7yd3"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 3 (Concurrent Objects)",
+        "Herlihy, \"Wait-Free Synchronization\" (1991)"
+      ],
+      "answer": "It guarantees that a thread running in isolation, with no interference, finishes in a bounded number of steps; under contention it is explicitly allowed to livelock, with every thread repeatedly interrupting another's isolated run so that none of them ever finishes."
+    },
+    {
+      "id": "card-5blv",
+      "format": "recall",
+      "category": "amp",
+      "tags": [
+        "progress-conditions",
+        "lock-free",
+        "wait-free",
+        "obstruction-free"
+      ],
+      "prompt": "Explain why wait-free implies lock-free, and lock-free implies obstruction-free, but neither implication reverses — what specific guarantee is lost at each step down the hierarchy?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/progress-conditions.md",
+        "block": "card-5blv"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 3 (Concurrent Objects)",
+        "Herlihy, \"Wait-Free Synchronization\" (1991)"
+      ]
+    },
+    {
+      "id": "card-wnbg",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "registers",
+        "atomicity",
+        "shared-memory",
+        "memory-hierarchy"
+      ],
+      "prompt": "A ___ register only makes a promise about non-overlapping accesses: a read that does not overlap any write returns the last value written. If a read overlaps a concurrent write, this weakest guarantee lets it return any value at all — not necessarily the old or the new one — because nothing guarantees the bits changing underneath a concurrent reader are seen consistently.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/shared-memory-model.md",
+        "block": "card-wnbg"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 4 (Foundations of Shared Memory)",
+        "Lamport, \"On Interprocess Communication, Parts I & II\" (1986)"
+      ],
+      "answer": "safe"
+    },
+    {
+      "id": "card-x113",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "registers",
+        "atomicity",
+        "shared-memory",
+        "memory-hierarchy"
+      ],
+      "prompt": "A ___ register strengthens safe by also constraining overlapping reads: a read overlapping a write must return either the value being written or the value already there, never garbage. Two overlapping reads, however, are not required to agree on an order — one reader can observe the new value while a later reader still sees the old one.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/shared-memory-model.md",
+        "block": "card-x113"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 4 (Foundations of Shared Memory)",
+        "Lamport, \"On Interprocess Communication, Parts I & II\" (1986)"
+      ],
+      "answer": "regular"
+    },
+    {
+      "id": "card-hs9w",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "registers",
+        "atomicity",
+        "shared-memory",
+        "memory-hierarchy"
+      ],
+      "prompt": "An ___ register is what most programmers implicitly assume memory to be: every read and write behaves as if it took effect at a single instant, so all accesses agree on one total order consistent with real time, exactly like a memory cell in a sequential program.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/shared-memory-model.md",
+        "block": "card-hs9w"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 4 (Foundations of Shared Memory)",
+        "Lamport, \"On Interprocess Communication, Parts I & II\" (1986)"
+      ],
+      "answer": "atomic"
+    },
+    {
+      "id": "card-qrnb",
+      "format": "qa",
+      "category": "amp",
+      "tags": [
+        "registers",
+        "atomicity",
+        "shared-memory",
+        "memory-hierarchy"
+      ],
+      "prompt": "Why does a shared boolean flag fail as a mutual-exclusion primitive on atomic hardware?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/shared-memory-model.md",
+        "block": "card-qrnb"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 4 (Foundations of Shared Memory)",
+        "Lamport, \"On Interprocess Communication, Parts I & II\" (1986)"
+      ],
+      "answer": "An atomic register only guarantees that one single read or one single write is indivisible; checking the flag and then setting it are two separate atomic accesses with a gap between them, and another thread can run in that gap, so the check-then-set pair itself is not atomic even though each half of it is."
+    },
+    {
+      "id": "card-wd8z",
+      "format": "mcq",
+      "category": "amp",
+      "tags": [
+        "registers",
+        "atomicity",
+        "shared-memory",
+        "memory-hierarchy"
+      ],
+      "prompt": "Peterson's algorithm relies on each thread's own `flag[i]` being written by only that one thread, while any thread may read it. What register class does that require?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/shared-memory-model.md",
+        "block": "card-wd8z"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 4 (Foundations of Shared Memory)",
+        "Lamport, \"On Interprocess Communication, Parts I & II\" (1986)"
+      ],
+      "choices": [
+        {
+          "text": "Single-writer, multi-reader (SWMR)",
+          "correct": true
+        },
+        {
+          "text": "Multi-writer, multi-reader (MWMR)",
+          "correct": false
+        },
+        {
+          "text": "Single-writer, single-reader (SWSR)",
+          "correct": false
+        },
+        {
+          "text": "Multi-writer, single-reader (MWSR)",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-ep3c",
+      "format": "recall",
+      "category": "amp",
+      "tags": [
+        "registers",
+        "atomicity",
+        "shared-memory",
+        "memory-hierarchy"
+      ],
+      "prompt": "Explain why a 64-bit counter updated with two separate 32-bit stores on older 32-bit hardware might only satisfy the \"safe\" register guarantee rather than \"atomic\" — and what a reader could observe as a result.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/shared-memory-model.md",
+        "block": "card-ep3c"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 4 (Foundations of Shared Memory)",
+        "Lamport, \"On Interprocess Communication, Parts I & II\" (1986)"
+      ]
+    },
+    {
+      "id": "card-fgs1",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "spin-locks",
+        "cache-coherence",
+        "backoff",
+        "queue-locks",
+        "mcs-lock",
+        "clh-lock"
+      ],
+      "prompt": "Every failed spin on a plain test-and-set lock still issues the read-modify-write instruction, and because an RMW forces the cache-coherence protocol to invalidate every other core's cached copy of that line, a thread ___, even while just checking whether the lock is free.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/spin-locks-and-queue-locks.md",
+        "block": "card-fgs1"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 7 (Spin Locks and Contention)",
+        "Mellor-Crummey & Scott, \"Algorithms for Scalable Synchronization on Shared-Memory Multiprocessors\" (1991)"
+      ],
+      "answer": "spinning on test-and-set generates coherence traffic on every single iteration"
+    },
+    {
+      "id": "card-utst",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "spin-locks",
+        "cache-coherence",
+        "backoff",
+        "queue-locks",
+        "mcs-lock",
+        "clh-lock"
+      ],
+      "prompt": "___ fixes the worst of this by spinning on an ordinary read first — which the coherence protocol can satisfy from a cached, shared copy with no traffic — and only issuing a real test-and-set once that read suggests the lock looks free.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/spin-locks-and-queue-locks.md",
+        "block": "card-utst"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 7 (Spin Locks and Contention)",
+        "Mellor-Crummey & Scott, \"Algorithms for Scalable Synchronization on Shared-Memory Multiprocessors\" (1991)"
+      ],
+      "answer": "Test-and-test-and-set"
+    },
+    {
+      "id": "card-jhoy",
+      "format": "qa",
+      "category": "amp",
+      "tags": [
+        "spin-locks",
+        "cache-coherence",
+        "backoff",
+        "queue-locks",
+        "mcs-lock",
+        "clh-lock"
+      ],
+      "prompt": "Why does TTAS still cause a coherence-traffic burst exactly when a lock is released?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/spin-locks-and-queue-locks.md",
+        "block": "card-jhoy"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 7 (Spin Locks and Contention)",
+        "Mellor-Crummey & Scott, \"Algorithms for Scalable Synchronization on Shared-Memory Multiprocessors\" (1991)"
+      ],
+      "answer": "Every spinning thread's cached copy of the lock is invalidated by the release's write, so all of them re-read at once and then all race to issue a real test-and-set simultaneously — a thundering herd — even though the scheme avoided traffic the entire time nothing was changing."
+    },
+    {
+      "id": "card-a1jd",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "spin-locks",
+        "cache-coherence",
+        "backoff",
+        "queue-locks",
+        "mcs-lock",
+        "clh-lock"
+      ],
+      "prompt": "___ has a thread that just failed to acquire the lock wait a randomized delay that grows on each successive failure before retrying, trading a little individual latency for less simultaneous contention on the next release.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/spin-locks-and-queue-locks.md",
+        "block": "card-a1jd"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 7 (Spin Locks and Contention)",
+        "Mellor-Crummey & Scott, \"Algorithms for Scalable Synchronization on Shared-Memory Multiprocessors\" (1991)"
+      ],
+      "answer": "Exponential backoff"
+    },
+    {
+      "id": "card-kvv8",
+      "format": "mcq",
+      "category": "amp",
+      "tags": [
+        "spin-locks",
+        "cache-coherence",
+        "backoff",
+        "queue-locks",
+        "mcs-lock",
+        "clh-lock"
+      ],
+      "prompt": "In an MCS queue lock, what does each waiting thread actually spin on?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/spin-locks-and-queue-locks.md",
+        "block": "card-kvv8"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 7 (Spin Locks and Contention)",
+        "Mellor-Crummey & Scott, \"Algorithms for Scalable Synchronization on Shared-Memory Multiprocessors\" (1991)"
+      ],
+      "choices": [
+        {
+          "text": "A flag inside its own locally-allocated queue node, which its predecessor writes to on release",
+          "correct": true
+        },
+        {
+          "text": "The single global lock variable, exactly like test-and-set",
+          "correct": false
+        },
+        {
+          "text": "A randomized exponential-backoff timer, not a memory location",
+          "correct": false
+        },
+        {
+          "text": "Its successor's queue node",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-nrac",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "spin-locks",
+        "cache-coherence",
+        "backoff",
+        "queue-locks",
+        "mcs-lock",
+        "clh-lock"
+      ],
+      "prompt": "Because each waiting thread in a CLH or MCS queue lock spins on its own node rather than one shared variable, an acquire or release causes ___ no matter how many threads are waiting, unlike test-and-set, test-and-test-and-set, or backoff locks, where a single release can invalidate every spinner's cache at once.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/spin-locks-and-queue-locks.md",
+        "block": "card-nrac"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 7 (Spin Locks and Contention)",
+        "Mellor-Crummey & Scott, \"Algorithms for Scalable Synchronization on Shared-Memory Multiprocessors\" (1991)"
+      ],
+      "answer": "only a constant number of cache invalidations"
+    },
+    {
+      "id": "card-zhfa",
+      "format": "qa",
+      "category": "amp",
+      "tags": [
+        "spin-locks",
+        "cache-coherence",
+        "backoff",
+        "queue-locks",
+        "mcs-lock",
+        "clh-lock"
+      ],
+      "prompt": "Why does MCS suit NUMA machines better than CLH, given what each thread spins on?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/spin-locks-and-queue-locks.md",
+        "block": "card-zhfa"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 7 (Spin Locks and Contention)",
+        "Mellor-Crummey & Scott, \"Algorithms for Scalable Synchronization on Shared-Memory Multiprocessors\" (1991)"
+      ],
+      "answer": "MCS's spin target is always the thread's own locally-allocated node, so the spin loop hits local memory; CLH's spin target is the predecessor's node, which on a non-cache-coherent or NUMA machine may live in another node's memory, turning every spin iteration into a remote access."
+    },
+    {
+      "id": "card-05oh",
+      "format": "recall",
+      "category": "amp",
+      "tags": [
+        "spin-locks",
+        "cache-coherence",
+        "backoff",
+        "queue-locks",
+        "mcs-lock",
+        "clh-lock"
+      ],
+      "prompt": "A ticket lock already gives FIFO fairness. Explain what problem CLH and MCS queue locks are solving on top of that fairness — what does a ticket lock's shared \"now serving\" counter still cost on every release that these designs avoid?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/spin-locks-and-queue-locks.md",
+        "block": "card-05oh"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 7 (Spin Locks and Contention)",
+        "Mellor-Crummey & Scott, \"Algorithms for Scalable Synchronization on Shared-Memory Multiprocessors\" (1991)"
+      ]
+    },
+    {
+      "id": "card-gtzo",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "work-stealing",
+        "load-balancing",
+        "deques",
+        "scheduling"
+      ],
+      "prompt": "In work stealing, each worker owns a ___ of tasks: the owner pushes and pops its own new work from one end, while idle workers (\"thieves\") steal from the opposite end of a randomly chosen victim's deque, which keeps the owner's fast-path access and a thief's rare steal from contending on the same end of the structure.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/work-stealing.md",
+        "block": "card-gtzo"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 16 (Futures, Scheduling, and Work Distribution)",
+        "Blumofe & Leiserson, \"Scheduling Multithreaded Computations by Work Stealing\" (1999)"
+      ],
+      "answer": "double-ended queue"
+    },
+    {
+      "id": "card-7y7y",
+      "format": "qa",
+      "category": "amp",
+      "tags": [
+        "work-stealing",
+        "load-balancing",
+        "deques",
+        "scheduling"
+      ],
+      "prompt": "Why do thieves steal from the deque end opposite the owner's push/pop end?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/work-stealing.md",
+        "block": "card-7y7y"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 16 (Futures, Scheduling, and Work Distribution)",
+        "Blumofe & Leiserson, \"Scheduling Multithreaded Computations by Work Stealing\" (1999)"
+      ],
+      "answer": "Splitting the two ends apart keeps the owner's frequent fast-path operations from colliding with a thief's rare steal, minimizing contention; it also means a steal takes the oldest, typically largest and coarsest-grained task, amortizing the steal's relatively expensive synchronization over more work."
+    },
+    {
+      "id": "card-d612",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "work-stealing",
+        "load-balancing",
+        "deques",
+        "scheduling"
+      ],
+      "prompt": "A ___ work-stealing deque uses a fixed-size array whose maximum capacity must be chosen in advance, while an unbounded deque (such as the Chase-Lev design) grows its backing array dynamically, which is substantially harder to implement correctly because a resize can race with a concurrent steal.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/work-stealing.md",
+        "block": "card-d612"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 16 (Futures, Scheduling, and Work Distribution)",
+        "Blumofe & Leiserson, \"Scheduling Multithreaded Computations by Work Stealing\" (1999)"
+      ],
+      "answer": "bounded"
+    },
+    {
+      "id": "card-7vjx",
+      "format": "mcq",
+      "category": "amp",
+      "tags": [
+        "work-stealing",
+        "load-balancing",
+        "deques",
+        "scheduling"
+      ],
+      "prompt": "Why is the owner's end of a work-stealing deque cheap to operate on while stealing from the other end is comparatively expensive?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/work-stealing.md",
+        "block": "card-7vjx"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 16 (Futures, Scheduling, and Work Distribution)",
+        "Blumofe & Leiserson, \"Scheduling Multithreaded Computations by Work Stealing\" (1999)"
+      ],
+      "choices": [
+        {
+          "text": "The owner's end sees almost all operations and rarely coordinates with more than an occasional thief, while a steal must synchronize correctly against both the owner and other competing thieves",
+          "correct": true
+        },
+        {
+          "text": "The owner's end uses a completely different, non-concurrent data structure",
+          "correct": false
+        },
+        {
+          "text": "Stealing is expensive only because it requires acquiring a single global lock on the whole scheduler",
+          "correct": false
+        },
+        {
+          "text": "There is no real performance difference; it is purely a naming convention",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-76qo",
+      "format": "cloze",
+      "category": "amp",
+      "tags": [
+        "work-stealing",
+        "load-balancing",
+        "deques",
+        "scheduling"
+      ],
+      "prompt": "___ analysis shows randomized work stealing achieves expected running time close to `T1/P + O(T∞)` on P processors, where T1 is the total sequential work and T∞ is the computation's critical path — a provable guarantee that this decentralized, per-worker scheme balances load about as well as an omniscient central scheduler could.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/work-stealing.md",
+        "block": "card-76qo"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 16 (Futures, Scheduling, and Work Distribution)",
+        "Blumofe & Leiserson, \"Scheduling Multithreaded Computations by Work Stealing\" (1999)"
+      ],
+      "answer": "Blumofe and Leiserson's"
+    },
+    {
+      "id": "card-40lf",
+      "format": "qa",
+      "category": "amp",
+      "tags": [
+        "work-stealing",
+        "load-balancing",
+        "deques",
+        "scheduling"
+      ],
+      "prompt": "Why is work stealing fundamentally a concurrency problem rather than purely a scheduling one?",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/work-stealing.md",
+        "block": "card-40lf"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 16 (Futures, Scheduling, and Work Distribution)",
+        "Blumofe & Leiserson, \"Scheduling Multithreaded Computations by Work Stealing\" (1999)"
+      ],
+      "answer": "Each worker's deque is itself accessed concurrently by its owner and by thieves at the same time, so the scheme's correctness and performance depend on the same synchronization and progress-condition concerns — contention, atomicity of a steal versus a pop, avoiding lost or duplicated tasks — as any other concurrent data structure in this vault."
+    },
+    {
+      "id": "card-d6za",
+      "format": "recall",
+      "category": "amp",
+      "tags": [
+        "work-stealing",
+        "load-balancing",
+        "deques",
+        "scheduling"
+      ],
+      "prompt": "Explain why popping the owner's own most-recently-created task (LIFO on the owner's end) tends to preserve better cache locality than taking the oldest task would, for typical divide-and-conquer recursion.",
+      "source": {
+        "path": "vault/art-of-multiprocessor-programming/work-stealing.md",
+        "block": "card-d6za"
+      },
+      "citations": [
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 16 (Futures, Scheduling, and Work Distribution)",
+        "Blumofe & Leiserson, \"Scheduling Multithreaded Computations by Work Stealing\" (1999)"
+      ]
+    },
     {
       "id": "card-rb57",
       "format": "mcq",
