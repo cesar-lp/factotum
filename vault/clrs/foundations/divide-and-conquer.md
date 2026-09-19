@@ -13,6 +13,7 @@ instances of one recursive strategy. This note isolates that strategy
 itself, worked through on merge sort.
 
 Divide-and-conquer breaks into three steps at each level of recursion.
+
 ==Divide== the problem into a number of smaller subproblems that are ^card-4oxh
 smaller instances of the same problem. ==Conquer== the subproblems by ^card-v6lb
 solving them recursively. If a subproblem is small enough, solve it

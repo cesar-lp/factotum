@@ -49,7 +49,7 @@ component graph: contracting each SCC of G to a single vertex always
 yields a ==DAG== — there can be no cycle among SCCs, since any cycle ^card-lo8s
 spanning multiple SCCs would merge them into one larger SCC by
 definition. Decreasing finish-time order effectively processes SCCs in
-a topological order of that component DAG, source SCCs first.
+a topological order of that component graph, source SCCs first.
 
 > [!card] recall
 > Explain, in terms of the component graph being a DAG, why picking the

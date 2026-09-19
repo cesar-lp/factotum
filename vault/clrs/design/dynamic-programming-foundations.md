@@ -23,7 +23,7 @@ necessarily produce the best overall answer.
 DP is only worth using when the problem also has ==overlapping ^card-gzfj
 subproblems==: the recursion revisits the same subproblem many times rather
 than each one exactly once. Optimal substructure alone justifies the
-recurrence; overlapping subproblems is what justifies caching it.
+recurrence; that repetition is what justifies caching it.
 
 Why does dynamic programming need both optimal substructure and overlapping subproblems, rather than either one alone? :: Optimal substructure alone guarantees the recursive formula is *correct* — merge sort has it too, but its subproblems never recur, so memoizing would waste memory for no speedup. Overlapping subproblems alone is not enough either: caching only pays off, and only computes a meaningful "best" answer, if the recurrence being cached is provably built from subproblem optima. DP earns its speedup only when both hold together. ^card-uge2
 

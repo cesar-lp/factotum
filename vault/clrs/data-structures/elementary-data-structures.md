@@ -35,11 +35,12 @@ walking the list.
 A ==sentinel== is a dummy object placed at a list's boundary (e.g. as ^card-f8w0
 `nil[L]` in a circular, doubly linked list) purely to simplify boundary
 code: insert and delete no longer need special-case branches for an empty
-list or an operation at the head or tail, since the sentinel is always
-there to link against. This trades a small, constant amount of memory
-per list for simpler, branch-free code — a bad trade when a program keeps
-many short lists, since the sentinel overhead is paid on every one of
-them.
+list or an operation at the head or tail, since there is always a real
+node to link against.
+
+That trades a small, constant amount of memory per list for simpler,
+branch-free code — a bad trade when a program keeps many short lists,
+since the cost is paid on every one of them.
 
 > [!card] mcq
 > What is the main practical downside of using a sentinel in a linked list?

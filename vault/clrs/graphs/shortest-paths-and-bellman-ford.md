@@ -15,10 +15,11 @@ algorithms.
 
 ==Relaxation== of edge (u, v) tests whether going through u improves ^card-hwv3
 the current best known distance to v — if d[u] + w(u, v) < d[v], it
-sets d[v] = d[u] + w(u, v) and pi[v] = u. No shortest-path algorithm in
-this category does anything structurally different from repeated
-relaxation — they differ only in which edges they relax, and in what
-order.
+sets d[v] = d[u] + w(u, v) and pi[v] = u.
+
+No shortest-path algorithm in this category does anything structurally
+different from repeating that step — they differ only in which edges
+they relax, and in what order.
 
 Correctness rests on the ==optimal-substructure== property of shortest ^card-7833
 paths: any subpath of a shortest path is itself a shortest path between

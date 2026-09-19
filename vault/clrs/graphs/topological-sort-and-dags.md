@@ -38,10 +38,12 @@ Why does ordering vertices by decreasing DFS finish time produce a valid topolog
 > - [ ] A cycle makes the graph's adjacency list infinite ^card-stoa
 
 The correctness argument rests on one fact about DFS on a DAG: it never
-produces a ==back edge==. A back edge (u, v) means v is an ancestor of ^card-0620
-u still on the recursion stack when u is discovered — but that implies
-a path v -> ... -> u plus the edge u -> v, which is a cycle. So a DAG's
-absence of cycles is equivalent to its DFS producing no back edges.
+produces a ==back edge==. ^card-0620
+
+Such an edge (u, v) means v is an ancestor of u still on the recursion
+stack when u is discovered — but that implies a path v -> ... -> u plus
+the edge u -> v, which is a cycle. So a DAG's absence of cycles is
+equivalent to its DFS producing no back edges.
 
 What kind of edge does a DFS of a directed graph produce if and only if the graph contains a cycle? :: A back edge — an edge from a vertex to one of its own ancestors in the depth-first forest, still gray (on the stack) at the time it's encountered. ^card-zjmn
 

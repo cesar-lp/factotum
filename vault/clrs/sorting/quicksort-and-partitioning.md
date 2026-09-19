@@ -15,9 +15,11 @@ no merge step needed at the end.
 
 `LOMUTO-PARTITION(A, p, r)` fixes `A[r]` as the ==pivot== and walks an ^card-a5he
 index `i` through `A[p..r-1]`, tracking the boundary of elements known to
-be `<= pivot`. Whenever the current element is `<= pivot`, it advances
-that boundary and swaps the element into it; at the end it swaps the
-pivot itself into place just past the boundary.
+be no greater than it.
+
+Whenever the current element is `<= pivot`, it advances that boundary and
+swaps the element into it; at the end it swaps the pivot itself into
+place just past the boundary.
 
 ```
 LOMUTO-PARTITION(A, p, r)
@@ -43,7 +45,9 @@ What is the asymptotic running time of a single call to LOMUTO-PARTITION on a su
 Quicksort's recursion structure means its running time depends entirely
 on how evenly each partition splits the subarray. A split into two equal
 halves recurses like merge sort's, giving a recursion tree of depth
-==lg n== and O(n lg n) total work. ^card-2z8y
+==lg n==. ^card-2z8y
+
+That balanced case therefore does O(n lg n) work in total.
 
 Which specific input triggers Lomuto quicksort's worst case, and what recursion does it produce? :: An already-sorted (or reverse-sorted) array, when the pivot is always chosen as the last element: the partition then puts every other element on one side and none on the other, so each call recurses on a subarray of length n-1, producing a completely unbalanced recursion of depth n and Theta(n^2) total work. ^card-x3bp
 

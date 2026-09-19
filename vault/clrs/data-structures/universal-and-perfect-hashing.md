@@ -22,7 +22,7 @@ adversarial against a choice the adversary can't predict in advance.
 A family H of hash functions is ==universal== if, for every pair of ^card-12d6
 distinct keys k and l, the number of functions h in H for which
 h(k) = h(l) is at most |H| / m. Equivalently, if h is drawn uniformly at
-random from a universal H, then for any fixed pair of distinct keys,
+random from such a family, then for any fixed pair of distinct keys,
 Pr[h(k) = h(l)] ≤ 1/m — no worse than the collision probability from
 truly random hashing.
 

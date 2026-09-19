@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-19T20:48:49.142Z",
+  "generatedAt": "2026-09-19T20:51:21.616Z",
   "cards": [
     {
       "id": "card-6fmp",
@@ -2574,7 +2574,7 @@
         "arrays",
         "pointers"
       ],
-      "prompt": "A ___ is a dummy object placed at a list's boundary (e.g. as `nil[L]` in a circular, doubly linked list) purely to simplify boundary code: insert and delete no longer need special-case branches for an empty list or an operation at the head or tail, since the sentinel is always there to link against. This trades a small, constant amount of memory per list for simpler, branch-free code — a bad trade when a program keeps many short lists, since the sentinel overhead is paid on every one of them.",
+      "prompt": "A ___ is a dummy object placed at a list's boundary (e.g. as `nil[L]` in a circular, doubly linked list) purely to simplify boundary code: insert and delete no longer need special-case branches for an empty list or an operation at the head or tail, since there is always a real node to link against.",
       "source": {
         "path": "vault/clrs/data-structures/elementary-data-structures.md",
         "block": "card-f8w0"
@@ -3187,7 +3187,7 @@
         "collisions",
         "static-key-sets"
       ],
-      "prompt": "A family H of hash functions is ___ if, for every pair of distinct keys k and l, the number of functions h in H for which h(k) = h(l) is at most |H| / m. Equivalently, if h is drawn uniformly at random from a universal H, then for any fixed pair of distinct keys, Pr[h(k) = h(l)] ≤ 1/m — no worse than the collision probability from truly random hashing.",
+      "prompt": "A family H of hash functions is ___ if, for every pair of distinct keys k and l, the number of functions h in H for which h(k) = h(l) is at most |H| / m. Equivalently, if h is drawn uniformly at random from such a family, then for any fixed pair of distinct keys, Pr[h(k) = h(l)] ≤ 1/m — no worse than the collision probability from truly random hashing.",
       "source": {
         "path": "vault/clrs/data-structures/universal-and-perfect-hashing.md",
         "block": "card-12d6"
@@ -3534,7 +3534,7 @@
         "tabulation",
         "rod-cutting"
       ],
-      "prompt": "DP is only worth using when the problem also has ___: the recursion revisits the same subproblem many times rather than each one exactly once. Optimal substructure alone justifies the recurrence; overlapping subproblems is what justifies caching it.",
+      "prompt": "DP is only worth using when the problem also has ___: the recursion revisits the same subproblem many times rather than each one exactly once. Optimal substructure alone justifies the recurrence; that repetition is what justifies caching it.",
       "source": {
         "path": "vault/clrs/design/dynamic-programming-foundations.md",
         "block": "card-gzfj"
@@ -4865,7 +4865,7 @@
         "merge-sort",
         "recursion"
       ],
-      "prompt": "Divide-and-conquer breaks into three steps at each level of recursion. ___ the problem into a number of smaller subproblems that are smaller instances of the same problem. Conquer the subproblems by solving them recursively. If a subproblem is small enough, solve it directly instead of recursing further; this stopping point is the base case, and it is what keeps the recursion finite. Combine the subproblems' solutions into the solution for the original problem.",
+      "prompt": "___ the problem into a number of smaller subproblems that are smaller instances of the same problem. Conquer the subproblems by solving them recursively. If a subproblem is small enough, solve it directly instead of recursing further; this stopping point is the base case, and it is what keeps the recursion finite. Combine the subproblems' solutions into the solution for the original problem.",
       "source": {
         "path": "vault/clrs/foundations/divide-and-conquer.md",
         "block": "card-4oxh"
@@ -4885,7 +4885,7 @@
         "merge-sort",
         "recursion"
       ],
-      "prompt": "Divide-and-conquer breaks into three steps at each level of recursion. Divide the problem into a number of smaller subproblems that are smaller instances of the same problem. ___ the subproblems by solving them recursively. If a subproblem is small enough, solve it directly instead of recursing further; this stopping point is the base case, and it is what keeps the recursion finite. Combine the subproblems' solutions into the solution for the original problem.",
+      "prompt": "Divide the problem into a number of smaller subproblems that are smaller instances of the same problem. ___ the subproblems by solving them recursively. If a subproblem is small enough, solve it directly instead of recursing further; this stopping point is the base case, and it is what keeps the recursion finite. Combine the subproblems' solutions into the solution for the original problem.",
       "source": {
         "path": "vault/clrs/foundations/divide-and-conquer.md",
         "block": "card-v6lb"
@@ -4905,7 +4905,7 @@
         "merge-sort",
         "recursion"
       ],
-      "prompt": "Divide-and-conquer breaks into three steps at each level of recursion. Divide the problem into a number of smaller subproblems that are smaller instances of the same problem. Conquer the subproblems by solving them recursively. If a subproblem is small enough, solve it directly instead of recursing further; this stopping point is the ___, and it is what keeps the recursion finite. Combine the subproblems' solutions into the solution for the original problem.",
+      "prompt": "Divide the problem into a number of smaller subproblems that are smaller instances of the same problem. Conquer the subproblems by solving them recursively. If a subproblem is small enough, solve it directly instead of recursing further; this stopping point is the ___, and it is what keeps the recursion finite. Combine the subproblems' solutions into the solution for the original problem.",
       "source": {
         "path": "vault/clrs/foundations/divide-and-conquer.md",
         "block": "card-468u"
@@ -4925,7 +4925,7 @@
         "merge-sort",
         "recursion"
       ],
-      "prompt": "Divide-and-conquer breaks into three steps at each level of recursion. Divide the problem into a number of smaller subproblems that are smaller instances of the same problem. Conquer the subproblems by solving them recursively. If a subproblem is small enough, solve it directly instead of recursing further; this stopping point is the base case, and it is what keeps the recursion finite. ___ the subproblems' solutions into the solution for the original problem.",
+      "prompt": "Divide the problem into a number of smaller subproblems that are smaller instances of the same problem. Conquer the subproblems by solving them recursively. If a subproblem is small enough, solve it directly instead of recursing further; this stopping point is the base case, and it is what keeps the recursion finite. ___ the subproblems' solutions into the solution for the original problem.",
       "source": {
         "path": "vault/clrs/foundations/divide-and-conquer.md",
         "block": "card-r1m0"
@@ -7402,7 +7402,7 @@
         "greedy-algorithms",
         "safe-edge"
       ],
-      "prompt": "A ___ of a graph is any partition of V into two disjoint sets S and V - S. An edge crosses the cut if it has one endpoint in each set. The cut property states: for any cut (S, V - S), if an edge (u, v) is a minimum-weight edge crossing that cut, then (u, v) is a safe edge for some MST — i.e., there exists an MST that contains it.",
+      "prompt": "A ___ of a graph is any partition of V into two disjoint sets S and V - S.",
       "source": {
         "path": "vault/clrs/graphs/minimum-spanning-trees.md",
         "block": "card-p5zz"
@@ -7423,7 +7423,7 @@
         "greedy-algorithms",
         "safe-edge"
       ],
-      "prompt": "A cut of a graph is any partition of V into two disjoint sets S and V - S. An edge crosses the cut if it has one endpoint in each set. The ___ states: for any cut (S, V - S), if an edge (u, v) is a minimum-weight edge crossing that cut, then (u, v) is a safe edge for some MST — i.e., there exists an MST that contains it.",
+      "prompt": "An edge crosses the cut if it has one endpoint in each set. The ___ states: for any cut (S, V - S), if an edge (u, v) is a minimum-weight edge crossing that cut, then (u, v) is a safe edge for some MST — i.e., there exists an MST that contains it.",
       "source": {
         "path": "vault/clrs/graphs/minimum-spanning-trees.md",
         "block": "card-rqvv"
@@ -7444,7 +7444,7 @@
         "greedy-algorithms",
         "safe-edge"
       ],
-      "prompt": "An edge is ___ for a set A of edges (already known to be a subset of some MST) if A union {(u, v)} is also a subset of some MST. The generic algorithm just repeatedly adds safe edges until it has a spanning tree — the whole design problem is finding safe edges cheaply.",
+      "prompt": "An edge is ___ for a set A of edges (already known to be a subset of some MST) if A union {(u, v)} is also a subset of some MST.",
       "source": {
         "path": "vault/clrs/graphs/minimum-spanning-trees.md",
         "block": "card-wo8u"
@@ -7524,7 +7524,7 @@
         "greedy-algorithms",
         "safe-edge"
       ],
-      "prompt": "A cut ___ A if no edge in A crosses it. The theorem's guarantee only holds for a light edge across a cut that respects the current A — choosing a cut that some edge of A crosses would let the property recommend an edge that creates a cycle with A.",
+      "prompt": "A cut ___ A if no edge in A crosses it.",
       "source": {
         "path": "vault/clrs/graphs/minimum-spanning-trees.md",
         "block": "card-2rf5"
@@ -7607,7 +7607,7 @@
         "bellman-ford",
         "negative-weight-cycle"
       ],
-      "prompt": "___ of edge (u, v) tests whether going through u improves the current best known distance to v — if d[u] + w(u, v) < d[v], it sets d[v] = d[u] + w(u, v) and pi[v] = u. No shortest-path algorithm in this category does anything structurally different from repeated relaxation — they differ only in which edges they relax, and in what order.",
+      "prompt": "___ of edge (u, v) tests whether going through u improves the current best known distance to v — if d[u] + w(u, v) < d[v], it sets d[v] = d[u] + w(u, v) and pi[v] = u.",
       "source": {
         "path": "vault/clrs/graphs/shortest-paths-and-bellman-ford.md",
         "block": "card-hwv3"
@@ -7913,7 +7913,7 @@
         "dfs",
         "finish-time"
       ],
-      "prompt": "The key structural fact that makes the whole scheme work is about the component graph: contracting each SCC of G to a single vertex always yields a ___ — there can be no cycle among SCCs, since any cycle spanning multiple SCCs would merge them into one larger SCC by definition. Decreasing finish-time order effectively processes SCCs in a topological order of that component DAG, source SCCs first.",
+      "prompt": "The key structural fact that makes the whole scheme work is about the component graph: contracting each SCC of G to a single vertex always yields a ___ — there can be no cycle among SCCs, since any cycle spanning multiple SCCs would merge them into one larger SCC by definition. Decreasing finish-time order effectively processes SCCs in a topological order of that component graph, source SCCs first.",
       "source": {
         "path": "vault/clrs/graphs/strongly-connected-components.md",
         "block": "card-lo8s"
@@ -8076,7 +8076,7 @@
         "dfs",
         "cycle-detection"
       ],
-      "prompt": "The correctness argument rests on one fact about DFS on a DAG: it never produces a ___. A back edge (u, v) means v is an ancestor of u still on the recursion stack when u is discovered — but that implies a path v -> ... -> u plus the edge u -> v, which is a cycle. So a DAG's absence of cycles is equivalent to its DFS producing no back edges.",
+      "prompt": "The correctness argument rests on one fact about DFS on a DAG: it never produces a ___.",
       "source": {
         "path": "vault/clrs/graphs/topological-sort-and-dags.md",
         "block": "card-0620"
@@ -8953,7 +8953,7 @@
         "lomuto",
         "divide-and-conquer"
       ],
-      "prompt": "`LOMUTO-PARTITION(A, p, r)` fixes `A[r]` as the ___ and walks an index `i` through `A[p..r-1]`, tracking the boundary of elements known to be `<= pivot`. Whenever the current element is `<= pivot`, it advances that boundary and swaps the element into it; at the end it swaps the pivot itself into place just past the boundary.",
+      "prompt": "`LOMUTO-PARTITION(A, p, r)` fixes `A[r]` as the ___ and walks an index `i` through `A[p..r-1]`, tracking the boundary of elements known to be no greater than it.",
       "source": {
         "path": "vault/clrs/sorting/quicksort-and-partitioning.md",
         "block": "card-a5he"
@@ -9016,7 +9016,7 @@
         "lomuto",
         "divide-and-conquer"
       ],
-      "prompt": "Quicksort's recursion structure means its running time depends entirely on how evenly each partition splits the subarray. A split into two equal halves recurses like merge sort's, giving a recursion tree of depth ___ and O(n lg n) total work.",
+      "prompt": "Quicksort's recursion structure means its running time depends entirely on how evenly each partition splits the subarray. A split into two equal halves recurses like merge sort's, giving a recursion tree of depth ___.",
       "source": {
         "path": "vault/clrs/sorting/quicksort-and-partitioning.md",
         "block": "card-2z8y"
