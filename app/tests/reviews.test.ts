@@ -6,7 +6,7 @@ import type { StoredCard } from '../src/db/schema.js';
 
 const now = new Date('2026-09-18T09:00:00Z');
 const card: StoredCard = {
-  id: 'card-aaaa', format: 'mcq', category: 'networking', tags: [], prompt: 'q',
+  id: 'card-aaaa', format: 'mcq', topic: 'networking', category: 'networking', tags: [], prompt: 'q',
   choices: [{ text: 'a', correct: true }],
   source: { path: 'vault/a.md', block: 'card-aaaa' }, citations: [], tombstoned: false
 };

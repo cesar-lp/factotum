@@ -6,7 +6,7 @@ import type { Deck } from '../../pipeline/src/types.js';
 const deck = (cards: Deck['cards']): Deck => ({ generatedAt: '2026-09-18T00:00:00.000Z', cards });
 
 const card = (id: string, prompt: string) => ({
-  id, format: 'cloze' as const, category: 'networking', tags: [],
+  id, format: 'cloze' as const, topic: 'networking', category: 'networking', tags: [],
   prompt, answer: 'x', source: { path: 'vault/a.md', block: id }, citations: []
 });
 
@@ -66,6 +66,7 @@ describe('mergeDeck', () => {
       prompt: 'first',
       tags: [] as string[],
       category: 'networking',
+      topic: 'networking',
       format: 'cloze' as const,
       id: 'card-aaaa'
     };
@@ -86,7 +87,7 @@ describe('mergeDeck', () => {
   it('still reports an update when only choices order changes', async () => {
     const db = await openDb();
     const mcqCard = (choices: { text: string; correct: boolean }[]) => ({
-      id: 'card-cccc', format: 'mcq' as const, category: 'networking', tags: [],
+      id: 'card-cccc', format: 'mcq' as const, topic: 'networking', category: 'networking', tags: [],
       prompt: 'pick one', answer: 'a', choices,
       source: { path: 'vault/a.md', block: 'card-cccc' }, citations: []
     });

@@ -91,3 +91,60 @@ export function buildExtension(input: ExtensionInput): StoredCard[] {
 
   return interleave(newCards);
 }
+
+/**
+ * Drops cards whose category the user has switched off. Order-preserving,
+ * and applied BEFORE `buildSession`/`buildExtension` rather than inside
+ * them, so those two keep exactly one job and stay byte-identical in
+ * behaviour when nothing is disabled.
+ *
+ * This is a filter, not a freeze: FSRS state is untouched, so due dates
+ * keep advancing while a category is off and re-enabling surfaces whatever
+ * became overdue. That is deliberate — FSRS models forgetting over real
+ * elapsed time, and pretending the clock stopped would overstate how much
+ * of that material is still retained.
+ */
+export function selectEnabled(cards: StoredCard[], disabled: ReadonlySet<string>): StoredCard[] {
+  if (disabled.size === 0) return cards;
+  return cards.filter((card) => !disabled.has(card.category));
+}
+
+export interface FocusInput {
+  cards: StoredCard[];
+  reviews: Map<string, ReviewState>;
+  now: Date;
+  category: string;
+}
+
+/**
+ * The on-demand session: one category, its due cards first, then every one
+ * of its unseen cards with no daily cap.
+ *
+ * Composed from the two existing builders rather than written as a third
+ * scheduling path — `newCardsPerDay: 0` makes `buildSession` contribute due
+ * cards only, and `buildExtension` contributes the uncapped new cards.
+ * Suspension, tombstoning and the not-yet-due test are therefore inherited
+ * rather than reimplemented, and there is no second notion of "due" to
+ * drift out of sync.
+ *
+ * Not-yet-due cards are deliberately absent: a focused session is a real
+ * review that writes FSRS state, so including them would pull their
+ * schedules forward. Cards are NOT filtered by `disabledCategories` here —
+ * disabling keeps a category out of the DAILY queue, and deliberately
+ * picking it on demand is exactly the case that should still work.
+ */
+export function buildFocusSession(input: FocusInput): StoredCard[] {
+  const { cards, reviews, now, category } = input;
+  const inCategory = cards.filter((card) => card.category === category);
+
+  return [
+    ...buildSession({
+      cards: inCategory,
+      reviews,
+      now,
+      newCardsPerDay: 0,
+      newCardsSeenToday: 0
+    }),
+    ...buildExtension({ cards: inCategory, reviews })
+  ];
+}

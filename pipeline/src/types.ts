@@ -16,6 +16,14 @@ export interface ParsedCard {
 }
 
 export interface NoteMeta {
+  /**
+   * The shelf this note sits on — a book, a subject, a cloud provider.
+   * Grouping and bulk-toggling happen at this level; interleaving and
+   * mastery stay keyed on `category`. Always populated: a note that omits
+   * `topic` gets its own `category` as its topic, so a single-category
+   * shelf is the floor, never an absent one.
+   */
+  topic: string;
   category: string;
   tags: string[];
   citations: string[];
@@ -29,6 +37,7 @@ export interface ParsedNote extends NoteMeta {
 export interface DeckCard {
   id: string;
   format: CardFormat;
+  topic: string;
   category: string;
   tags: string[];
   prompt: string;

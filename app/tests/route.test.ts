@@ -3,7 +3,7 @@ import { decideRoute, type DashboardState } from '../src/route.js';
 import type { StoredCard } from '../src/db/schema.js';
 
 const card = (id: string): StoredCard => ({
-  id, format: 'qa', category: 'net', tags: [], prompt: id, answer: 'a',
+  id, format: 'qa', topic: 'net', category: 'net', tags: [], prompt: id, answer: 'a',
   source: { path: 'vault/a.md', block: id }, citations: [], tombstoned: false
 });
 

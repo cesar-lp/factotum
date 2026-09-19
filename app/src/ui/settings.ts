@@ -50,7 +50,13 @@ export async function renderSettings(root: HTMLElement, db: FactotumDb, onBack: 
 
   const persist = async (): Promise<void> => {
     const rawTheme = themeSelect ? themeSelect.value : DEFAULT_SETTINGS.theme;
+    // Re-read rather than reusing the render-time `settings` snapshot: this
+    // form owns three fields, and must not write stale values over any
+    // field it does not render (disabledCategories, owned by the topics
+    // screen).
+    const current = await getSettings(db);
     const next = clampSettings({
+      ...current,
       theme: (THEMES as string[]).includes(rawTheme) ? (rawTheme as Settings['theme']) : DEFAULT_SETTINGS.theme,
       desiredRetention: retentionInput ? Number(retentionInput.value) : DEFAULT_SETTINGS.desiredRetention,
       newCardsPerDay: newCardsInput ? Number(newCardsInput.value) : DEFAULT_SETTINGS.newCardsPerDay

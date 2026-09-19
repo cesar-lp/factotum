@@ -118,6 +118,7 @@ export function buildDeck(notes: ParsedNote[], now: Date): Deck {
       const deckCard: DeckCard = {
         id: card.id,
         format: card.format,
+        topic: note.topic,
         category: note.category,
         tags: note.tags,
         prompt: card.prompt,
