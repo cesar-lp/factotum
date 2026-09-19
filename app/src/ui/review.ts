@@ -141,6 +141,10 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
         // choicesCache is already set for this card index, so the reveal
         // render below reuses the exact same (already-shuffled) order.
         draw(true, correct ? 'correct' : 'wrong');
+        // INVARIANT: `choices` here must stay the closure variable from the
+        // enclosing draw() (cache-backed via getPresentationChoices), never
+        // a fresh lookup or re-shuffle — it has to be the exact order the
+        // user just saw and tapped, or this highlight marks the wrong button.
         const classes = highlightClasses(choices, tappedIndex);
         root.querySelectorAll<HTMLButtonElement>('[data-choice]').forEach((b) => {
           const highlight = classes[Number(b.dataset['choice'])];
