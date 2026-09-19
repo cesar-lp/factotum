@@ -51,6 +51,12 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      # Defence in depth: build:app is a Vite/esbuild build, which strips
+      # types without checking them. ci.yml's typecheck only runs pre-merge
+      # on PRs, and the branch-protection ruleset still permits direct
+      # pushes to main, so without this a type error could reach a deploy
+      # undetected via that path.
+      - run: npm run typecheck
       - run: npm run build:app
       - uses: actions/upload-pages-artifact@v5
         with:

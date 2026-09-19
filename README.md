@@ -183,7 +183,11 @@ pushes or commits, unlike `build-deck.yml`.
    `build-deck.yml` pushes its deck-rebuild commit directly to `main` using
    the default `GITHUB_TOKEN`. Enabling branch protection on `main` without
    an exemption for that push will make `build-deck` start failing on every
-   run. To require `ci.yml` on PRs while keeping that push working:
+   run. GitHub only lists a status check in a ruleset's "Add checks" picker
+   once it has reported at least one run on the repo, so open (or already
+   have open) a pull request that runs `ci.yml` to completion **before**
+   creating the ruleset below — otherwise the check won't be there to
+   select. To require `ci.yml` on PRs while keeping that push working:
    - Go to repo **Settings → Rules → Rulesets → New ruleset → New branch
      ruleset**.
    - **Target branches**: add `main` (or use the default branch target).
@@ -197,7 +201,7 @@ pushes or commits, unlike `build-deck.yml`.
      that push starts failing the moment the ruleset is enforced, exactly
      as `build-deck.yml`'s own comment warns.
    - Set **Enforcement status** to **Active** and save.
-2. **Install to the iPhone Home Screen**: open the deployed Pages URL in
+3. **Install to the iPhone Home Screen**: open the deployed Pages URL in
    Safari, tap Share → **Add to Home Screen**. This is not optional
    polish — it's a hard prerequisite for two things:
    - Web Push notifications (Phase 2, **not yet built**) only work for

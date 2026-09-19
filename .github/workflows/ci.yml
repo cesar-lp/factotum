@@ -1,4 +1,4 @@
-# PR checks
+name: PR checks
 
 # Runs on every pull request targeting main. This is the only place tests
 # and typecheck run BEFORE a merge — build-deck.yml and deploy.yml only run
@@ -60,11 +60,21 @@ jobs:
       # catches it pre-merge instead. `npm run build:deck` above already
       # regenerated deck/deck.json from this PR's vault/pipeline; if that
       # output differs from what's committed, the deck is stale.
+      #
+      # Checks vault/ as well as deck/deck.json, not deck.json alone:
+      # build:deck's assignIds/writeBackIds (pipeline/src/build.ts) mint
+      # anchor ids for unanchored cards and write them back into the source
+      # markdown, exactly like build-deck.yml's own commit step does (it
+      # commits `vault deck` together, see its comment). If this check only
+      # looked at deck.json, a PR could pass with a deck that references
+      # anchor ids not present in the committed vault — and post-merge,
+      # build-deck would mint *different* ids for those cards and produce
+      # an unwanted drift commit. Checking both keeps "up to date" honest.
       - name: Check deck is up to date
         run: |
-          if ! git diff --quiet -- deck/deck.json; then
-            echo "::error::deck/deck.json is out of date with vault/pipeline changes in this PR."
-            echo "Run 'npm run build:deck' locally and commit the resulting deck/deck.json."
-            git diff --stat -- deck/deck.json
+          if ! git diff --quiet -- deck/deck.json vault/; then
+            echo "::error::deck/deck.json and/or vault/ files are out of date with this PR's changes (build:deck mints anchor ids into vault notes as well as regenerating the deck)."
+            echo "Run 'npm run build:deck' locally and commit the resulting changes to deck/deck.json and any vault/ files it modified (card id anchors)."
+            git diff --stat -- deck/deck.json vault/
             exit 1
           fi
