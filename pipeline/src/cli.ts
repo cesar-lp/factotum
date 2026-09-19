@@ -1,6 +1,6 @@
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
-import { buildDeck, processVault } from './build.js';
+import { buildDeck, processVault, readExistingDeck, withStableGeneratedAt } from './build.js';
 
 function main(): void {
   const [vaultDir, outFile] = process.argv.slice(2);
@@ -10,7 +10,8 @@ function main(): void {
   }
 
   const notes = processVault(vaultDir);
-  const deck = buildDeck(notes, new Date());
+  const built = buildDeck(notes, new Date());
+  const deck = withStableGeneratedAt(built, readExistingDeck(outFile));
   mkdirSync(dirname(outFile), { recursive: true });
   writeFileSync(outFile, `${JSON.stringify(deck, null, 2)}\n`, 'utf8');
   console.log(`Wrote ${deck.cards.length} cards from ${notes.length} notes to ${outFile}`);

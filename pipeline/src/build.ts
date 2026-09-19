@@ -5,6 +5,92 @@ import { parseCards } from './cards.js';
 import { assignIds, writeBackIds } from './ids.js';
 import type { Deck, DeckCard, ParsedNote } from './types.js';
 
+/**
+ * JSON.stringify with object keys sorted so two objects with identical
+ * content but different key insertion order compare equal. Array order is
+ * left untouched since it can be semantically meaningful (e.g. `choices`).
+ *
+ * Local equivalent of `app/src/db/deck.ts`'s `stableStringify`, kept in sync
+ * with it deliberately rather than imported — the pipeline and app packages
+ * do not share source across that boundary.
+ */
+function stableStringify(value: unknown): string {
+  return JSON.stringify(value, (_key, val) =>
+    val && typeof val === 'object' && !Array.isArray(val)
+      ? Object.fromEntries(Object.entries(val as Record<string, unknown>).sort(([a], [b]) => a.localeCompare(b)))
+      : val
+  );
+}
+
+/**
+ * Compares two card arrays for equality ignoring array order (cards are
+ * identified by `id`, same as the app's deck merge) and ignoring key order
+ * within each card object.
+ */
+function cardsEqual(a: DeckCard[], b: DeckCard[]): boolean {
+  if (a.length !== b.length) return false;
+  const byId = new Map(a.map((card) => [card.id, stableStringify(card)]));
+  for (const card of b) {
+    if (byId.get(card.id) !== stableStringify(card)) return false;
+  }
+  return true;
+}
+
+/**
+ * Reads `path` and returns its parsed Deck, or null if the file does not
+ * exist, is not valid JSON, or does not have the shape of a Deck (e.g. the
+ * first build, a corrupted commit, or a bad merge resolution) — in every
+ * case we should rebuild fresh rather than crash.
+ */
+export function readExistingDeck(path: string): Deck | null {
+  let raw: string;
+  try {
+    raw = readFileSync(path, 'utf8');
+  } catch {
+    return null;
+  }
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    console.warn(`${path} exists but is not valid JSON; rebuilding fresh`);
+    return null;
+  }
+  if (!parsed || typeof parsed !== 'object') {
+    console.warn(`${path} exists but is not a valid deck (not an object); rebuilding fresh`);
+    return null;
+  }
+  const candidate = parsed as { generatedAt?: unknown; cards?: unknown };
+  if (typeof candidate.generatedAt !== 'string') {
+    console.warn(`${path} exists but is not a valid deck (generatedAt is not a string); rebuilding fresh`);
+    return null;
+  }
+  if (!Array.isArray(candidate.cards) || candidate.cards.some((card) => !card || typeof card !== 'object')) {
+    console.warn(`${path} exists but is not a valid deck (cards is not an array of objects); rebuilding fresh`);
+    return null;
+  }
+  return parsed as Deck;
+}
+
+/**
+ * Preserves `existing.generatedAt` on `deck` when both decks carry the same
+ * cards (ignoring array order and object key order), so a rebuild whose
+ * content did not actually change produces byte-identical output — no
+ * timestamp churn, no pointless CI commit.
+ *
+ * `existing` is null for a first build or an unreadable/malformed prior
+ * file, in which case `deck`'s own fresh timestamp is kept, same as today.
+ *
+ * After this, `generatedAt` means "when the deck content last actually
+ * changed", not "when CI last ran".
+ */
+export function withStableGeneratedAt(deck: Deck, existing: Deck | null): Deck {
+  if (existing && cardsEqual(existing.cards, deck.cards)) {
+    return { ...deck, generatedAt: existing.generatedAt };
+  }
+  return deck;
+}
+
 export interface ParseNoteResult {
   note: ParsedNote | null;
   updatedSource: string;

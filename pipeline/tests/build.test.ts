@@ -1,8 +1,16 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { parseNote, buildDeck, processVault, markdownFiles } from '../src/build.js';
+import {
+  parseNote,
+  buildDeck,
+  processVault,
+  markdownFiles,
+  readExistingDeck,
+  withStableGeneratedAt
+} from '../src/build.js';
+import type { Deck } from '../src/types.js';
 
 const raw = [
   '---',
@@ -131,6 +139,207 @@ describe('markdownFiles', () => {
       if (!symlinked) return; // symlink creation unsupported on this platform; skip assertion
       expect(markdownFiles(root)).toEqual([join(target, 'note.md')]);
     } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('readExistingDeck', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('returns null when the file does not exist', () => {
+    const root = mkdtempSync(join(tmpdir(), 'factotum-deck-'));
+    try {
+      expect(readExistingDeck(join(root, 'deck.json'))).toBeNull();
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('returns null and warns when the file is malformed JSON', () => {
+    const root = mkdtempSync(join(tmpdir(), 'factotum-deck-'));
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      const path = join(root, 'deck.json');
+      writeFileSync(path, '{ not valid json', 'utf8');
+      expect(readExistingDeck(path)).toBeNull();
+      expect(warn).toHaveBeenCalledTimes(1);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('returns null and warns when the file is valid JSON but missing a cards array', () => {
+    const root = mkdtempSync(join(tmpdir(), 'factotum-deck-'));
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      const path = join(root, 'deck.json');
+      writeFileSync(path, '{}', 'utf8');
+      expect(readExistingDeck(path)).toBeNull();
+      expect(warn).toHaveBeenCalledTimes(1);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('returns null and warns when cards is present but not an array', () => {
+    const root = mkdtempSync(join(tmpdir(), 'factotum-deck-'));
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      const path = join(root, 'deck.json');
+      writeFileSync(path, JSON.stringify({ generatedAt: '2020-01-01T00:00:00.000Z', cards: 'nope' }), 'utf8');
+      expect(readExistingDeck(path)).toBeNull();
+      expect(warn).toHaveBeenCalledTimes(1);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('returns null and warns when generatedAt is missing', () => {
+    const root = mkdtempSync(join(tmpdir(), 'factotum-deck-'));
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      const path = join(root, 'deck.json');
+      writeFileSync(path, JSON.stringify({ cards: [] }), 'utf8');
+      expect(readExistingDeck(path)).toBeNull();
+      expect(warn).toHaveBeenCalledTimes(1);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('returns null and warns when generatedAt is present but not a string', () => {
+    const root = mkdtempSync(join(tmpdir(), 'factotum-deck-'));
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      const path = join(root, 'deck.json');
+      writeFileSync(path, JSON.stringify({ generatedAt: 123, cards: [] }), 'utf8');
+      expect(readExistingDeck(path)).toBeNull();
+      expect(warn).toHaveBeenCalledTimes(1);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('returns null and warns when cards contains a null element', () => {
+    const root = mkdtempSync(join(tmpdir(), 'factotum-deck-'));
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      const path = join(root, 'deck.json');
+      writeFileSync(path, JSON.stringify({ generatedAt: '2020-01-01T00:00:00.000Z', cards: [null] }), 'utf8');
+      expect(readExistingDeck(path)).toBeNull();
+      expect(warn).toHaveBeenCalledTimes(1);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('parses a well-formed deck file', () => {
+    const root = mkdtempSync(join(tmpdir(), 'factotum-deck-'));
+    try {
+      const path = join(root, 'deck.json');
+      const deck: Deck = { generatedAt: '2026-09-18T10:00:00.000Z', cards: [] };
+      writeFileSync(path, JSON.stringify(deck), 'utf8');
+      expect(readExistingDeck(path)).toEqual(deck);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('withStableGeneratedAt', () => {
+  const cardA = {
+    id: 'card-aaaa',
+    format: 'qa' as const,
+    category: 'networking',
+    tags: ['tcp'],
+    prompt: 'What is TCP?',
+    answer: 'A protocol',
+    source: { path: 'vault/networking/tcp.md', block: 'card-aaaa' },
+    citations: []
+  };
+  const cardB = {
+    id: 'card-bbbb',
+    format: 'qa' as const,
+    category: 'networking',
+    tags: ['udp'],
+    prompt: 'What is UDP?',
+    answer: 'Another protocol',
+    source: { path: 'vault/networking/udp.md', block: 'card-bbbb' },
+    citations: []
+  };
+
+  it('preserves the existing timestamp when cards are unchanged (same order)', () => {
+    const existing: Deck = { generatedAt: '2020-01-01T00:00:00.000Z', cards: [cardA, cardB] };
+    const built: Deck = { generatedAt: '2026-09-19T14:19:23.949Z', cards: [cardA, cardB] };
+    expect(withStableGeneratedAt(built, existing).generatedAt).toBe('2020-01-01T00:00:00.000Z');
+  });
+
+  it('preserves the existing timestamp when cards are unchanged but reordered', () => {
+    const existing: Deck = { generatedAt: '2020-01-01T00:00:00.000Z', cards: [cardA, cardB] };
+    const built: Deck = { generatedAt: '2026-09-19T14:19:23.949Z', cards: [cardB, cardA] };
+    expect(withStableGeneratedAt(built, existing).generatedAt).toBe('2020-01-01T00:00:00.000Z');
+  });
+
+  it('preserves the existing timestamp when a card has different key insertion order', () => {
+    const reorderedA = {
+      source: cardA.source,
+      id: cardA.id,
+      citations: cardA.citations,
+      format: cardA.format,
+      prompt: cardA.prompt,
+      answer: cardA.answer,
+      category: cardA.category,
+      tags: cardA.tags
+    };
+    const existing: Deck = { generatedAt: '2020-01-01T00:00:00.000Z', cards: [cardA] };
+    const built: Deck = { generatedAt: '2026-09-19T14:19:23.949Z', cards: [reorderedA] };
+    expect(withStableGeneratedAt(built, existing).generatedAt).toBe('2020-01-01T00:00:00.000Z');
+  });
+
+  it('stamps a new timestamp when cards changed', () => {
+    const existing: Deck = { generatedAt: '2020-01-01T00:00:00.000Z', cards: [cardA] };
+    const changedA = { ...cardA, answer: 'A different answer' };
+    const built: Deck = { generatedAt: '2026-09-19T14:19:23.949Z', cards: [changedA] };
+    expect(withStableGeneratedAt(built, existing).generatedAt).toBe('2026-09-19T14:19:23.949Z');
+  });
+
+  it('stamps a new timestamp when there is no existing deck', () => {
+    const built: Deck = { generatedAt: '2026-09-19T14:19:23.949Z', cards: [cardA] };
+    expect(withStableGeneratedAt(built, null).generatedAt).toBe('2026-09-19T14:19:23.949Z');
+  });
+
+  it('rebuilds fresh instead of throwing when the existing file is malformed-shape ({})', () => {
+    const root = mkdtempSync(join(tmpdir(), 'factotum-deck-'));
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      const path = join(root, 'deck.json');
+      writeFileSync(path, '{}', 'utf8');
+      const built: Deck = { generatedAt: '2026-09-19T14:19:23.949Z', cards: [cardA] };
+      expect(() => withStableGeneratedAt(built, readExistingDeck(path))).not.toThrow();
+      expect(withStableGeneratedAt(built, readExistingDeck(path)).generatedAt).toBe('2026-09-19T14:19:23.949Z');
+    } finally {
+      vi.restoreAllMocks();
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('rebuilds fresh instead of throwing when cards contains a null element at a matching length', () => {
+    const root = mkdtempSync(join(tmpdir(), 'factotum-deck-'));
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      const path = join(root, 'deck.json');
+      // One existing "card" (null) matching the built deck's one card — a length
+      // mismatch would short-circuit cardsEqual before ever touching the element,
+      // so the guard would go untested without this.
+      writeFileSync(path, JSON.stringify({ generatedAt: 'OLD', cards: [null] }), 'utf8');
+      const built: Deck = { generatedAt: '2026-09-19T14:19:23.949Z', cards: [cardA] };
+      expect(() => withStableGeneratedAt(built, readExistingDeck(path))).not.toThrow();
+      expect(withStableGeneratedAt(built, readExistingDeck(path)).generatedAt).toBe('2026-09-19T14:19:23.949Z');
+    } finally {
+      vi.restoreAllMocks();
       rmSync(root, { recursive: true, force: true });
     }
   });
