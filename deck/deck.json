@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-19T00:54:20.317Z",
+  "generatedAt": "2026-09-19T03:29:48.937Z",
   "cards": [
     {
       "id": "card-rb57",
@@ -1738,6 +1738,1682 @@
       "citations": [
         "Kleppmann, Designing Data-Intensive Applications, Ch. 7"
       ]
+    },
+    {
+      "id": "card-vohr",
+      "format": "cloze",
+      "category": "database-internals",
+      "tags": [
+        "b-tree",
+        "fanout",
+        "disk-seeks"
+      ],
+      "prompt": "A B-tree's ___ is the number of child pointers a single node can",
+      "source": {
+        "path": "vault/database-internals/btree-basics.md",
+        "block": "card-vohr"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 2"
+      ],
+      "answer": "fanout"
+    },
+    {
+      "id": "card-35d6",
+      "format": "mcq",
+      "category": "database-internals",
+      "tags": [
+        "b-tree",
+        "fanout",
+        "disk-seeks"
+      ],
+      "prompt": "Why do B-trees favor a high fanout (many keys and children per node)?",
+      "source": {
+        "path": "vault/database-internals/btree-basics.md",
+        "block": "card-35d6"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 2"
+      ],
+      "choices": [
+        {
+          "text": "It keeps the tree's height small, so fewer nodes (and disk seeks) must be visited to reach any key",
+          "correct": true
+        },
+        {
+          "text": "It reduces the total number of keys the tree can store",
+          "correct": false
+        },
+        {
+          "text": "It makes each node fit in less disk space",
+          "correct": false
+        },
+        {
+          "text": "It removes the need to keep keys sorted within a node",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-ih4x",
+      "format": "cloze",
+      "category": "database-internals",
+      "tags": [
+        "b-tree",
+        "fanout",
+        "disk-seeks"
+      ],
+      "prompt": "Each node lives on one disk page, and a node's ___ is how full",
+      "source": {
+        "path": "vault/database-internals/btree-basics.md",
+        "block": "card-ih4x"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 2"
+      ],
+      "answer": "occupancy"
+    },
+    {
+      "id": "card-q0pz",
+      "format": "cloze",
+      "category": "database-internals",
+      "tags": [
+        "b-tree",
+        "fanout",
+        "disk-seeks"
+      ],
+      "prompt": "When an insert would overflow a full node, the node ___ into two",
+      "source": {
+        "path": "vault/database-internals/btree-basics.md",
+        "block": "card-q0pz"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 2"
+      ],
+      "answer": "splits"
+    },
+    {
+      "id": "card-br0l",
+      "format": "mcq",
+      "category": "database-internals",
+      "tags": [
+        "b-tree",
+        "fanout",
+        "disk-seeks"
+      ],
+      "prompt": "Under what condition does a B-tree's height increase?",
+      "source": {
+        "path": "vault/database-internals/btree-basics.md",
+        "block": "card-br0l"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 2"
+      ],
+      "choices": [
+        {
+          "text": "A split cascades all the way up to the root, which itself splits and creates a new root",
+          "correct": true
+        },
+        {
+          "text": "Any single leaf node splits, regardless of its position in the tree",
+          "correct": false
+        },
+        {
+          "text": "The tree is rebalanced on a fixed schedule regardless of inserts",
+          "correct": false
+        },
+        {
+          "text": "A node falls below minimum occupancy",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-hpz9",
+      "format": "qa",
+      "category": "database-internals",
+      "tags": [
+        "b-tree",
+        "fanout",
+        "disk-seeks"
+      ],
+      "prompt": "What is the relationship between a B-tree's fanout and its height for a fixed number of stored keys?",
+      "source": {
+        "path": "vault/database-internals/btree-basics.md",
+        "block": "card-hpz9"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 2"
+      ],
+      "answer": "Height is roughly logarithmic in the number of keys with the fanout as the log's base, so a higher fanout means each level accounts for exponentially more keys and the tree needs fewer levels — which is why real B-trees pick a fanout in the hundreds, sized to fill one disk page, rather than the small fanout of a binary tree."
+    },
+    {
+      "id": "card-wmnd",
+      "format": "recall",
+      "category": "database-internals",
+      "tags": [
+        "b-tree",
+        "fanout",
+        "disk-seeks"
+      ],
+      "prompt": "Explain why B-trees are the standard on-disk index structure for databases, in terms of disk seeks, even though seeking to a random disk page is orders of magnitude slower than an in-memory pointer dereference.",
+      "source": {
+        "path": "vault/database-internals/btree-basics.md",
+        "block": "card-wmnd"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 2"
+      ]
+    },
+    {
+      "id": "card-p6nd",
+      "format": "cloze",
+      "category": "database-internals",
+      "tags": [
+        "b-tree",
+        "fanout",
+        "disk-seeks"
+      ],
+      "prompt": "uses, stores all records only in its ___ nodes; internal nodes hold",
+      "source": {
+        "path": "vault/database-internals/btree-basics.md",
+        "block": "card-p6nd"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 2"
+      ],
+      "answer": "leaf"
+    },
+    {
+      "id": "card-o7ft",
+      "format": "mcq",
+      "category": "database-internals",
+      "tags": [
+        "b-tree",
+        "fanout",
+        "disk-seeks"
+      ],
+      "prompt": "What distinguishes a B+tree from a plain B-tree?",
+      "source": {
+        "path": "vault/database-internals/btree-basics.md",
+        "block": "card-o7ft"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 2"
+      ],
+      "choices": [
+        {
+          "text": "In a B+tree, records live only in leaf nodes; internal nodes hold routing keys only, and leaves are linked for range scans",
+          "correct": true
+        },
+        {
+          "text": "A B+tree has no internal nodes at all",
+          "correct": false
+        },
+        {
+          "text": "A B+tree never splits nodes on insert",
+          "correct": false
+        },
+        {
+          "text": "A B+tree stores records in internal nodes but not in leaves",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-3gkw",
+      "format": "cloze",
+      "category": "database-internals",
+      "tags": [
+        "b-tree",
+        "slotted-pages",
+        "copy-on-write",
+        "rebalancing"
+      ],
+      "prompt": "A slotted page's ___ holds pointers into the page rather than",
+      "source": {
+        "path": "vault/database-internals/btree-implementation.md",
+        "block": "card-3gkw"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 3-4"
+      ],
+      "answer": "slot array"
+    },
+    {
+      "id": "card-4yv2",
+      "format": "mcq",
+      "category": "database-internals",
+      "tags": [
+        "b-tree",
+        "slotted-pages",
+        "copy-on-write",
+        "rebalancing"
+      ],
+      "prompt": "Why do B-tree pages commonly use a slotted layout instead of storing fixed-width records directly?",
+      "source": {
+        "path": "vault/database-internals/btree-implementation.md",
+        "block": "card-4yv2"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 3-4"
+      ],
+      "choices": [
+        {
+          "text": "It lets variable-length records be stored, deleted, or resized by rewriting a small offset array rather than physically shifting every other record on the page",
+          "correct": true
+        },
+        {
+          "text": "It removes the need to keep records sorted on the page",
+          "correct": false
+        },
+        {
+          "text": "It eliminates the need for a write-ahead log",
+          "correct": false
+        },
+        {
+          "text": "It doubles the page's effective storage capacity",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-l6ji",
+      "format": "mcq",
+      "category": "database-internals",
+      "tags": [
+        "b-tree",
+        "slotted-pages",
+        "copy-on-write",
+        "rebalancing"
+      ],
+      "prompt": "What guarantee does B-tree rebalancing (splits, merges, key redistribution) primarily preserve?",
+      "source": {
+        "path": "vault/database-internals/btree-implementation.md",
+        "block": "card-l6ji"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 3-4"
+      ],
+      "choices": [
+        {
+          "text": "Every leaf stays at the same depth and every node stays within its occupancy bounds, regardless of the order keys were inserted or deleted",
+          "correct": true
+        },
+        {
+          "text": "Every node ends up holding exactly the same keys as its sibling",
+          "correct": false
+        },
+        {
+          "text": "The tree never needs to write to disk again after the first insert",
+          "correct": false
+        },
+        {
+          "text": "Keys are stored in insertion order rather than sorted order",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-3aqg",
+      "format": "cloze",
+      "category": "database-internals",
+      "tags": [
+        "b-tree",
+        "slotted-pages",
+        "copy-on-write",
+        "rebalancing"
+      ],
+      "prompt": "might still be using, it can support a globally-consistent ___",
+      "source": {
+        "path": "vault/database-internals/btree-implementation.md",
+        "block": "card-3aqg"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 3-4"
+      ],
+      "answer": "snapshot"
+    },
+    {
+      "id": "card-5zry",
+      "format": "qa",
+      "category": "database-internals",
+      "tags": [
+        "b-tree",
+        "slotted-pages",
+        "copy-on-write",
+        "rebalancing"
+      ],
+      "prompt": "What does a copy-on-write B-tree give up in exchange for lock-free, snapshot-consistent reads?",
+      "source": {
+        "path": "vault/database-internals/btree-implementation.md",
+        "block": "card-5zry"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 3-4"
+      ],
+      "answer": "It must write a new copy of every page on the path from the modified leaf up to the root on each update (not just the one page changed), which increases the amount of data written per logical update compared to in-place updates."
+    },
+    {
+      "id": "card-ly3c",
+      "format": "recall",
+      "category": "database-internals",
+      "tags": [
+        "b-tree",
+        "slotted-pages",
+        "copy-on-write",
+        "rebalancing"
+      ],
+      "prompt": "Explain why a copy-on-write B-tree can offer snapshot isolation for readers without taking locks against concurrent writers, in terms of what happens (and does not happen) to the old version of a modified page.",
+      "source": {
+        "path": "vault/database-internals/btree-implementation.md",
+        "block": "card-ly3c"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 3-4"
+      ]
+    },
+    {
+      "id": "card-uyyw",
+      "format": "mcq",
+      "category": "database-internals",
+      "tags": [
+        "b-tree",
+        "slotted-pages",
+        "copy-on-write",
+        "rebalancing"
+      ],
+      "prompt": "In a copy-on-write B-tree, what happens to the pages along the path from a modified leaf to the root when a single key is updated?",
+      "source": {
+        "path": "vault/database-internals/btree-implementation.md",
+        "block": "card-uyyw"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 3-4"
+      ],
+      "choices": [
+        {
+          "text": "Each of those pages is rewritten to a new location, and the parent above it is updated to point to the new copy, all the way to a new root",
+          "correct": true
+        },
+        {
+          "text": "Only the leaf page is rewritten; all ancestor pages are updated in place",
+          "correct": false
+        },
+        {
+          "text": "No pages are rewritten; the update is recorded only in a separate log",
+          "correct": false
+        },
+        {
+          "text": "The entire tree is rewritten from scratch on every update",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-ubdh",
+      "format": "cloze",
+      "category": "database-internals",
+      "tags": [
+        "paxos",
+        "raft",
+        "two-phase-commit",
+        "consensus",
+        "leader-election"
+      ],
+      "prompt": "___ of nodes, and any two majorities out of a fixed set must",
+      "source": {
+        "path": "vault/database-internals/consensus.md",
+        "block": "card-ubdh"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 13-14"
+      ],
+      "answer": "majority"
+    },
+    {
+      "id": "card-tfl3",
+      "format": "mcq",
+      "category": "database-internals",
+      "tags": [
+        "paxos",
+        "raft",
+        "two-phase-commit",
+        "consensus",
+        "leader-election"
+      ],
+      "prompt": "Why must a Paxos proposer get agreement from a majority of acceptors, rather than just one or two?",
+      "source": {
+        "path": "vault/database-internals/consensus.md",
+        "block": "card-tfl3"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 13-14"
+      ],
+      "choices": [
+        {
+          "text": "Any two majorities out of the same set of nodes are guaranteed to overlap in at least one node, which is what stops two different proposals from both being accepted as the decided value",
+          "correct": true
+        },
+        {
+          "text": "A majority is required only to make the protocol fair to slow nodes",
+          "correct": false
+        },
+        {
+          "text": "Majorities are not actually required; any single acceptor's agreement is sufficient",
+          "correct": false
+        },
+        {
+          "text": "It guarantees every node applies the accepted value at the same wall-clock instant",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-tl1c",
+      "format": "cloze",
+      "category": "database-internals",
+      "tags": [
+        "paxos",
+        "raft",
+        "two-phase-commit",
+        "consensus",
+        "leader-election"
+      ],
+      "prompt": "wins votes from a majority becomes leader for that ___; the",
+      "source": {
+        "path": "vault/database-internals/consensus.md",
+        "block": "card-tl1c"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 13-14"
+      ],
+      "answer": "term"
+    },
+    {
+      "id": "card-ejvd",
+      "format": "mcq",
+      "category": "database-internals",
+      "tags": [
+        "paxos",
+        "raft",
+        "two-phase-commit",
+        "consensus",
+        "leader-election"
+      ],
+      "prompt": "What is the purpose of Raft's randomized election timeout?",
+      "source": {
+        "path": "vault/database-internals/consensus.md",
+        "block": "card-ejvd"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 13-14"
+      ],
+      "choices": [
+        {
+          "text": "It makes it unlikely that multiple followers become candidates simultaneously, reducing repeated split votes and helping a leader get elected quickly",
+          "correct": true
+        },
+        {
+          "text": "It guarantees an election never needs more than one round under any circumstances",
+          "correct": false
+        },
+        {
+          "text": "It removes the need for a majority vote to elect a leader",
+          "correct": false
+        },
+        {
+          "text": "It synchronizes every node's clock to the same value",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-mnci",
+      "format": "cloze",
+      "category": "database-internals",
+      "tags": [
+        "paxos",
+        "raft",
+        "two-phase-commit",
+        "consensus",
+        "leader-election"
+      ],
+      "prompt": "___ once a majority of nodes have stored it in their log,",
+      "source": {
+        "path": "vault/database-internals/consensus.md",
+        "block": "card-mnci"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 13-14"
+      ],
+      "answer": "committed"
+    },
+    {
+      "id": "card-7e8t",
+      "format": "qa",
+      "category": "database-internals",
+      "tags": [
+        "paxos",
+        "raft",
+        "two-phase-commit",
+        "consensus",
+        "leader-election"
+      ],
+      "prompt": "What does a Raft term number protect against, given that leader election can occasionally produce more than one node that believes it is leader?",
+      "source": {
+        "path": "vault/database-internals/consensus.md",
+        "block": "card-7e8t"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 13-14"
+      ],
+      "answer": "A term is a monotonically increasing counter that every message carries; a node that sees a higher term than its own steps down, so at most one leader can actually get entries committed for any given term (an old leader from a stale term is rejected once a follower has seen a newer term), preventing two leaders from both successfully appending conflicting log entries."
+    },
+    {
+      "id": "card-mxxf",
+      "format": "cloze",
+      "category": "database-internals",
+      "tags": [
+        "paxos",
+        "raft",
+        "two-phase-commit",
+        "consensus",
+        "leader-election"
+      ],
+      "prompt": "knowing the coordinator's decision, so they must ___ and hold",
+      "source": {
+        "path": "vault/database-internals/consensus.md",
+        "block": "card-mxxf"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 13-14"
+      ],
+      "answer": "block"
+    },
+    {
+      "id": "card-br12",
+      "format": "mcq",
+      "category": "database-internals",
+      "tags": [
+        "paxos",
+        "raft",
+        "two-phase-commit",
+        "consensus",
+        "leader-election"
+      ],
+      "prompt": "Why does two-phase commit block when the coordinator crashes after the prepare phase completes but before the commit/abort decision is sent?",
+      "source": {
+        "path": "vault/database-internals/consensus.md",
+        "block": "card-br12"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 13-14"
+      ],
+      "choices": [
+        {
+          "text": "Participants that voted \"yes\" have promised they can commit and must wait for the coordinator's decision, since they cannot safely decide commit or abort on their own without risking disagreement with other participants",
+          "correct": true
+        },
+        {
+          "text": "Participants automatically abort after a short timeout, so there is no actual blocking",
+          "correct": false
+        },
+        {
+          "text": "The coordinator's crash immediately aborts the transaction on all participants",
+          "correct": false
+        },
+        {
+          "text": "2PC has no coordinator, so this scenario cannot occur",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-hphb",
+      "format": "recall",
+      "category": "database-internals",
+      "tags": [
+        "paxos",
+        "raft",
+        "two-phase-commit",
+        "consensus",
+        "leader-election"
+      ],
+      "prompt": "A system replaces its single 2PC coordinator with a Raft-replicated group of coordinators. Explain precisely what this change does and does not fix about 2PC's blocking behavior.",
+      "source": {
+        "path": "vault/database-internals/consensus.md",
+        "block": "card-hphb"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 13-14"
+      ]
+    },
+    {
+      "id": "card-eia3",
+      "format": "mcq",
+      "category": "database-internals",
+      "tags": [
+        "paxos",
+        "raft",
+        "two-phase-commit",
+        "consensus",
+        "leader-election"
+      ],
+      "prompt": "What was 3PC's goal relative to 2PC, and why is it rarely used in practice?",
+      "source": {
+        "path": "vault/database-internals/consensus.md",
+        "block": "card-eia3"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 13-14"
+      ],
+      "choices": [
+        {
+          "text": "It aimed to avoid blocking on coordinator failure, but it relies on bounded network delay assumptions that don't hold on real asynchronous networks",
+          "correct": true
+        },
+        {
+          "text": "It aimed to reduce the number of participants required, and is rarely used because it needs at least 100 nodes",
+          "correct": false
+        },
+        {
+          "text": "It aimed to remove the need for a coordinator entirely, and is rarely used because it requires no coordinator at all",
+          "correct": false
+        },
+        {
+          "text": "It aimed to make commits faster by skipping the prepare phase, and is rarely used because it is slower than 2PC in every case",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-uoqr",
+      "format": "cloze",
+      "category": "database-internals",
+      "tags": [
+        "failure-detection",
+        "heartbeats",
+        "phi-accrual",
+        "gossip"
+      ],
+      "prompt": "timeout declares the sender ___. This is easy to implement but",
+      "source": {
+        "path": "vault/database-internals/failure-detection.md",
+        "block": "card-uoqr"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 9"
+      ],
+      "answer": "dead"
+    },
+    {
+      "id": "card-ttsw",
+      "format": "mcq",
+      "category": "database-internals",
+      "tags": [
+        "failure-detection",
+        "heartbeats",
+        "phi-accrual",
+        "gossip"
+      ],
+      "prompt": "What is the core weakness of a fixed-timeout heartbeat failure detector?",
+      "source": {
+        "path": "vault/database-internals/failure-detection.md",
+        "block": "card-ttsw"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 9"
+      ],
+      "choices": [
+        {
+          "text": "One fixed timeout must trade off detection speed against false-positive rate, and cannot adapt to a network whose latency varies over time",
+          "correct": true
+        },
+        {
+          "text": "It requires every node to run the same clock, synchronized to the microsecond",
+          "correct": false
+        },
+        {
+          "text": "It can only be used in networks with fewer than three nodes",
+          "correct": false
+        },
+        {
+          "text": "It never produces false positives, only false negatives",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-uffu",
+      "format": "cloze",
+      "category": "database-internals",
+      "tags": [
+        "failure-detection",
+        "heartbeats",
+        "phi-accrual",
+        "gossip"
+      ],
+      "prompt": "___ (phi) for a node, rather than emitting a binary alive/dead",
+      "source": {
+        "path": "vault/database-internals/failure-detection.md",
+        "block": "card-uffu"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 9"
+      ],
+      "answer": "level"
+    },
+    {
+      "id": "card-8ei4",
+      "format": "mcq",
+      "category": "database-internals",
+      "tags": [
+        "failure-detection",
+        "heartbeats",
+        "phi-accrual",
+        "gossip"
+      ],
+      "prompt": "What does a phi-accrual failure detector output for a monitored node?",
+      "source": {
+        "path": "vault/database-internals/failure-detection.md",
+        "block": "card-8ei4"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 9"
+      ],
+      "choices": [
+        {
+          "text": "A continuously-valued suspicion level, computed from the recent distribution of heartbeat arrival times, that the application thresholds itself",
+          "correct": true
+        },
+        {
+          "text": "A simple boolean: alive or dead",
+          "correct": false
+        },
+        {
+          "text": "A fixed timeout value in milliseconds, recalculated once per hour",
+          "correct": false
+        },
+        {
+          "text": "The exact wall-clock time the node crashed",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-l9iu",
+      "format": "qa",
+      "category": "database-internals",
+      "tags": [
+        "failure-detection",
+        "heartbeats",
+        "phi-accrual",
+        "gossip"
+      ],
+      "prompt": "What advantage does using the recent history of heartbeat inter-arrival times (as phi-accrual does) give over comparing against one fixed timeout?",
+      "source": {
+        "path": "vault/database-internals/failure-detection.md",
+        "block": "card-l9iu"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 9"
+      ],
+      "answer": "It lets the detector adapt its sensitivity to the network's actual, currently-observed variability, so a network that is usually jittery doesn't trigger false suspicion on an ordinary delay, while a network that is usually very regular can still be flagged quickly once a delay is unusually large relative to its own history."
+    },
+    {
+      "id": "card-l4nm",
+      "format": "mcq",
+      "category": "database-internals",
+      "tags": [
+        "failure-detection",
+        "heartbeats",
+        "phi-accrual",
+        "gossip"
+      ],
+      "prompt": "Why does gossip-based failure detection scale better than every node heartbeating every other node directly?",
+      "source": {
+        "path": "vault/database-internals/failure-detection.md",
+        "block": "card-l4nm"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 9"
+      ],
+      "choices": [
+        {
+          "text": "Each node only exchanges state with a few random peers per round, and information still propagates cluster-wide in a small number of rounds, avoiding an all-to-all connection count that grows quadratically with cluster size",
+          "correct": true
+        },
+        {
+          "text": "Gossip protocols eliminate the need for any node to detect failures at all",
+          "correct": false
+        },
+        {
+          "text": "Gossip only works correctly in clusters smaller than ten nodes",
+          "correct": false
+        },
+        {
+          "text": "Gossip requires a single coordinator node that all messages pass through",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-ggdw",
+      "format": "recall",
+      "category": "database-internals",
+      "tags": [
+        "failure-detection",
+        "heartbeats",
+        "phi-accrual",
+        "gossip"
+      ],
+      "prompt": "Explain why an \"is this node alive?\" answer from any failure detector is fundamentally a probabilistic guess rather than a verified fact, and what phi-accrual does differently from a plain heartbeat to represent that uncertainty.",
+      "source": {
+        "path": "vault/database-internals/failure-detection.md",
+        "block": "card-ggdw"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 9"
+      ]
+    },
+    {
+      "id": "card-drcz",
+      "format": "cloze",
+      "category": "database-internals",
+      "tags": [
+        "lsm-tree",
+        "compaction",
+        "amplification",
+        "sstable"
+      ],
+      "prompt": "An LSM-tree buffers recent writes in an in-memory ___, backed by",
+      "source": {
+        "path": "vault/database-internals/lsm-trees.md",
+        "block": "card-drcz"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 7"
+      ],
+      "answer": "memtable"
+    },
+    {
+      "id": "card-7a0i",
+      "format": "mcq",
+      "category": "database-internals",
+      "tags": [
+        "lsm-tree",
+        "compaction",
+        "amplification",
+        "sstable"
+      ],
+      "prompt": "Which amplification does levelled compaction reduce compared to size-tiered compaction, and at what cost?",
+      "source": {
+        "path": "vault/database-internals/lsm-trees.md",
+        "block": "card-7a0i"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 7"
+      ],
+      "choices": [
+        {
+          "text": "It reduces space amplification (less stale/duplicate data lingers), at the cost of higher write amplification (data is rewritten more times moving between levels)",
+          "correct": true
+        },
+        {
+          "text": "It reduces write amplification, at the cost of higher space amplification",
+          "correct": false
+        },
+        {
+          "text": "It reduces both write and space amplification with no tradeoff",
+          "correct": false
+        },
+        {
+          "text": "It eliminates compaction entirely, removing all amplification",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-9k1r",
+      "format": "cloze",
+      "category": "database-internals",
+      "tags": [
+        "lsm-tree",
+        "compaction",
+        "amplification",
+        "sstable"
+      ],
+      "prompt": "Size-tiered compaction keeps ___ amplification low but lets stale",
+      "source": {
+        "path": "vault/database-internals/lsm-trees.md",
+        "block": "card-9k1r"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 7"
+      ],
+      "answer": "write"
+    },
+    {
+      "id": "card-w9id",
+      "format": "mcq",
+      "category": "database-internals",
+      "tags": [
+        "lsm-tree",
+        "compaction",
+        "amplification",
+        "sstable"
+      ],
+      "prompt": "A workload rewrites the same small set of keys very frequently and disk space is tightly constrained. Which compaction strategy better fits this, and why?",
+      "source": {
+        "path": "vault/database-internals/lsm-trees.md",
+        "block": "card-w9id"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 7"
+      ],
+      "choices": [
+        {
+          "text": "Levelled compaction, because it keeps stale versions of frequently-overwritten keys from accumulating across many segments, bounding space usage",
+          "correct": true
+        },
+        {
+          "text": "Size-tiered compaction, because it minimizes space amplification by design",
+          "correct": false
+        },
+        {
+          "text": "Neither strategy affects space usage; only the memtable size does",
+          "correct": false
+        },
+        {
+          "text": "Size-tiered compaction, because it never rewrites a key more than once",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-ugwk",
+      "format": "cloze",
+      "category": "database-internals",
+      "tags": [
+        "lsm-tree",
+        "compaction",
+        "amplification",
+        "sstable"
+      ],
+      "prompt": "___ per segment lets the engine skip segments that",
+      "source": {
+        "path": "vault/database-internals/lsm-trees.md",
+        "block": "card-ugwk"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 7"
+      ],
+      "answer": "Bloom filter"
+    },
+    {
+      "id": "card-hcmf",
+      "format": "qa",
+      "category": "database-internals",
+      "tags": [
+        "lsm-tree",
+        "compaction",
+        "amplification",
+        "sstable"
+      ],
+      "prompt": "What is \"write amplification\" in an LSM-tree, distinct from the number of client write requests?",
+      "source": {
+        "path": "vault/database-internals/lsm-trees.md",
+        "block": "card-hcmf"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 7"
+      ],
+      "answer": "The ratio of bytes actually written to disk (across the initial flush and every later compaction rewrite of that data) to the bytes of the original logical write — a single logical write can be physically rewritten to disk many times over its lifetime as compactions merge it into progressively larger segments."
+    },
+    {
+      "id": "card-unnd",
+      "format": "recall",
+      "category": "database-internals",
+      "tags": [
+        "lsm-tree",
+        "compaction",
+        "amplification",
+        "sstable"
+      ],
+      "prompt": "A team is choosing a compaction strategy for a workload that ingests huge volumes of write-once, rarely-updated time-series data and cares most about sustaining high write throughput. Explain which strategy (size-tiered or levelled) fits better and what amplification tradeoff they are accepting.",
+      "source": {
+        "path": "vault/database-internals/lsm-trees.md",
+        "block": "card-unnd"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 7"
+      ]
+    },
+    {
+      "id": "card-830u",
+      "format": "mcq",
+      "category": "database-internals",
+      "tags": [
+        "lsm-tree",
+        "compaction",
+        "amplification",
+        "sstable"
+      ],
+      "prompt": "Why can an LSM-tree read require checking multiple SSTable segments even for a single key?",
+      "source": {
+        "path": "vault/database-internals/lsm-trees.md",
+        "block": "card-830u"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 7"
+      ],
+      "choices": [
+        {
+          "text": "The same key may have been written or overwritten at different times, landing in different segments that haven't yet been merged by compaction",
+          "correct": true
+        },
+        {
+          "text": "SSTables are stored unsorted, so every segment must always be scanned fully",
+          "correct": false
+        },
+        {
+          "text": "The memtable is never checked during a read, only disk segments are",
+          "correct": false
+        },
+        {
+          "text": "LSM-trees store each key exactly once, so this never happens",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-72wa",
+      "format": "cloze",
+      "category": "database-internals",
+      "tags": [
+        "quorums",
+        "read-repair",
+        "hinted-handoff",
+        "crdt",
+        "tunable-consistency"
+      ],
+      "prompt": "If ___, every read quorum and every write quorum are guaranteed",
+      "source": {
+        "path": "vault/database-internals/replication-consistency.md",
+        "block": "card-72wa"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 11-12"
+      ],
+      "answer": "W + R > N"
+    },
+    {
+      "id": "card-w8zx",
+      "format": "mcq",
+      "category": "database-internals",
+      "tags": [
+        "quorums",
+        "read-repair",
+        "hinted-handoff",
+        "crdt",
+        "tunable-consistency"
+      ],
+      "prompt": "Why does the condition W + R > N matter for a quorum-based system?",
+      "source": {
+        "path": "vault/database-internals/replication-consistency.md",
+        "block": "card-w8zx"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 11-12"
+      ],
+      "choices": [
+        {
+          "text": "It guarantees any read quorum and any write quorum share at least one common replica, so a read can always reach a replica that has the latest acknowledged write",
+          "correct": true
+        },
+        {
+          "text": "It guarantees the system will never accept a write during a network partition",
+          "correct": false
+        },
+        {
+          "text": "It guarantees every replica is always fully up to date at all times",
+          "correct": false
+        },
+        {
+          "text": "It has no effect on consistency, only on write latency",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-4itb",
+      "format": "qa",
+      "category": "database-internals",
+      "tags": [
+        "quorums",
+        "read-repair",
+        "hinted-handoff",
+        "crdt",
+        "tunable-consistency"
+      ],
+      "prompt": "What does read repair do, and when does it happen?",
+      "source": {
+        "path": "vault/database-internals/replication-consistency.md",
+        "block": "card-4itb"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 11-12"
+      ],
+      "answer": "During a quorum read, when the coordinator notices that some replicas in the read quorum returned an older version than others, it writes the newest version back to the stale replicas — repairing that specific piece of divergence as a side effect of the read, rather than waiting for a separate background process."
+    },
+    {
+      "id": "card-cmhr",
+      "format": "mcq",
+      "category": "database-internals",
+      "tags": [
+        "quorums",
+        "read-repair",
+        "hinted-handoff",
+        "crdt",
+        "tunable-consistency"
+      ],
+      "prompt": "What problem does hinted handoff address?",
+      "source": {
+        "path": "vault/database-internals/replication-consistency.md",
+        "block": "card-cmhr"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 11-12"
+      ],
+      "choices": [
+        {
+          "text": "Letting a write still succeed and reach its intended replica eventually, even when that replica is temporarily unreachable at write time",
+          "correct": true
+        },
+        {
+          "text": "Detecting which replica holds the most recent version of a key",
+          "correct": false
+        },
+        {
+          "text": "Permanently resolving conflicting concurrent writes to the same key",
+          "correct": false
+        },
+        {
+          "text": "Reducing the network bandwidth used by replication traffic",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-xvyt",
+      "format": "cloze",
+      "category": "database-internals",
+      "tags": [
+        "quorums",
+        "read-repair",
+        "hinted-handoff",
+        "crdt",
+        "tunable-consistency"
+      ],
+      "prompt": "___ — every replica eventually reaches the same state — not",
+      "source": {
+        "path": "vault/database-internals/replication-consistency.md",
+        "block": "card-xvyt"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 11-12"
+      ],
+      "answer": "convergence"
+    },
+    {
+      "id": "card-9vow",
+      "format": "mcq",
+      "category": "database-internals",
+      "tags": [
+        "quorums",
+        "read-repair",
+        "hinted-handoff",
+        "crdt",
+        "tunable-consistency"
+      ],
+      "prompt": "What guarantee do CRDTs actually provide?",
+      "source": {
+        "path": "vault/database-internals/replication-consistency.md",
+        "block": "card-9vow"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 11-12"
+      ],
+      "choices": [
+        {
+          "text": "That replicas which have seen the same set of updates will deterministically converge to the same value, regardless of the order updates were applied",
+          "correct": true
+        },
+        {
+          "text": "That concurrent writes to the same field can never happen",
+          "correct": false
+        },
+        {
+          "text": "That merged values always match the intent of every concurrent writer",
+          "correct": false
+        },
+        {
+          "text": "That a single global lock coordinates all writes across replicas",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-r1j7",
+      "format": "recall",
+      "category": "database-internals",
+      "tags": [
+        "quorums",
+        "read-repair",
+        "hinted-handoff",
+        "crdt",
+        "tunable-consistency"
+      ],
+      "prompt": "Explain the difference between what read repair fixes and what hinted handoff fixes — specifically, what each mechanism assumes about why a replica ended up out of sync.",
+      "source": {
+        "path": "vault/database-internals/replication-consistency.md",
+        "block": "card-r1j7"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 11-12"
+      ]
+    },
+    {
+      "id": "card-nm0x",
+      "format": "recall",
+      "category": "database-internals",
+      "tags": [
+        "quorums",
+        "read-repair",
+        "hinted-handoff",
+        "crdt",
+        "tunable-consistency"
+      ],
+      "prompt": "A key-value store lets you configure W and R independently per request. For a workload that writes rarely but reads very frequently and needs those reads to reflect the latest write as often as possible, explain how you would set W and R relative to N and why.",
+      "source": {
+        "path": "vault/database-internals/replication-consistency.md",
+        "block": "card-nm0x"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 11-12"
+      ]
+    },
+    {
+      "id": "card-4u9i",
+      "format": "mcq",
+      "category": "database-internals",
+      "tags": [
+        "storage-engines",
+        "row-store",
+        "column-store",
+        "buffer-pool"
+      ],
+      "prompt": "Which workload is a column-oriented store best suited for?",
+      "source": {
+        "path": "vault/database-internals/storage-engine-basics.md",
+        "block": "card-4u9i"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 1"
+      ],
+      "choices": [
+        {
+          "text": "Aggregating one or two columns (e.g. sum of a price column) across millions of rows",
+          "correct": true
+        },
+        {
+          "text": "Fetching every column of a single record by primary key",
+          "correct": false
+        },
+        {
+          "text": "Appending one full record at a time as fast as possible",
+          "correct": false
+        },
+        {
+          "text": "Storing records with no fixed schema at all",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-if86",
+      "format": "cloze",
+      "category": "database-internals",
+      "tags": [
+        "storage-engines",
+        "row-store",
+        "column-store",
+        "buffer-pool"
+      ],
+      "prompt": "stores are generally better for scanning ___ across many rows.",
+      "source": {
+        "path": "vault/database-internals/storage-engine-basics.md",
+        "block": "card-if86"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 1"
+      ],
+      "answer": "few columns"
+    },
+    {
+      "id": "card-se4z",
+      "format": "cloze",
+      "category": "database-internals",
+      "tags": [
+        "storage-engines",
+        "row-store",
+        "column-store",
+        "buffer-pool"
+      ],
+      "prompt": "not yet written back are called ___ pages; the engine must track",
+      "source": {
+        "path": "vault/database-internals/storage-engine-basics.md",
+        "block": "card-se4z"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 1"
+      ],
+      "answer": "dirty"
+    },
+    {
+      "id": "card-4bcw",
+      "format": "mcq",
+      "category": "database-internals",
+      "tags": [
+        "storage-engines",
+        "row-store",
+        "column-store",
+        "buffer-pool"
+      ],
+      "prompt": "Why does a database storage engine typically implement its own buffer pool instead of relying entirely on the operating system's page cache?",
+      "source": {
+        "path": "vault/database-internals/storage-engine-basics.md",
+        "block": "card-4bcw"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 1"
+      ],
+      "choices": [
+        {
+          "text": "It needs precise control over which pages are evicted and exactly when a dirty page is flushed, since that timing matters for crash recovery correctness",
+          "correct": true
+        },
+        {
+          "text": "The operating system does not allow databases to read files at all",
+          "correct": false
+        },
+        {
+          "text": "Buffer pools are only needed for column-oriented stores",
+          "correct": false
+        },
+        {
+          "text": "The OS page cache does not exist on modern systems",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-579l",
+      "format": "qa",
+      "category": "database-internals",
+      "tags": [
+        "storage-engines",
+        "row-store",
+        "column-store",
+        "buffer-pool"
+      ],
+      "prompt": "What tradeoff does an in-memory storage engine accept in exchange for its low latency?",
+      "source": {
+        "path": "vault/database-internals/storage-engine-basics.md",
+        "block": "card-579l"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 1"
+      ],
+      "answer": "It must give up disk as its primary storage medium, meaning the dataset is bounded by available RAM, and it depends on a write-ahead log or periodic snapshot to disk (replayed on restart) to survive a crash without losing committed data."
+    },
+    {
+      "id": "card-tssx",
+      "format": "recall",
+      "category": "database-internals",
+      "tags": [
+        "storage-engines",
+        "row-store",
+        "column-store",
+        "buffer-pool"
+      ],
+      "prompt": "A team is choosing between a row-oriented and a column-oriented storage engine for a new analytics dashboard that runs queries like \"average order value per month over the last two years.\" Explain which layout fits better and why.",
+      "source": {
+        "path": "vault/database-internals/storage-engine-basics.md",
+        "block": "card-tssx"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 1"
+      ]
+    },
+    {
+      "id": "card-ysmq",
+      "format": "cloze",
+      "category": "database-internals",
+      "tags": [
+        "wal",
+        "aries",
+        "steal-force",
+        "recovery",
+        "buffer-management"
+      ],
+      "prompt": "The WAL must be flushed to disk ___ the transaction that produced",
+      "source": {
+        "path": "vault/database-internals/transaction-processing.md",
+        "block": "card-ysmq"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 5"
+      ],
+      "answer": "before"
+    },
+    {
+      "id": "card-4491",
+      "format": "mcq",
+      "category": "database-internals",
+      "tags": [
+        "wal",
+        "aries",
+        "steal-force",
+        "recovery",
+        "buffer-management"
+      ],
+      "prompt": "What does \"write-ahead\" in write-ahead logging actually require?",
+      "source": {
+        "path": "vault/database-internals/transaction-processing.md",
+        "block": "card-4491"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 5"
+      ],
+      "choices": [
+        {
+          "text": "The log record for a change must reach durable storage before the corresponding data page write is considered complete",
+          "correct": true
+        },
+        {
+          "text": "Data pages must be written to disk before any log record is created",
+          "correct": false
+        },
+        {
+          "text": "The log is written only after a transaction commits, never before",
+          "correct": false
+        },
+        {
+          "text": "Log records and data pages must always be written in the same disk operation",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-g7ek",
+      "format": "mcq",
+      "category": "database-internals",
+      "tags": [
+        "wal",
+        "aries",
+        "steal-force",
+        "recovery",
+        "buffer-management"
+      ],
+      "prompt": "A database uses a no-force buffer policy. What does this mean, and how is durability of a committed transaction still preserved?",
+      "source": {
+        "path": "vault/database-internals/transaction-processing.md",
+        "block": "card-g7ek"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 5"
+      ],
+      "choices": [
+        {
+          "text": "Dirty data pages need not be flushed to disk at commit time; durability instead comes from the transaction's log records already being durably written to the WAL, which can be replayed (redone) after a crash",
+          "correct": true
+        },
+        {
+          "text": "Committed transactions are not durable at all under no-force",
+          "correct": false
+        },
+        {
+          "text": "No-force means the write-ahead log itself is never flushed",
+          "correct": false
+        },
+        {
+          "text": "No-force means dirty pages are flushed immediately, before commit",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-p9kf",
+      "format": "cloze",
+      "category": "database-internals",
+      "tags": [
+        "wal",
+        "aries",
+        "steal-force",
+        "recovery",
+        "buffer-management"
+      ],
+      "prompt": "production engines use ___, because pinning all of a",
+      "source": {
+        "path": "vault/database-internals/transaction-processing.md",
+        "block": "card-p9kf"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 5"
+      ],
+      "answer": "steal/no-force"
+    },
+    {
+      "id": "card-ug24",
+      "format": "qa",
+      "category": "database-internals",
+      "tags": [
+        "wal",
+        "aries",
+        "steal-force",
+        "recovery",
+        "buffer-management"
+      ],
+      "prompt": "What must an engine be able to do during recovery if it uses a steal policy (uncommitted pages can reach disk)?",
+      "source": {
+        "path": "vault/database-internals/transaction-processing.md",
+        "block": "card-ug24"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 5"
+      ],
+      "answer": "It must be able to undo the effects of any transaction that was stolen to disk but never committed, since a stolen page can contain changes from a transaction the crash interrupted before commit — so recovery needs an undo phase, not just redo."
+    },
+    {
+      "id": "card-dcuk",
+      "format": "mcq",
+      "category": "database-internals",
+      "tags": [
+        "wal",
+        "aries",
+        "steal-force",
+        "recovery",
+        "buffer-management"
+      ],
+      "prompt": "What is the purpose of ARIES's redo phase?",
+      "source": {
+        "path": "vault/database-internals/transaction-processing.md",
+        "block": "card-dcuk"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 5"
+      ],
+      "choices": [
+        {
+          "text": "Reapply every logged change, from both committed and uncommitted transactions, to bring the database back to its exact pre-crash state before any rollback happens",
+          "correct": true
+        },
+        {
+          "text": "Roll back all transactions that had not committed at the time of the crash",
+          "correct": false
+        },
+        {
+          "text": "Determine which transactions were active when the crash occurred",
+          "correct": false
+        },
+        {
+          "text": "Delete log records for transactions that already committed",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-37fc",
+      "format": "recall",
+      "category": "database-internals",
+      "tags": [
+        "wal",
+        "aries",
+        "steal-force",
+        "recovery",
+        "buffer-management"
+      ],
+      "prompt": "ARIES always redoes before it undoes, even though the undo phase will immediately reverse some of what redo just reapplied. Explain why this redo-then-undo order is used rather than skipping redo for transactions that will be undone anyway.",
+      "source": {
+        "path": "vault/database-internals/transaction-processing.md",
+        "block": "card-37fc"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 5"
+      ]
+    },
+    {
+      "id": "card-bwmp",
+      "format": "cloze",
+      "category": "database-internals",
+      "tags": [
+        "wal",
+        "aries",
+        "steal-force",
+        "recovery",
+        "buffer-management"
+      ],
+      "prompt": "___ (log sequence number), which is what lets the analysis phase",
+      "source": {
+        "path": "vault/database-internals/transaction-processing.md",
+        "block": "card-bwmp"
+      },
+      "citations": [
+        "Petrov, Database Internals, Ch. 5"
+      ],
+      "answer": "LSN"
     },
     {
       "id": "card-uprv",
