@@ -556,7 +556,7 @@ export function parseCards(body: string, bodyStartLine: number): ParsedCard[] {
 - [ ] **Step 4: Run tests**
 
 Run: `npx vitest run pipeline/tests/cards-inline.test.ts`
-Expected: PASS, 6 tests.
+Expected: PASS, 8 tests.
 
 - [ ] **Step 5: Commit**
 
@@ -929,7 +929,7 @@ export function writeBackIds(source: string, cards: ParsedCard[]): string {
 - [ ] **Step 4: Run tests**
 
 Run: `npx vitest run pipeline/tests/ids.test.ts`
-Expected: PASS, 6 tests.
+Expected: PASS, 8 tests.
 
 - [ ] **Step 5: Commit**
 
@@ -1824,7 +1824,7 @@ export function isDue(state: ReviewState, now: Date): boolean {
 - [ ] **Step 4: Run tests**
 
 Run: `npx vitest run app/tests/fsrs.test.ts`
-Expected: PASS, 6 tests.
+Expected: PASS, 8 tests.
 
 - [ ] **Step 5: Commit**
 
