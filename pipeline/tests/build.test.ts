@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { parseNote, buildDeck } from '../src/build.js';
+import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { parseNote, buildDeck, processVault, markdownFiles } from '../src/build.js';
 
 const raw = [
   '---',
@@ -56,5 +59,79 @@ describe('buildDeck', () => {
     const a = parseNote('a.md', '---\ncategory: x\n---\nA ==b==. ^card-dupe', new Set()).note;
     const b = parseNote('b.md', '---\ncategory: x\n---\nC ==d==. ^card-dupe', new Set()).note;
     expect(() => buildDeck([a!, b!], new Date())).toThrow(/card-dupe/);
+  });
+});
+
+describe('processVault', () => {
+  it('produces a source path relative to the vault parent, independent of process.cwd()', () => {
+    // Built under the OS temp dir, which is not under process.cwd() — proves the
+    // path does not depend on where the CLI happens to be invoked from.
+    const root = mkdtempSync(join(tmpdir(), 'factotum-vault-'));
+    const vaultDir = join(root, 'vault');
+    mkdirSync(join(vaultDir, 'networking'), { recursive: true });
+    writeFileSync(
+      join(vaultDir, 'networking', 'tcp.md'),
+      '---\ncategory: networking\n---\n\nDefault MTU is ==1500 bytes==.\n',
+      'utf8'
+    );
+
+    try {
+      const notes = processVault(vaultDir);
+      expect(notes).toHaveLength(1);
+      expect(notes[0]?.path).toBe('vault/networking/tcp.md');
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('throws an error naming the file when a note has malformed frontmatter', () => {
+    const root = mkdtempSync(join(tmpdir(), 'factotum-vault-'));
+    const vaultDir = join(root, 'vault');
+    mkdirSync(vaultDir, { recursive: true });
+    const badFile = join(vaultDir, 'broken.md');
+    writeFileSync(badFile, '---\ncategory: [unterminated\n---\nBody', 'utf8');
+
+    try {
+      expect(() => processVault(vaultDir)).toThrow(badFile);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('markdownFiles', () => {
+  it('skips a .obsidian directory even when it contains markdown-suffixed data', () => {
+    const root = mkdtempSync(join(tmpdir(), 'factotum-vault-'));
+    mkdirSync(join(root, '.obsidian'), { recursive: true });
+    writeFileSync(join(root, '.obsidian', 'workspace.md'), 'not a note', 'utf8');
+    writeFileSync(join(root, 'real.md'), '# real', 'utf8');
+
+    try {
+      expect(markdownFiles(root)).toEqual([join(root, 'real.md')]);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('skips a symlinked directory instead of following it', () => {
+    const root = mkdtempSync(join(tmpdir(), 'factotum-vault-'));
+    const target = join(root, 'target');
+    mkdirSync(target, { recursive: true });
+    writeFileSync(join(target, 'note.md'), '# note', 'utf8');
+    const link = join(root, 'link');
+
+    let symlinked = true;
+    try {
+      symlinkSync(target, link, 'dir');
+    } catch {
+      symlinked = false;
+    }
+
+    try {
+      if (!symlinked) return; // symlink creation unsupported on this platform; skip assertion
+      expect(markdownFiles(root)).toEqual([join(target, 'note.md')]);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 });
