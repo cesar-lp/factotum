@@ -10,7 +10,9 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "build:deck": "tsx pipeline/src/cli.ts vault deck/deck.json",
+    "predev": "cp deck/deck.json app/public/deck.json",
     "dev": "vite --config vite.config.ts",
+    "prebuild:app": "cp deck/deck.json app/public/deck.json",
     "build:app": "vite build --config vite.config.ts"
   },
   "devDependencies": {
