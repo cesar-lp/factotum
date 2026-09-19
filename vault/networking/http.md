@@ -10,9 +10,9 @@ HTTP is a request-response protocol where a client sends a request and a
 server returns a response, with the server retaining no memory of past
 requests by default — HTTP is a ==stateless== protocol. ^card-3sgk
 
-Non-persistent HTTP :: Each object is fetched over its own new TCP connection, which is opened, used once, and closed, adding a full connection setup delay per object. ^card-8cyf
+Under non-persistent HTTP, how many objects share each TCP connection, and what does that cost per object? :: Each object is fetched over its own new TCP connection, which is opened, used once, and closed, adding a full connection setup delay per object. ^card-8cyf
 
-Persistent HTTP :: Multiple requests and responses can be sent over the same open TCP connection, avoiding repeated handshake overhead for objects on the same server. ^card-1jwg
+Under persistent HTTP, how many objects can share one TCP connection, and what overhead does that avoid? :: Multiple requests and responses can be sent over the same open TCP connection, avoiding repeated handshake overhead for objects on the same server. ^card-1jwg
 
 The `GET` method requests a resource, `POST` submits data to be processed
 (often creating or modifying state), and `PUT` replaces a resource at a

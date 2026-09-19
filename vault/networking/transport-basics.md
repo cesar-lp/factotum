@@ -10,9 +10,9 @@ The transport layer extends the network layer's host-to-host delivery into
 process-to-process delivery, using port numbers to identify which
 application on a host should receive a given segment.
 
-Multiplexing :: The sending-side task of gathering data from multiple sockets, wrapping each chunk with header information, and passing the resulting segments down to the network layer. ^card-d82i
+On the sending side, what does multiplexing do with data from multiple sockets before handing it to the network layer? :: The sending-side task of gathering data from multiple sockets, wrapping each chunk with header information, and passing the resulting segments down to the network layer. ^card-d82i
 
-Demultiplexing :: The receiving-side task of using header fields to deliver each arriving segment's data to the correct socket. ^card-xoi1
+On the receiving side, how does demultiplexing decide which socket gets an arriving segment's data? :: The receiving-side task of using header fields to deliver each arriving segment's data to the correct socket. ^card-xoi1
 
 A UDP segment carries very little header overhead: just source port,
 destination port, length, and checksum, each occupying ==16 bits==. This ^card-l423

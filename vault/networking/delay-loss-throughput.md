@@ -16,7 +16,7 @@ equal to packet length divided by ==link bandwidth==. Propagation delay is ^card
 the time for a bit to travel the physical link, equal to link length divided
 by the propagation speed of the medium.
 
-Queuing delay :: The time a packet waits in a router's output buffer before it can be transmitted, and it depends on how many other packets are already queued ahead of it. ^card-jwnf
+What is queuing delay, and what determines how long a packet waits in it? :: The time a packet waits in a router's output buffer before it can be transmitted, and it depends on how many other packets are already queued ahead of it. ^card-jwnf
 
 Traffic intensity is defined as the ratio of the average bit arrival rate to
 the link's transmission rate. As traffic intensity approaches ==1==, average ^card-1kkn

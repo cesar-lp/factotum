@@ -17,9 +17,9 @@ roughly one segment, but on a detected loss the window is cut, typically
 ==in half==. This sawtooth pattern keeps senders probing for more bandwidth ^card-iwku
 without piling on indefinitely.
 
-Slow start :: The initial phase after a connection starts (or after a timeout), where the congestion window doubles every round trip until it reaches a threshold or a loss occurs, growing far faster than AIMD's linear increase. ^card-sbuh
+What happens to TCP's congestion window during slow start, and how does its growth rate compare to AIMD's steady-state increase? :: The initial phase after a connection starts (or after a timeout), where the congestion window doubles every round trip until it reaches a threshold or a loss occurs, growing far faster than AIMD's linear increase. ^card-sbuh
 
-Fast retransmit :: A sender that receives three duplicate ACKs for the same segment infers that segment was lost and retransmits it immediately, without waiting for the retransmission timer to expire. ^card-3mgt
+What condition triggers TCP's fast retransmit, and why does it let the sender act sooner than waiting out the retransmission timer? :: A sender that receives three duplicate ACKs for the same segment infers that segment was lost and retransmits it immediately, without waiting for the retransmission timer to expire. ^card-3mgt
 
 Fast retransmit lets TCP recover from an isolated loss in roughly one round
 trip instead of waiting a full ==timeout== interval, which is much longer ^card-z816

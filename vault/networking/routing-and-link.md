@@ -6,9 +6,9 @@ citations: ["Kurose & Ross, Computer Networking 8e, Ch. 5-6"]
 
 # Routing Algorithms and the Link Layer
 
-Link-state routing :: Every router floods information about its directly connected links to all other routers in the network, so each router independently builds a complete map of the topology and computes shortest paths itself, typically with Dijkstra's algorithm. ^card-ooah
+In link-state routing, what does each router learn from flooding, and how does it use that to compute routes? :: Every router floods information about its directly connected links to all other routers in the network, so each router independently builds a complete map of the topology and computes shortest paths itself, typically with Dijkstra's algorithm. ^card-ooah
 
-Distance-vector routing :: Each router only knows the distance to each destination as reported by its immediate neighbors, and iteratively recomputes its own distances by combining a neighbor's reported distance with the cost to reach that neighbor, using a form of the Bellman-Ford algorithm. ^card-6abb
+In distance-vector routing, what does a router know about the rest of the network, and how does it update its own distances? :: Each router only knows the distance to each destination as reported by its immediate neighbors, and iteratively recomputes its own distances by combining a neighbor's reported distance with the cost to reach that neighbor, using a form of the Bellman-Ford algorithm. ^card-6abb
 
 A well-known problem with naive distance-vector routing is
 ==count-to-infinity==: when a link fails, routers can keep telling each ^card-bob5
@@ -32,7 +32,7 @@ forwarding table by observing the source MAC address and incoming port of
 each frame it sees, rather than requiring manual configuration or running a
 routing protocol.
 
-ARP :: A host broadcasts a request asking "who has this IP address" on the local network, and the host owning that IP replies directly with its MAC address, which the requester then caches for future frames to that IP. ^card-7u3r
+How does ARP discover the MAC address that corresponds to an IP address on the local network? :: A host broadcasts a request asking "who has this IP address" on the local network, and the host owning that IP replies directly with its MAC address, which the requester then caches for future frames to that IP. ^card-7u3r
 
 > [!card] mcq
 > How does a router fundamentally differ from a switch in how it forwards traffic?

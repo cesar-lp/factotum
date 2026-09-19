@@ -15,9 +15,9 @@ point to top-level domain (TLD) servers (`.com`, `.org`, country codes),
 which point to authoritative servers that hold the actual records for a
 specific domain.
 
-Iterative query :: A DNS server responds with the address of the next server to ask, rather than the final answer, leaving the requester to follow the chain itself. ^card-vikl
+In an iterative DNS query, what does the queried server return instead of the final answer, and who has to follow up? :: A DNS server responds with the address of the next server to ask, rather than the final answer, leaving the requester to follow the chain itself. ^card-vikl
 
-Recursive query :: A DNS server takes on the work of contacting other servers on the requester's behalf and returns only the final answer. ^card-70hq
+In a recursive DNS query, who does the work of contacting further servers, and what does the original requester get back? :: A DNS server takes on the work of contacting other servers on the requester's behalf and returns only the final answer. ^card-70hq
 
 A local DNS resolver typically issues ==recursive== queries to itself on ^card-vqne
 behalf of the client, while it issues ==iterative== queries when walking ^card-z181
