@@ -94,7 +94,7 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
     advance();
   };
 
-  function draw(revealed: boolean, pendingOutcome: Outcome | null = null): void {
+  function draw(revealed: boolean, pendingOutcome: 'correct' | 'wrong' | null = null): void {
     const card = deps.session[index];
     if (!card) return deps.onDone(reviewed);
 
@@ -111,7 +111,7 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
         <div class="top"><span>${index + 1} / ${deps.session.length}</span></div>
         <div class="progress"><i style="width:${(index / deps.session.length) * 100}%"></i></div>
         ${renderPrompt(card)}
-        ${renderActions(card, revealed, choices)}
+        ${renderActions(card, revealed, choices, pendingOutcome ?? undefined)}
       </section>
     `;
 
@@ -153,14 +153,19 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
       });
     });
 
+    // Mirrors the mcq tap handler: mark correct/wrong and re-render revealed
+    // (with citations and, for a wrong answer, the override) rather than
+    // submitting immediately — a correct cloze was previously advancing
+    // with no confirmation and no citation, the same bug Task 16 already
+    // fixed for mcq. draw() resets `submitting` for the revealed render, so
+    // Continue/override still work.
     root.querySelector('[data-role="check"]')?.addEventListener('click', () => {
       if (submitting) return;
       submitting = true;
       lockControls();
       const input = root.querySelector<HTMLInputElement>('[data-role="cloze-input"]');
       const correct = checkCloze(input?.value ?? '', card.answer ?? '');
-      if (correct) void submit(card, 'correct', startedAt);
-      else draw(true, 'wrong');
+      draw(true, correct ? 'correct' : 'wrong');
     });
 
     root.querySelectorAll<HTMLButtonElement>('[data-outcome]').forEach((button) => {

@@ -66,8 +66,19 @@ function ratingRow(): string {
  * (review.ts) is responsible for shuffling once per card presentation and
  * passing the SAME array back in on both the unrevealed and revealed
  * render, so the two renders agree on which button is which.
+ *
+ * `clozeOutcome` carries whether a revealed cloze's typed answer was
+ * correct or wrong — set by review.ts once it has checked the input — so
+ * this function can render the matching feedback and, for a correct
+ * answer, suppress the "I actually knew this" override (meaningless when
+ * the user was already right).
  */
-export function renderActions(card: StoredCard, revealed: boolean, mcqChoices?: Choice[]): string {
+export function renderActions(
+  card: StoredCard,
+  revealed: boolean,
+  mcqChoices?: Choice[],
+  clozeOutcome?: 'correct' | 'wrong'
+): string {
   const tail = `${citations(card)}${flagButton()}`;
 
   if (card.format === 'mcq') {
@@ -99,11 +110,23 @@ export function renderActions(card: StoredCard, revealed: boolean, mcqChoices?: 
         </div>
       `;
     }
+    // Revealed state distinguishes correct from wrong (spec parity with
+    // mcq's revealed branch): a correct answer confirms itself and shows
+    // its citation; a wrong one keeps the override, since a correct
+    // answer has nothing for "I actually knew this" to override.
+    const isCorrect = clozeOutcome === 'correct';
+    const feedback = isCorrect
+      ? `<p class="feedback is-correct">Correct</p>`
+      : `<p class="feedback is-wrong">Not quite</p>`;
+    const override = isCorrect
+      ? ''
+      : `<button class="btn-quiet" data-outcome="override">I actually knew this</button>`;
     return `
       <div class="action-area">
+        ${feedback}
         <p class="expected">${escapeHtml(card.answer ?? '')}</p>
         <button class="btn" data-outcome="continue">Continue</button>
-        <button class="btn-quiet" data-outcome="override">I actually knew this</button>
+        ${override}
         ${tail}
       </div>
     `;
