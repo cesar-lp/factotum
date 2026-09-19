@@ -103,7 +103,8 @@ function blockClozeCards(blockText: string, blockLines: BlockLine[], bodyStartLi
     const targetStart = target.index ?? 0;
     const found = blockLines.findIndex((bl) => targetStart >= bl.start && targetStart < bl.end);
     const ownerIndex = found >= 0 ? found : blockLines.length - 1;
-    const owner = blockLines[ownerIndex]!;
+    const owner = blockLines[ownerIndex];
+    if (!owner) throw new Error('processBlock: no owner line for cloze match (invariant violation)');
     const used = idCursor.get(ownerIndex) ?? 0;
     idCursor.set(ownerIndex, used + 1);
 
@@ -138,7 +139,8 @@ function processBlock(lines: string[], memberLines: number[], bodyStartLine: num
     // any already-anchored line keeps existing ids pinned in place; brand
     // new (never-anchored) wrapped qa pairs still land on the first line.
     const anchored = blockLines.find((bl) => bl.ids[0] !== null);
-    const owner = anchored ?? blockLines[0]!;
+    const owner = anchored ?? blockLines[0];
+    if (!owner) throw new Error('processBlock: empty blockLines (invariant violation)');
     return [
       {
         id: owner.ids[0] ?? null,
