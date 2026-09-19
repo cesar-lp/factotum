@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-19T03:29:48.937Z",
+  "generatedAt": "2026-09-19T12:32:23.266Z",
   "cards": [
     {
       "id": "card-rb57",
@@ -50,7 +50,7 @@
         "consensus",
         "total-order-broadcast"
       ],
-      "prompt": "Linearizability is a ___ guarantee on single objects;",
+      "prompt": "Linearizability is a ___ guarantee on single objects; serializability is an isolation guarantee across transactions.",
       "source": {
         "path": "vault/data-systems/consistency-consensus.md",
         "block": "card-4n76"
@@ -71,7 +71,7 @@
         "consensus",
         "total-order-broadcast"
       ],
-      "prompt": "serializability is an ___ guarantee across transactions.",
+      "prompt": "Linearizability is a recency guarantee on single objects; serializability is an ___ guarantee across transactions.",
       "source": {
         "path": "vault/data-systems/consistency-consensus.md",
         "block": "card-lgbl"
@@ -151,7 +151,7 @@
         "consensus",
         "total-order-broadcast"
       ],
-      "prompt": "delivered to every node in the ___, reliably (no message is",
+      "prompt": "Total order broadcast is a protocol guaranteeing that messages are delivered to every node in the ___, reliably (no message is lost) — it is equivalent in difficulty to solving consensus, and can be used to implement single-leader replication's operation log or to build a linearizable storage service.",
       "source": {
         "path": "vault/data-systems/consistency-consensus.md",
         "block": "card-9e5b"
@@ -210,7 +210,7 @@
         "consensus",
         "total-order-broadcast"
       ],
-      "prompt": "___ (every node that doesn't crash eventually decides some",
+      "prompt": "Consensus algorithms (e.g. Raft, Paxos) must satisfy uniform agreement (no two nodes decide differently), integrity (no node decides twice), validity (a decided value was actually proposed by some node), and ___ (every node that doesn't crash eventually decides some value) — this last property is why consensus is provably impossible to guarantee in a fully asynchronous system with even one faulty node (the FLP result), which is why practical algorithms rely on timeouts and partial synchrony assumptions.",
       "source": {
         "path": "vault/data-systems/consistency-consensus.md",
         "block": "card-1f46"
@@ -289,7 +289,7 @@
         "graph",
         "schema"
       ],
-      "prompt": "Document databases are typically described as ___, meaning",
+      "prompt": "Document databases are typically described as ___, meaning the structure of the data is implicit and only interpreted when the application reads it; a relational database with a fixed schema is schema-on-write, meaning the database enforces structure at write time.",
       "source": {
         "path": "vault/data-systems/data-models.md",
         "block": "card-r1ey"
@@ -330,7 +330,7 @@
         "graph",
         "schema"
       ],
-      "prompt": "Vertices in a ___ can have arbitrary key-value properties",
+      "prompt": "Vertices in a ___ can have arbitrary key-value properties and one or more labels, and edges also carry a label describing the kind of relationship and can have their own properties.",
       "source": {
         "path": "vault/data-systems/data-models.md",
         "block": "card-3ue1"
@@ -389,7 +389,7 @@
         "graph",
         "schema"
       ],
-      "prompt": "databases) require that the relational model does not?",
+      "prompt": "What does \"the network model\" (a historical predecessor to relational databases) require that the relational model does not?",
       "source": {
         "path": "vault/data-systems/data-models.md",
         "block": "card-of38"
@@ -446,7 +446,7 @@
         "partial-failure",
         "fencing-tokens"
       ],
-      "prompt": "increasing the window of ___.",
+      "prompt": "Because failure detection via timeout can't distinguish a slow node from a dead one, choosing a timeout value is a tradeoff: too short and you declare healthy-but-slow nodes dead (spuriously triggering failover or duplicate work); too long and real failures take longer to detect, increasing the window of ___.",
       "source": {
         "path": "vault/data-systems/distributed-trouble.md",
         "block": "card-9uv8"
@@ -466,7 +466,7 @@
         "partial-failure",
         "fencing-tokens"
       ],
-      "prompt": "ordering events; ___ only ever move forward and are",
+      "prompt": "**Time-of-day clocks** (NTP-synchronized wall-clock time) can jump backward or forward and are unsuitable for measuring elapsed time or ordering events; ___ only ever move forward and are appropriate for measuring durations, but are meaningless to compare across different machines.",
       "source": {
         "path": "vault/data-systems/distributed-trouble.md",
         "block": "card-fr76"
@@ -523,7 +523,7 @@
         "partial-failure",
         "fencing-tokens"
       ],
-      "prompt": "A ___ is a monotonically increasing number issued alongside",
+      "prompt": "A ___ is a monotonically increasing number issued alongside a lock or lease grant; a resource being protected can then reject any write tagged with a fencing token lower than the highest one it has already seen, protecting against a paused process that wakes up believing it still holds the lock.",
       "source": {
         "path": "vault/data-systems/distributed-trouble.md",
         "block": "card-kg0z"
@@ -601,7 +601,7 @@
         "protobuf",
         "compatibility"
       ],
-      "prompt": "Protocol Buffers and Thrift both encode fields using a numeric ___",
+      "prompt": "Protocol Buffers and Thrift both encode fields using a numeric ___ (field number) instead of the field name, which keeps encoded messages compact since the schema (not the data) carries the field names.",
       "source": {
         "path": "vault/data-systems/encoding-evolution.md",
         "block": "card-i6zu"
@@ -660,7 +660,7 @@
         "protobuf",
         "compatibility"
       ],
-      "prompt": "___ and its own reader's schema, resolving differences",
+      "prompt": "Avro takes a different approach from Protobuf/Thrift: it has no per-field tag numbers at all, and instead a reader decodes data using both the ___ and its own reader's schema, resolving differences between them field-by-field.",
       "source": {
         "path": "vault/data-systems/encoding-evolution.md",
         "block": "card-s36d"
@@ -778,7 +778,7 @@
         "protobuf",
         "compatibility"
       ],
-      "prompt": "time, but dataflow through a ___ decouples producers and",
+      "prompt": "Dataflow through services (REST/RPC) couples a request and response in time, but dataflow through a ___ decouples producers and consumers entirely — they don't call each other directly and don't even need to be running at the same time.",
       "source": {
         "path": "vault/data-systems/encoding-evolution.md",
         "block": "card-hbdp"
@@ -855,7 +855,7 @@
         "hot-spots",
         "rebalancing"
       ],
-      "prompt": "efficient ___, because adjacent keys in the original key",
+      "prompt": "Hash partitioning distributes keys evenly but loses the ability to do efficient ___, because adjacent keys in the original key space no longer land on adjacent (or even nearby) partitions.",
       "source": {
         "path": "vault/data-systems/partitioning.md",
         "block": "card-0tbb"
@@ -912,7 +912,7 @@
         "hot-spots",
         "rebalancing"
       ],
-      "prompt": "usually doesn't align with the primary partitioning key. A ___",
+      "prompt": "Secondary indexes complicate partitioning because an indexed value usually doesn't align with the primary partitioning key. A ___ (local) index keeps each partition's index covering only its own documents, so a query on the secondary index must be sent to every partition (scatter/gather); a term-partitioned (global) index partitions the index itself by term, so a query can go to fewer partitions but writes may need to update partitions other than the one holding the document.",
       "source": {
         "path": "vault/data-systems/partitioning.md",
         "block": "card-34m1"
@@ -951,7 +951,7 @@
         "hot-spots",
         "rebalancing"
       ],
-      "prompt": "changes, keeping the assignment ___ consistent across the",
+      "prompt": "Request routing in a partitioned system needs a way for a client (or a load balancer) to know which node currently owns a given partition; this is commonly solved by an external coordination service (e.g. ZooKeeper) that tracks partition assignment and notifies routing tiers when it changes, keeping the assignment ___ consistent across the cluster.",
       "source": {
         "path": "vault/data-systems/partitioning.md",
         "block": "card-3fqf"
@@ -1008,7 +1008,7 @@
         "latency",
         "load"
       ],
-      "prompt": "A fault is a component deviating from spec; a ___ is the system as",
+      "prompt": "A fault is a component deviating from spec; a ___ is the system as a whole ceasing to provide the required service.",
       "source": {
         "path": "vault/data-systems/reliability-scalability.md",
         "block": "card-e79p"
@@ -1028,7 +1028,7 @@
         "latency",
         "load"
       ],
-      "prompt": "of how a system's performance responds as a specific ___",
+      "prompt": "Scalability is not a single number (\"this system scales\") but a question of how a system's performance responds as a specific ___ grows, such as requests per second, the ratio of reads to writes, or the number of simultaneously active users.",
       "source": {
         "path": "vault/data-systems/reliability-scalability.md",
         "block": "card-ms4h"
@@ -1105,7 +1105,7 @@
         "latency",
         "load"
       ],
-      "prompt": "engineers can understand it), and ___ (making it easy to",
+      "prompt": "Maintainability is often reduced to three overlapping goals: operability (making it easy for operations teams to keep the system running), simplicity (removing unnecessary complexity from the system so new engineers can understand it), and ___ (making it easy to adapt the system to new requirements as they inevitably arise).",
       "source": {
         "path": "vault/data-systems/reliability-scalability.md",
         "block": "card-nu5j"
@@ -1181,7 +1181,7 @@
         "read-your-writes",
         "consistency"
       ],
-      "prompt": "Replication can be ___ (the leader waits for a follower to",
+      "prompt": "Replication can be ___ (the leader waits for a follower to confirm before acknowledging the write to the client) or asynchronous (the leader acknowledges immediately without waiting). Fully synchronous replication to all followers would make the system unavailable if any one follower is slow or down, so real systems typically use synchronous replication to just one follower (\"semi-synchronous\") and async to the rest, or go fully async and accept possible data loss on leader failure.",
       "source": {
         "path": "vault/data-systems/replication.md",
         "block": "card-b8zh"
@@ -1238,7 +1238,7 @@
         "read-your-writes",
         "consistency"
       ],
-      "prompt": "Monotonic reads constrains one ___’s own sequence of reads over",
+      "prompt": "Monotonic reads constrains one ___’s own sequence of reads over time; it says nothing about whether two different users perceive writes in the same order as each other.",
       "source": {
         "path": "vault/data-systems/replication.md",
         "block": "card-x5bt"
@@ -1332,7 +1332,7 @@
         "read-your-writes",
         "consistency"
       ],
-      "prompt": "several replicas and considers the write successful once a ___ of",
+      "prompt": "In leaderless replication, a client typically writes to and reads from several replicas and considers the write successful once a ___ of replicas acknowledges it, rather than waiting for every replica.",
       "source": {
         "path": "vault/data-systems/replication.md",
         "block": "card-ous0"
@@ -1373,7 +1373,7 @@
         "ssm",
         "compaction"
       ],
-      "prompt": "An LSM-tree keeps recent writes in an in-memory ___ (backed by a",
+      "prompt": "An LSM-tree keeps recent writes in an in-memory ___ (backed by a write-ahead log for crash recovery) and, once it grows past a threshold, flushes it to disk as a new sorted SSTable segment.",
       "source": {
         "path": "vault/data-systems/storage-engines.md",
         "block": "card-ocbt"
@@ -1432,7 +1432,7 @@
         "ssm",
         "compaction"
       ],
-      "prompt": "A B-tree stores data in fixed-size ___, each of which is referenced",
+      "prompt": "A B-tree stores data in fixed-size ___, each of which is referenced by other pages the way a tree's parent references children, and updating a value means finding the containing page and overwriting it in place.",
       "source": {
         "path": "vault/data-systems/storage-engines.md",
         "block": "card-hnpk"
@@ -1453,7 +1453,7 @@
         "ssm",
         "compaction"
       ],
-      "prompt": "B-trees typically require a ___ so that a crash during a",
+      "prompt": "B-trees typically require a ___ so that a crash during a multi-page update (e.g. a page split) can be recovered from without leaving the tree in a corrupted state.",
       "source": {
         "path": "vault/data-systems/storage-engines.md",
         "block": "card-beza"
@@ -1553,7 +1553,7 @@
         "write-skew",
         "serializability"
       ],
-      "prompt": "Read committed does NOT prevent a ___ (also called a",
+      "prompt": "Read committed does NOT prevent a ___ (also called a read skew), where a transaction reads the same row twice and gets two different values because another transaction committed in between.",
       "source": {
         "path": "vault/data-systems/transactions.md",
         "block": "card-aj12"
@@ -1650,7 +1650,7 @@
         "write-skew",
         "serializability"
       ],
-      "prompt": "Write skew is a generalization of the ___ anomaly to cases",
+      "prompt": "Write skew is a generalization of the ___ anomaly to cases where two transactions modify different objects rather than the same object, based on a premise (something they each read) that becomes false once both commit.",
       "source": {
         "path": "vault/data-systems/transactions.md",
         "block": "card-p56w"
@@ -1748,7 +1748,7 @@
         "fanout",
         "disk-seeks"
       ],
-      "prompt": "A B-tree's ___ is the number of child pointers a single node can",
+      "prompt": "A B-tree's ___ is the number of child pointers a single node can hold; high fanout is what keeps tree height — and therefore the number of disk seeks needed to find a key — low, since each level of the tree can represent a much larger multiple of keys than in a binary tree.",
       "source": {
         "path": "vault/database-internals/btree-basics.md",
         "block": "card-vohr"
@@ -1803,7 +1803,7 @@
         "fanout",
         "disk-seeks"
       ],
-      "prompt": "Each node lives on one disk page, and a node's ___ is how full",
+      "prompt": "Each node lives on one disk page, and a node's ___ is how full that page is relative to its capacity; B-tree implementations typically enforce a minimum occupancy (e.g. at least half full) so pages aren't mostly wasted space, while still allowing partially-filled nodes so inserts don't force a rewrite on every operation.",
       "source": {
         "path": "vault/database-internals/btree-basics.md",
         "block": "card-ih4x"
@@ -1822,7 +1822,7 @@
         "fanout",
         "disk-seeks"
       ],
-      "prompt": "When an insert would overflow a full node, the node ___ into two",
+      "prompt": "When an insert would overflow a full node, the node ___ into two nodes, and the split promotes one key up to the parent to separate them; if that promotion overflows the parent in turn, the split cascades upward, and in the worst case a split reaches the root, which grows the tree's height by one level.",
       "source": {
         "path": "vault/database-internals/btree-basics.md",
         "block": "card-q0pz"
@@ -1914,7 +1914,7 @@
         "fanout",
         "disk-seeks"
       ],
-      "prompt": "uses, stores all records only in its ___ nodes; internal nodes hold",
+      "prompt": "A **B+tree**, the variant almost every production database actually uses, stores all records only in its ___ nodes; internal nodes hold only keys used for routing, and leaves are typically linked together for fast in-order range scans. A plain B-tree, by contrast, may store a record's value at whichever internal node its key first appears in.",
       "source": {
         "path": "vault/database-internals/btree-basics.md",
         "block": "card-p6nd"
@@ -1970,7 +1970,7 @@
         "copy-on-write",
         "rebalancing"
       ],
-      "prompt": "A slotted page's ___ holds pointers into the page rather than",
+      "prompt": "A slotted page's ___ holds pointers into the page rather than the records themselves, which lets a record be deleted or resized by updating a pointer and compacting cell space, without shifting every other record's offset on the page.",
       "source": {
         "path": "vault/database-internals/btree-implementation.md",
         "block": "card-3gkw"
@@ -2064,7 +2064,7 @@
         "copy-on-write",
         "rebalancing"
       ],
-      "prompt": "might still be using, it can support a globally-consistent ___",
+      "prompt": "Because a copy-on-write B-tree never overwrites a page that a reader might still be using, it can support a globally-consistent ___ of the whole tree simply by holding onto an old root pointer, without any locking against concurrent writers.",
       "source": {
         "path": "vault/database-internals/btree-implementation.md",
         "block": "card-3aqg"
@@ -2161,7 +2161,7 @@
         "consensus",
         "leader-election"
       ],
-      "prompt": "___ of nodes, and any two majorities out of a fixed set must",
+      "prompt": "**Paxos** is a family of protocols letting a set of nodes agree on a single value despite failures and message delays, built around two phases: in the **prepare** phase a proposer asks a majority of acceptors to promise not to accept any proposal numbered lower than its own, and in the **accept** phase it asks that same majority to actually accept a value. Because both phases require agreement from a ___ of nodes, and any two majorities out of a fixed set must overlap in at least one node, an acceptor that already promised a higher-numbered proposal blocks a stale proposer from committing a conflicting value — this majority overlap is the core mechanism, not just a vague assertion that Paxos \"prevents\" conflicting decisions.",
       "source": {
         "path": "vault/database-internals/consensus.md",
         "block": "card-ubdh"
@@ -2220,7 +2220,7 @@
         "consensus",
         "leader-election"
       ],
-      "prompt": "wins votes from a majority becomes leader for that ___; the",
+      "prompt": "**Raft** is designed to be an easier-to-implement alternative to Paxos that reaches the same kind of agreement, structured around a single elected leader. Leader election uses randomized election timeouts: each follower waits a randomized interval without hearing from a leader before becoming a candidate and requesting votes, and a candidate that wins votes from a majority becomes leader for that ___; the randomization makes it unlikely that two nodes become candidates at the same moment and split the vote repeatedly.",
       "source": {
         "path": "vault/database-internals/consensus.md",
         "block": "card-tl1c"
@@ -2279,7 +2279,7 @@
         "consensus",
         "leader-election"
       ],
-      "prompt": "___ once a majority of nodes have stored it in their log,",
+      "prompt": "Once elected, a Raft leader handles all client writes and replicates each one as a log entry to its followers; an entry is considered ___ once a majority of nodes have stored it in their log, after which the leader applies it to its state machine and informs followers to do the same on their next contact. A stale leader (one that lost contact and no longer holds a majority) cannot get new entries committed, because it cannot reach that majority.",
       "source": {
         "path": "vault/database-internals/consensus.md",
         "block": "card-mnci"
@@ -2321,7 +2321,7 @@
         "consensus",
         "leader-election"
       ],
-      "prompt": "knowing the coordinator's decision, so they must ___ and hold",
+      "prompt": "**Two-phase commit (2PC)** coordinates an atomic commit across multiple independent participants (e.g. separate databases) using a coordinator: in the prepare phase every participant is asked to get ready to commit and replies yes/no, and in the commit phase the coordinator tells all participants to actually commit (if all said yes) or abort (if any said no). The protocol's well-known weakness is that if the coordinator crashes after participants have voted yes but before it sends the commit/abort decision, those participants are stuck: each has already promised it *can* commit and cannot unilaterally abort or commit without knowing the coordinator's decision, so they must ___ and hold their locks until the coordinator recovers or someone else can determine the outcome.",
       "source": {
         "path": "vault/database-internals/consensus.md",
         "block": "card-mxxf"
@@ -2437,7 +2437,7 @@
         "phi-accrual",
         "gossip"
       ],
-      "prompt": "timeout declares the sender ___. This is easy to implement but",
+      "prompt": "A simple **heartbeat** detector has each node periodically send \"I'm alive\" messages, and a peer that hasn't heard one within some fixed timeout declares the sender ___. This is easy to implement but forces an awkward tradeoff between a short timeout (fast detection, more false positives on temporary slowness) and a long timeout (fewer false positives, slower detection of real failures).",
       "source": {
         "path": "vault/database-internals/failure-detection.md",
         "block": "card-uoqr"
@@ -2494,7 +2494,7 @@
         "phi-accrual",
         "gossip"
       ],
-      "prompt": "___ (phi) for a node, rather than emitting a binary alive/dead",
+      "prompt": "A **phi-accrual** failure detector improves on the fixed-timeout heartbeat by tracking the recent history of heartbeat inter-arrival times and using that history to compute a continuous suspicion ___ (phi) for a node, rather than emitting a binary alive/dead verdict; the application then picks its own phi threshold at which to treat a node as failed, and can even use a rising phi to react (e.g. shed traffic) before formally declaring the node down.",
       "source": {
         "path": "vault/database-internals/failure-detection.md",
         "block": "card-uffu"
@@ -2627,7 +2627,7 @@
         "amplification",
         "sstable"
       ],
-      "prompt": "An LSM-tree buffers recent writes in an in-memory ___, backed by",
+      "prompt": "An LSM-tree buffers recent writes in an in-memory ___, backed by a write-ahead log for crash safety; once the memtable fills up, it is flushed to disk as an immutable, sorted **SSTable** segment. Because segments are immutable and sorted, they can be merged efficiently and searched with a sparse index, but a single key can end up duplicated across many segments until compaction cleans it up.",
       "source": {
         "path": "vault/database-internals/lsm-trees.md",
         "block": "card-drcz"
@@ -2684,7 +2684,7 @@
         "amplification",
         "sstable"
       ],
-      "prompt": "Size-tiered compaction keeps ___ amplification low but lets stale",
+      "prompt": "Size-tiered compaction keeps ___ amplification low but lets stale and duplicate data accumulate, so it trades toward higher space amplification; levelled compaction is the mirror image.",
       "source": {
         "path": "vault/database-internals/lsm-trees.md",
         "block": "card-9k1r"
@@ -2741,7 +2741,7 @@
         "amplification",
         "sstable"
       ],
-      "prompt": "___ per segment lets the engine skip segments that",
+      "prompt": "**Read amplification** is the number of underlying disk reads a single logical lookup requires — potentially the memtable plus several disk segments — since a key might exist (or have existed and been deleted) in more than one of them. Because segments are sorted, a lookup only needs to check segments whose key range could contain the target, and a ___ per segment lets the engine skip segments that definitely do not contain the key, without a disk read at all.",
       "source": {
         "path": "vault/database-internals/lsm-trees.md",
         "block": "card-ugwk"
@@ -2838,7 +2838,7 @@
         "crdt",
         "tunable-consistency"
       ],
-      "prompt": "If ___, every read quorum and every write quorum are guaranteed",
+      "prompt": "If ___, every read quorum and every write quorum are guaranteed to overlap in at least one replica, so at least one replica in any read quorum must have seen the most recent write — this is what a \"quorum\" read/write setup is built to guarantee, though it does not by itself guarantee that replica's value is recognized as the newest without version information.",
       "source": {
         "path": "vault/database-internals/replication-consistency.md",
         "block": "card-72wa"
@@ -2956,7 +2956,7 @@
         "crdt",
         "tunable-consistency"
       ],
-      "prompt": "___ — every replica eventually reaches the same state — not",
+      "prompt": "**CRDTs** (conflict-free replicated data types) are data structures designed so that concurrent, independent updates made on different replicas can always be merged deterministically into the same final value, without coordination between replicas at write time. It is important to be precise about what this buys: CRDTs guarantee ___ — every replica eventually reaches the same state — not that conflicting updates are avoided or that the merged result matches what either writer \"intended\"; a merge of two concurrent counter increments, for instance, still has to define a specific (and sometimes surprising) rule for what the merged value becomes.",
       "source": {
         "path": "vault/database-internals/replication-consistency.md",
         "block": "card-xvyt"
@@ -3091,7 +3091,7 @@
         "column-store",
         "buffer-pool"
       ],
-      "prompt": "stores are generally better for scanning ___ across many rows.",
+      "prompt": "Row stores are generally better for record-at-a-time OLTP access; column stores are generally better for scanning ___ across many rows.",
       "source": {
         "path": "vault/database-internals/storage-engine-basics.md",
         "block": "card-if86"
@@ -3111,7 +3111,7 @@
         "column-store",
         "buffer-pool"
       ],
-      "prompt": "not yet written back are called ___ pages; the engine must track",
+      "prompt": "Pages read from disk into the buffer pool that have been modified but not yet written back are called ___ pages; the engine must track them so it knows what still needs to be flushed.",
       "source": {
         "path": "vault/database-internals/storage-engine-basics.md",
         "block": "card-se4z"
@@ -3208,7 +3208,7 @@
         "recovery",
         "buffer-management"
       ],
-      "prompt": "The WAL must be flushed to disk ___ the transaction that produced",
+      "prompt": "The WAL must be flushed to disk ___ the transaction that produced it is reported as committed to the client; otherwise a crash right after \"success\" is returned could still lose the write.",
       "source": {
         "path": "vault/database-internals/transaction-processing.md",
         "block": "card-ysmq"
@@ -3305,7 +3305,7 @@
         "recovery",
         "buffer-management"
       ],
-      "prompt": "production engines use ___, because pinning all of a",
+      "prompt": "Steal and force are independent axes: a system can be steal/no-force, no-steal/force, or any other combination, and the choice determines which recovery work (redo, undo, or both) is needed after a crash. Most production engines use ___, because pinning all of a transaction's pages in memory (no-steal) or flushing everything at every commit (force) is too costly, and instead accept the extra recovery complexity of needing both redo and undo logic.",
       "source": {
         "path": "vault/database-internals/transaction-processing.md",
         "block": "card-p9kf"
@@ -3405,7 +3405,7 @@
         "recovery",
         "buffer-management"
       ],
-      "prompt": "___ (log sequence number), which is what lets the analysis phase",
+      "prompt": "Each log record ARIES writes carries a monotonically increasing ___ (log sequence number), which is what lets the analysis phase locate exactly where in the log a given page's last-known state came from, and lets redo determine whether a page already reflects a given log record (so it isn't needlessly reapplied).",
       "source": {
         "path": "vault/database-internals/transaction-processing.md",
         "block": "card-bwmp"
@@ -3424,7 +3424,7 @@
         "tcp",
         "transport-layer"
       ],
-      "prompt": "___ signal.",
+      "prompt": "TCP treats the network itself as a resource that must be shared without explicit coordination, so senders probe for available capacity and back off when they infer it has been exceeded, generally treating packet loss as a ___ signal.",
       "source": {
         "path": "vault/networking/congestion-control.md",
         "block": "card-uprv"
@@ -3443,7 +3443,7 @@
         "tcp",
         "transport-layer"
       ],
-      "prompt": "___. This sawtooth pattern keeps senders probing for more bandwidth",
+      "prompt": "AIMD (additive increase, multiplicative decrease) governs steady-state behavior: on each successful round trip the congestion window grows by roughly one segment, but on a detected loss the window is cut, typically ___. This sawtooth pattern keeps senders probing for more bandwidth without piling on indefinitely.",
       "source": {
         "path": "vault/networking/congestion-control.md",
         "block": "card-iwku"
@@ -3500,7 +3500,7 @@
         "tcp",
         "transport-layer"
       ],
-      "prompt": "trip instead of waiting a full ___ interval, which is much longer",
+      "prompt": "Fast retransmit lets TCP recover from an isolated loss in roughly one round trip instead of waiting a full ___ interval, which is much longer than a typical RTT.",
       "source": {
         "path": "vault/networking/congestion-control.md",
         "block": "card-z816"
@@ -3538,7 +3538,7 @@
         "tcp",
         "transport-layer"
       ],
-      "prompt": "___-style AIMD does.",
+      "prompt": "CUBIC, used by default in Linux, grows its window as a cubic function of time since the last loss rather than AIMD's linear growth, letting it reach a link's available capacity faster on high-bandwidth, high-delay paths than ___-style AIMD does.",
       "source": {
         "path": "vault/networking/congestion-control.md",
         "block": "card-5zh2"
@@ -3611,7 +3611,7 @@
         "queuing",
         "throughput"
       ],
-      "prompt": "equal to packet length divided by ___. Propagation delay is",
+      "prompt": "Transmission delay is the time to push all of a packet's bits onto the link, equal to packet length divided by ___. Propagation delay is the time for a bit to travel the physical link, equal to link length divided by the propagation speed of the medium.",
       "source": {
         "path": "vault/networking/delay-loss-throughput.md",
         "block": "card-h7jf"
@@ -3649,7 +3649,7 @@
         "queuing",
         "throughput"
       ],
-      "prompt": "the link's transmission rate. As traffic intensity approaches ___, average",
+      "prompt": "Traffic intensity is defined as the ratio of the average bit arrival rate to the link's transmission rate. As traffic intensity approaches ___, average queuing delay grows without bound for bursty arrivals, and a full buffer starts dropping packets.",
       "source": {
         "path": "vault/networking/delay-loss-throughput.md",
         "block": "card-1kkn"
@@ -3687,7 +3687,7 @@
         "queuing",
         "throughput"
       ],
-      "prompt": "___ — the link along the path with the smallest available",
+      "prompt": "End-to-end throughput between a sender and receiver is limited by the ___ — the link along the path with the smallest available capacity — regardless of how fast the other links are.",
       "source": {
         "path": "vault/networking/delay-loss-throughput.md",
         "block": "card-n9op"
@@ -3759,7 +3759,7 @@
         "dns",
         "application-layer"
       ],
-      "prompt": "The hierarchy has three main levels: ___ servers at the top, which",
+      "prompt": "The hierarchy has three main levels: ___ servers at the top, which point to top-level domain (TLD) servers (`.com`, `.org`, country codes), which point to authoritative servers that hold the actual records for a specific domain.",
       "source": {
         "path": "vault/networking/dns.md",
         "block": "card-67w2"
@@ -3816,7 +3816,7 @@
         "dns",
         "application-layer"
       ],
-      "prompt": "A local DNS resolver typically issues ___ queries to itself on",
+      "prompt": "A local DNS resolver typically issues ___ queries to itself on behalf of the client, while it issues iterative queries when walking down the root-to-authoritative chain.",
       "source": {
         "path": "vault/networking/dns.md",
         "block": "card-vqne"
@@ -3835,7 +3835,7 @@
         "dns",
         "application-layer"
       ],
-      "prompt": "behalf of the client, while it issues ___ queries when walking",
+      "prompt": "A local DNS resolver typically issues recursive queries to itself on behalf of the client, while it issues ___ queries when walking down the root-to-authoritative chain.",
       "source": {
         "path": "vault/networking/dns.md",
         "block": "card-z181"
@@ -3928,7 +3928,7 @@
         "application-layer",
         "web"
       ],
-      "prompt": "requests by default — HTTP is a ___ protocol.",
+      "prompt": "HTTP is a request-response protocol where a client sends a request and a server returns a response, with the server retaining no memory of past requests by default — HTTP is a ___ protocol.",
       "source": {
         "path": "vault/networking/http.md",
         "block": "card-3sgk"
@@ -3988,7 +3988,7 @@
         "application-layer",
         "web"
       ],
-      "prompt": "given URL. A status code in the ___ range indicates success, while a",
+      "prompt": "The `GET` method requests a resource, `POST` submits data to be processed (often creating or modifying state), and `PUT` replaces a resource at a given URL. A status code in the ___ range indicates success, while a 4xx code means the problem was with the client's request rather than the server.",
       "source": {
         "path": "vault/networking/http.md",
         "block": "card-47oq"
@@ -4008,7 +4008,7 @@
         "application-layer",
         "web"
       ],
-      "prompt": "___ code means the problem was with the client's request rather than",
+      "prompt": "The `GET` method requests a resource, `POST` submits data to be processed (often creating or modifying state), and `PUT` replaces a resource at a given URL. A status code in the 2xx range indicates success, while a ___ code means the problem was with the client's request rather than the server.",
       "source": {
         "path": "vault/networking/http.md",
         "block": "card-nm6o"
@@ -4048,7 +4048,7 @@
         "application-layer",
         "web"
       ],
-      "prompt": "replies ___ if it has not.",
+      "prompt": "The `Cache-Control` and `If-Modified-Since` headers let a client avoid re-downloading unchanged content: a conditional GET asks the server to send the object only if it has changed since a given time, and the server replies ___ if it has not.",
       "source": {
         "path": "vault/networking/http.md",
         "block": "card-pgfv"
@@ -4124,7 +4124,7 @@
         "access-networks",
         "switching"
       ],
-      "prompt": "first router on its path, sometimes called the ___. Common",
+      "prompt": "An access network is the link that physically connects an end system to the first router on its path, sometimes called the ___. Common examples include DSL, cable, fiber-to-the-home, and cellular.",
       "source": {
         "path": "vault/networking/internet-structure.md",
         "block": "card-ftnu"
@@ -4291,7 +4291,7 @@
         "nat",
         "dhcp"
       ],
-      "prompt": "32-bit source and destination addresses. When TTL reaches ___, a router",
+      "prompt": "The IPv4 header carries, among other fields, a version number, a header length, a total length, a time-to-live (TTL) that is decremented at every router hop, a protocol field identifying the transport-layer payload, and 32-bit source and destination addresses. When TTL reaches ___, a router discards the packet, which is what makes traceroute-style tools possible.",
       "source": {
         "path": "vault/networking/network-layer.md",
         "block": "card-e2gi"
@@ -4313,7 +4313,7 @@
         "nat",
         "dhcp"
       ],
-      "prompt": "Ethernet MTU is ___.",
+      "prompt": "Fragmentation happens when a packet is larger than the maximum transmission unit (MTU) of an outgoing link; the router splits it into smaller fragments, each with the same identification field so the destination can reassemble them, and an offset field recording each fragment's position. The default Ethernet MTU is ___.",
       "source": {
         "path": "vault/networking/network-layer.md",
         "block": "card-7a3g"
@@ -4335,7 +4335,7 @@
         "nat",
         "dhcp"
       ],
-      "prompt": "using a mask; ___ notation (e.g. `/24`) expresses how many leading bits",
+      "prompt": "Subnetting divides an IP address into a network portion and a host portion using a mask; ___ notation (e.g. `/24`) expresses how many leading bits belong to the network portion, letting routers aggregate many addresses under one routing table entry.",
       "source": {
         "path": "vault/networking/network-layer.md",
         "block": "card-w4yg"
@@ -4401,7 +4401,7 @@
         "nat",
         "dhcp"
       ],
-      "prompt": "exchange commonly remembered as ___: discover, offer, request, and",
+      "prompt": "DHCP lets a host joining a network automatically obtain an IP address, subnet mask, default gateway, and DNS server, through a four-message exchange commonly remembered as ___: discover, offer, request, and acknowledge.",
       "source": {
         "path": "vault/networking/network-layer.md",
         "block": "card-isly"
@@ -4482,7 +4482,7 @@
         "sliding-window",
         "transport-layer"
       ],
-      "prompt": "unacknowledged packets in flight at once, bounded by a ___. The",
+      "prompt": "Pipelining improves on stop-and-wait by letting the sender have multiple unacknowledged packets in flight at once, bounded by a ___. The two classic pipelined protocols differ in how they recover from loss.",
       "source": {
         "path": "vault/networking/reliable-transfer.md",
         "block": "card-d1vp"
@@ -4539,7 +4539,7 @@
         "sliding-window",
         "transport-layer"
       ],
-      "prompt": "receiver ___ any out-of-order segment instead of buffering it,",
+      "prompt": "Go-Back-N needs a smaller receiver buffer than selective repeat because the receiver ___ any out-of-order segment instead of buffering it, simplifying the receiver at the cost of wasted retransmissions.",
       "source": {
         "path": "vault/networking/reliable-transfer.md",
         "block": "card-jhpu"
@@ -4558,7 +4558,7 @@
         "sliding-window",
         "transport-layer"
       ],
-      "prompt": "tell a genuinely new packet from a ___ of an old one.",
+      "prompt": "Sequence numbers must be large enough that the sender's window cannot wrap around and reuse a number still in flight; if it did, the receiver could not tell a genuinely new packet from a ___ of an old one.",
       "source": {
         "path": "vault/networking/reliable-transfer.md",
         "block": "card-7ghf"
@@ -4678,7 +4678,7 @@
         "bgp",
         "ospf"
       ],
-      "prompt": "___: when a link fails, routers can keep telling each",
+      "prompt": "A well-known problem with naive distance-vector routing is ___: when a link fails, routers can keep telling each other stale, ever-increasing distances to a now-unreachable destination before the bad route is finally purged.",
       "source": {
         "path": "vault/networking/routing-and-link.md",
         "block": "card-bob5"
@@ -4700,7 +4700,7 @@
         "bgp",
         "ospf"
       ],
-      "prompt": "common ___ intra-domain protocol. Between autonomous systems, BGP",
+      "prompt": "Within a single administrative domain (an autonomous system), OSPF is the common ___ intra-domain protocol. Between autonomous systems, BGP is used instead — it is a path-vector protocol that lets each AS apply its own routing policy, not just minimize hop count or cost.",
       "source": {
         "path": "vault/networking/routing-and-link.md",
         "block": "card-j2vr"
@@ -4744,7 +4744,7 @@
         "bgp",
         "ospf"
       ],
-      "prompt": "At the link layer, Ethernet frames are addressed using ___ MAC",
+      "prompt": "At the link layer, Ethernet frames are addressed using ___ MAC addresses that are (in principle) globally unique and burned into the network interface, unlike IP addresses which change with location in the network.",
       "source": {
         "path": "vault/networking/routing-and-link.md",
         "block": "card-8c10"
@@ -4766,7 +4766,7 @@
         "bgp",
         "ospf"
       ],
-      "prompt": "A switch is a link-layer device that is ___: it builds its",
+      "prompt": "A switch is a link-layer device that is ___: it builds its forwarding table by observing the source MAC address and incoming port of each frame it sees, rather than requiring manual configuration or running a routing protocol.",
       "source": {
         "path": "vault/networking/routing-and-link.md",
         "block": "card-4uve"
@@ -4866,7 +4866,7 @@
         "tcp",
         "transport-layer"
       ],
-      "prompt": "Connection teardown is a ___ exchange, because each direction is",
+      "prompt": "Connection teardown is a ___ exchange, because each direction is closed independently with its own FIN and ACK.",
       "source": {
         "path": "vault/networking/tcp.md",
         "block": "card-rcsz"
@@ -4885,7 +4885,7 @@
         "tcp",
         "transport-layer"
       ],
-      "prompt": "The side that closes first enters ___ and waits 2·MSL before",
+      "prompt": "The side that closes first enters ___ and waits 2·MSL before releasing the socket.",
       "source": {
         "path": "vault/networking/tcp.md",
         "block": "card-mdle"
@@ -4904,7 +4904,7 @@
         "tcp",
         "transport-layer"
       ],
-      "prompt": "The side that closes first enters TIME_WAIT and waits ___ before",
+      "prompt": "The side that closes first enters TIME_WAIT and waits ___ before releasing the socket.",
       "source": {
         "path": "vault/networking/tcp.md",
         "block": "card-btcf"
@@ -4942,7 +4942,7 @@
         "tcp",
         "transport-layer"
       ],
-      "prompt": "four times the RTT ___.",
+      "prompt": "TCP's retransmission timeout is derived from a smoothed RTT estimate plus four times the RTT ___.",
       "source": {
         "path": "vault/networking/tcp.md",
         "block": "card-ng8b"
@@ -5092,7 +5092,7 @@
         "udp",
         "multiplexing"
       ],
-      "prompt": "destination port, length, and checksum, each occupying ___. This",
+      "prompt": "A UDP segment carries very little header overhead: just source port, destination port, length, and checksum, each occupying ___. This compactness is part of why UDP is favored for latency-sensitive applications like streaming and DNS.",
       "source": {
         "path": "vault/networking/transport-basics.md",
         "block": "card-l423"
@@ -5112,7 +5112,7 @@
         "udp",
         "multiplexing"
       ],
-      "prompt": "lets the application deal with loss or reordering ___.",
+      "prompt": "Unlike TCP, UDP provides no connection setup, no reliability guarantees, and no congestion control — it simply hands datagrams to the network layer and lets the application deal with loss or reordering ___.",
       "source": {
         "path": "vault/networking/transport-basics.md",
         "block": "card-2uba"
@@ -5132,7 +5132,7 @@
         "udp",
         "multiplexing"
       ],
-      "prompt": "computed value does not match, the receiver ___ the segment.",
+      "prompt": "The UDP checksum is computed over the segment (header and data) plus a pseudo-header containing source and destination IP addresses; if the computed value does not match, the receiver ___ the segment.",
       "source": {
         "path": "vault/networking/transport-basics.md",
         "block": "card-w4ol"

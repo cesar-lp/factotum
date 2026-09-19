@@ -68,6 +68,36 @@ describe('ids', () => {
     expect(twice).toBe(once);
   });
 
+  it('is idempotent for a wrapped two-line block with per-line anchors (Task 16.5)', () => {
+    const source = [
+      'Linearizability is a ==recency== guarantee on single objects;',
+      'serializability is an ==isolation== guarantee across transactions.'
+    ].join('\n');
+
+    const parsed = parseCards(source, 0);
+    expect(parsed).toHaveLength(2);
+    expect(parsed.map((c) => c.anchorLine)).toEqual([0, 1]);
+
+    const assigned = assignIds(parsed, new Set());
+    const [id0, id1] = assigned.map((c) => c.id);
+    expect(id0).toMatch(/^card-[a-z0-9]{4}$/);
+    expect(id1).toMatch(/^card-[a-z0-9]{4}$/);
+
+    const once = writeBackIds(source, assigned);
+    const reparsedOnce = parseCards(once, 0);
+    expect(reparsedOnce.map((c) => c.id)).toEqual([id0, id1]);
+    expect(reparsedOnce.map((c) => c.anchorLine)).toEqual([0, 1]);
+    expect(reparsedOnce[0]?.prompt).toBe(
+      'Linearizability is a ___ guarantee on single objects; serializability is an isolation guarantee across transactions.'
+    );
+    expect(reparsedOnce[1]?.prompt).toBe(
+      'Linearizability is a recency guarantee on single objects; serializability is an ___ guarantee across transactions.'
+    );
+
+    const twice = writeBackIds(once, reparsedOnce);
+    expect(twice).toBe(once);
+  });
+
   it('still writes the anchor for a card id that already appears as literal prose elsewhere (e.g. an Obsidian block link)', () => {
     const source =
       'See [[Note#^card-abcd]] for details.\nMTU is ==1500 bytes==.\n';
