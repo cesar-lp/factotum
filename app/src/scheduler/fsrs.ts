@@ -97,3 +97,17 @@ export function applyRating(
 export function isDue(state: ReviewState, now: Date): boolean {
   return !state.suspended && state.due <= now.getTime();
 }
+
+/**
+ * True when a card is still inside its (re)learning steps -- FSRS state
+ * Learning (a brand-new card working through its first steps) or
+ * Relearning (a graduated card that lapsed and is working through its
+ * relapse steps) -- rather than `due - now` against some arbitrary
+ * threshold. Such a card is typically due minutes, not days, from now, so
+ * it belongs back in the SAME session instead of surfacing later on the
+ * dashboard. A card that reaches Review state has graduated and follows
+ * the normal due-date flow.
+ */
+export function isStillLearning(state: ReviewState): boolean {
+  return state.state === State.Learning || state.state === State.Relearning;
+}
