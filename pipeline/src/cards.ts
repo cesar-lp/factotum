@@ -1,10 +1,13 @@
-import type { ParsedCard } from './types.js';
+import type { Choice, ParsedCard } from './types.js';
 
 const ANCHOR = /\s*\^(card-[a-z0-9]{4})\s*$/;
 const BARE_ANCHOR = /^\s*\^(card-[a-z0-9]{4})\s*$/;
 const HIGHLIGHT = /==(\S[^=]*?\S|\S)==/g;
 const QA = /^(.+?)\s+::\s+(.+)$/;
 const FENCE = /^\s*(```|~~~)/;
+const CALLOUT_OPEN = /^>\s*\[!card\]\s*(mcq|recall)\s*$/i;
+const CALLOUT_LINE = /^>\s?(.*)$/;
+const CHOICE = /^-\s*\[( |x)\]\s*(.+)$/i;
 
 interface StrippedLine {
   text: string;
@@ -55,6 +58,71 @@ function trailingAnchors(lines: string[], index: number): string[] {
   return ids;
 }
 
+interface CalloutResult {
+  card: ParsedCard | null;
+  nextIndex: number;
+}
+
+function parseCallout(
+  lines: string[],
+  start: number,
+  bodyStartLine: number,
+  format: 'mcq' | 'recall'
+): CalloutResult {
+  const promptParts: string[] = [];
+  const choices: Choice[] = [];
+  let id: string | null = null;
+  let anchorLine: number | null = null;
+  let lastContentLine = start;
+  let i = start + 1;
+
+  for (; i < lines.length; i++) {
+    const raw = lines[i] ?? '';
+    const match = raw.match(CALLOUT_LINE);
+    if (!match) break;
+
+    const inner = (match[1] ?? '').trim();
+    const stripped = stripAnchor(inner);
+    if (stripped.id) {
+      id = stripped.id;
+      anchorLine = bodyStartLine + i;
+    }
+
+    const content = stripped.text.trim();
+    if (content === '') continue;
+    lastContentLine = i;
+
+    const choice = content.match(CHOICE);
+    if (choice && choice[2]) {
+      choices.push({ text: choice[2].trim(), correct: choice[1]?.toLowerCase() === 'x' });
+      continue;
+    }
+    promptParts.push(content);
+  }
+
+  // With no anchor of its own, the callout's LAST content line carries it, so
+  // write-back appends `^card-xxxx` inside the callout rather than corrupting
+  // the `> [!card] …` header.
+  anchorLine = anchorLine ?? bodyStartLine + lastContentLine;
+
+  const prompt = promptParts.join(' ');
+  if (prompt === '') {
+    console.warn(`Skipping [!card] ${format} at line ${bodyStartLine + start}: no prompt`);
+    return { card: null, nextIndex: i };
+  }
+
+  if (format === 'recall') {
+    return { card: { id, format, prompt, anchorLine }, nextIndex: i };
+  }
+
+  if (!choices.some((c) => c.correct)) {
+    console.warn(`Skipping [!card] mcq at line ${bodyStartLine + start}: no correct choice`);
+    return { card: null, nextIndex: i };
+  }
+
+  return { card: { id, format, prompt, choices, anchorLine }, nextIndex: i };
+}
+
 export function parseCards(body: string, bodyStartLine: number): ParsedCard[] {
   const cards: ParsedCard[] = [];
   const lines = body.split('\n');
@@ -68,6 +136,15 @@ export function parseCards(body: string, bodyStartLine: number): ParsedCard[] {
       continue;
     }
     if (inFence) continue;
+
+    const open = rawLine.match(CALLOUT_OPEN);
+    if (open && open[1]) {
+      const format = open[1].toLowerCase() as 'mcq' | 'recall';
+      const { card, nextIndex } = parseCallout(lines, i, bodyStartLine, format);
+      if (card) cards.push(card);
+      i = nextIndex - 1;
+      continue;
+    }
 
     if (BARE_ANCHOR.test(rawLine)) continue; // claimed by the card line above
 
