@@ -159,13 +159,26 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
     // with no confirmation and no citation, the same bug Task 16 already
     // fixed for mcq. draw() resets `submitting` for the revealed render, so
     // Continue/override still work.
-    root.querySelector('[data-role="check"]')?.addEventListener('click', () => {
+    const runCheck = (): void => {
       if (submitting) return;
       submitting = true;
       lockControls();
       const input = root.querySelector<HTMLInputElement>('[data-role="cloze-input"]');
       const correct = checkCloze(input?.value ?? '', card.answer ?? '');
       draw(true, correct ? 'correct' : 'wrong');
+    };
+
+    root.querySelector('[data-role="check"]')?.addEventListener('click', runCheck);
+
+    // Submit on Enter, using the platform's keyboard action (enterkeyhint on
+    // the input). There's no <form> here, so Enter never also triggers a
+    // native submit — this listener is the only path — and it shares the
+    // exact same `runCheck` (and therefore the same `submitting` guard) as
+    // the Check button, so the two can never double-fire against each other.
+    root.querySelector<HTMLInputElement>('[data-role="cloze-input"]')?.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter') return;
+      e.preventDefault();
+      runCheck();
     });
 
     root.querySelectorAll<HTMLButtonElement>('[data-outcome]').forEach((button) => {

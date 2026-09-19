@@ -31,6 +31,16 @@ export function checkCloze(input: string, expected: string): boolean {
   return normalizeAnswer(input) === normalizeAnswer(expected);
 }
 
+/**
+ * True when a cloze answer is purely digits, so the input can offer a
+ * numeric keyboard instead of full QWERTY. Deliberately conservative — an
+ * answer with any letter, punctuation or whitespace (e.g. "SSTF", "24-bit")
+ * falls back to text, since a numeric keypad would make those untypeable.
+ */
+export function isNumericAnswer(answer: string): boolean {
+  return /^\d+$/.test(answer.trim());
+}
+
 export function renderPrompt(card: StoredCard): string {
   return `
     <div class="prompt-area">
@@ -101,10 +111,13 @@ export function renderActions(
 
   if (card.format === 'cloze') {
     if (!revealed) {
+      const numeric = isNumericAnswer(card.answer ?? '');
       return `
         <div class="action-area">
           <input class="answer-input" data-role="cloze-input" autocapitalize="off"
-                 autocomplete="off" autocorrect="off" placeholder="type answer" />
+                 autocomplete="off" autocorrect="off" enterkeyhint="done"
+                 ${numeric ? 'inputmode="numeric" pattern="[0-9]*"' : ''}
+                 placeholder="type answer" />
           <button class="btn" data-role="check">Check</button>
           ${flagButton()}
         </div>
