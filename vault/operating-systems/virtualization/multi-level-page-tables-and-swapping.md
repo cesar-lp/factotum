@@ -1,4 +1,5 @@
 ---
+topic: operating-systems
 category: os-virtualization
 tags: [multi-level-page-tables, swapping, page-replacement, thrashing]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 20 (Paging: Smaller Tables)", "Arpaci-Dusseau, OSTEP, Ch. 21 (Beyond Physical Memory: Mechanisms)", "Arpaci-Dusseau, OSTEP, Ch. 22 (Beyond Physical Memory: Policies)"]

@@ -1,4 +1,5 @@
 ---
+topic: networking
 category: networking
 tags: [dns, application-layer]
 citations: ["Kurose & Ross, Computer Networking 8e, Ch. 2.4", "RFC 1035"]

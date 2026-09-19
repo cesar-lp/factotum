@@ -39,6 +39,15 @@ export interface Settings {
   desiredRetention: number;
   newCardsPerDay: number;
   theme: 'auto' | 'day' | 'night';
+  /**
+   * Categories kept out of the daily session and its extension. Stored as
+   * the DISABLED set, not an allowlist, so a newly authored category is
+   * reviewable the moment it lands rather than silently inert until
+   * someone remembers to opt in. A name here that no longer exists in the
+   * deck is harmless and is deliberately not pruned — a temporarily
+   * missing deck must not silently un-mute a shelf.
+   */
+  disabledCategories: string[];
 }
 
 export interface FactotumSchema extends DBSchema {

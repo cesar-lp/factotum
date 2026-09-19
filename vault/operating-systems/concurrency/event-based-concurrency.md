@@ -1,4 +1,5 @@
 ---
+topic: concurrency
 category: os-concurrency
 tags: [event-based-concurrency, event-loop, non-blocking-io, select]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 33 (Event-based Concurrency)"]

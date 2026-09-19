@@ -3,8 +3,12 @@ import type { FactotumDb, Settings } from './schema.js';
 export const DEFAULT_SETTINGS: Settings = {
   desiredRetention: 0.9,
   newCardsPerDay: 10,
-  theme: 'auto'
+  theme: 'auto',
+  disabledCategories: []
 };
+
+/** Bounds a corrupt or malicious write; far above any plausible real vault. */
+const MAX_DISABLED_CATEGORIES = 200;
 
 function isTheme(value: unknown): value is Settings['theme'] {
   return value === 'auto' || value === 'day' || value === 'night';
@@ -13,6 +17,21 @@ function isTheme(value: unknown): value is Settings['theme'] {
 function clampFinite(value: unknown, min: number, max: number, fallback: number): number {
   if (typeof value !== 'number' || !Number.isFinite(value)) return fallback;
   return Math.min(max, Math.max(min, value));
+}
+
+function toCategoryList(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const entry of value) {
+    if (typeof entry !== 'string') continue;
+    const trimmed = entry.trim();
+    if (trimmed === '' || seen.has(trimmed)) continue;
+    seen.add(trimmed);
+    out.push(trimmed);
+    if (out.length >= MAX_DISABLED_CATEGORIES) break;
+  }
+  return out;
 }
 
 /**
@@ -29,7 +48,12 @@ export function sanitizeSettings(input: unknown): Settings {
   const newCardsPerDay = Math.round(newCardsPerDayRaw);
   const theme = isTheme(record['theme']) ? record['theme'] : DEFAULT_SETTINGS.theme;
 
-  return { desiredRetention, newCardsPerDay, theme };
+  return {
+    desiredRetention,
+    newCardsPerDay,
+    theme,
+    disabledCategories: toCategoryList(record['disabledCategories'])
+  };
 }
 
 export async function getSettings(db: FactotumDb): Promise<Settings> {

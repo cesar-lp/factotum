@@ -1,4 +1,5 @@
 ---
+topic: concurrency
 category: os-concurrency
 tags: [performance, scalability, lock-contention, amdahls-law]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 29 (Lock-based Concurrent Data Structures)", "Arpaci-Dusseau, OSTEP, Ch. 28 (Locks)"]

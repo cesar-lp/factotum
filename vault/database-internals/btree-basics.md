@@ -1,4 +1,5 @@
 ---
+topic: database-internals
 category: database-internals
 tags: [b-tree, fanout, disk-seeks]
 citations: ["Petrov, Database Internals, Ch. 2"]

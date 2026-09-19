@@ -1,4 +1,5 @@
 ---
+topic: operating-systems
 category: os-virtualization
 tags: [paging, page-tables, tlb, address-translation]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 18 (Paging: Introduction)", "Arpaci-Dusseau, OSTEP, Ch. 19 (Paging: Faster Translations (TLBs))"]

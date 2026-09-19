@@ -1,4 +1,5 @@
 ---
+topic: database-internals
 category: database-internals
 tags: [b-tree, slotted-pages, copy-on-write, rebalancing]
 citations: ["Petrov, Database Internals, Ch. 3-4"]

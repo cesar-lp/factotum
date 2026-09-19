@@ -1,4 +1,5 @@
 ---
+topic: concurrency
 category: amp
 tags: [linearizability, sequential-consistency, quiescent-consistency, correctness-conditions]
 citations: ["Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 3 (Concurrent Objects)", "Herlihy & Wing, \"Linearizability: A Correctness Condition for Concurrent Objects\" (1990)"]

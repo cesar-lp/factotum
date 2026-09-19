@@ -4,7 +4,7 @@ import { renderActions } from '../src/ui/renderers.js';
 import type { StoredCard } from '../src/db/schema.js';
 
 const mcqCard: StoredCard = {
-  id: 'card-xxxx', format: 'mcq', category: 'networking', tags: [],
+  id: 'card-xxxx', format: 'mcq', topic: 'networking', category: 'networking', tags: [],
   prompt: 'Layer?', citations: [], tombstoned: false,
   source: { path: 'vault/a.md', block: 'card-xxxx' },
   choices: [
@@ -59,7 +59,7 @@ describe('getPresentationChoices', () => {
 
   it('non-mcq cards get no choices and never invoke the rng', () => {
     const recall: StoredCard = {
-      id: 'card-yyyy', format: 'recall', category: 'net', tags: [],
+      id: 'card-yyyy', format: 'recall', topic: 'net', category: 'net', tags: [],
       prompt: 'Explain', citations: [], tombstoned: false,
       source: { path: 'vault/a.md', block: 'card-yyyy' }
     };

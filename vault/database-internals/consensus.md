@@ -1,4 +1,5 @@
 ---
+topic: database-internals
 category: database-internals
 tags: [paxos, raft, two-phase-commit, consensus, leader-election]
 citations: ["Petrov, Database Internals, Ch. 13-14"]

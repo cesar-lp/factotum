@@ -1,4 +1,5 @@
 ---
+topic: concurrency
 category: amp
 tags: [treiber-stack, michael-scott-queue, aba-problem, hazard-pointers]
 citations: ["Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and the ABA Problem; Concurrent Stacks and Elimination)", "Michael & Scott, \"Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms\" (1996)"]

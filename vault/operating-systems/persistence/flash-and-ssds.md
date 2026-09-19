@@ -1,4 +1,5 @@
 ---
+topic: operating-systems
 category: os-persistence
 tags: [ssd, flash, ftl, wear-levelling]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 44 (Flash-based SSDs)"]

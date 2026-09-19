@@ -1,4 +1,5 @@
 ---
+topic: operating-systems
 category: os-persistence
 tags: [file-system-implementation, inodes, allocation, superblock]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 40 (File System Implementation)"]

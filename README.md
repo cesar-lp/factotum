@@ -19,10 +19,12 @@ write and edit notes.
 
 Only notes with a `category` key in their YAML frontmatter are scanned for
 cards. Notes without one (drafts, daily notes) are ignored entirely by the
-build.
+build. `topic` is optional and groups categories into shelves — see [Vault
+conventions](#vault-conventions) below.
 
 ```markdown
 ---
+topic: networking
 category: networking
 tags: [tcp, transport-layer]
 ---
@@ -106,9 +108,23 @@ OSTEP is organized as three categories (`os-virtualization`,
 `os-concurrency`, `os-persistence`), matching the book's three parts, all
 under a single `vault/operating-systems/` folder.
 
-**Notes are topic-scoped, not chapter-scoped.** A note should cover one
-coherent topic (e.g. `dns.md` covers a topic as a unit), not mirror a single
-textbook chapter. Group related chapters into one note when they read
+**`topic` is an optional shelf above `category`.** `category` stays the
+unit interleaving and mastery bars key on; `topic` is the coarser grouping
+you browse and bulk-mute by — a book, a cloud provider, a subject — so that
+"turn off AWS" is one decision instead of eight independent category
+toggles. When `topic` is absent, blank, or not a string, the pipeline
+defaults it to the note's own `category`, so a note with no `topic` simply
+becomes a single-category shelf and the build never rejects it on that
+account. Like `category`, `topic` comes only from frontmatter, never from
+folder path. `os-concurrency` and `amp` (Art of Multiprocessor Programming)
+share the `concurrency` topic despite being different categories from
+different books — a topic groups by subject, not by source — while staying
+separate categories so interleaving still discriminates between them.
+
+**Notes are subject-scoped, not chapter-scoped.** (Unrelated to the `topic`
+key above — this is about how much material one note covers.) A note should
+cover one coherent subject (e.g. `dns.md` covers it as a unit), not mirror a
+single textbook chapter. Group related chapters into one note when they read
 better together — address translation, paging, and TLBs make one note, not
 three thin ones.
 
@@ -121,6 +137,43 @@ push. Do not hand-edit or delete these anchors: review history (FSRS
 state — stability, due date, lapses, etc.) is keyed by card id, and deleting
 or changing an anchor permanently orphans that card's history on the next
 deck rebuild.
+
+## Topics and focused sessions
+
+The dashboard's **Topics** button opens `#topics`, a browsing screen laid
+out by shelf: one section per `topic`, each listing its categories with
+their due/new counts and a per-category on/off toggle plus a **Learn**
+button. A category shows up there as soon as it has any live (non-
+tombstoned) card, even a fully caught-up one — it renders `0 due / 0 new`
+rather than disappearing, because the picker is also where you would go to
+mute a category right as you finish it, and a caught-up category still
+needs to stay toggleable. Only a category every one of whose cards is
+tombstoned drops out, since there is then nothing left to serve or mute.
+Muting is per-category; a shelf's header toggle just flips every category
+on it at once (unmute only when the whole shelf is already off).
+
+**Categories are enabled by default.** A newly-added category joins the
+daily session immediately — there is no allowlist to remember to opt into,
+because a silently-unreviewable new category is worse than a rare unwanted
+one. Turning a category off removes it from the daily session and its
+"keep going" extension, but is a filter, not a freeze: FSRS due dates keep
+advancing while a category is muted, so re-enabling it surfaces whatever
+became overdue in the meantime, all at once. That is deliberate — FSRS
+models forgetting over real elapsed time, and freezing the clock on a
+muted category would overstate how much of it you still remember.
+
+**Learn** starts a focused session on one category, reachable at
+`#focus/<category>` in addition to (not instead of) the daily `#review`.
+It serves that category's due cards first, then every one of its unseen
+cards with no daily new-card cap — composed from the same session and
+extension builders the daily queue uses, just scoped to one category, so
+there is no second, divergent notion of "due". A focused session is a
+real review: grading it writes FSRS state and the review log exactly like
+the daily session, new cards taken there count against today's
+`newCardsPerDay` allowance the same as anywhere else, and a not-yet-due
+card is never pulled forward into it. A muted category can still be
+focused — muting only keeps a category out of the *daily* queue, and
+deliberately choosing it here is the point.
 
 ## Scripts
 

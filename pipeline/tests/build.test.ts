@@ -68,6 +68,32 @@ describe('buildDeck', () => {
     const b = parseNote('b.md', '---\ncategory: x\n---\nC ==d==. ^card-dupe', new Set()).note;
     expect(() => buildDeck([a!, b!], new Date())).toThrow(/card-dupe/);
   });
+
+  it('carries topic onto every deck card', () => {
+    const deck = buildDeck(
+      [
+        {
+          path: 'vault/aws/dynamodb.md',
+          topic: 'aws',
+          category: 'aws-dynamodb',
+          tags: [],
+          citations: [],
+          cards: [{ id: 'card-a1', format: 'qa', prompt: 'q', answer: 'a', anchorLine: 3 }]
+        },
+        {
+          path: 'vault/networking/dns.md',
+          topic: 'networking',
+          category: 'networking',
+          tags: [],
+          citations: [],
+          cards: [{ id: 'card-n1', format: 'qa', prompt: 'q', answer: 'a', anchorLine: 3 }]
+        }
+      ],
+      new Date('2026-09-19T00:00:00Z')
+    );
+
+    expect(deck.cards.map((c) => c.topic)).toEqual(['aws', 'networking']);
+  });
 });
 
 describe('processVault', () => {
@@ -253,6 +279,7 @@ describe('withStableGeneratedAt', () => {
   const cardA = {
     id: 'card-aaaa',
     format: 'qa' as const,
+    topic: 'networking',
     category: 'networking',
     tags: ['tcp'],
     prompt: 'What is TCP?',
@@ -263,6 +290,7 @@ describe('withStableGeneratedAt', () => {
   const cardB = {
     id: 'card-bbbb',
     format: 'qa' as const,
+    topic: 'networking',
     category: 'networking',
     tags: ['udp'],
     prompt: 'What is UDP?',
@@ -291,6 +319,7 @@ describe('withStableGeneratedAt', () => {
       format: cardA.format,
       prompt: cardA.prompt,
       answer: cardA.answer,
+      topic: cardA.topic,
       category: cardA.category,
       tags: cardA.tags
     };

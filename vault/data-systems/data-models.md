@@ -1,4 +1,5 @@
 ---
+topic: data-systems
 category: data-systems
 tags: [data-models, relational, document, graph, schema]
 citations: ["Kleppmann, Designing Data-Intensive Applications, Ch. 2"]

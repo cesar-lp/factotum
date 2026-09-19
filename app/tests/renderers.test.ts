@@ -12,7 +12,7 @@ import type { StoredCard } from '../src/db/schema.js';
 import type { Choice } from '../../pipeline/src/types.js';
 
 const base = {
-  category: 'networking', tags: [], source: { path: 'vault/a.md', block: 'card-aaaa' },
+  topic: 'networking', category: 'networking', tags: [], source: { path: 'vault/a.md', block: 'card-aaaa' },
   citations: ['RFC 9293'], tombstoned: false
 };
 

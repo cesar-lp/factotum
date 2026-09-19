@@ -1,4 +1,5 @@
 ---
+topic: concurrency
 category: os-concurrency
 tags: [concurrency-bugs, atomicity-violation, order-violation, debugging]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 32 (Concurrency Bugs)"]

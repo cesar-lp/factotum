@@ -1,4 +1,5 @@
 ---
+topic: operating-systems
 category: os-persistence
 tags: [raid, redundancy, fault-tolerance, parity]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 38 (RAID)"]

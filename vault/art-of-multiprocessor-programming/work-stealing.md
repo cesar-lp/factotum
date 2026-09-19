@@ -1,4 +1,5 @@
 ---
+topic: concurrency
 category: amp
 tags: [work-stealing, load-balancing, deques, scheduling]
 citations: ["Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 16 (Futures, Scheduling, and Work Distribution)", "Blumofe & Leiserson, \"Scheduling Multithreaded Computations by Work Stealing\" (1999)"]

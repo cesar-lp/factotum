@@ -1,4 +1,5 @@
 ---
+topic: operating-systems
 category: os-persistence
 tags: [file-api, directories, inodes, links]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 39 (Files and Directories)"]

@@ -1,4 +1,5 @@
 ---
+topic: concurrency
 category: amp
 tags: [registers, atomicity, shared-memory, memory-hierarchy]
 citations: ["Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 4 (Foundations of Shared Memory)", "Lamport, \"On Interprocess Communication, Parts I & II\" (1986)"]

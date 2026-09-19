@@ -1,4 +1,5 @@
 ---
+topic: database-internals
 category: database-internals
 tags: [failure-detection, heartbeats, phi-accrual, gossip]
 citations: ["Petrov, Database Internals, Ch. 9"]

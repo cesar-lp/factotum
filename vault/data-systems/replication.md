@@ -1,4 +1,5 @@
 ---
+topic: data-systems
 category: data-systems
 tags: [replication, leader-election, read-your-writes, consistency]
 citations: ["Kleppmann, Designing Data-Intensive Applications, Ch. 5"]

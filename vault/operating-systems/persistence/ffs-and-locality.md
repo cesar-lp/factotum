@@ -1,4 +1,5 @@
 ---
+topic: operating-systems
 category: os-persistence
 tags: [ffs, locality, block-groups, disk-awareness]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 41 (Locality and The Fast File System)"]

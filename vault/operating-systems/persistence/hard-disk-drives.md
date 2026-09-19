@@ -1,4 +1,5 @@
 ---
+topic: operating-systems
 category: os-persistence
 tags: [hard-disk-drives, disk-scheduling, seek-time, rotational-latency]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 37 (Hard Disk Drives)"]

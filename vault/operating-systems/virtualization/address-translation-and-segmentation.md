@@ -1,4 +1,5 @@
 ---
+topic: operating-systems
 category: os-virtualization
 tags: [address-translation, segmentation, base-and-bounds, fragmentation]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 15 (Address Translation)", "Arpaci-Dusseau, OSTEP, Ch. 16 (Segmentation)"]

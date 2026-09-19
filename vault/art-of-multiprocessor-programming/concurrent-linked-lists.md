@@ -1,4 +1,5 @@
 ---
+topic: concurrency
 category: amp
 tags: [linked-lists, optimistic-synchronization, lazy-synchronization, lock-free]
 citations: ["Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 9 (Linked Lists: The Role of Locking)", "Heller et al., \"A Lazy Concurrent List-Based Set Algorithm\" (2005)"]

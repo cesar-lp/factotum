@@ -1,4 +1,5 @@
 ---
+topic: concurrency
 category: amp
 tags: [progress-conditions, lock-free, wait-free, obstruction-free]
 citations: ["Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 3 (Concurrent Objects)", "Herlihy, \"Wait-Free Synchronization\" (1991)"]

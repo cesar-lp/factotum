@@ -1,4 +1,5 @@
 ---
+topic: networking
 category: networking
 tags: [routing, link-layer, ethernet, arp, bgp, ospf]
 citations: ["Kurose & Ross, Computer Networking 8e, Ch. 5-6"]

@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { buildExtension, buildSession, dayKey } from '../src/scheduler/queue.js';
+import { buildExtension, buildFocusSession, buildSession, dayKey, selectEnabled } from '../src/scheduler/queue.js';
 import { initialState } from '../src/scheduler/fsrs.js';
 import type { StoredCard, ReviewState } from '../src/db/schema.js';
 
 const now = new Date('2026-09-18T09:00:00Z');
 
 const card = (id: string, category: string): StoredCard => ({
-  id, format: 'qa', category, tags: [], prompt: id, answer: 'a',
+  id, format: 'qa', topic: category, category, tags: [], prompt: id, answer: 'a',
   source: { path: 'vault/a.md', block: id }, citations: [], tombstoned: false
 });
 
@@ -107,5 +107,95 @@ describe('buildExtension', () => {
     const categories = extension.map((c) => c.category);
     expect(categories[0]).not.toBe(categories[1]);
     expect(categories[2]).not.toBe(categories[3]);
+  });
+});
+
+describe('selectEnabled', () => {
+  it('is a no-op for an empty disabled set', () => {
+    const cards = [card('card-a', 'algo'), card('card-n', 'net')];
+    expect(selectEnabled(cards, new Set())).toEqual(cards);
+  });
+
+  it('removes cards in disabled categories and preserves order', () => {
+    const cards = [card('card-a', 'algo'), card('card-n', 'net'), card('card-a2', 'algo')];
+    expect(selectEnabled(cards, new Set(['net'])).map((c) => c.id))
+      .toEqual(['card-a', 'card-a2']);
+  });
+
+  it('keeps a disabled name that matches nothing harmless', () => {
+    const cards = [card('card-a', 'algo')];
+    expect(selectEnabled(cards, new Set(['gone']))).toEqual(cards);
+  });
+});
+
+describe('disabled categories and the daily queue', () => {
+  it('keeps a disabled category out of both the session and the extension', () => {
+    const cards = [
+      card('card-due-net', 'net'), card('card-new-net', 'net'),
+      card('card-due-algo', 'algo'), card('card-new-algo', 'algo')
+    ];
+    const reviews = new Map([
+      ['card-due-net', due('card-due-net')],
+      ['card-due-algo', due('card-due-algo')]
+    ]);
+    const enabled = selectEnabled(cards, new Set(['net']));
+
+    const session = buildSession({
+      cards: enabled, reviews, now, newCardsPerDay: 10, newCardsSeenToday: 0
+    });
+    const extension = buildExtension({ cards: enabled, reviews });
+
+    expect(session.map((c) => c.id)).toEqual(['card-due-algo', 'card-new-algo']);
+    expect(extension.map((c) => c.id)).toEqual(['card-new-algo']);
+  });
+});
+
+describe('buildFocusSession', () => {
+  it('serves the category\'s due cards before its new cards', () => {
+    const cards = [card('card-new', 'algo'), card('card-due', 'algo')];
+    const reviews = new Map([['card-due', due('card-due')]]);
+    const focus = buildFocusSession({ cards, reviews, now, category: 'algo' });
+    expect(focus.map((c) => c.id)).toEqual(['card-due', 'card-new']);
+  });
+
+  it('ignores other categories entirely', () => {
+    const cards = [card('card-algo', 'algo'), card('card-net', 'net')];
+    const focus = buildFocusSession({ cards, reviews: new Map(), now, category: 'algo' });
+    expect(focus.map((c) => c.id)).toEqual(['card-algo']);
+  });
+
+  it('is uncapped — every new card in the category, past any daily allowance', () => {
+    const cards = Array.from({ length: 25 }, (_, i) => card(`card-n${i}`, 'algo'));
+    const focus = buildFocusSession({ cards, reviews: new Map(), now, category: 'algo' });
+    expect(focus).toHaveLength(25);
+  });
+
+  it('excludes cards that are not yet due, so it cannot pull a schedule forward', () => {
+    const cards = [card('card-future', 'algo'), card('card-due', 'algo')];
+    const reviews = new Map([
+      ['card-future', { ...due('card-future'), due: now.getTime() + 86_400_000 }],
+      ['card-due', due('card-due')]
+    ]);
+    const focus = buildFocusSession({ cards, reviews, now, category: 'algo' });
+    expect(focus.map((c) => c.id)).toEqual(['card-due']);
+  });
+
+  it('excludes suspended and tombstoned cards', () => {
+    const cards = [
+      { ...card('card-tomb', 'algo'), tombstoned: true },
+      card('card-susp', 'algo'),
+      card('card-ok', 'algo')
+    ];
+    const reviews = new Map([
+      ['card-susp', { ...due('card-susp'), suspended: true }],
+      ['card-ok', due('card-ok')]
+    ]);
+    const focus = buildFocusSession({ cards, reviews, now, category: 'algo' });
+    expect(focus.map((c) => c.id)).toEqual(['card-ok']);
+  });
+
+  it('returns nothing for a category that does not exist', () => {
+    const cards = [card('card-algo', 'algo')];
+    expect(buildFocusSession({ cards, reviews: new Map(), now, category: 'gone' })).toEqual([]);
   });
 });

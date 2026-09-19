@@ -11,6 +11,7 @@ const now = new Date('2026-09-18T09:00:00Z');
 const card = (id: string): StoredCard => ({
   id,
   format: 'qa',
+  topic: 'net',
   category: 'net',
   tags: [],
   prompt: id,

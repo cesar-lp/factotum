@@ -26,12 +26,21 @@ export function parseFrontmatter(raw: string): FrontmatterResult {
     return { meta: null, body: parsed.content, bodyStartLine: 0 };
   }
 
+  const trimmedCategory = category.trim();
+  const rawTopic = parsed.data['topic'];
+  // A missing, blank or non-string topic falls back to the note's own
+  // category, so a build can never fail on a missing topic and an
+  // un-migrated note simply becomes a single-category shelf.
+  const topic =
+    typeof rawTopic === 'string' && rawTopic.trim() !== '' ? rawTopic.trim() : trimmedCategory;
+
   const consumed = raw.length - parsed.content.length;
   const bodyStartLine = raw.slice(0, consumed).split('\n').length - 1;
 
   return {
     meta: {
-      category: category.trim(),
+      topic,
+      category: trimmedCategory,
       tags: toStringArray(parsed.data['tags'], 'tags'),
       citations: toStringArray(parsed.data['citations'], 'citations')
     },

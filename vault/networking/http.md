@@ -1,4 +1,5 @@
 ---
+topic: networking
 category: networking
 tags: [http, application-layer, web]
 citations: ["Kurose & Ross, Computer Networking 8e, Ch. 2.2", "RFC 9110"]
