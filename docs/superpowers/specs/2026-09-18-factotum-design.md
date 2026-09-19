@@ -78,6 +78,8 @@ from a previous connection being accepted by a new one. ^card-p2x1
 > ^card-r5t2
 ```
 
+mcq choices are shuffled at render time, so the position of the `- [x]` line above is cosmetic — it has no effect on the order a learner sees.
+
 | Construct | Format | Grading |
 |---|---|---|
 | `==text==` | cloze | typed, exact match (case/whitespace-insensitive) |
