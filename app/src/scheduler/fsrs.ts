@@ -44,7 +44,8 @@ export function initialState(cardId: string, now: Date): ReviewState {
     state: empty.state,
     lastReview: null,
     suspended: false,
-    flagged: false
+    flagged: false,
+    learningFailures: 0
   };
 }
 
@@ -74,6 +75,17 @@ export function applyRating(
   const scheduler = fsrs(generatorParameters({ request_retention: desiredRetention }));
   const { card } = scheduler.next(toFsrsCard(state), now, rating satisfies Grade);
 
+  // FSRS only increments `lapses` when a card that has graduated to Review
+  // lapses back out. An Again rated while the card is still in its initial
+  // Learning steps (or Relearning) leaves `lapses` untouched -- the card
+  // can be failed forever without FSRS ever charging it. Detect that gap
+  // BEHAVIORALLY, by asking FSRS what it actually did (`card.lapses ===
+  // state.lapses` despite an Again), rather than re-deriving "which states
+  // charge a lapse" ourselves from State.Learning/State.Relearning. If
+  // ts-fsrs ever changes when it charges a lapse, this stays correct and
+  // can never double-count.
+  const failedWithoutLapse = rating === Rating.Again && card.lapses === state.lapses;
+
   const next: ReviewState = {
     ...state,
     due: card.due.getTime(),
@@ -84,14 +96,28 @@ export function applyRating(
     reps: card.reps,
     lapses: card.lapses,
     state: card.state,
-    lastReview: now.getTime()
+    lastReview: now.getTime(),
+    learningFailures: (state.learningFailures ?? 0) + (failedWithoutLapse ? 1 : 0)
   };
 
-  if (next.lapses >= LEECH_THRESHOLD) {
+  if (isLeech(next)) {
     next.suspended = true;
     next.flagged = true;
   }
   return next;
+}
+
+/**
+ * Total times a card has been failed: real FSRS lapses (a graduated card
+ * rated Again) plus learning failures (an Again FSRS declined to charge as
+ * a lapse). This is what spec section 5's "a card failed 8 times" means.
+ */
+export function failureCount(state: ReviewState): number {
+  return state.lapses + (state.learningFailures ?? 0);
+}
+
+export function isLeech(state: ReviewState): boolean {
+  return failureCount(state) >= LEECH_THRESHOLD;
 }
 
 export function isDue(state: ReviewState, now: Date): boolean {

@@ -6,6 +6,8 @@ import {
   applyRating,
   isDue,
   isStillLearning,
+  failureCount,
+  isLeech,
   LEECH_THRESHOLD,
   type Outcome
 } from '../src/scheduler/fsrs.js';
@@ -135,15 +137,164 @@ describe('isStillLearning', () => {
     expect(isStillLearning(state)).toBe(false);
   });
 
-  it('repeated Again on a fresh card never trips the leech/lapses counter (documents why a separate session cap is needed)', () => {
+  it('repeated Again on a fresh card never increments FSRS lapses, but now trips the leech guard via learningFailures', () => {
     let state = initialState('card-aaaa', now);
     let now2 = now;
     for (let i = 0; i < 15; i++) {
       state = applyRating(state, Rating.Again, now2, 0.9);
       now2 = new Date(state.due);
     }
+    // ts-fsrs fact, unchanged and still worth pinning: lapses never
+    // increments for a card stuck in initial Learning.
+    expect(state.lapses).toBe(0);
+    // But learningFailures now counts these Agains, so the card DOES
+    // suspend -- closing the cross-session leech gap.
+    expect(state.suspended).toBe(true);
+    expect(state.flagged).toBe(true);
+    expect(isStillLearning(state)).toBe(true);
+  });
+});
+
+describe('failureCount / isLeech', () => {
+  it('suspends and flags after 8 consecutive Again ratings on a fresh card that never graduates', () => {
+    let state = initialState('card-aaaa', now);
+    let now2 = now;
+    for (let i = 0; i < 8; i++) {
+      state = applyRating(state, Rating.Again, now2, 0.9);
+      now2 = new Date(state.due);
+    }
+    expect(state.lapses).toBe(0);
+    expect(state.suspended).toBe(true);
+    expect(state.flagged).toBe(true);
+  });
+
+  it('does NOT suspend after only 7 consecutive Again ratings on a fresh card', () => {
+    let state = initialState('card-aaaa', now);
+    let now2 = now;
+    for (let i = 0; i < 7; i++) {
+      state = applyRating(state, Rating.Again, now2, 0.9);
+      now2 = new Date(state.due);
+    }
+    expect(state.suspended).toBe(false);
+    expect(state.flagged).toBe(false);
+  });
+
+  it('sums learning failures and real lapses toward one shared threshold of 8', () => {
+    // 4 Again ratings while stuck in Learning (learningFailures accrues,
+    // lapses stays 0).
+    let state = initialState('card-aaaa', now);
+    let now2 = now;
+    for (let i = 0; i < 4; i++) {
+      state = applyRating(state, Rating.Again, now2, 0.9);
+      now2 = new Date(state.due);
+    }
+    expect(state.learningFailures).toBe(4);
     expect(state.lapses).toBe(0);
     expect(state.suspended).toBe(false);
-    expect(isStillLearning(state)).toBe(true);
+
+    // Graduate the card out of Learning.
+    state = applyRating(state, Rating.Easy, now2, 0.9);
+    now2 = new Date(state.due);
+    expect(state.state).toBe(2);
+
+    // 3 real lapses (Review -> Again -> Relearning) don't yet trip the
+    // threshold (4 + 3 = 7).
+    for (let i = 0; i < 3; i++) {
+      state = applyRating(state, Rating.Again, now2, 0.9);
+      now2 = new Date(state.due);
+      // Re-graduate so the next Again is a fresh Review->lapse, not a
+      // Relearning->Again (which FSRS also declines to charge as a lapse).
+      state = applyRating(state, Rating.Easy, now2, 0.9);
+      now2 = new Date(state.due);
+    }
+    expect(state.lapses).toBe(3);
+    expect(state.learningFailures).toBe(4);
+    expect(failureCount(state)).toBe(7);
+    expect(state.suspended).toBe(false);
+
+    // The 8th failure (a real lapse) trips the shared threshold.
+    state = applyRating(state, Rating.Again, now2, 0.9);
+    expect(state.lapses).toBe(4);
+    expect(state.learningFailures).toBe(4);
+    expect(failureCount(state)).toBe(8);
+    expect(isLeech(state)).toBe(true);
+    expect(state.suspended).toBe(true);
+    expect(state.flagged).toBe(true);
+  });
+
+  it('does not increment learningFailures on a non-Again rating during learning', () => {
+    let state = initialState('card-aaaa', now);
+    state = applyRating(state, Rating.Hard, now, 0.9);
+    expect(state.learningFailures).toBe(0);
+    state = applyRating(state, Rating.Good, new Date(state.due), 0.9);
+    expect(state.learningFailures).toBe(0);
+  });
+
+  it('a genuine Review->Again lapse increments lapses and leaves learningFailures alone', () => {
+    let state = applyRating(initialState('card-aaaa', now), Rating.Easy, now, 0.9);
+    expect(state.state).toBe(2);
+    const lapsed = applyRating(state, Rating.Again, new Date(state.due), 0.9);
+    expect(lapsed.lapses).toBe(1);
+    expect(lapsed.learningFailures).toBe(0);
+  });
+
+  it('treats an absent learningFailures field (a record already on disk) as zero and still trips the leech rule on lapses alone', () => {
+    const state = {
+      ...initialState('card-aaaa', now),
+      lapses: LEECH_THRESHOLD - 1,
+      reps: 20,
+      state: 2
+    };
+    delete (state as { learningFailures?: number }).learningFailures;
+    expect(state.learningFailures).toBeUndefined();
+
+    const next = applyRating(state, Rating.Again, now, 0.9);
+    expect(next.lapses).toBe(LEECH_THRESHOLD);
+    expect(next.suspended).toBe(true);
+    expect(next.flagged).toBe(true);
+  });
+
+  // SECOND, DISTINCT flavor of the same gap: this is NOT the "never
+  // graduates" case above. Here the card DOES graduate and DOES lapse once
+  // (lapses=1), but then gets stuck failing its relearning steps
+  // (State.Relearning) without ever re-graduating. FSRS charges a lapse
+  // only on the Review->Again transition, not on repeated Relearning->Again,
+  // so `lapses` freezes at 1 forever -- this path was just as immune to the
+  // leech rule as the initial-Learning case, before learningFailures.
+  it('a graduated card stuck failing its relearning steps (lapses frozen, never re-graduating) also trips the leech guard via learningFailures', () => {
+    let state = applyRating(initialState('card-aaaa', now), Rating.Easy, now, 0.9);
+    expect(state.state).toBe(2);
+    let now2 = new Date(state.due);
+
+    // One real lapse: Review -> Again -> Relearning.
+    state = applyRating(state, Rating.Again, now2, 0.9);
+    now2 = new Date(state.due);
+    expect(state.state).toBe(3);
+    expect(state.lapses).toBe(1);
+
+    // Keep failing the relearning steps WITHOUT re-graduating: 6 more
+    // Agains (total failures so far: 1 lapse + 6 learningFailures = 7).
+    for (let i = 0; i < 6; i++) {
+      state = applyRating(state, Rating.Again, now2, 0.9);
+      now2 = new Date(state.due);
+    }
+    // ts-fsrs fact this rests on, the direct analogue of `lapses === 0`
+    // pinned for the initial-Learning case: lapses stays frozen at 1 while
+    // stuck in Relearning.
+    expect(state.state).toBe(3);
+    expect(state.lapses).toBe(1);
+    expect(state.learningFailures).toBe(6);
+    expect(failureCount(state)).toBe(7);
+    expect(state.suspended).toBe(false);
+
+    // The 8th failure (still an uncounted Relearning->Again) trips the
+    // shared threshold.
+    state = applyRating(state, Rating.Again, now2, 0.9);
+    expect(state.lapses).toBe(1);
+    expect(state.learningFailures).toBe(7);
+    expect(failureCount(state)).toBe(8);
+    expect(isLeech(state)).toBe(true);
+    expect(state.suspended).toBe(true);
+    expect(state.flagged).toBe(true);
   });
 });

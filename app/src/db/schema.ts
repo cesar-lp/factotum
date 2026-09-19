@@ -18,6 +18,13 @@ export interface ReviewState {
   lastReview: number | null;
   suspended: boolean;
   flagged: boolean;
+  /**
+   * Count of Again ratings FSRS declined to charge as a lapse (i.e. while
+   * the card was stuck in its initial Learning state and never graduated).
+   * Optional so existing on-disk records without this field are treated as
+   * zero, without requiring a DB version bump / upgrade migration.
+   */
+  learningFailures?: number;
 }
 
 export interface ReviewLogEntry {
