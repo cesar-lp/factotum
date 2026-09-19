@@ -36,9 +36,8 @@ SJF's late-arrival gap.
 STCF optimizes for turnaround time but is bad for ==response time== under ^card-terk
 a steady stream of arrivals, because it always favors whichever job has
 the least remaining time — so a job still waiting for its first turn can
-keep getting bumped by newer, shorter jobs. Its response time balloons,
-and it can starve outright, even while STCF's average turnaround time
-looks excellent.
+keep getting bumped by newer, shorter jobs indefinitely, and can starve
+outright, even while STCF's average turnaround time looks excellent.
 
 Round Robin (RR) takes the opposite priority: it runs each ready job for
 a fixed time slice, then moves to the next, cycling through repeatedly.

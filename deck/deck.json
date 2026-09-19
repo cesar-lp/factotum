@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-19T17:13:13.646Z",
+  "generatedAt": "2026-09-19T17:17:52.044Z",
   "cards": [
     {
       "id": "card-rb57",
@@ -9794,7 +9794,7 @@
         "turnaround-time",
         "response-time"
       ],
-      "prompt": "STCF optimizes for turnaround time but is bad for ___ under a steady stream of arrivals, because it always favors whichever job has the least remaining time — so a job still waiting for its first turn can keep getting bumped by newer, shorter jobs. Its response time balloons, and it can starve outright, even while STCF's average turnaround time looks excellent.",
+      "prompt": "STCF optimizes for turnaround time but is bad for ___ under a steady stream of arrivals, because it always favors whichever job has the least remaining time — so a job still waiting for its first turn can keep getting bumped by newer, shorter jobs indefinitely, and can starve outright, even while STCF's average turnaround time looks excellent.",
       "source": {
         "path": "vault/operating-systems/virtualization/scheduling-basics.md",
         "block": "card-terk"
