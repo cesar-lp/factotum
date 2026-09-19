@@ -4,10 +4,11 @@ import { openDb, type FactotumDb, type StoredCard } from './db/schema.js';
 import { getSettings } from './db/settings.js';
 import { mergeDeck } from './db/deck.js';
 import { loadReviews, newCardsSeenToday } from './db/reviews.js';
-import { buildSession } from './scheduler/queue.js';
+import { buildExtension, buildSession } from './scheduler/queue.js';
 import { renderDashboard } from './ui/dashboard.js';
 import { startReview } from './ui/review.js';
 import { renderSettings } from './ui/settings.js';
+import { decideRoute, type DashboardState } from './route.js';
 import type { Deck } from '../../pipeline/src/types.js';
 
 const REPO = 'cesar-lp/factotum';
@@ -32,7 +33,7 @@ async function syncDeck(db: FactotumDb): Promise<boolean> {
   }
 }
 
-export async function currentSession(db: FactotumDb, now: Date): Promise<StoredCard[]> {
+export async function loadDashboardState(db: FactotumDb, now: Date): Promise<DashboardState> {
   const [cards, reviews, settings, seen] = await Promise.all([
     db.getAll('cards'),
     loadReviews(db),
@@ -40,37 +41,65 @@ export async function currentSession(db: FactotumDb, now: Date): Promise<StoredC
     newCardsSeenToday(db, now)
   ]);
 
-  return buildSession({
+  const session = buildSession({
     cards,
     reviews,
     now,
     newCardsPerDay: settings.newCardsPerDay,
     newCardsSeenToday: seen
   });
+  const extension = buildExtension({ cards, reviews });
+
+  return { session, extension, newCardsSeenToday: seen };
 }
 
 async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: boolean): Promise<void> {
-  const session = await currentSession(db, new Date());
+  const state = await loadDashboardState(db, new Date());
+  const hash = window.location.hash;
+  const decision = decideRoute(hash, state);
 
-  if (window.location.hash === '#review' && session.length > 0) {
+  if (decision === 'review') {
     await startReview(appRoot, {
       db,
-      session,
+      session: state.session,
       repo: REPO,
       onDone: () => { window.location.hash = ''; }
     });
     return;
   }
 
-  if (window.location.hash === '#settings') {
+  if (decision === 'review-extend') {
+    await startReview(appRoot, {
+      db,
+      session: state.extension,
+      repo: REPO,
+      onDone: () => { window.location.hash = ''; }
+    });
+    return;
+  }
+
+  if (decision === 'settings') {
     await renderSettings(appRoot, db, () => { window.location.hash = ''; });
     return;
   }
 
+  if (hash === '#review-extend') {
+    // Stale/invalid entry into the extension route (due cards exist again,
+    // or nothing left to extend into) — clear it so a subsequent reload or
+    // back/forward doesn't land here again, and so the dashboard's own
+    // "keep going" button (not a leftover hash) is what drives this route
+    // from here on. A hash mutation is a side effect, so it stays here
+    // rather than in the pure decideRoute.
+    window.location.hash = '';
+  }
+
   renderDashboard(appRoot, {
-    dueCount: session.length,
+    dueCount: state.session.length,
+    newCardsRemaining: state.extension.length,
+    newCardsSeenToday: state.newCardsSeenToday,
     deckUnavailable,
     onStart: () => { window.location.hash = '#review'; },
+    onKeepGoing: () => { window.location.hash = '#review-extend'; },
     onSettings: () => { window.location.hash = '#settings'; }
   });
 }
