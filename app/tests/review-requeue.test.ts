@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { shouldRequeue, requeueIndex, REQUEUE_GAP, MAX_REQUEUES_PER_CARD } from '../src/ui/review.js';
-import { buildSession } from '../src/scheduler/queue.js';
+import { buildSession, buildExtension } from '../src/scheduler/queue.js';
 import { recordReview, newCardsSeenToday } from '../src/db/reviews.js';
 import { initialState } from '../src/scheduler/fsrs.js';
 import { openDb } from '../src/db/schema.js';
@@ -155,22 +155,33 @@ describe('session-level re-queue behaviour (simulated, mirrors submit())', () =>
     expect(counts.get('card-a')).toBe(MAX_REQUEUES_PER_CARD);
   });
 
-  it('the extension path (buildSession output concatenated with more cards, as feat/keep-going does) behaves the same way', () => {
-    // buildSession's own new-card allowance is capped; simulate an
-    // "extension" appending further new cards beyond that cap the way
-    // buildExtension (feat/keep-going, not in this branch's base) would.
+  it('the extension path (buildExtension output appended to a session, as feat/keep-going does) behaves the same way', () => {
+    // buildSession's own new-card allowance is capped at 1 here, so
+    // 'new-2' is left over for buildExtension to pick up.
     const dueCards = [card('due-1')];
+    const reviews = new Map([['due-1', { ...initialState('due-1', now), due: now.getTime() - 1000 }]]);
     const capped = buildSession({
       cards: [...dueCards, card('new-1'), card('new-2')],
-      reviews: new Map([['due-1', { ...initialState('due-1', now), due: now.getTime() - 1000 }]]),
+      reviews,
       now,
       newCardsPerDay: 1,
       newCardsSeenToday: 0
     });
     expect(capped.map((c) => c.id)).toEqual(['due-1', 'new-1']);
 
-    const extensionCards = [card('new-2')]; // what buildExtension would add
-    const session = [...capped, ...extensionCards];
+    // By the time buildExtension is called (after the capped session was
+    // actually reviewed), 'new-1' has a review row too -- buildExtension
+    // treats "has a reviews entry" as "already served", same as
+    // buildSession, so it correctly excludes it and offers only 'new-2'.
+    const reviewsAfterCappedSession = new Map(reviews);
+    reviewsAfterCappedSession.set('new-1', initialState('new-1', now));
+    const extension = buildExtension({
+      cards: [...dueCards, card('new-1'), card('new-2')],
+      reviews: reviewsAfterCappedSession
+    });
+    expect(extension.map((c) => c.id)).toEqual(['new-2']);
+
+    const session = [...capped, ...extension];
     const counts = new Map<string, number>();
 
     // A card served only via the extension still re-queues under the exact
