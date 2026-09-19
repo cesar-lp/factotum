@@ -76,4 +76,5 @@ body {
 .field select, .field input {
   padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line);
   background: var(--surface); color: var(--text); font-size: 16px; max-width: 140px;
+  min-height: 44px; box-sizing: border-box;
 }
