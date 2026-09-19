@@ -29,7 +29,7 @@ device might finish almost immediately, and only fall back to interrupts
 if it doesn't — a hybrid that avoids both wasted spinning and needless
 interrupt overhead depending on measured load.
 
-Without ==DMA (direct memory access)==, the CPU itself must copy every ^card-0c25
+Without ==DMA== (direct memory access), the CPU itself must copy every ^card-0c25
 byte of a large transfer between a device and memory through the data
 register, one word at a time — wasteful for anything beyond a few bytes.
 

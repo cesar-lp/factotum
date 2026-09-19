@@ -21,7 +21,7 @@ mutual-exclusion behavior, just expressed as a counting primitive.
 
 Why does starting a semaphore at 1 make wait/post behave like a lock's acquire/release? :: With an initial value of 1, exactly one thread's wait() can decrement it to 0 and proceed; any other thread's wait() drives the value negative and blocks, so only one thread is ever "inside," which is precisely mutual exclusion. ^card-j2oa
 
-Used as a ==condition variable / ordering primitive==, a semaphore is ^card-nv37
+Used as an ==ordering primitive==, a semaphore is ^card-nv37
 initialized to 0: a thread that must wait for some event calls
 `sem_wait()` and blocks immediately (since the value starts at 0 or
 below), while the thread that produces the event calls `sem_post()` when

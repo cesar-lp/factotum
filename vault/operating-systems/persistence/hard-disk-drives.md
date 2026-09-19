@@ -24,7 +24,7 @@ requests are serviced matters a great deal, which is why disks (and the
 OS layer above them) run a scheduler rather than servicing requests in
 arrival order.
 
-The ==SSTF (shortest seek time first)== scheduler always services the ^card-vo0a
+The ==SSTF== (shortest seek time first) scheduler always services the ^card-vo0a
 pending request closest to the disk head's current position. It minimizes
 seek distance greedily, but a steady stream of nearby requests can keep
 pushing a distant request to the back indefinitely.

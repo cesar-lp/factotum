@@ -14,8 +14,8 @@ explicit way to sleep until another thread signals that the state they
 care about has changed.
 
 `pthread_cond_wait(cond, mutex)` requires the caller to already hold
-`mutex`. Its critical behavior: it ==atomically releases the mutex and ^card-bjep
-puts the calling thread to sleep==, so no other thread can slip in and
+`mutex`. Its critical behavior: it ==atomically== releases the mutex and ^card-bjep
+puts the calling thread to sleep, so no other thread can slip in and
 change the shared state in the gap between "release the lock" and
 "start sleeping." When the thread is later woken, `wait` re-acquires
 the mutex before returning, so the caller resumes still holding the

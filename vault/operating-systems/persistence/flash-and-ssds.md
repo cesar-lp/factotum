@@ -13,7 +13,7 @@ erasing — and therefore rewriting — the whole surrounding region.
 
 Why does an SSD write updates to a fresh page instead of overwriting in place? :: Overwriting in place would force erasing the whole containing block first, a comparatively slow operation, so instead the drive writes the new version to an already-erased page elsewhere and remaps the logical address to it, deferring the erase until garbage collection reclaims the old block later. ^card-5vfk
 
-The ==flash translation layer (FTL)== maps the logical block addresses the ^card-hwid
+The flash translation layer (==FTL==) maps the logical block addresses the ^card-hwid
 OS uses to physical flash locations, hiding erase-before-write and
 block-level erase granularity from the file system entirely — to the OS,
 the SSD still looks like an ordinary block device.

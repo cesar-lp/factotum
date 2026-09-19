@@ -45,8 +45,8 @@ After a crash, how does a journaling file system know which journal transactions
 Journaling comes in two common flavors. ==Data journaling== writes both a ^card-zosc
 block's content and its metadata to the journal before writing them again
 to their home locations, doubling I/O for every changed block but
-protecting file content itself against a crash. ==Metadata-only (ordered) ^card-jjel
-journaling== logs only metadata, writing data blocks directly to their
+protecting file content itself against a crash. ==Metadata-only journaling== ^card-jjel
+(also called ordered journaling) logs only metadata, writing data blocks directly to their
 home locations once, before the commit record — much cheaper, at the cost
 of a smaller window where a crash can leave stale (but not corrupt) data
 behind a valid pointer.
