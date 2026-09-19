@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-19T15:46:09.778Z",
+  "generatedAt": "2026-09-19T16:47:52.565Z",
   "cards": [
     {
       "id": "card-rb57",
@@ -5197,6 +5197,1531 @@
       "citations": [
         "Kurose & Ross, Computer Networking 8e, Ch. 3.1-3.3",
         "RFC 768"
+      ]
+    },
+    {
+      "id": "card-qnak",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "address-space",
+        "memory-api",
+        "malloc",
+        "memory-bugs"
+      ],
+      "prompt": "Why can't the OS fix a process's address space at one physical location forever?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/address-spaces-and-memory-api.md",
+        "block": "card-qnak"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 13 (Address Spaces)",
+        "Arpaci-Dusseau, OSTEP, Ch. 14 (Interlude: Memory API)"
+      ],
+      "answer": "Multiple processes are being run and swapped in and out of physical memory over time, and each one thinks it owns address zero, so the OS needs the freedom to place (and later move) a process's data anywhere in physical RAM without the process's own code having to change."
+    },
+    {
+      "id": "card-5adu",
+      "format": "cloze",
+      "category": "os-virtualization",
+      "tags": [
+        "address-space",
+        "memory-api",
+        "malloc",
+        "memory-bugs"
+      ],
+      "prompt": "Conventionally, the heap is drawn growing ___ from just above the code and static data, while the stack grows upward from the top of the address space — leaving unused space between them that either region can claim as it grows, without a fixed boundary between them.",
+      "source": {
+        "path": "vault/operating-systems/virtualization/address-spaces-and-memory-api.md",
+        "block": "card-5adu"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 13 (Address Spaces)",
+        "Arpaci-Dusseau, OSTEP, Ch. 14 (Interlude: Memory API)"
+      ],
+      "answer": "downward"
+    },
+    {
+      "id": "card-4voc",
+      "format": "cloze",
+      "category": "os-virtualization",
+      "tags": [
+        "address-space",
+        "memory-api",
+        "malloc",
+        "memory-bugs"
+      ],
+      "prompt": "Conventionally, the heap is drawn growing downward from just above the code and static data, while the stack grows ___ from the top of the address space — leaving unused space between them that either region can claim as it grows, without a fixed boundary between them.",
+      "source": {
+        "path": "vault/operating-systems/virtualization/address-spaces-and-memory-api.md",
+        "block": "card-4voc"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 13 (Address Spaces)",
+        "Arpaci-Dusseau, OSTEP, Ch. 14 (Interlude: Memory API)"
+      ],
+      "answer": "upward"
+    },
+    {
+      "id": "card-9u13",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "address-space",
+        "memory-api",
+        "malloc",
+        "memory-bugs"
+      ],
+      "prompt": "Why does free() need no size argument even though malloc() does?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/address-spaces-and-memory-api.md",
+        "block": "card-9u13"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 13 (Address Spaces)",
+        "Arpaci-Dusseau, OSTEP, Ch. 14 (Interlude: Memory API)"
+      ],
+      "answer": "The allocator stores each block's size as metadata alongside the block itself (commonly just before the returned pointer), so free() can look up how much to reclaim from that bookkeeping rather than requiring the caller to remember and pass it back."
+    },
+    {
+      "id": "card-r8jn",
+      "format": "mcq",
+      "category": "os-virtualization",
+      "tags": [
+        "address-space",
+        "memory-api",
+        "malloc",
+        "memory-bugs"
+      ],
+      "prompt": "A program calls `free(p)` and then, later in the same function, reads through `p` again without reallocating it. What kind of bug is this?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/address-spaces-and-memory-api.md",
+        "block": "card-r8jn"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 13 (Address Spaces)",
+        "Arpaci-Dusseau, OSTEP, Ch. 14 (Interlude: Memory API)"
+      ],
+      "choices": [
+        {
+          "text": "A memory leak",
+          "correct": false
+        },
+        {
+          "text": "A dangling pointer (use-after-free)",
+          "correct": true
+        },
+        {
+          "text": "A double allocation",
+          "correct": false
+        },
+        {
+          "text": "A stack overflow",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-pvlh",
+      "format": "recall",
+      "category": "os-virtualization",
+      "tags": [
+        "address-space",
+        "memory-api",
+        "malloc",
+        "memory-bugs"
+      ],
+      "prompt": "Explain why a long-running server process is far more vulnerable to slow memory leaks than a short command-line utility that runs once and exits, even though both have the same kind of bug in their code.",
+      "source": {
+        "path": "vault/operating-systems/virtualization/address-spaces-and-memory-api.md",
+        "block": "card-pvlh"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 13 (Address Spaces)",
+        "Arpaci-Dusseau, OSTEP, Ch. 14 (Interlude: Memory API)"
+      ]
+    },
+    {
+      "id": "card-l5f7",
+      "format": "cloze",
+      "category": "os-virtualization",
+      "tags": [
+        "address-translation",
+        "segmentation",
+        "base-and-bounds",
+        "fragmentation"
+      ],
+      "prompt": "The simplest scheme is base-and-bounds (dynamic relocation): the CPU has a ___ register holding where this process's memory starts in physical RAM, and a bounds register holding the size of that region. A virtual address is translated by adding the base, and the hardware checks the address against the bounds first to catch out-of-range accesses.",
+      "source": {
+        "path": "vault/operating-systems/virtualization/address-translation-and-segmentation.md",
+        "block": "card-l5f7"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 15 (Address Translation)",
+        "Arpaci-Dusseau, OSTEP, Ch. 16 (Segmentation)"
+      ],
+      "answer": "base"
+    },
+    {
+      "id": "card-nkcw",
+      "format": "cloze",
+      "category": "os-virtualization",
+      "tags": [
+        "address-translation",
+        "segmentation",
+        "base-and-bounds",
+        "fragmentation"
+      ],
+      "prompt": "The simplest scheme is base-and-bounds (dynamic relocation): the CPU has a base register holding where this process's memory starts in physical RAM, and a ___ register holding the size of that region. A virtual address is translated by adding the base, and the hardware checks the address against the bounds first to catch out-of-range accesses.",
+      "source": {
+        "path": "vault/operating-systems/virtualization/address-translation-and-segmentation.md",
+        "block": "card-nkcw"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 15 (Address Translation)",
+        "Arpaci-Dusseau, OSTEP, Ch. 16 (Segmentation)"
+      ],
+      "answer": "bounds"
+    },
+    {
+      "id": "card-1msk",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "address-translation",
+        "segmentation",
+        "base-and-bounds",
+        "fragmentation"
+      ],
+      "prompt": "Why is a bounds check needed even though the base register already relocates addresses?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/address-translation-and-segmentation.md",
+        "block": "card-1msk"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 15 (Address Translation)",
+        "Arpaci-Dusseau, OSTEP, Ch. 16 (Segmentation)"
+      ],
+      "answer": "Without a bounds check, a process could generate a virtual address larger than its own address space and, after the base is added, land inside another process's memory or unallocated physical memory — the bounds check is what turns relocation into isolation."
+    },
+    {
+      "id": "card-9r1a",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "address-translation",
+        "segmentation",
+        "base-and-bounds",
+        "fragmentation"
+      ],
+      "prompt": "How does segmentation avoid wasting the gap between a small heap and the stack?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/address-translation-and-segmentation.md",
+        "block": "card-9r1a"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 15 (Address Translation)",
+        "Arpaci-Dusseau, OSTEP, Ch. 16 (Segmentation)"
+      ],
+      "answer": "Because the stack is its own segment with its own base and bounds, the OS only needs to allocate physical memory for the segments actually in use and their current sizes, not for a single contiguous span that has to cover the gap between an unrelated heap and stack."
+    },
+    {
+      "id": "card-zdkf",
+      "format": "mcq",
+      "category": "os-virtualization",
+      "tags": [
+        "address-translation",
+        "segmentation",
+        "base-and-bounds",
+        "fragmentation"
+      ],
+      "prompt": "A system uses segmentation with separate code, heap, and stack segments. What new fragmentation problem does this introduce that plain base-and-bounds did not have?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/address-translation-and-segmentation.md",
+        "block": "card-zdkf"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 15 (Address Translation)",
+        "Arpaci-Dusseau, OSTEP, Ch. 16 (Segmentation)"
+      ],
+      "choices": [
+        {
+          "text": "Internal fragmentation within a single segment",
+          "correct": false
+        },
+        {
+          "text": "External fragmentation across free chunks of physical memory",
+          "correct": true
+        },
+        {
+          "text": "Fragmentation of the CPU's register file",
+          "correct": false
+        },
+        {
+          "text": "Fragmentation only affects the code segment",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-aif1",
+      "format": "recall",
+      "category": "os-virtualization",
+      "tags": [
+        "address-translation",
+        "segmentation",
+        "base-and-bounds",
+        "fragmentation"
+      ],
+      "prompt": "Explain why a bounds violation should trap into the OS rather than the hardware simply refusing the access silently — what does the OS need to do with that information?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/address-translation-and-segmentation.md",
+        "block": "card-aif1"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 15 (Address Translation)",
+        "Arpaci-Dusseau, OSTEP, Ch. 16 (Segmentation)"
+      ]
+    },
+    {
+      "id": "card-zpzd",
+      "format": "cloze",
+      "category": "os-virtualization",
+      "tags": [
+        "free-space-management",
+        "malloc-internals",
+        "fragmentation",
+        "allocation-strategies"
+      ],
+      "prompt": "Free-space allocators commonly track free chunks with a ___, a linked structure threaded through the free chunks themselves — each free chunk's header doubles as a list node, which is why free chunks need to be at least large enough to hold that header.",
+      "source": {
+        "path": "vault/operating-systems/virtualization/free-space-management.md",
+        "block": "card-zpzd"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 17 (Free-Space Management)"
+      ],
+      "answer": "free list"
+    },
+    {
+      "id": "card-nnoj",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "free-space-management",
+        "malloc-internals",
+        "fragmentation",
+        "allocation-strategies"
+      ],
+      "prompt": "Why does best fit, despite its name, often perform worse in practice than it sounds like it should?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/free-space-management.md",
+        "block": "card-nnoj"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 17 (Free-Space Management)"
+      ],
+      "answer": "Best fit tends to leave behind many tiny, barely-usable leftover slivers (the chunk chosen is only just big enough, so the remainder after splitting is often too small to satisfy future requests), and a full linear scan of the free list to find the best chunk is also slow."
+    },
+    {
+      "id": "card-nbxt",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "free-space-management",
+        "malloc-internals",
+        "fragmentation",
+        "allocation-strategies"
+      ],
+      "prompt": "What operation reverses splitting, and why does an allocator need to perform it?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/free-space-management.md",
+        "block": "card-nbxt"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 17 (Free-Space Management)"
+      ],
+      "answer": "Coalescing merges two adjacent free chunks back into one larger free chunk when a block is freed and it happens to sit next to another already-free block; without coalescing, a system could accumulate many small, adjacent free fragments that could have combined into a block big enough for a large future request."
+    },
+    {
+      "id": "card-klpp",
+      "format": "cloze",
+      "category": "os-virtualization",
+      "tags": [
+        "free-space-management",
+        "malloc-internals",
+        "fragmentation",
+        "allocation-strategies"
+      ],
+      "prompt": "Fragmentation itself comes in two distinct flavors worth keeping apart. ___ fragmentation is space wasted inside an allocated chunk because it is bigger than what was requested (as buddy allocation's rounding causes), while external fragmentation is space wasted between allocated chunks, scattered across many free fragments none of which individually fits the next request.",
+      "source": {
+        "path": "vault/operating-systems/virtualization/free-space-management.md",
+        "block": "card-klpp"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 17 (Free-Space Management)"
+      ],
+      "answer": "Internal"
+    },
+    {
+      "id": "card-bw5h",
+      "format": "mcq",
+      "category": "os-virtualization",
+      "tags": [
+        "free-space-management",
+        "malloc-internals",
+        "fragmentation",
+        "allocation-strategies"
+      ],
+      "prompt": "An allocator uses buddy allocation. A caller requests 12KB from a system where blocks are always powers of two. What is the main cost of this scheme?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/free-space-management.md",
+        "block": "card-bw5h"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 17 (Free-Space Management)"
+      ],
+      "choices": [
+        {
+          "text": "External fragmentation from scattered chunk sizes",
+          "correct": false
+        },
+        {
+          "text": "Internal fragmentation from rounding requests up to the next power of two",
+          "correct": true
+        },
+        {
+          "text": "O(n) search time through the whole free list",
+          "correct": false
+        },
+        {
+          "text": "Inability to ever coalesce freed memory",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-mgdb",
+      "format": "recall",
+      "category": "os-virtualization",
+      "tags": [
+        "free-space-management",
+        "malloc-internals",
+        "fragmentation",
+        "allocation-strategies"
+      ],
+      "prompt": "Explain why external fragmentation cannot be fully solved just by choosing a cleverer placement strategy (best fit, worst fit, first fit) among fixed free chunks, and what compaction would have to do instead.",
+      "source": {
+        "path": "vault/operating-systems/virtualization/free-space-management.md",
+        "block": "card-mgdb"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 17 (Free-Space Management)"
+      ]
+    },
+    {
+      "id": "card-zjlo",
+      "format": "cloze",
+      "category": "os-virtualization",
+      "tags": [
+        "limited-direct-execution",
+        "traps",
+        "mode-switch",
+        "system-calls"
+      ],
+      "prompt": "The hardware provides two privilege levels. In ___, code cannot directly issue privileged instructions (like ones that touch disk or reconfigure the MMU) — attempting one causes the hardware to trap into the OS instead. In kernel mode, the OS itself runs with full access to the hardware. A process's normal code always runs in user mode.",
+      "source": {
+        "path": "vault/operating-systems/virtualization/limited-direct-execution.md",
+        "block": "card-zjlo"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 6 (Limited Direct Execution)"
+      ],
+      "answer": "user mode"
+    },
+    {
+      "id": "card-ohmn",
+      "format": "cloze",
+      "category": "os-virtualization",
+      "tags": [
+        "limited-direct-execution",
+        "traps",
+        "mode-switch",
+        "system-calls"
+      ],
+      "prompt": "The hardware provides two privilege levels. In user mode, code cannot directly issue privileged instructions (like ones that touch disk or reconfigure the MMU) — attempting one causes the hardware to trap into the OS instead. In ___, the OS itself runs with full access to the hardware. A process's normal code always runs in user mode.",
+      "source": {
+        "path": "vault/operating-systems/virtualization/limited-direct-execution.md",
+        "block": "card-ohmn"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 6 (Limited Direct Execution)"
+      ],
+      "answer": "kernel mode"
+    },
+    {
+      "id": "card-wh1e",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "limited-direct-execution",
+        "traps",
+        "mode-switch",
+        "system-calls"
+      ],
+      "prompt": "How does a user-mode process ask the OS to perform a privileged operation, such as reading a file?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/limited-direct-execution.md",
+        "block": "card-wh1e"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 6 (Limited Direct Execution)"
+      ],
+      "answer": "It executes a system call, a special trap instruction; the trap saves the caller's register state and jumps to a fixed, OS-defined entry point in kernel mode, so the process cannot jump into arbitrary kernel code, only through the sanctioned entry."
+    },
+    {
+      "id": "card-pryn",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "limited-direct-execution",
+        "traps",
+        "mode-switch",
+        "system-calls"
+      ],
+      "prompt": "Why must only the OS be allowed to configure the trap table, and never a user process?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/limited-direct-execution.md",
+        "block": "card-pryn"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 6 (Limited Direct Execution)"
+      ],
+      "answer": "If a user process could set the trap handler address, it could point a system call trap at its own code and have that code run with full kernel privilege, defeating the entire protection scheme."
+    },
+    {
+      "id": "card-amid",
+      "format": "cloze",
+      "category": "os-virtualization",
+      "tags": [
+        "limited-direct-execution",
+        "traps",
+        "mode-switch",
+        "system-calls"
+      ],
+      "prompt": "A single trap into the kernel isn't enough to keep control forever, though — a process could simply never make a system call and monopolize the CPU. The classic fix is a ___: hardware raises an interrupt at a fixed interval regardless of what the process is doing, forcing a trap back into the OS, which can then decide whether to keep running this process or switch to another. This is what makes preemptive scheduling possible without cooperation from the program being interrupted.",
+      "source": {
+        "path": "vault/operating-systems/virtualization/limited-direct-execution.md",
+        "block": "card-amid"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 6 (Limited Direct Execution)"
+      ],
+      "answer": "timer interrupt"
+    },
+    {
+      "id": "card-mm2u",
+      "format": "mcq",
+      "category": "os-virtualization",
+      "tags": [
+        "limited-direct-execution",
+        "traps",
+        "mode-switch",
+        "system-calls"
+      ],
+      "prompt": "A process is running an infinite loop with no system calls and no I/O. What lets the OS regain control of the CPU?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/limited-direct-execution.md",
+        "block": "card-mm2u"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 6 (Limited Direct Execution)"
+      ],
+      "choices": [
+        {
+          "text": "The process's next system call",
+          "correct": false
+        },
+        {
+          "text": "The scheduler polling the process's state",
+          "correct": false
+        },
+        {
+          "text": "A periodic timer interrupt forcing a trap into the OS",
+          "correct": true
+        },
+        {
+          "text": "The compiler inserting yield calls automatically",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-qh6j",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "limited-direct-execution",
+        "traps",
+        "mode-switch",
+        "system-calls"
+      ],
+      "prompt": "Why does \"return-from-trap\" not necessarily resume the same process that trapped into the kernel?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/limited-direct-execution.md",
+        "block": "card-qh6j"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 6 (Limited Direct Execution)"
+      ],
+      "answer": "Between the trap and the return, the OS's scheduler is free to swap in a different process's saved register state, so the trap and the eventual return-from-trap can belong to two different processes even though they are the same hardware instruction pair."
+    },
+    {
+      "id": "card-efqj",
+      "format": "recall",
+      "category": "os-virtualization",
+      "tags": [
+        "limited-direct-execution",
+        "traps",
+        "mode-switch",
+        "system-calls"
+      ],
+      "prompt": "Explain why direct execution alone (running a program straight on the CPU with no traps or timer interrupts) is unsafe for a multiprogrammed OS, even though it is the fastest possible way to run code.",
+      "source": {
+        "path": "vault/operating-systems/virtualization/limited-direct-execution.md",
+        "block": "card-efqj"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 6 (Limited Direct Execution)"
+      ]
+    },
+    {
+      "id": "card-sf97",
+      "format": "cloze",
+      "category": "os-virtualization",
+      "tags": [
+        "scheduling",
+        "mlfq",
+        "multi-level-feedback-queue"
+      ],
+      "prompt": "The base rules: a higher-priority queue always runs before a lower one, and jobs on the same queue share the CPU in round robin. To decide how priority changes over time, MLFQ tracks a job's ___: the amount of CPU time it may use at its current priority level before being demoted one queue.",
+      "source": {
+        "path": "vault/operating-systems/virtualization/mlfq.md",
+        "block": "card-sf97"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 8 (Multi-Level Feedback Queue)"
+      ],
+      "answer": "allotment"
+    },
+    {
+      "id": "card-vuab",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "scheduling",
+        "mlfq",
+        "multi-level-feedback-queue"
+      ],
+      "prompt": "Why does a job entering the system start at the highest-priority queue rather than the lowest?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/mlfq.md",
+        "block": "card-vuab"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 8 (Multi-Level Feedback Queue)"
+      ],
+      "answer": "The scheduler has no information yet about whether the job is short and interactive or long and CPU-bound, so it optimistically assumes short/interactive first; a truly short job finishes quickly from there, while a long job reveals itself by using up its allotment and sinking down."
+    },
+    {
+      "id": "card-o4yf",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "scheduling",
+        "mlfq",
+        "multi-level-feedback-queue"
+      ],
+      "prompt": "How can a process game a naive MLFQ that resets allotment on voluntary yield?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/mlfq.md",
+        "block": "card-o4yf"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 8 (Multi-Level Feedback Queue)"
+      ],
+      "answer": "The process can issue a near-instant I/O request just before its allotment runs out, over and over, so it never gets demoted despite consuming nearly all of the CPU's time — it \"relinquishes\" just often enough to stay parked at the top queue."
+    },
+    {
+      "id": "card-6jpq",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "scheduling",
+        "mlfq",
+        "multi-level-feedback-queue"
+      ],
+      "prompt": "What mechanism keeps a long-running, low-priority MLFQ job from starving?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/mlfq.md",
+        "block": "card-6jpq"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 8 (Multi-Level Feedback Queue)"
+      ],
+      "answer": "A periodic priority boost: after a fixed time period S, every job in the system — regardless of current queue — is moved back to the topmost queue, giving starved long-running jobs a fresh chance to run again."
+    },
+    {
+      "id": "card-46fc",
+      "format": "mcq",
+      "category": "os-virtualization",
+      "tags": [
+        "scheduling",
+        "mlfq",
+        "multi-level-feedback-queue"
+      ],
+      "prompt": "The priority-boost interval S is set far too long for the workload. What is the most likely symptom?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/mlfq.md",
+        "block": "card-46fc"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 8 (Multi-Level Feedback Queue)"
+      ],
+      "choices": [
+        {
+          "text": "Long-running jobs starve for extended stretches before being boosted",
+          "correct": true
+        },
+        {
+          "text": "Short jobs never get to run at all",
+          "correct": false
+        },
+        {
+          "text": "The scheduler degenerates into pure FIFO immediately",
+          "correct": false
+        },
+        {
+          "text": "Context-switch overhead disappears entirely",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-ch7q",
+      "format": "recall",
+      "category": "os-virtualization",
+      "tags": [
+        "scheduling",
+        "mlfq",
+        "multi-level-feedback-queue"
+      ],
+      "prompt": "Explain why MLFQ counts as \"learning from history to predict the future,\" and describe one way that strategy can backfire if a job's behavior changes partway through its life.",
+      "source": {
+        "path": "vault/operating-systems/virtualization/mlfq.md",
+        "block": "card-ch7q"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 8 (Multi-Level Feedback Queue)"
+      ]
+    },
+    {
+      "id": "card-eiiq",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "multi-level-page-tables",
+        "swapping",
+        "page-replacement",
+        "thrashing"
+      ],
+      "prompt": "Why do multi-level page tables use less memory than a single-level table?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/multi-level-page-tables-and-swapping.md",
+        "block": "card-eiiq"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 20 (Paging: Smaller Tables)",
+        "Arpaci-Dusseau, OSTEP, Ch. 21 (Beyond Physical Memory: Mechanisms)",
+        "Arpaci-Dusseau, OSTEP, Ch. 22 (Beyond Physical Memory: Policies)"
+      ],
+      "answer": "An entire region of the address space that is unused doesn't need its second-level page table allocated at all — the page directory entry for that region can simply be marked invalid, so memory is only spent on page-table chunks that actually cover pages the process is using."
+    },
+    {
+      "id": "card-oisa",
+      "format": "cloze",
+      "category": "os-virtualization",
+      "tags": [
+        "multi-level-page-tables",
+        "swapping",
+        "page-replacement",
+        "thrashing"
+      ],
+      "prompt": "Swapping extends virtual memory beyond what physical RAM can hold, by using disk (or, in modern systems, flash) as a backing store for pages that don't currently fit in RAM. The OS designates a region of the disk as ___, and a page not currently resident in physical memory is instead written out there.",
+      "source": {
+        "path": "vault/operating-systems/virtualization/multi-level-page-tables-and-swapping.md",
+        "block": "card-oisa"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 20 (Paging: Smaller Tables)",
+        "Arpaci-Dusseau, OSTEP, Ch. 21 (Beyond Physical Memory: Mechanisms)",
+        "Arpaci-Dusseau, OSTEP, Ch. 22 (Beyond Physical Memory: Policies)"
+      ],
+      "answer": "swap space"
+    },
+    {
+      "id": "card-oy1r",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "multi-level-page-tables",
+        "swapping",
+        "page-replacement",
+        "thrashing"
+      ],
+      "prompt": "What happens on a page fault for a valid page currently swapped out to disk?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/multi-level-page-tables-and-swapping.md",
+        "block": "card-oy1r"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 20 (Paging: Smaller Tables)",
+        "Arpaci-Dusseau, OSTEP, Ch. 21 (Beyond Physical Memory: Mechanisms)",
+        "Arpaci-Dusseau, OSTEP, Ch. 22 (Beyond Physical Memory: Policies)"
+      ],
+      "answer": "The OS's page-fault handler reads the page's location from the PTE, finds (or evicts something to make) a free physical frame, reads the page's contents in from disk into that frame, updates the PTE to point at the new frame and mark it present, and then retries the faulting instruction."
+    },
+    {
+      "id": "card-116z",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "multi-level-page-tables",
+        "swapping",
+        "page-replacement",
+        "thrashing"
+      ],
+      "prompt": "Why do real systems use the clock algorithm instead of exact LRU?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/multi-level-page-tables-and-swapping.md",
+        "block": "card-116z"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 20 (Paging: Smaller Tables)",
+        "Arpaci-Dusseau, OSTEP, Ch. 21 (Beyond Physical Memory: Mechanisms)",
+        "Arpaci-Dusseau, OSTEP, Ch. 22 (Beyond Physical Memory: Policies)"
+      ],
+      "answer": "Exact LRU would require updating bookkeeping on every memory reference, which is far too costly to do at hardware speed; the clock algorithm instead relies on a cheap hardware-set \"use\" bit per page and periodic sweeps, trading precision for something actually affordable to run."
+    },
+    {
+      "id": "card-bxwb",
+      "format": "mcq",
+      "category": "os-virtualization",
+      "tags": [
+        "multi-level-page-tables",
+        "swapping",
+        "page-replacement",
+        "thrashing"
+      ],
+      "prompt": "Physical memory is nearly full and every running process's active pages together exceed it. What is this condition called?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/multi-level-page-tables-and-swapping.md",
+        "block": "card-bxwb"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 20 (Paging: Smaller Tables)",
+        "Arpaci-Dusseau, OSTEP, Ch. 21 (Beyond Physical Memory: Mechanisms)",
+        "Arpaci-Dusseau, OSTEP, Ch. 22 (Beyond Physical Memory: Policies)"
+      ],
+      "choices": [
+        {
+          "text": "Internal fragmentation",
+          "correct": false
+        },
+        {
+          "text": "A TLB miss storm",
+          "correct": false
+        },
+        {
+          "text": "Thrashing",
+          "correct": true
+        },
+        {
+          "text": "Priority inversion",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-r4yi",
+      "format": "recall",
+      "category": "os-virtualization",
+      "tags": [
+        "multi-level-page-tables",
+        "swapping",
+        "page-replacement",
+        "thrashing"
+      ],
+      "prompt": "Explain why the optimal page-replacement policy (evict what's used furthest in the future) is useful even though no real OS can implement it directly.",
+      "source": {
+        "path": "vault/operating-systems/virtualization/multi-level-page-tables-and-swapping.md",
+        "block": "card-r4yi"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 20 (Paging: Smaller Tables)",
+        "Arpaci-Dusseau, OSTEP, Ch. 21 (Beyond Physical Memory: Mechanisms)",
+        "Arpaci-Dusseau, OSTEP, Ch. 22 (Beyond Physical Memory: Policies)"
+      ]
+    },
+    {
+      "id": "card-zac3",
+      "format": "cloze",
+      "category": "os-virtualization",
+      "tags": [
+        "paging",
+        "page-tables",
+        "tlb",
+        "address-translation"
+      ],
+      "prompt": "A virtual address is split into a ___ (VPN), which selects an entry in the process's page table, and a page offset, which is left unchanged by translation because it just locates a byte within the page — only the page number needs to be translated, not the offset.",
+      "source": {
+        "path": "vault/operating-systems/virtualization/paging-and-tlbs.md",
+        "block": "card-zac3"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 18 (Paging: Introduction)",
+        "Arpaci-Dusseau, OSTEP, Ch. 19 (Paging: Faster Translations (TLBs))"
+      ],
+      "answer": "virtual page number"
+    },
+    {
+      "id": "card-01nc",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "paging",
+        "page-tables",
+        "tlb",
+        "address-translation"
+      ],
+      "prompt": "Why does a page table need a valid bit, given sparse address spaces?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/paging-and-tlbs.md",
+        "block": "card-01nc"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 18 (Paging: Introduction)",
+        "Arpaci-Dusseau, OSTEP, Ch. 19 (Paging: Faster Translations (TLBs))"
+      ],
+      "answer": "Most address spaces are sparse (a small amount of used memory in a huge virtual range), so allocating a PTE only marks pages actually in use as valid; an access to an unmapped page's still-present-but-invalid PTE traps to the OS instead of silently succeeding against garbage."
+    },
+    {
+      "id": "card-f9rs",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "paging",
+        "page-tables",
+        "tlb",
+        "address-translation"
+      ],
+      "prompt": "What hardware structure avoids a full page-table walk on every memory access?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/paging-and-tlbs.md",
+        "block": "card-f9rs"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 18 (Paging: Introduction)",
+        "Arpaci-Dusseau, OSTEP, Ch. 19 (Paging: Faster Translations (TLBs))"
+      ],
+      "answer": "The TLB (translation lookaside buffer), a small hardware cache of recently used virtual-to-physical page translations sitting inside (or next to) the CPU; a TLB hit supplies the frame number in one cycle, skipping the memory access to the page table entirely."
+    },
+    {
+      "id": "card-ttzh",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "paging",
+        "page-tables",
+        "tlb",
+        "address-translation"
+      ],
+      "prompt": "Why does switching between processes risk invalidating the TLB's cached entries?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/paging-and-tlbs.md",
+        "block": "card-ttzh"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 18 (Paging: Introduction)",
+        "Arpaci-Dusseau, OSTEP, Ch. 19 (Paging: Faster Translations (TLBs))"
+      ],
+      "answer": "TLB entries map virtual addresses to physical frames for one specific address space, so after a context switch the previous process's cached translations are meaningless (or, worse, wrong) for the new process's virtual addresses, unless the TLB tags entries with a process/address-space id to keep multiple processes' translations valid at once."
+    },
+    {
+      "id": "card-33qt",
+      "format": "mcq",
+      "category": "os-virtualization",
+      "tags": [
+        "paging",
+        "page-tables",
+        "tlb",
+        "address-translation"
+      ],
+      "prompt": "A process has excellent temporal locality but the TLB is very small relative to its working set. What is the most likely consequence?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/paging-and-tlbs.md",
+        "block": "card-33qt"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 18 (Paging: Introduction)",
+        "Arpaci-Dusseau, OSTEP, Ch. 19 (Paging: Faster Translations (TLBs))"
+      ],
+      "choices": [
+        {
+          "text": "Frequent TLB misses forcing repeated page-table walks",
+          "correct": true
+        },
+        {
+          "text": "The page table itself becomes unnecessary",
+          "correct": false
+        },
+        {
+          "text": "Internal fragmentation increases sharply",
+          "correct": false
+        },
+        {
+          "text": "The valid bit is checked less often",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-udid",
+      "format": "recall",
+      "category": "os-virtualization",
+      "tags": [
+        "paging",
+        "page-tables",
+        "tlb",
+        "address-translation"
+      ],
+      "prompt": "Explain why fixed-size pages eliminate external fragmentation compared to segmentation, and what kind of fragmentation paging can still leave behind.",
+      "source": {
+        "path": "vault/operating-systems/virtualization/paging-and-tlbs.md",
+        "block": "card-udid"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 18 (Paging: Introduction)",
+        "Arpaci-Dusseau, OSTEP, Ch. 19 (Paging: Faster Translations (TLBs))"
+      ]
+    },
+    {
+      "id": "card-etmx",
+      "format": "cloze",
+      "category": "os-virtualization",
+      "tags": [
+        "processes",
+        "process-api",
+        "fork",
+        "exec",
+        "wait"
+      ],
+      "prompt": "The OS tracks a process's status internally, typically as one of three states: it is ___ when its instructions are actually executing on a CPU, ready when it could run but the OS has chosen another process instead, and blocked when it cannot run until some event (such as an I/O completion) occurs, even if a CPU is free.",
+      "source": {
+        "path": "vault/operating-systems/virtualization/processes-and-process-api.md",
+        "block": "card-etmx"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 4 (Processes)",
+        "Arpaci-Dusseau, OSTEP, Ch. 5 (Process API)"
+      ],
+      "answer": "running"
+    },
+    {
+      "id": "card-zs5v",
+      "format": "cloze",
+      "category": "os-virtualization",
+      "tags": [
+        "processes",
+        "process-api",
+        "fork",
+        "exec",
+        "wait"
+      ],
+      "prompt": "The OS tracks a process's status internally, typically as one of three states: it is running when its instructions are actually executing on a CPU, ___ when it could run but the OS has chosen another process instead, and blocked when it cannot run until some event (such as an I/O completion) occurs, even if a CPU is free.",
+      "source": {
+        "path": "vault/operating-systems/virtualization/processes-and-process-api.md",
+        "block": "card-zs5v"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 4 (Processes)",
+        "Arpaci-Dusseau, OSTEP, Ch. 5 (Process API)"
+      ],
+      "answer": "ready"
+    },
+    {
+      "id": "card-g1h4",
+      "format": "cloze",
+      "category": "os-virtualization",
+      "tags": [
+        "processes",
+        "process-api",
+        "fork",
+        "exec",
+        "wait"
+      ],
+      "prompt": "The OS tracks a process's status internally, typically as one of three states: it is running when its instructions are actually executing on a CPU, ready when it could run but the OS has chosen another process instead, and ___ when it cannot run until some event (such as an I/O completion) occurs, even if a CPU is free.",
+      "source": {
+        "path": "vault/operating-systems/virtualization/processes-and-process-api.md",
+        "block": "card-g1h4"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 4 (Processes)",
+        "Arpaci-Dusseau, OSTEP, Ch. 5 (Process API)"
+      ],
+      "answer": "blocked"
+    },
+    {
+      "id": "card-0ifj",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "processes",
+        "process-api",
+        "fork",
+        "exec",
+        "wait"
+      ],
+      "prompt": "Why can't a blocked process simply be given the CPU when it becomes the highest-priority job?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/processes-and-process-api.md",
+        "block": "card-0ifj"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 4 (Processes)",
+        "Arpaci-Dusseau, OSTEP, Ch. 5 (Process API)"
+      ],
+      "answer": "A blocked process is waiting on an event outside the CPU's control (e.g., a disk read); running it would not make progress, so the OS leaves it off the ready pool until the event fires and moves it to ready."
+    },
+    {
+      "id": "card-cb78",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "processes",
+        "process-api",
+        "fork",
+        "exec",
+        "wait"
+      ],
+      "prompt": "Why does fork() return a different value in the parent than in the child?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/processes-and-process-api.md",
+        "block": "card-cb78"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 4 (Processes)",
+        "Arpaci-Dusseau, OSTEP, Ch. 5 (Process API)"
+      ],
+      "answer": "fork() returns the child's process ID to the parent and 0 to the child, so the same post-fork code can branch on the return value to run different logic in each process even though both start from the identical point in the program."
+    },
+    {
+      "id": "card-hczt",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "processes",
+        "process-api",
+        "fork",
+        "exec",
+        "wait"
+      ],
+      "prompt": "Why split process creation into fork() then exec() instead of one spawn call?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/processes-and-process-api.md",
+        "block": "card-hczt"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 4 (Processes)",
+        "Arpaci-Dusseau, OSTEP, Ch. 5 (Process API)"
+      ],
+      "answer": "Splitting them lets the shell run code between the fork and the exec, in the child only — for example redirecting a file descriptor or setting up a pipe — before the child's image is replaced by the target program, which a single combined call could not support."
+    },
+    {
+      "id": "card-4p96",
+      "format": "mcq",
+      "category": "os-virtualization",
+      "tags": [
+        "processes",
+        "process-api",
+        "fork",
+        "exec",
+        "wait"
+      ],
+      "prompt": "A parent calls `wait()` right after `fork()`. What is the parent waiting for?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/processes-and-process-api.md",
+        "block": "card-4p96"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 4 (Processes)",
+        "Arpaci-Dusseau, OSTEP, Ch. 5 (Process API)"
+      ],
+      "choices": [
+        {
+          "text": "The child to call exec()",
+          "correct": false
+        },
+        {
+          "text": "The child to terminate, so the parent can reap its exit status",
+          "correct": true
+        },
+        {
+          "text": "The scheduler to grant the parent another time slice",
+          "correct": false
+        },
+        {
+          "text": "The child to release its file descriptors",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-xox5",
+      "format": "recall",
+      "category": "os-virtualization",
+      "tags": [
+        "processes",
+        "process-api",
+        "fork",
+        "exec",
+        "wait"
+      ],
+      "prompt": "Explain why an OS needs `wait()` at all — what would go wrong for the parent, or for the system's process table, if a parent never collected a terminated child's exit status?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/processes-and-process-api.md",
+        "block": "card-xox5"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 4 (Processes)",
+        "Arpaci-Dusseau, OSTEP, Ch. 5 (Process API)"
+      ]
+    },
+    {
+      "id": "card-178l",
+      "format": "cloze",
+      "category": "os-virtualization",
+      "tags": [
+        "scheduling",
+        "lottery-scheduling",
+        "stride-scheduling",
+        "cfs",
+        "proportional-share"
+      ],
+      "prompt": "Lottery scheduling implements this with randomness. Each job holds some number of ___, and on every scheduling decision the scheduler draws a random winning ticket and runs whichever job holds it — a job with twice the tickets of another wins (and thus runs) about twice as often, in expectation, over many draws.",
+      "source": {
+        "path": "vault/operating-systems/virtualization/proportional-share-scheduling.md",
+        "block": "card-178l"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 9 (Scheduling: Proportional Share)"
+      ],
+      "answer": "tickets"
+    },
+    {
+      "id": "card-adbt",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "scheduling",
+        "lottery-scheduling",
+        "stride-scheduling",
+        "cfs",
+        "proportional-share"
+      ],
+      "prompt": "Why is lottery scheduling only probabilistically fair over short intervals?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/proportional-share-scheduling.md",
+        "block": "card-adbt"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 9 (Scheduling: Proportional Share)"
+      ],
+      "answer": "Because the winner is chosen by drawing a random ticket each time, short runs can deviate from the target ratio purely by chance (e.g., a low-ticket job could win several draws in a row); the guarantee only holds as a long-run average, by the law of large numbers."
+    },
+    {
+      "id": "card-d6ti",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "scheduling",
+        "lottery-scheduling",
+        "stride-scheduling",
+        "cfs",
+        "proportional-share"
+      ],
+      "prompt": "Which job does stride scheduling pick to run next?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/proportional-share-scheduling.md",
+        "block": "card-d6ti"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 9 (Scheduling: Proportional Share)"
+      ],
+      "answer": "The scheduler always picks whichever runnable job currently has the lowest accumulated pass value, then adds that job's stride to its pass value — since a high-ticket job's stride is small, its pass value climbs slowly, so it gets picked more often."
+    },
+    {
+      "id": "card-kae7",
+      "format": "cloze",
+      "category": "os-virtualization",
+      "tags": [
+        "scheduling",
+        "lottery-scheduling",
+        "stride-scheduling",
+        "cfs",
+        "proportional-share"
+      ],
+      "prompt": "Linux's CFS (Completely Fair Scheduler) takes a related but distinct approach: instead of tickets, it tracks each runnable process's ___, virtual runtime, which increases as the process consumes CPU time, and always runs whichever runnable process currently has the lowest vruntime — approximating an ideal where every process's vruntime advances at the same rate.",
+      "source": {
+        "path": "vault/operating-systems/virtualization/proportional-share-scheduling.md",
+        "block": "card-kae7"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 9 (Scheduling: Proportional Share)"
+      ],
+      "answer": "vruntime"
+    },
+    {
+      "id": "card-o1j1",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "scheduling",
+        "lottery-scheduling",
+        "stride-scheduling",
+        "cfs",
+        "proportional-share"
+      ],
+      "prompt": "How does CFS use \"nice\" values to give some processes a larger share of the CPU than others?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/proportional-share-scheduling.md",
+        "block": "card-o1j1"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 9 (Scheduling: Proportional Share)"
+      ],
+      "answer": "A process's nice value sets a weight that scales how fast its vruntime accumulates per unit of real CPU time — a higher-priority (lower nice) process's vruntime grows more slowly for the same work, so it appears to have run \"less\" and gets picked again sooner."
+    },
+    {
+      "id": "card-577n",
+      "format": "mcq",
+      "category": "os-virtualization",
+      "tags": [
+        "scheduling",
+        "lottery-scheduling",
+        "stride-scheduling",
+        "cfs",
+        "proportional-share"
+      ],
+      "prompt": "Two jobs run under lottery scheduling: A has 100 tickets, B has 300 tickets (400 total). What is B's expected long-run share of the CPU?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/proportional-share-scheduling.md",
+        "block": "card-577n"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 9 (Scheduling: Proportional Share)"
+      ],
+      "choices": [
+        {
+          "text": "25%",
+          "correct": false
+        },
+        {
+          "text": "50%",
+          "correct": false
+        },
+        {
+          "text": "75%",
+          "correct": true
+        },
+        {
+          "text": "100%, since it holds the most tickets",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-eap6",
+      "format": "recall",
+      "category": "os-virtualization",
+      "tags": [
+        "scheduling",
+        "lottery-scheduling",
+        "stride-scheduling",
+        "cfs",
+        "proportional-share"
+      ],
+      "prompt": "Explain why stride scheduling can reproduce lottery scheduling's target ratios with far less short-term variance, given that both are driven by the same underlying ticket counts.",
+      "source": {
+        "path": "vault/operating-systems/virtualization/proportional-share-scheduling.md",
+        "block": "card-eap6"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 9 (Scheduling: Proportional Share)"
+      ]
+    },
+    {
+      "id": "card-yk72",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "scheduling",
+        "fifo",
+        "sjf",
+        "stcf",
+        "round-robin",
+        "turnaround-time",
+        "response-time"
+      ],
+      "prompt": "Why can a scheduler that is excellent for turnaround time be terrible for response time?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/scheduling-basics.md",
+        "block": "card-yk72"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 7 (Scheduling: Introduction)"
+      ],
+      "answer": "Optimizing turnaround favors running whichever job finishes soonest to completion without interruption, but that can force an interactive job to wait behind a long job's entire run before it is ever touched, producing a long response time even though total turnaround looks good on average."
+    },
+    {
+      "id": "card-n52o",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "scheduling",
+        "fifo",
+        "sjf",
+        "stcf",
+        "round-robin",
+        "turnaround-time",
+        "response-time"
+      ],
+      "prompt": "What is the \"convoy effect\" in FIFO scheduling?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/scheduling-basics.md",
+        "block": "card-n52o"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 7 (Scheduling: Introduction)"
+      ],
+      "answer": "A short, quick job gets queued behind a long-running job that arrived slightly earlier, so many short jobs collectively wait on one long one, inflating average turnaround time well beyond what the jobs' own lengths would justify."
+    },
+    {
+      "id": "card-terk",
+      "format": "cloze",
+      "category": "os-virtualization",
+      "tags": [
+        "scheduling",
+        "fifo",
+        "sjf",
+        "stcf",
+        "round-robin",
+        "turnaround-time",
+        "response-time"
+      ],
+      "prompt": "STCF optimizes for turnaround time but is bad for ___ under a mix of short and long jobs, because a long job that is not yet finished can still be picked over a job that has been waiting a while, if a still-shorter job keeps arriving.",
+      "source": {
+        "path": "vault/operating-systems/virtualization/scheduling-basics.md",
+        "block": "card-terk"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 7 (Scheduling: Introduction)"
+      ],
+      "answer": "response time"
+    },
+    {
+      "id": "card-wfas",
+      "format": "qa",
+      "category": "os-virtualization",
+      "tags": [
+        "scheduling",
+        "fifo",
+        "sjf",
+        "stcf",
+        "round-robin",
+        "turnaround-time",
+        "response-time"
+      ],
+      "prompt": "Why does an overly short RR time slice hurt performance despite better response time?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/scheduling-basics.md",
+        "block": "card-wfas"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 7 (Scheduling: Introduction)"
+      ],
+      "answer": "A very short time slice means the fixed cost of a context switch (saving and restoring register state, flushing caches/TLB entries) happens far more often relative to useful work done, so switching overhead starts to dominate and total throughput drops."
+    },
+    {
+      "id": "card-ihhj",
+      "format": "mcq",
+      "category": "os-virtualization",
+      "tags": [
+        "scheduling",
+        "fifo",
+        "sjf",
+        "stcf",
+        "round-robin",
+        "turnaround-time",
+        "response-time"
+      ],
+      "prompt": "Jobs A (100ms), B (10ms), C (10ms) all arrive at time 0 and run under FIFO in that order. Which policy would give B and C the best average turnaround time here?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/scheduling-basics.md",
+        "block": "card-ihhj"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 7 (Scheduling: Introduction)"
+      ],
+      "choices": [
+        {
+          "text": "FIFO, unchanged",
+          "correct": false
+        },
+        {
+          "text": "SJF, running B and C before A",
+          "correct": true
+        },
+        {
+          "text": "Round robin with a 50ms time slice",
+          "correct": false
+        },
+        {
+          "text": "Running A first always minimizes turnaround for all three",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-6wdi",
+      "format": "recall",
+      "category": "os-virtualization",
+      "tags": [
+        "scheduling",
+        "fifo",
+        "sjf",
+        "stcf",
+        "round-robin",
+        "turnaround-time",
+        "response-time"
+      ],
+      "prompt": "Explain why no single scheduling policy can simultaneously minimize average turnaround time and minimize average response time for a mixed workload of long and short jobs — what is the fundamental tension?",
+      "source": {
+        "path": "vault/operating-systems/virtualization/scheduling-basics.md",
+        "block": "card-6wdi"
+      },
+      "citations": [
+        "Arpaci-Dusseau, OSTEP, Ch. 7 (Scheduling: Introduction)"
       ]
     }
   ]
