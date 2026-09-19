@@ -18,7 +18,7 @@ two classic pipelined protocols differ in how they recover from loss.
 
 In Go-Back-N, what does the sender retransmit once it detects a lost segment? :: On detecting a lost or out-of-order segment (via a timeout or an out-of-order ACK), the sender retransmits that segment and every segment sent after it, even ones the receiver already got correctly. ^card-4gu6
 
-In selective repeat, which segment does the sender retransmit after a loss, and how does the receiver treat segments that arrive out of order? :: Both sender and receiver maintain a window and buffer out-of-order segments; only the specific lost segment is retransmitted, and the receiver individually acknowledges each correctly received segment. ^card-n2ae
+In selective repeat, what's retransmitted after a loss, and how are out-of-order segments handled? :: Both sender and receiver maintain a window and buffer out-of-order segments; only the specific lost segment is retransmitted, and the receiver individually acknowledges each correctly received segment. ^card-n2ae
 
 Go-Back-N needs a smaller receiver buffer than selective repeat because the
 receiver ==discards== any out-of-order segment instead of buffering it, ^card-jhpu

@@ -45,6 +45,10 @@ notes never produce cards.
 
 ### 3.2 Card syntax
 
+> Reconciled with `pipeline/src/cards.ts` on 2026-09-19. The parser was
+> hardened during Phase 1 after this section was written; the divergences
+> are folded in below rather than left for the README to silently correct.
+
 Four constructs across three grading modes (machine-graded choice, machine-graded cloze, self-graded):
 
 ```markdown
@@ -83,6 +87,21 @@ from a previous connection being accepted by a new one. ^card-p2x1
 
 Syntax overlaps deliberately with the Obsidian Spaced Repetition plugin, so
 notes remain useful outside this app.
+
+**Parsing rules that shape what actually produces a card:**
+
+- A run of plain prose lines is joined into one logical block before
+  matching, so a cloze or qa sentence hard-wrapped across two source lines
+  yields one complete prompt rather than a fragment — the single worst
+  content defect of Phase 1 (80 of 82 cloze prompts were sentence fragments
+  before this was fixed). Blank lines, headings, list items, and
+  blockquotes/callouts each end a block; they never join with a neighbour.
+- Highlights and `::` pairs inside fenced code blocks (` ``` ` or `~~~`) are
+  never parsed as card syntax — the vault is programming notes, and
+  constructs like `if (a == b && c == d)` were otherwise producing a bogus
+  cloze that got written back into the user's note.
+- A highlight must hug non-whitespace on both sides: `==1500 bytes==`
+  produces a card, `== 1500 bytes ==` does not.
 
 ### 3.3 Citations
 
