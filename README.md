@@ -82,6 +82,32 @@ from a previous connection being accepted by a new one.
 Syntax deliberately overlaps the Obsidian Spaced Repetition plugin, so notes
 stay useful outside this app too.
 
+### Vault conventions
+
+**Folder structure is free; `category` is not.** The pipeline derives
+`category` only from a note's frontmatter (`pipeline/src/frontmatter.ts`);
+which folder the note lives in affects nothing but its `source.path`
+(provenance, and the `obsidian://` deep link). Organize folders however
+reads best in Obsidian.
+
+`category`, though, is load-bearing: the scheduler buckets and interleaves
+the daily session by category to improve discrimination between similar
+concepts (spec §5), and Phase 2's per-category mastery bars redirect
+attention toward weak topics (spec §8.3). A category that's too big
+undermines both — it dominates interleaving and its mastery bar averages
+into uselessness. Aim for roughly 8–12 notes per category, matching the
+existing three. When a source spans more ground than that, split it into
+several categories under one folder rather than one oversized category — for
+example OSTEP is organized as three categories
+(`os-virtualization`, `os-concurrency`, `os-persistence`), matching the
+book's three parts, all under a single `vault/operating-systems/` folder.
+
+**Notes are topic-scoped, not chapter-scoped.** A note should cover one
+coherent topic (e.g. `dns.md` covers a topic as a unit), not mirror a single
+textbook chapter. Group related chapters into one note when they read
+better together — address translation, paging, and TLBs make one note, not
+three thin ones.
+
 ## Stable ids
 
 Every card gets a `^card-xxxx` block-reference anchor. The build Action
