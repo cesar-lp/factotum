@@ -71,3 +71,9 @@ body {
   flex: 1; padding: 14px 0; border-radius: 10px; border: 1px solid var(--line);
   background: var(--surface); color: var(--text); font-size: 13px; text-transform: capitalize;
 }
+
+.field { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.field select, .field input {
+  padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--text); font-size: 16px; max-width: 140px;
+}
