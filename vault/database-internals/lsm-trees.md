@@ -7,7 +7,7 @@ citations: ["Petrov, Database Internals, Ch. 7"]
 # LSM-Trees and Compaction
 
 An LSM-tree buffers recent writes in an in-memory ==memtable==, backed by ^card-drcz
-a write-ahead log for crash safety; once the memtable fills up, it is
+a write-ahead log for crash safety; once that buffer fills up, it is
 flushed to disk as an immutable, sorted **SSTable** segment. Because
 segments are immutable and sorted, they can be merged efficiently and
 searched with a sparse index, but a single key can end up duplicated

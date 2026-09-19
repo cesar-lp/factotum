@@ -13,7 +13,7 @@ which is why a common interaction pattern shows up throughout the OS's
 device-handling code, not just in one driver.
 
 The simplest way to drive a device is ==polling==: repeatedly read the ^card-cfps
-status register in a loop until it reports the device is ready. Polling is
+status register in a loop until it reports the device is ready. That's
 simple but wastes CPU cycles spinning while a slow device does its work.
 
 Why do fast devices sometimes perform better with polling than with interrupts? :: An interrupt costs a context switch and trap-handling overhead; if a device usually finishes before that overhead would even be paid, briefly polling is cheaper than triggering, delivering, and dispatching an interrupt for a result that was already ready by the time it arrived. ^card-1j36

@@ -14,7 +14,7 @@ much CPU as job B, rather than being ranked by length or arrival order.
 Lottery scheduling implements this with randomness. Each job holds some
 number of ==tickets==, and on every scheduling decision the scheduler ^card-178l
 draws a random winning ticket and runs whichever job holds it — a job
-with twice the tickets of another wins (and thus runs) about twice as
+with twice as many as another wins (and thus runs) about twice as
 often, in expectation, over many draws.
 
 Why is lottery scheduling only probabilistically fair over short intervals? :: Because the winner is chosen by drawing a random ticket each time, short runs can deviate from the target ratio purely by chance (e.g., a low-ticket job could win several draws in a row); the guarantee only holds as a long-run average, by the law of large numbers. ^card-adbt
@@ -44,8 +44,8 @@ Linux's CFS (Completely Fair Scheduler) takes a related but distinct
 approach: instead of tickets, it tracks each runnable process's
 ==vruntime==, virtual runtime, which increases as the process consumes ^card-kae7
 CPU time, and always runs whichever runnable process currently has the
-lowest vruntime — approximating an ideal where every process's vruntime
-advances at the same rate.
+lowest such value — approximating an ideal where every process's virtual
+runtime advances at the same rate.
 
 How does CFS use "nice" values to give some processes a larger share of the CPU than others? :: A process's nice value sets a weight that scales how fast its vruntime accumulates per unit of real CPU time — a higher-priority (lower nice) process's vruntime grows more slowly for the same work, so it appears to have run "less" and gets picked again sooner. ^card-o1j1
 

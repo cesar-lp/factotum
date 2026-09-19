@@ -27,11 +27,11 @@ potentially returning stale data.
 
 Replication can be ==synchronous== (the leader waits for a follower to ^card-b8zh
 confirm before acknowledging the write to the client) or asynchronous
-(the leader acknowledges immediately without waiting). Fully synchronous
-replication to all followers would make the system unavailable if any one
-follower is slow or down, so real systems typically use synchronous
-replication to just one follower ("semi-synchronous") and async to the
-rest, or go fully async and accept possible data loss on leader failure.
+(the leader acknowledges immediately without waiting). Waiting on every
+follower before acknowledging would make the system unavailable if any
+one follower is slow or down, so real systems typically wait on just one
+follower before acknowledging ("semi-sync") and go async to the rest, or
+skip waiting entirely and accept possible data loss on leader failure.
 
 **Read-your-writes** consistency guarantees a user sees their own prior
 writes on a subsequent read, even if that read is served by a lagging

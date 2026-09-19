@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-19T17:17:52.044Z",
+  "generatedAt": "2026-09-19T17:44:02.215Z",
   "cards": [
     {
       "id": "card-rb57",
@@ -523,7 +523,7 @@
         "partial-failure",
         "fencing-tokens"
       ],
-      "prompt": "A ___ is a monotonically increasing number issued alongside a lock or lease grant; a resource being protected can then reject any write tagged with a fencing token lower than the highest one it has already seen, protecting against a paused process that wakes up believing it still holds the lock.",
+      "prompt": "A ___ is a monotonically increasing number issued alongside a lock or lease grant; a resource being protected can then reject any write carrying a number lower than the highest one it has already seen, protecting against a paused process that wakes up believing it still holds the lock.",
       "source": {
         "path": "vault/data-systems/distributed-trouble.md",
         "block": "card-kg0z"
@@ -1181,7 +1181,7 @@
         "read-your-writes",
         "consistency"
       ],
-      "prompt": "Replication can be ___ (the leader waits for a follower to confirm before acknowledging the write to the client) or asynchronous (the leader acknowledges immediately without waiting). Fully synchronous replication to all followers would make the system unavailable if any one follower is slow or down, so real systems typically use synchronous replication to just one follower (\"semi-synchronous\") and async to the rest, or go fully async and accept possible data loss on leader failure.",
+      "prompt": "Replication can be ___ (the leader waits for a follower to confirm before acknowledging the write to the client) or asynchronous (the leader acknowledges immediately without waiting). Waiting on every follower before acknowledging would make the system unavailable if any one follower is slow or down, so real systems typically wait on just one follower before acknowledging (\"semi-sync\") and go async to the rest, or skip waiting entirely and accept possible data loss on leader failure.",
       "source": {
         "path": "vault/data-systems/replication.md",
         "block": "card-b8zh"
@@ -1432,7 +1432,7 @@
         "ssm",
         "compaction"
       ],
-      "prompt": "A B-tree stores data in fixed-size ___, each of which is referenced by other pages the way a tree's parent references children, and updating a value means finding the containing page and overwriting it in place.",
+      "prompt": "A B-tree stores data in fixed-size ___, referenced from a parent the way a tree references child nodes, and updating a value means finding the containing page and overwriting it in place.",
       "source": {
         "path": "vault/data-systems/storage-engines.md",
         "block": "card-hnpk"
@@ -1748,7 +1748,7 @@
         "fanout",
         "disk-seeks"
       ],
-      "prompt": "A B-tree's ___ is the number of child pointers a single node can hold; high fanout is what keeps tree height — and therefore the number of disk seeks needed to find a key — low, since each level of the tree can represent a much larger multiple of keys than in a binary tree.",
+      "prompt": "A B-tree's ___ is the number of child pointers a single node can hold; a high value here is what keeps tree height — and therefore the number of disk seeks needed to find a key — low, since each level of the tree can represent a much larger multiple of keys than in a binary tree.",
       "source": {
         "path": "vault/database-internals/btree-basics.md",
         "block": "card-vohr"
@@ -1803,7 +1803,7 @@
         "fanout",
         "disk-seeks"
       ],
-      "prompt": "Each node lives on one disk page, and a node's ___ is how full that page is relative to its capacity; B-tree implementations typically enforce a minimum occupancy (e.g. at least half full) so pages aren't mostly wasted space, while still allowing partially-filled nodes so inserts don't force a rewrite on every operation.",
+      "prompt": "Each node lives on one disk page, and a node's ___ is how full that page is relative to its capacity; B-tree implementations typically enforce a minimum fill level (e.g. at least half full) so pages aren't mostly wasted space, while still allowing partially-filled nodes so inserts don't force a rewrite on every operation.",
       "source": {
         "path": "vault/database-internals/btree-basics.md",
         "block": "card-ih4x"
@@ -2161,7 +2161,7 @@
         "consensus",
         "leader-election"
       ],
-      "prompt": "**Paxos** is a family of protocols letting a set of nodes agree on a single value despite failures and message delays, built around two phases: in the **prepare** phase a proposer asks a majority of acceptors to promise not to accept any proposal numbered lower than its own, and in the **accept** phase it asks that same majority to actually accept a value. Because both phases require agreement from a ___ of nodes, and any two majorities out of a fixed set must overlap in at least one node, an acceptor that already promised a higher-numbered proposal blocks a stale proposer from committing a conflicting value — this majority overlap is the core mechanism, not just a vague assertion that Paxos \"prevents\" conflicting decisions.",
+      "prompt": "**Paxos** is a family of protocols letting a set of nodes agree on a single value despite failures and message delays, built around two phases: in the **prepare** phase a proposer asks more than half the acceptors to promise not to accept any proposal numbered lower than its own, and in the **accept** phase it asks that same group to actually accept a value. Because both phases require agreement from a ___ of nodes, and any two such quorums out of a fixed set must overlap in at least one node, an acceptor that already promised a higher-numbered proposal blocks a stale proposer from committing a conflicting value — this quorum overlap is the core mechanism, not just a vague assertion that Paxos \"prevents\" conflicting decisions.",
       "source": {
         "path": "vault/database-internals/consensus.md",
         "block": "card-ubdh"
@@ -2279,7 +2279,7 @@
         "consensus",
         "leader-election"
       ],
-      "prompt": "Once elected, a Raft leader handles all client writes and replicates each one as a log entry to its followers; an entry is considered ___ once a majority of nodes have stored it in their log, after which the leader applies it to its state machine and informs followers to do the same on their next contact. A stale leader (one that lost contact and no longer holds a majority) cannot get new entries committed, because it cannot reach that majority.",
+      "prompt": "Once elected, a Raft leader handles all client writes and replicates each one as a log entry to its followers; an entry is considered ___ once a majority of nodes have stored it in their log, after which the leader applies it to its state machine and informs followers to do the same on their next contact. A stale leader (one that lost contact and no longer holds a majority) cannot get any new entry across that same threshold, because it cannot reach a majority of nodes.",
       "source": {
         "path": "vault/database-internals/consensus.md",
         "block": "card-mnci"
@@ -2627,7 +2627,7 @@
         "amplification",
         "sstable"
       ],
-      "prompt": "An LSM-tree buffers recent writes in an in-memory ___, backed by a write-ahead log for crash safety; once the memtable fills up, it is flushed to disk as an immutable, sorted **SSTable** segment. Because segments are immutable and sorted, they can be merged efficiently and searched with a sparse index, but a single key can end up duplicated across many segments until compaction cleans it up.",
+      "prompt": "An LSM-tree buffers recent writes in an in-memory ___, backed by a write-ahead log for crash safety; once that buffer fills up, it is flushed to disk as an immutable, sorted **SSTable** segment. Because segments are immutable and sorted, they can be merged efficiently and searched with a sparse index, but a single key can end up duplicated across many segments until compaction cleans it up.",
       "source": {
         "path": "vault/database-internals/lsm-trees.md",
         "block": "card-drcz"
@@ -3305,7 +3305,7 @@
         "recovery",
         "buffer-management"
       ],
-      "prompt": "Steal and force are independent axes: a system can be steal/no-force, no-steal/force, or any other combination, and the choice determines which recovery work (redo, undo, or both) is needed after a crash. Most production engines use ___, because pinning all of a transaction's pages in memory (no-steal) or flushing everything at every commit (force) is too costly, and instead accept the extra recovery complexity of needing both redo and undo logic.",
+      "prompt": "Steal and force are independent axes, so a system can combine them freely — steal with no-force, no-steal with force, or any other pairing — and the choice determines which recovery work (redo, undo, or both) is needed after a crash. Most production engines use ___, because pinning all of a transaction's pages in memory (no-steal) or flushing everything at every commit (force) is too costly, and instead accept the extra recovery complexity of needing both redo and undo logic.",
       "source": {
         "path": "vault/database-internals/transaction-processing.md",
         "block": "card-p9kf"
@@ -6829,7 +6829,7 @@
         "corruption",
         "scrubbing"
       ],
-      "prompt": "A ___ is a small value computed from a block's data so that a later mismatch between the stored checksum and a freshly recomputed one reveals the data changed, without needing to keep a full second copy of the block just to compare against.",
+      "prompt": "A ___ is a small value computed from a block's data so that a later mismatch between the stored value and a freshly recomputed one reveals the data changed, without needing to keep a full second copy of the block just to compare against.",
       "source": {
         "path": "vault/operating-systems/persistence/data-integrity-and-checksums.md",
         "block": "card-ettn"
@@ -7473,7 +7473,7 @@
         "ftl",
         "wear-levelling"
       ],
-      "prompt": "Flash memory can be read and written at ___ granularity but can only be erased at the larger block granularity (a block holds many pages), so overwriting a single page in place would require first erasing — and therefore rewriting — its entire containing block.",
+      "prompt": "Flash memory can be read and written at ___ granularity but can only be erased at the larger block granularity (each such unit holds many pages), so overwriting even one of them in place would require first erasing — and therefore rewriting — the whole surrounding region.",
       "source": {
         "path": "vault/operating-systems/persistence/flash-and-ssds.md",
         "block": "card-3t2z"
@@ -7493,7 +7493,7 @@
         "ftl",
         "wear-levelling"
       ],
-      "prompt": "Flash memory can be read and written at page granularity but can only be erased at the larger ___ granularity (a block holds many pages), so overwriting a single page in place would require first erasing — and therefore rewriting — its entire containing block.",
+      "prompt": "Flash memory can be read and written at page granularity but can only be erased at the larger ___ granularity (each such unit holds many pages), so overwriting even one of them in place would require first erasing — and therefore rewriting — the whole surrounding region.",
       "source": {
         "path": "vault/operating-systems/persistence/flash-and-ssds.md",
         "block": "card-yc4w"
@@ -7825,7 +7825,7 @@
         "polling",
         "dma"
       ],
-      "prompt": "The simplest way to drive a device is ___: repeatedly read the status register in a loop until it reports the device is ready. Polling is simple but wastes CPU cycles spinning while a slow device does its work.",
+      "prompt": "The simplest way to drive a device is ___: repeatedly read the status register in a loop until it reports the device is ready. That's simple but wastes CPU cycles spinning while a slow device does its work.",
       "source": {
         "path": "vault/operating-systems/persistence/io-devices-interrupts-dma.md",
         "block": "card-cfps"
@@ -8257,7 +8257,7 @@
         "fault-tolerance",
         "parity"
       ],
-      "prompt": "RAID-5 tolerates exactly ___ disk failure per stripe: losing a second disk before the array finishes rebuilding from the first loses data, because a stripe's parity can only reconstruct one missing block, not two.",
+      "prompt": "RAID-5 tolerates exactly ___ disk failure per stripe: losing a second disk before the array finishes rebuilding from the first loses data, because a stripe's parity can only reconstruct a single missing block, not two.",
       "source": {
         "path": "vault/operating-systems/persistence/raid.md",
         "block": "card-b03p"
@@ -8495,7 +8495,7 @@
         "base-and-bounds",
         "fragmentation"
       ],
-      "prompt": "The simplest scheme is base-and-bounds (dynamic relocation): the CPU has a ___ register holding where this process's memory starts in physical RAM, and a bounds register holding the size of that region. A virtual address is translated by adding the base, and the hardware checks the address against the bounds first to catch out-of-range accesses.",
+      "prompt": "The simplest scheme is dynamic relocation using a pair of hardware registers: the CPU has a ___ register holding where this process's memory starts in physical RAM, and a bounds register holding the size of that region. A virtual address is translated by adding that starting offset, and the hardware checks the address against the size limit first to catch out-of-range accesses.",
       "source": {
         "path": "vault/operating-systems/virtualization/address-translation-and-segmentation.md",
         "block": "card-l5f7"
@@ -8516,7 +8516,7 @@
         "base-and-bounds",
         "fragmentation"
       ],
-      "prompt": "The simplest scheme is base-and-bounds (dynamic relocation): the CPU has a base register holding where this process's memory starts in physical RAM, and a ___ register holding the size of that region. A virtual address is translated by adding the base, and the hardware checks the address against the bounds first to catch out-of-range accesses.",
+      "prompt": "The simplest scheme is dynamic relocation using a pair of hardware registers: the CPU has a base register holding where this process's memory starts in physical RAM, and a ___ register holding the size of that region. A virtual address is translated by adding that starting offset, and the hardware checks the address against the size limit first to catch out-of-range accesses.",
       "source": {
         "path": "vault/operating-systems/virtualization/address-translation-and-segmentation.md",
         "block": "card-nkcw"
@@ -8773,7 +8773,7 @@
         "mode-switch",
         "system-calls"
       ],
-      "prompt": "The hardware provides two privilege levels. In ___, code cannot directly issue privileged instructions (like ones that touch disk or reconfigure the MMU) — attempting one causes the hardware to trap into the OS instead. In kernel mode, the OS itself runs with full access to the hardware. A process's normal code always runs in user mode.",
+      "prompt": "The hardware provides two privilege levels. In ___, code cannot directly issue privileged instructions (like ones that touch disk or reconfigure the MMU) — attempting one causes the hardware to trap into the OS instead. In kernel mode, the OS itself runs with full access to the hardware. A process's normal code always runs at that lower privilege level.",
       "source": {
         "path": "vault/operating-systems/virtualization/limited-direct-execution.md",
         "block": "card-zjlo"
@@ -8793,7 +8793,7 @@
         "mode-switch",
         "system-calls"
       ],
-      "prompt": "The hardware provides two privilege levels. In user mode, code cannot directly issue privileged instructions (like ones that touch disk or reconfigure the MMU) — attempting one causes the hardware to trap into the OS instead. In ___, the OS itself runs with full access to the hardware. A process's normal code always runs in user mode.",
+      "prompt": "The hardware provides two privilege levels. In user mode, code cannot directly issue privileged instructions (like ones that touch disk or reconfigure the MMU) — attempting one causes the hardware to trap into the OS instead. In ___, the OS itself runs with full access to the hardware. A process's normal code always runs at that lower privilege level.",
       "source": {
         "path": "vault/operating-systems/virtualization/limited-direct-execution.md",
         "block": "card-ohmn"
@@ -9583,7 +9583,7 @@
         "cfs",
         "proportional-share"
       ],
-      "prompt": "Lottery scheduling implements this with randomness. Each job holds some number of ___, and on every scheduling decision the scheduler draws a random winning ticket and runs whichever job holds it — a job with twice the tickets of another wins (and thus runs) about twice as often, in expectation, over many draws.",
+      "prompt": "Lottery scheduling implements this with randomness. Each job holds some number of ___, and on every scheduling decision the scheduler draws a random winning ticket and runs whichever job holds it — a job with twice as many as another wins (and thus runs) about twice as often, in expectation, over many draws.",
       "source": {
         "path": "vault/operating-systems/virtualization/proportional-share-scheduling.md",
         "block": "card-178l"
@@ -9646,7 +9646,7 @@
         "cfs",
         "proportional-share"
       ],
-      "prompt": "Linux's CFS (Completely Fair Scheduler) takes a related but distinct approach: instead of tickets, it tracks each runnable process's ___, virtual runtime, which increases as the process consumes CPU time, and always runs whichever runnable process currently has the lowest vruntime — approximating an ideal where every process's vruntime advances at the same rate.",
+      "prompt": "Linux's CFS (Completely Fair Scheduler) takes a related but distinct approach: instead of tickets, it tracks each runnable process's ___, virtual runtime, which increases as the process consumes CPU time, and always runs whichever runnable process currently has the lowest such value — approximating an ideal where every process's virtual runtime advances at the same rate.",
       "source": {
         "path": "vault/operating-systems/virtualization/proportional-share-scheduling.md",
         "block": "card-kae7"

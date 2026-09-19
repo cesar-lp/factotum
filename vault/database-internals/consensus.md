@@ -8,14 +8,14 @@ citations: ["Petrov, Database Internals, Ch. 13-14"]
 
 **Paxos** is a family of protocols letting a set of nodes agree on a
 single value despite failures and message delays, built around two
-phases: in the **prepare** phase a proposer asks a majority of
+phases: in the **prepare** phase a proposer asks more than half the
 acceptors to promise not to accept any proposal numbered lower than
-its own, and in the **accept** phase it asks that same majority to
+its own, and in the **accept** phase it asks that same group to
 actually accept a value. Because both phases require agreement from a
-==majority== of nodes, and any two majorities out of a fixed set must ^card-ubdh
+==majority== of nodes, and any two such quorums out of a fixed set must ^card-ubdh
 overlap in at least one node, an acceptor that already promised a
 higher-numbered proposal blocks a stale proposer from committing a
-conflicting value — this majority overlap is the core mechanism, not
+conflicting value — this quorum overlap is the core mechanism, not
 just a vague assertion that Paxos "prevents" conflicting decisions.
 
 > [!card] mcq
@@ -47,8 +47,9 @@ each one as a log entry to its followers; an entry is considered
 ==committed== once a majority of nodes have stored it in their log, ^card-mnci
 after which the leader applies it to its state machine and informs
 followers to do the same on their next contact. A stale leader (one
-that lost contact and no longer holds a majority) cannot get new
-entries committed, because it cannot reach that majority.
+that lost contact and no longer holds a majority) cannot get any new
+entry across that same threshold, because it cannot reach a majority
+of nodes.
 
 What does a Raft term number protect against, given that leader election can occasionally produce more than one node that believes it is leader? :: A term is a monotonically increasing counter that every message carries; a node that sees a higher term than its own steps down, so at most one leader can actually get entries committed for any given term (an old leader from a stale term is rejected once a follower has seen a newer term), preventing two leaders from both successfully appending conflicting log entries. ^card-7e8t
 
