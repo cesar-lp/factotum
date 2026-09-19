@@ -6,7 +6,11 @@ import { mergeDeck } from './db/deck.js';
 import { loadReviews, newCardsSeenToday } from './db/reviews.js';
 import { buildSession } from './scheduler/queue.js';
 import { renderDashboard } from './ui/dashboard.js';
+import { startReview } from './ui/review.js';
+import { renderSettings } from './ui/settings.js';
 import type { Deck } from '../../pipeline/src/types.js';
+
+const REPO = 'cesar-lp/factotum';
 
 const root = document.querySelector<HTMLElement>('#app');
 if (!root) throw new Error('#app missing');
@@ -48,15 +52,23 @@ export async function currentSession(db: FactotumDb, now: Date): Promise<StoredC
   });
 }
 
-async function boot(): Promise<void> {
-  const db = await openDb();
-  const settings = await getSettings(db);
-  if (settings.theme !== 'auto') document.documentElement.dataset['theme'] = settings.theme;
-
-  const syncOk = await syncDeck(db);
-  const cardCount = await db.count('cards');
+async function route(db: FactotumDb, deckUnavailable: boolean): Promise<void> {
   const session = await currentSession(db, new Date());
-  const deckUnavailable = cardCount === 0 && !syncOk;
+
+  if (window.location.hash === '#review' && session.length > 0) {
+    await startReview(root!, {
+      db,
+      session,
+      repo: REPO,
+      onDone: () => { window.location.hash = ''; }
+    });
+    return;
+  }
+
+  if (window.location.hash === '#settings') {
+    await renderSettings(root!, db, () => { window.location.hash = ''; });
+    return;
+  }
 
   renderDashboard(root!, {
     dueCount: session.length,
@@ -64,6 +76,19 @@ async function boot(): Promise<void> {
     onStart: () => { window.location.hash = '#review'; },
     onSettings: () => { window.location.hash = '#settings'; }
   });
+}
+
+async function boot(): Promise<void> {
+  const db = await openDb();
+  const settings = await getSettings(db);
+  if (settings.theme !== 'auto') document.documentElement.dataset['theme'] = settings.theme;
+
+  const syncOk = await syncDeck(db);
+  const cardCount = await db.count('cards');
+  const deckUnavailable = cardCount === 0 && !syncOk;
+
+  window.addEventListener('hashchange', () => { void route(db, deckUnavailable); });
+  await route(db, deckUnavailable);
 }
 
 void boot();

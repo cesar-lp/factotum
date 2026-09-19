@@ -35,3 +35,31 @@ body {
   display: inline-block; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
   padding: 4px 9px; border-radius: 99px; background: var(--accent-soft); color: var(--accent);
 }
+
+.review { justify-content: flex-start; }
+.progress { height: 4px; border-radius: 2px; background: var(--line); overflow: hidden; margin: 8px 0 4px; }
+.progress > i { display: block; height: 100%; background: var(--accent); transition: width 0.2s; }
+
+.prompt-area { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 12px; }
+.prompt { font-size: 22px; line-height: 1.35; margin: 0; }
+
+.action-area { display: flex; flex-direction: column; gap: 8px; }
+.choice {
+  width: 100%; text-align: left; padding: 14px; border-radius: 10px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--text); font-size: 16px;
+}
+.choice.is-correct { border-color: var(--ok); background: var(--ok-soft); }
+.choice.is-wrong { border-color: var(--bad); background: var(--bad-soft); }
+
+.answer-input {
+  width: 100%; padding: 14px; border-radius: 10px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--text); font-size: 17px;
+}
+.expected { text-align: center; font-size: 18px; color: var(--ok); margin: 4px 0; }
+.citation { text-align: center; font-size: 12px; color: var(--dim); margin: 0; }
+
+.rating-row { display: flex; gap: 6px; }
+.rate {
+  flex: 1; padding: 14px 0; border-radius: 10px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--text); font-size: 13px; text-transform: capitalize;
+}
