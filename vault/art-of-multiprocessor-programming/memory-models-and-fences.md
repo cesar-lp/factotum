@@ -1,7 +1,7 @@
 ---
 category: amp
 tags: [memory-models, reordering, fences, atomics, volatile]
-citations: ["Herlihy & Shavit, The Art of Multiprocessor Programming, memory models appendix", "Adve & Gharachorloo, \"Shared Memory Consistency Models: A Tutorial\" (1996)"]
+citations: ["Herlihy & Shavit, The Art of Multiprocessor Programming, Appendix A (Software Basics, Java Memory Model); Appendix B (Hardware Basics, Relaxed Memory Consistency)", "Adve & Gharachorloo, \"Shared Memory Consistency Models: A Tutorial\" (1996)"]
 ---
 
 # Memory Models, Reordering, and Fences

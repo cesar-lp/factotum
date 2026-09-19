@@ -1,7 +1,7 @@
 ---
 category: amp
 tags: [mutual-exclusion, peterson-lock, bakery-algorithm, progress-conditions]
-citations: ["Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 2 (Mutual Exclusion)", "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)"]
+citations: ["Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 2 (Mutual Exclusion)", "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)", "Peterson, \"Myths About the Mutual Exclusion Problem\" (1981)"]
 ---
 
 # Mutual Exclusion: Correctness Conditions and Read/Write-Only Locks

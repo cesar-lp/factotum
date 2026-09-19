@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-19T18:02:17.335Z",
+  "generatedAt": "2026-09-19T18:10:14.746Z",
   "cards": [
     {
       "id": "card-6fmp",
@@ -180,7 +180,7 @@
         "block": "card-i4bf"
       },
       "citations": [
-        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and Stacks)",
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and the ABA Problem; Concurrent Stacks and Elimination)",
         "Michael & Scott, \"Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms\" (1996)"
       ],
       "answer": "Treiber stack"
@@ -201,7 +201,7 @@
         "block": "card-5sev"
       },
       "citations": [
-        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and Stacks)",
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and the ABA Problem; Concurrent Stacks and Elimination)",
         "Michael & Scott, \"Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms\" (1996)"
       ],
       "answer": "A failed CAS only means another thread's push or pop changed the top since it was read, not that the caller's own operation was invalid; retrying with the current top keeps the operation attempting until it succeeds, which is exactly what gives the algorithm lock-free, system-wide progress instead of abandoning the caller."
@@ -222,7 +222,7 @@
         "block": "card-e6va"
       },
       "citations": [
-        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and Stacks)",
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and the ABA Problem; Concurrent Stacks and Elimination)",
         "Michael & Scott, \"Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms\" (1996)"
       ],
       "answer": "helps by CAS-ing tail forward itself"
@@ -243,7 +243,7 @@
         "block": "card-ffpp"
       },
       "citations": [
-        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and Stacks)",
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and the ABA Problem; Concurrent Stacks and Elimination)",
         "Michael & Scott, \"Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms\" (1996)"
       ],
       "choices": [
@@ -281,7 +281,7 @@
         "block": "card-s8fy"
       },
       "citations": [
-        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and Stacks)",
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and the ABA Problem; Concurrent Stacks and Elimination)",
         "Michael & Scott, \"Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms\" (1996)"
       ],
       "answer": "With a plain value, 5 really is 5 again — no hidden state was lost in between. With a pointer, the same address can now refer to an entirely different node after being freed and reallocated, so a CAS that only compares the address believes nothing changed while the object actually behind it is completely different."
@@ -302,7 +302,7 @@
         "block": "card-iifp"
       },
       "citations": [
-        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and Stacks)",
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and the ABA Problem; Concurrent Stacks and Elimination)",
         "Michael & Scott, \"Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms\" (1996)"
       ],
       "answer": "Tagging"
@@ -323,7 +323,7 @@
         "block": "card-p1wf"
       },
       "citations": [
-        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and Stacks)",
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and the ABA Problem; Concurrent Stacks and Elimination)",
         "Michael & Scott, \"Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms\" (1996)"
       ],
       "answer": "Hazard pointers"
@@ -344,7 +344,7 @@
         "block": "card-9nrz"
       },
       "citations": [
-        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and Stacks)",
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and the ABA Problem; Concurrent Stacks and Elimination)",
         "Michael & Scott, \"Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms\" (1996)"
       ]
     },
@@ -364,7 +364,7 @@
         "block": "card-13y8"
       },
       "citations": [
-        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 5 (The Relative Power of Primitive Synchronization Operations)",
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 5-6 (The Relative Power of Primitive Synchronization Operations; Universality of Consensus)",
         "Herlihy, \"Wait-Free Synchronization\" (1991)"
       ],
       "answer": "consensus number"
@@ -385,7 +385,7 @@
         "block": "card-7xuo"
       },
       "citations": [
-        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 5 (The Relative Power of Primitive Synchronization Operations)",
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 5-6 (The Relative Power of Primitive Synchronization Operations; Universality of Consensus)",
         "Herlihy, \"Wait-Free Synchronization\" (1991)"
       ],
       "answer": "consensus number one"
@@ -406,7 +406,7 @@
         "block": "card-8r5c"
       },
       "citations": [
-        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 5 (The Relative Power of Primitive Synchronization Operations)",
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 5-6 (The Relative Power of Primitive Synchronization Operations; Universality of Consensus)",
         "Herlihy, \"Wait-Free Synchronization\" (1991)"
       ],
       "answer": "Peterson's lock is a blocking construction — a thread can wait indefinitely for another to release it — not a wait-free one; the consensus-number-one impossibility is specifically about wait-free protocols, so a blocking mutual-exclusion algorithm built from registers doesn't fall under it at all."
@@ -427,7 +427,7 @@
         "block": "card-qdek"
       },
       "citations": [
-        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 5 (The Relative Power of Primitive Synchronization Operations)",
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 5-6 (The Relative Power of Primitive Synchronization Operations; Universality of Consensus)",
         "Herlihy, \"Wait-Free Synchronization\" (1991)"
       ],
       "choices": [
@@ -465,7 +465,7 @@
         "block": "card-qfu8"
       },
       "citations": [
-        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 5 (The Relative Power of Primitive Synchronization Operations)",
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 5-6 (The Relative Power of Primitive Synchronization Operations; Universality of Consensus)",
         "Herlihy, \"Wait-Free Synchronization\" (1991)"
       ],
       "answer": "unbounded consensus number"
@@ -486,7 +486,7 @@
         "block": "card-v47a"
       },
       "citations": [
-        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 5 (The Relative Power of Primitive Synchronization Operations)",
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 5-6 (The Relative Power of Primitive Synchronization Operations; Universality of Consensus)",
         "Herlihy, \"Wait-Free Synchronization\" (1991)"
       ]
     },
@@ -506,7 +506,7 @@
         "block": "card-2dqf"
       },
       "citations": [
-        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 5 (The Relative Power of Primitive Synchronization Operations)",
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 5-6 (The Relative Power of Primitive Synchronization Operations; Universality of Consensus)",
         "Herlihy, \"Wait-Free Synchronization\" (1991)"
       ],
       "answer": "CAS's unbounded consensus number makes it universal by itself, together with registers, for implementing any wait-free object regardless of how many threads contend; test-and-set's consensus number of two caps what it alone can wait-free-implement once more than two threads are involved, however it is combined with registers."
@@ -691,7 +691,7 @@
         "block": "card-qfvk"
       },
       "citations": [
-        "Herlihy & Shavit, The Art of Multiprocessor Programming, memory models appendix",
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Appendix A (Software Basics, Java Memory Model); Appendix B (Hardware Basics, Relaxed Memory Consistency)",
         "Adve & Gharachorloo, \"Shared Memory Consistency Models: A Tutorial\" (1996)"
       ],
       "answer": "single-threaded, as-if-serial"
@@ -713,7 +713,7 @@
         "block": "card-6aje"
       },
       "citations": [
-        "Herlihy & Shavit, The Art of Multiprocessor Programming, memory models appendix",
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Appendix A (Software Basics, Java Memory Model); Appendix B (Hardware Basics, Relaxed Memory Consistency)",
         "Adve & Gharachorloo, \"Shared Memory Consistency Models: A Tutorial\" (1996)"
       ],
       "answer": "visible to other cores in an order different from the program order"
@@ -735,7 +735,7 @@
         "block": "card-qivj"
       },
       "citations": [
-        "Herlihy & Shavit, The Art of Multiprocessor Programming, memory models appendix",
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Appendix A (Software Basics, Java Memory Model); Appendix B (Hardware Basics, Relaxed Memory Consistency)",
         "Adve & Gharachorloo, \"Shared Memory Consistency Models: A Tutorial\" (1996)"
       ],
       "answer": "Each core can satisfy its own later load from its local store buffer immediately, before an earlier store has actually become visible to other cores; x86-64 preserves store-store and load-load order but not a store followed by a load to a different address, which is exactly the reordering a store buffer produces."
@@ -757,7 +757,7 @@
         "block": "card-rd9p"
       },
       "citations": [
-        "Herlihy & Shavit, The Art of Multiprocessor Programming, memory models appendix",
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Appendix A (Software Basics, Java Memory Model); Appendix B (Hardware Basics, Relaxed Memory Consistency)",
         "Adve & Gharachorloo, \"Shared Memory Consistency Models: A Tutorial\" (1996)"
       ],
       "choices": [
@@ -796,7 +796,7 @@
         "block": "card-tavd"
       },
       "citations": [
-        "Herlihy & Shavit, The Art of Multiprocessor Programming, memory models appendix",
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Appendix A (Software Basics, Java Memory Model); Appendix B (Hardware Basics, Relaxed Memory Consistency)",
         "Adve & Gharachorloo, \"Shared Memory Consistency Models: A Tutorial\" (1996)"
       ],
       "answer": "`volatile`"
@@ -818,7 +818,7 @@
         "block": "card-cllz"
       },
       "citations": [
-        "Herlihy & Shavit, The Art of Multiprocessor Programming, memory models appendix",
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Appendix A (Software Basics, Java Memory Model); Appendix B (Hardware Basics, Relaxed Memory Consistency)",
         "Adve & Gharachorloo, \"Shared Memory Consistency Models: A Tutorial\" (1996)"
       ],
       "answer": "It only stops the compiler from optimizing away or reordering accesses to that one variable at the source level; it neither makes a read-modify-write sequence atomic, so two threads can still interleave a read and a write, nor emits the hardware fences needed to keep the increment ordered relative to other memory."
@@ -840,7 +840,7 @@
         "block": "card-kqed"
       },
       "citations": [
-        "Herlihy & Shavit, The Art of Multiprocessor Programming, memory models appendix",
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Appendix A (Software Basics, Java Memory Model); Appendix B (Hardware Basics, Relaxed Memory Consistency)",
         "Adve & Gharachorloo, \"Shared Memory Consistency Models: A Tutorial\" (1996)"
       ]
     },
@@ -861,7 +861,7 @@
         "block": "card-z6jo"
       },
       "citations": [
-        "Herlihy & Shavit, The Art of Multiprocessor Programming, memory models appendix",
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Appendix A (Software Basics, Java Memory Model); Appendix B (Hardware Basics, Relaxed Memory Consistency)",
         "Adve & Gharachorloo, \"Shared Memory Consistency Models: A Tutorial\" (1996)"
       ],
       "answer": "Their correctness assumes every CAS acts as a full ordering barrier — nothing before it is reordered past it, and its effect becomes immediately visible to other cores; a naive implementation gives no such guarantee under compiler optimization or real hardware reordering, so the pseudocode can be correct on paper yet silently broken once compiled, unless it uses primitives that genuinely provide that ordering."
@@ -883,7 +883,8 @@
       },
       "citations": [
         "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 2 (Mutual Exclusion)",
-        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)"
+        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)",
+        "Peterson, \"Myths About the Mutual Exclusion Problem\" (1981)"
       ],
       "answer": "Deadlock-freedom"
     },
@@ -904,7 +905,8 @@
       },
       "citations": [
         "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 2 (Mutual Exclusion)",
-        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)"
+        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)",
+        "Peterson, \"Myths About the Mutual Exclusion Problem\" (1981)"
       ],
       "answer": "Starvation-freedom"
     },
@@ -925,7 +927,8 @@
       },
       "citations": [
         "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 2 (Mutual Exclusion)",
-        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)"
+        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)",
+        "Peterson, \"Myths About the Mutual Exclusion Problem\" (1981)"
       ],
       "answer": "Deadlock-freedom only guarantees *some* thread eventually enters, which permits one unlucky thread to be perpetually passed over forever; starvation-freedom additionally guarantees *every* thread that tries eventually enters, ruling that out — every starvation-free algorithm is deadlock-free, but not the reverse."
     },
@@ -946,7 +949,8 @@
       },
       "citations": [
         "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 2 (Mutual Exclusion)",
-        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)"
+        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)",
+        "Peterson, \"Myths About the Mutual Exclusion Problem\" (1981)"
       ],
       "answer": "mutual exclusion and starvation-freedom"
     },
@@ -967,7 +971,8 @@
       },
       "citations": [
         "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 2 (Mutual Exclusion)",
-        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)"
+        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)",
+        "Peterson, \"Myths About the Mutual Exclusion Problem\" (1981)"
       ],
       "choices": [
         {
@@ -1005,7 +1010,8 @@
       },
       "citations": [
         "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 2 (Mutual Exclusion)",
-        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)"
+        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)",
+        "Peterson, \"Myths About the Mutual Exclusion Problem\" (1981)"
       ],
       "answer": "filter lock"
     },
@@ -1026,7 +1032,8 @@
       },
       "citations": [
         "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 2 (Mutual Exclusion)",
-        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)"
+        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)",
+        "Peterson, \"Myths About the Mutual Exclusion Problem\" (1981)"
       ],
       "answer": "The bakery algorithm has every waiting thread draw a strictly increasing ticket number and then enter in ticket order, so a thread that arrived earlier is always served first (bounded waiting); the filter lock only guarantees every thread eventually gets through, with no bound on how many times a given thread can be overtaken by later arrivals first."
     },
@@ -1047,7 +1054,8 @@
       },
       "citations": [
         "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 2 (Mutual Exclusion)",
-        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)"
+        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)",
+        "Peterson, \"Myths About the Mutual Exclusion Problem\" (1981)"
       ]
     },
     {
@@ -1067,7 +1075,8 @@
       },
       "citations": [
         "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 2 (Mutual Exclusion)",
-        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)"
+        "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)",
+        "Peterson, \"Myths About the Mutual Exclusion Problem\" (1981)"
       ],
       "answer": "A thread can be swapped out between the two accesses, so another thread's operations can slip into that gap even though each individual access is indivisible on its own; algorithms like Peterson's have to be built specifically to tolerate that gap, not just assume it away."
     },

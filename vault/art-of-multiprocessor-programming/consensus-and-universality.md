@@ -1,7 +1,7 @@
 ---
 category: amp
 tags: [consensus, compare-and-swap, universal-construction, wait-free]
-citations: ["Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 5 (The Relative Power of Primitive Synchronization Operations)", "Herlihy, \"Wait-Free Synchronization\" (1991)"]
+citations: ["Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 5-6 (The Relative Power of Primitive Synchronization Operations; Universality of Consensus)", "Herlihy, \"Wait-Free Synchronization\" (1991)"]
 ---
 
 # Consensus and the Consensus Number Hierarchy
