@@ -226,5 +226,52 @@ describe('parseCards — inline constructs', () => {
         }
       ]);
     });
+
+    it('warns and keeps the first anchor when a qa block has two pre-existing anchors', () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      try {
+        // A hand-edit collision: two lines in the same joined qa block each
+        // carry their own ^card-xxxx anchor. The second id must not be
+        // silently dropped from the vault without at least a build-log
+        // warning, even though selection (first anchor wins) is unchanged.
+        const body = [
+          'What does "the network model" require ^card-aaaa',
+          'that the relational model does not? :: Pointer-based navigation. ^card-bbbb'
+        ].join('\n');
+        const cards = parseCards(body, 0);
+        expect(cards).toEqual([
+          {
+            id: 'card-aaaa',
+            format: 'qa',
+            prompt: 'What does "the network model" require that the relational model does not?',
+            answer: 'Pointer-based navigation.',
+            anchorLine: 0
+          }
+        ]);
+        expect(warnSpy).toHaveBeenCalledTimes(1);
+        const message = warnSpy.mock.calls[0]?.[0];
+        expect(message).toContain('card-aaaa');
+        expect(message).toContain('card-bbbb');
+        expect(message).toContain('multiple pre-existing anchors');
+      } finally {
+        warnSpy.mockRestore();
+      }
+    });
+
+    it('does not warn for the ordinary single-anchor qa case', () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      try {
+        const body = [
+          'What does "the network model" (a historical predecessor to relational',
+          'databases) require that the relational model does not? :: The network model requires pointer-based navigation. ^card-of38'
+        ].join('\n');
+        const cards = parseCards(body, 0);
+        expect(cards).toHaveLength(1);
+        expect(cards[0]?.id).toBe('card-of38');
+        expect(warnSpy).not.toHaveBeenCalled();
+      } finally {
+        warnSpy.mockRestore();
+      }
+    });
   });
 });

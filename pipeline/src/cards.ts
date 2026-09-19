@@ -138,8 +138,14 @@ function processBlock(lines: string[], memberLines: number[], bodyStartLine: num
     // which is exactly the id-reissue this task must not cause. Preferring
     // any already-anchored line keeps existing ids pinned in place; brand
     // new (never-anchored) wrapped qa pairs still land on the first line.
-    const anchored = blockLines.find((bl) => bl.ids[0] !== null);
-    const owner = anchored ?? blockLines[0];
+    const allAnchored = blockLines.filter((bl) => bl.ids[0] !== null);
+    if (allAnchored.length > 1) {
+      const detail = allAnchored.map((bl) => `${bl.ids[0]} (line ${bodyStartLine + bl.idx})`).join(', ');
+      console.warn(
+        `parseCards: qa block has multiple pre-existing anchors [${detail}]; using ${allAnchored[0]?.ids[0]}`
+      );
+    }
+    const owner = allAnchored[0] ?? blockLines[0];
     if (!owner) throw new Error('processBlock: empty blockLines (invariant violation)');
     return [
       {
