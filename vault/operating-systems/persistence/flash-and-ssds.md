@@ -4,7 +4,7 @@ tags: [ssd, flash, ftl, wear-levelling]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 44 (Flash-based SSDs)"]
 ---
 
-# Flash and SSDs: Erase Blocks, the FTL, and Wear Levelling
+# Flash and SSDs: Erase Blocks, the Flash Translation Layer (FTL), and Wear Levelling
 
 Flash memory can be read and written at ==page== granularity but can only ^card-3t2z
 be erased at the larger ==block== granularity (each such unit holds many ^card-yc4w
@@ -13,7 +13,7 @@ erasing — and therefore rewriting — the whole surrounding region.
 
 Why does an SSD write updates to a fresh page instead of overwriting in place? :: Overwriting in place would force erasing the whole containing block first, a comparatively slow operation, so instead the drive writes the new version to an already-erased page elsewhere and remaps the logical address to it, deferring the erase until garbage collection reclaims the old block later. ^card-5vfk
 
-The flash translation layer (==FTL==) maps the logical block addresses the ^card-hwid
+The ==FTL== maps the logical block addresses the ^card-hwid
 OS uses to physical flash locations, hiding erase-before-write and
 block-level erase granularity from the file system entirely — to the OS,
 the SSD still looks like an ordinary block device.

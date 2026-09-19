@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-19T18:24:02.340Z",
+  "generatedAt": "2026-09-19T18:33:06.558Z",
   "cards": [
     {
       "id": "card-rb57",
@@ -7533,7 +7533,7 @@
         "ftl",
         "wear-levelling"
       ],
-      "prompt": "The flash translation layer (___) maps the logical block addresses the OS uses to physical flash locations, hiding erase-before-write and block-level erase granularity from the file system entirely — to the OS, the SSD still looks like an ordinary block device.",
+      "prompt": "The ___ maps the logical block addresses the OS uses to physical flash locations, hiding erase-before-write and block-level erase granularity from the file system entirely — to the OS, the SSD still looks like an ordinary block device.",
       "source": {
         "path": "vault/operating-systems/persistence/flash-and-ssds.md",
         "block": "card-hwid"
@@ -7709,7 +7709,7 @@
         "seek-time",
         "rotational-latency"
       ],
-      "prompt": "The ___ (shortest seek time first) scheduler always services the pending request closest to the disk head's current position. It minimizes seek distance greedily, but a steady stream of nearby requests can keep pushing a distant request to the back indefinitely.",
+      "prompt": "The ___ scheduler always services the pending request closest to the disk head's current position. It minimizes seek distance greedily, but a steady stream of nearby requests can keep pushing a distant request to the back indefinitely.",
       "source": {
         "path": "vault/operating-systems/persistence/hard-disk-drives.md",
         "block": "card-vo0a"
@@ -7905,7 +7905,7 @@
         "polling",
         "dma"
       ],
-      "prompt": "Without ___ (direct memory access), the CPU itself must copy every byte of a large transfer between a device and memory through the data register, one word at a time — wasteful for anything beyond a few bytes.",
+      "prompt": "Without ___, the CPU itself must copy every byte of a large transfer between a device and memory through the data register, one word at a time — wasteful for anything beyond a few bytes.",
       "source": {
         "path": "vault/operating-systems/persistence/io-devices-interrupts-dma.md",
         "block": "card-0c25"

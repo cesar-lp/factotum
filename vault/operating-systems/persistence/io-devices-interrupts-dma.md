@@ -4,7 +4,7 @@ tags: [io-devices, interrupts, polling, dma]
 citations: ["Arpaci-Dusseau, OSTEP, Ch. 36 (I/O Devices)"]
 ---
 
-# I/O Devices, Interrupts, and DMA
+# I/O Devices, Interrupts, and DMA (Direct Memory Access)
 
 A device typically exposes a small set of registers — status, command, and
 data — that the OS reads and writes to drive it. This canonical protocol
@@ -29,7 +29,7 @@ device might finish almost immediately, and only fall back to interrupts
 if it doesn't — a hybrid that avoids both wasted spinning and needless
 interrupt overhead depending on measured load.
 
-Without ==DMA== (direct memory access), the CPU itself must copy every ^card-0c25
+Without ==DMA==, the CPU itself must copy every ^card-0c25
 byte of a large transfer between a device and memory through the data
 register, one word at a time — wasteful for anything beyond a few bytes.
 
