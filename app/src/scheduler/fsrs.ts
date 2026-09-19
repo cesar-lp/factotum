@@ -15,10 +15,18 @@ export function ratingFor(format: CardFormat, outcome: Outcome): Rating {
       return Rating.Again;
     case 'hard':
       return Rating.Hard;
+    case 'good':
+      return Rating.Good;
     case 'easy':
       return Rating.Easy;
-    default:
+    case 'correct':
       return Rating.Good;
+    case 'wrong':
+      return Rating.Again;
+    default: {
+      const exhaustive: never = outcome;
+      throw new Error(`Unhandled outcome: ${String(exhaustive)}`);
+    }
   }
 }
 
