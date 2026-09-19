@@ -29,7 +29,9 @@ Why does fsck not scale as disks grow into the terabyte range? :: Its recovery t
 Journaling instead writes a description of an update to a small,
 sequential log before touching the update's real, scattered home
 locations at all — turning an unordered set of risky in-place writes into
-one durable, ordered record that recovery can trust.
+one durable, ordered record that recovery can trust. Metadata-only
+journaling is also called ordered journaling, after that same durable
+ordering.
 
 > [!card] recall
 > Explain why write-ahead journaling writes and commits a transaction to
@@ -45,8 +47,8 @@ After a crash, how does a journaling file system know which journal transactions
 Journaling comes in two common flavors. ==Data journaling== writes both a ^card-zosc
 block's content and its metadata to the journal before writing them again
 to their home locations, doubling I/O for every changed block but
-protecting file content itself against a crash. ==Metadata-only (ordered) ^card-jjel
-journaling== logs only metadata, writing data blocks directly to their
+protecting file content itself against a crash. ==Metadata-only journaling== ^card-jjel
+logs only metadata, writing data blocks directly to their
 home locations once, before the commit record — much cheaper, at the cost
 of a smaller window where a crash can leave stale (but not corrupt) data
 behind a valid pointer.

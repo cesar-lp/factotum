@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-19T18:10:14.746Z",
+  "generatedAt": "2026-09-19T18:58:01.629Z",
   "cards": [
     {
       "id": "card-6fmp",
@@ -7275,7 +7275,7 @@
         "producer-consumer",
         "locks"
       ],
-      "prompt": "`pthread_cond_wait(cond, mutex)` requires the caller to already hold `mutex`. Its critical behavior: it ___, so no other thread can slip in and change the shared state in the gap between \"release the lock\" and \"start sleeping.\" When the thread is later woken, `wait` re-acquires the mutex before returning, so the caller resumes still holding the lock it started with.",
+      "prompt": "`pthread_cond_wait(cond, mutex)` requires the caller to already hold `mutex`. Its critical behavior: it ___ releases the mutex and puts the calling thread to sleep, so no other thread can slip in and change the shared state in the gap between \"release the lock\" and \"start sleeping.\" When the thread is later woken, `wait` re-acquires the mutex before returning, so the caller resumes still holding the lock it started with.",
       "source": {
         "path": "vault/operating-systems/concurrency/condition-variables.md",
         "block": "card-bjep"
@@ -7283,7 +7283,7 @@
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 30 (Condition Variables)"
       ],
-      "answer": "atomically releases the mutex and puts the calling thread to sleep"
+      "answer": "atomically"
     },
     {
       "id": "card-48we",
@@ -8102,7 +8102,7 @@
         "producer-consumer",
         "locks"
       ],
-      "prompt": "Used as a ___, a semaphore is initialized to 0: a thread that must wait for some event calls `sem_wait()` and blocks immediately (since the value starts at 0 or below), while the thread that produces the event calls `sem_post()` when it happens. Whichever order the two threads actually run in, the semaphore itself records whether the event has already occurred.",
+      "prompt": "Used as an ___, a semaphore is initialized to 0: a thread that must wait for some event calls `sem_wait()` and blocks immediately (since the value starts at 0 or below), while the thread that produces the event calls `sem_post()` when it happens. Whichever order the two threads actually run in, the semaphore itself records whether the event has already occurred.",
       "source": {
         "path": "vault/operating-systems/concurrency/semaphores.md",
         "block": "card-nv37"
@@ -8110,7 +8110,7 @@
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 31 (Semaphores)"
       ],
-      "answer": "condition variable / ordering primitive"
+      "answer": "ordering primitive"
     },
     {
       "id": "card-g1z3",
@@ -8500,7 +8500,7 @@
         "journaling",
         "write-ahead-logging"
       ],
-      "prompt": "Journaling comes in two common flavors. ___ writes both a block's content and its metadata to the journal before writing them again to their home locations, doubling I/O for every changed block but protecting file content itself against a crash. Metadata-only (ordered) journaling logs only metadata, writing data blocks directly to their home locations once, before the commit record — much cheaper, at the cost of a smaller window where a crash can leave stale (but not corrupt) data behind a valid pointer.",
+      "prompt": "Journaling comes in two common flavors. ___ writes both a block's content and its metadata to the journal before writing them again to their home locations, doubling I/O for every changed block but protecting file content itself against a crash. Metadata-only journaling logs only metadata, writing data blocks directly to their home locations once, before the commit record — much cheaper, at the cost of a smaller window where a crash can leave stale (but not corrupt) data behind a valid pointer.",
       "source": {
         "path": "vault/operating-systems/persistence/crash-consistency-fsck-and-journaling.md",
         "block": "card-zosc"
@@ -8528,7 +8528,7 @@
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 42 (Crash Consistency: FSCK and Journaling)"
       ],
-      "answer": "Metadata-only (ordered) journaling"
+      "answer": "Metadata-only journaling"
     },
     {
       "id": "card-ddml",
@@ -9309,7 +9309,7 @@
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 44 (Flash-based SSDs)"
       ],
-      "answer": "flash translation layer (FTL)"
+      "answer": "FTL"
     },
     {
       "id": "card-a37s",
@@ -9485,7 +9485,7 @@
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 37 (Hard Disk Drives)"
       ],
-      "answer": "SSTF (shortest seek time first)"
+      "answer": "SSTF"
     },
     {
       "id": "card-58v1",
@@ -9681,7 +9681,7 @@
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 36 (I/O Devices)"
       ],
-      "answer": "DMA (direct memory access)"
+      "answer": "DMA"
     },
     {
       "id": "card-kn62",

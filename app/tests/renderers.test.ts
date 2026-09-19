@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { normalizeAnswer, checkCloze, renderPrompt, renderActions, shuffle } from '../src/ui/renderers.js';
+import {
+  normalizeAnswer,
+  checkCloze,
+  isNumericAnswer,
+  renderPrompt,
+  renderActions,
+  shuffle
+} from '../src/ui/renderers.js';
 import { issueUrl } from '../src/ui/flag.js';
 import type { StoredCard } from '../src/db/schema.js';
 import type { Choice } from '../../pipeline/src/types.js';
@@ -15,6 +22,7 @@ const mcq: StoredCard = {
   choices: [{ text: 'Transport', correct: true }, { text: 'Network', correct: false }]
 };
 const recall: StoredCard = { ...base, id: 'card-cccc', format: 'recall', prompt: 'Explain ARQ.' };
+const qa: StoredCard = { ...base, id: 'card-dddd', format: 'qa', prompt: 'What is ARQ?', answer: 'Automatic repeat request' };
 
 // Deterministic PRNG (mulberry32) so shuffle tests are reproducible without
 // depending on Math.random.
@@ -36,6 +44,21 @@ describe('answer checking', () => {
   it('accepts answers differing only by case or spacing', () => {
     expect(checkCloze('1500  BYTES', '1500 bytes')).toBe(true);
     expect(checkCloze('1400 bytes', '1500 bytes')).toBe(false);
+  });
+});
+
+describe('isNumericAnswer', () => {
+  it('is true for purely digit answers', () => {
+    expect(isNumericAnswer('1')).toBe(true);
+    expect(isNumericAnswer('0')).toBe(true);
+    expect(isNumericAnswer('  42  ')).toBe(true); // trims surrounding whitespace first
+  });
+
+  it('is false for ordinary word or mixed answers', () => {
+    expect(isNumericAnswer('SSTF')).toBe(false);
+    expect(isNumericAnswer('1500 bytes')).toBe(false); // digits + word, not purely numeric
+    expect(isNumericAnswer('24-bit')).toBe(false); // punctuation disqualifies it
+    expect(isNumericAnswer('')).toBe(false);
   });
 });
 
@@ -99,6 +122,51 @@ describe('renderActions', () => {
   it('always renders the flag button', () => {
     expect(renderActions(mcq, false)).toContain('data-role="flag"');
     expect(renderActions(recall, true)).toContain('data-role="flag"');
+  });
+
+  describe('revealed cloze feedback (the correct-path bug this branch fixes)', () => {
+    it('a correct answer shows the expected answer and citations, and suppresses the override', () => {
+      const html = renderActions(cloze, true, undefined, 'correct');
+      expect(html).toContain('1500 bytes'); // expected answer still shown
+      expect(html).toContain('RFC 9293'); // citation — this is the bug: it never rendered before
+      expect(html).toContain('data-outcome="continue"');
+      expect(html).not.toContain('data-outcome="override"'); // meaningless when already correct
+      expect(html.toLowerCase()).toContain('correct');
+    });
+
+    it('a wrong answer shows the override alongside Continue and citations', () => {
+      const html = renderActions(cloze, true, undefined, 'wrong');
+      expect(html).toContain('1500 bytes');
+      expect(html).toContain('RFC 9293');
+      expect(html).toContain('data-outcome="continue"');
+      expect(html).toContain('data-outcome="override"');
+    });
+  });
+
+  describe('pre-reveal label: qa vs recall', () => {
+    it('qa keeps "Show answer" — there is an answer key to show', () => {
+      const html = renderActions(qa, false);
+      expect(html).toContain('Show answer');
+    });
+
+    it('recall gets a different label, since it has no answer key by design', () => {
+      const html = renderActions(recall, false);
+      expect(html).not.toContain('Show answer');
+      expect(html).toContain('data-role="reveal"');
+    });
+  });
+
+  describe('qa with a missing answer still degrades safely', () => {
+    it('does not throw, and renders no answer paragraph', () => {
+      const qaNoAnswer: StoredCard = { ...qa, answer: undefined };
+      expect(() => renderActions(qaNoAnswer, true)).not.toThrow();
+      const html = renderActions(qaNoAnswer, true);
+      expect(html).not.toContain('class="expected"');
+      // still gets the rating row — nothing about the missing answer breaks the reveal
+      for (const outcome of ['again', 'hard', 'good', 'easy']) {
+        expect(html).toContain(`data-outcome="${outcome}"`);
+      }
+    });
   });
 });
 

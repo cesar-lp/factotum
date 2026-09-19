@@ -31,6 +31,16 @@ export function checkCloze(input: string, expected: string): boolean {
   return normalizeAnswer(input) === normalizeAnswer(expected);
 }
 
+/**
+ * True when a cloze answer is purely digits, so the input can offer a
+ * numeric keyboard instead of full QWERTY. Deliberately conservative — an
+ * answer with any letter, punctuation or whitespace (e.g. "SSTF", "24-bit")
+ * falls back to text, since a numeric keypad would make those untypeable.
+ */
+export function isNumericAnswer(answer: string): boolean {
+  return /^\d+$/.test(answer.trim());
+}
+
 export function renderPrompt(card: StoredCard): string {
   return `
     <div class="prompt-area">
@@ -66,8 +76,19 @@ function ratingRow(): string {
  * (review.ts) is responsible for shuffling once per card presentation and
  * passing the SAME array back in on both the unrevealed and revealed
  * render, so the two renders agree on which button is which.
+ *
+ * `clozeOutcome` carries whether a revealed cloze's typed answer was
+ * correct or wrong — set by review.ts once it has checked the input — so
+ * this function can render the matching feedback and, for a correct
+ * answer, suppress the "I actually knew this" override (meaningless when
+ * the user was already right).
  */
-export function renderActions(card: StoredCard, revealed: boolean, mcqChoices?: Choice[]): string {
+export function renderActions(
+  card: StoredCard,
+  revealed: boolean,
+  mcqChoices?: Choice[],
+  clozeOutcome?: 'correct' | 'wrong'
+): string {
   const tail = `${citations(card)}${flagButton()}`;
 
   if (card.format === 'mcq') {
@@ -90,31 +111,61 @@ export function renderActions(card: StoredCard, revealed: boolean, mcqChoices?: 
 
   if (card.format === 'cloze') {
     if (!revealed) {
+      const numeric = isNumericAnswer(card.answer ?? '');
       return `
         <div class="action-area">
           <input class="answer-input" data-role="cloze-input" autocapitalize="off"
-                 autocomplete="off" autocorrect="off" placeholder="type answer" />
+                 autocomplete="off" autocorrect="off" enterkeyhint="done"
+                 ${numeric ? 'inputmode="numeric" pattern="[0-9]*"' : ''}
+                 placeholder="type answer" />
           <button class="btn" data-role="check">Check</button>
           ${flagButton()}
         </div>
       `;
     }
+    // Revealed state distinguishes correct from wrong (spec parity with
+    // mcq's revealed branch): a correct answer confirms itself and shows
+    // its citation; a wrong one keeps the override, since a correct
+    // answer has nothing for "I actually knew this" to override.
+    const isCorrect = clozeOutcome === 'correct';
+    const feedback = isCorrect
+      ? `<p class="feedback is-correct">Correct</p>`
+      : `<p class="feedback is-wrong">Not quite</p>`;
+    const override = isCorrect
+      ? ''
+      : `<button class="btn-quiet" data-outcome="override">I actually knew this</button>`;
     return `
       <div class="action-area">
+        ${feedback}
         <p class="expected">${escapeHtml(card.answer ?? '')}</p>
         <button class="btn" data-outcome="continue">Continue</button>
-        <button class="btn-quiet" data-outcome="override">I actually knew this</button>
+        ${override}
         ${tail}
       </div>
     `;
   }
 
   if (!revealed) {
-    return `<div class="action-area"><button class="btn" data-role="reveal">Show answer</button>${flagButton()}</div>`;
+    // qa has an answer key to show; recall is self-graded with none (spec
+    // 3.2), so its pre-reveal label must not promise one — "Show answer"
+    // on a recall card that then shows nothing reads as broken.
+    const label = card.format === 'recall' ? 'Rate yourself' : 'Show answer';
+    return `<div class="action-area"><button class="btn" data-role="reveal">${label}</button>${flagButton()}</div>`;
   }
+  // A recall card with no answer key would otherwise reveal into just a
+  // rating row, which can read as empty rather than as the self-graded
+  // format working as designed. The hint is skipped whenever an answer
+  // paragraph is already rendering (keyed off card.answer, not format, so
+  // a qa card that happens to be missing its answer still degrades safely
+  // instead of double-hinting).
+  const recallHint =
+    card.format === 'recall' && !card.answer
+      ? `<p class="citation">How did you do? Rate yourself below.</p>`
+      : '';
   return `
     <div class="action-area">
       ${card.answer ? `<p class="expected">${escapeHtml(card.answer)}</p>` : ''}
+      ${recallHint}
       ${ratingRow()}
       ${tail}
     </div>

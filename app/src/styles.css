@@ -64,6 +64,9 @@ body {
   background: var(--surface); color: var(--text); font-size: 17px;
 }
 .expected { text-align: center; font-size: 18px; color: var(--ok); margin: 4px 0; }
+.feedback { text-align: center; font-size: 15px; font-weight: 600; margin: 0; }
+.feedback.is-correct { color: var(--ok); }
+.feedback.is-wrong { color: var(--bad); }
 .citation { text-align: center; font-size: 12px; color: var(--dim); margin: 0; }
 
 .rating-row { display: flex; gap: 6px; }
