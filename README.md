@@ -90,17 +90,21 @@ which folder the note lives in affects nothing but its `source.path`
 (provenance, and the `obsidian://` deep link). Organize folders however
 reads best in Obsidian.
 
-`category`, though, is load-bearing: the scheduler buckets and interleaves
-the daily session by category to improve discrimination between similar
-concepts (spec §5), and Phase 2's per-category mastery bars redirect
-attention toward weak topics (spec §8.3). A category that's too big
-undermines both — it dominates interleaving and its mastery bar averages
-into uselessness. Aim for roughly 8–12 notes per category, matching the
-existing three. When a source spans more ground than that, split it into
-several categories under one folder rather than one oversized category — for
-example OSTEP is organized as three categories
-(`os-virtualization`, `os-concurrency`, `os-persistence`), matching the
-book's three parts, all under a single `vault/operating-systems/` folder.
+`category`, though, is load-bearing: the scheduler buckets the daily session
+by category and takes one card per category per round to interleave it
+(spec §5), and Phase 2's per-category mastery bars redirect attention toward
+weak topics (spec §8, item 3). Aim for roughly 8–12 notes per category,
+matching the existing three. A category that spans a whole textbook
+undermines both: its mastery bar averages a wide mix of strong and weak
+material into one uninformative number, and lumping unrelated sub-topics
+together means they never get interleaved against each other within the
+category — which is exactly the discrimination interleaving is for. It also
+drags out the tail of the session, since the round-robin exhausts smaller
+categories first and finishes alone on whatever's left. Split a big source
+into several right-sized categories under one folder instead — for example
+OSTEP is organized as three categories (`os-virtualization`,
+`os-concurrency`, `os-persistence`), matching the book's three parts, all
+under a single `vault/operating-systems/` folder.
 
 **Notes are topic-scoped, not chapter-scoped.** A note should cover one
 coherent topic (e.g. `dns.md` covers a topic as a unit), not mirror a single
