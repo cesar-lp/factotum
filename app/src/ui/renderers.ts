@@ -1,4 +1,21 @@
 import type { StoredCard } from '../db/schema.js';
+import type { Choice } from '../../../pipeline/src/types.js';
+
+/**
+ * Fisher-Yates shuffle. Returns a new array; never mutates `items`.
+ * `rng` defaults to Math.random but accepts an injected generator so
+ * callers (and tests) can get deterministic, seeded output.
+ */
+export function shuffle<T>(items: T[], rng: () => number = Math.random): T[] {
+  const result = items.slice();
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    const temp = result[i] as T;
+    result[i] = result[j] as T;
+    result[j] = temp;
+  }
+  return result;
+}
 
 export function escapeHtml(value: string): string {
   return value
@@ -42,11 +59,20 @@ function ratingRow(): string {
   `;
 }
 
-export function renderActions(card: StoredCard, revealed: boolean): string {
+/**
+ * Renders the action area for a card. For mcq cards, `mcqChoices` — when
+ * given — is used in place of `card.choices` verbatim (no shuffling here;
+ * this function stays a pure, order-preserving renderer). The caller
+ * (review.ts) is responsible for shuffling once per card presentation and
+ * passing the SAME array back in on both the unrevealed and revealed
+ * render, so the two renders agree on which button is which.
+ */
+export function renderActions(card: StoredCard, revealed: boolean, mcqChoices?: Choice[]): string {
   const tail = `${citations(card)}${flagButton()}`;
 
   if (card.format === 'mcq') {
-    const choices = (card.choices ?? [])
+    const choiceList = mcqChoices ?? card.choices ?? [];
+    const choices = choiceList
       .map((choice, index) =>
         `<button class="choice" data-choice="${index}" data-correct="${choice.correct}"
                  ${revealed ? 'disabled' : ''}>
