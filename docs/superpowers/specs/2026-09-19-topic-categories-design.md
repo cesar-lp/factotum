@@ -80,14 +80,24 @@ first run. This is mechanical and content-free:
 | `data-systems` | `data-systems` |
 | `database-internals` | `database-internals` |
 | `amp` | `concurrency` |
+| `os-concurrency` | `concurrency` |
 | `os-virtualization` | `operating-systems` |
-| `os-concurrency` | `operating-systems` |
 | `os-persistence` | `operating-systems` |
 
-Only OSTEP's three categories and `amp` change grouping; the other three
-become single-category shelves, which is the same thing the default rule
-would have produced. They are still written explicitly so every note in the
-vault states its shelf.
+`amp` (Art of Multiprocessor Programming) and `os-concurrency` (OSTEP part
+2) share the `concurrency` shelf: a topic groups by *subject*, not by
+source book, and locks, condition variables and linearizability are one
+study session regardless of which text they came from. The interleaving
+unit is still the category, so the two stay separate buckets within that
+shelf — nothing about their scheduling changes.
+
+`operating-systems` therefore covers virtualization and persistence only,
+which remains coherent (scheduling and memory, plus filesystems and I/O)
+and keeps its name.
+
+The remaining three categories become single-category shelves, which is the
+same thing the default rule would have produced. They are still written
+explicitly so every note in the vault states its shelf.
 
 Folder structure stays free-form. `topic` is derived from frontmatter only,
 never from a path — the same rule `category` already follows.
