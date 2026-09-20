@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-20T22:24:47.972Z",
+  "generatedAt": "2026-09-20T23:44:07.056Z",
   "cards": [
     {
       "id": "card-hdu0",
@@ -33425,6 +33425,4306 @@
         "RFC 9700 (OAuth 2.0 Security Best Current Practice)"
       ],
       "answer": "introspection"
+    },
+    {
+      "id": "card-c94c",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "assertion-validation",
+        "replay",
+        "destination",
+        "in-response-to"
+      ],
+      "prompt": "An SP's response-handling code checks \"does this document contain a valid signature from a key I recognize?\" and, finding one, proceeds to read claims out of an assertion element elsewhere in the same document — one the signature does not cover. Which check was implemented wrong?",
+      "source": {
+        "path": "vault/identity/saml/assertion-validation-at-the-sp.md",
+        "block": "card-c94c"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "choices": [
+        {
+          "text": "The signature check — the SP must require the signature over the specific element it reads, not merely find one somewhere in the document",
+          "correct": true
+        },
+        {
+          "text": "The issuer check — the key belongs to an untrusted party",
+          "correct": false
+        },
+        {
+          "text": "The audience check — the assertion was minted for a different SP",
+          "correct": false
+        },
+        {
+          "text": "Nothing was implemented wrong; a valid signature anywhere in the document is sufficient",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-w3qs",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "assertion-validation",
+        "replay",
+        "destination",
+        "in-response-to"
+      ],
+      "prompt": "Guarding against reuse means the SP has to remember the identifier of every ___ it has already accepted, for at least as long as the assertion's stated validity window remains open — a signed assertion is otherwise just as usable the second time it's presented as the first, since nothing about its signature changes between uses.",
+      "source": {
+        "path": "vault/identity/saml/assertion-validation-at-the-sp.md",
+        "block": "card-w3qs"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "replay"
+    },
+    {
+      "id": "card-hpee",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "assertion-validation",
+        "replay",
+        "destination",
+        "in-response-to"
+      ],
+      "prompt": "An attacker captures a legitimately issued assertion in transit while it is still inside its validity window, and resubmits the identical assertion to the same SP a minute later. Its signature verifies, its issuer and audience are correct, and it has not expired. What is the SP's last line of defense here?",
+      "source": {
+        "path": "vault/identity/saml/assertion-validation-at-the-sp.md",
+        "block": "card-hpee"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "choices": [
+        {
+          "text": "Recognizing that this assertion's id has already been consumed and rejecting the resubmission",
+          "correct": true
+        },
+        {
+          "text": "The expiry check, since a minute is close to the clock-skew allowance",
+          "correct": false
+        },
+        {
+          "text": "The audience check, since a captured assertion was not minted for the attacker",
+          "correct": false
+        },
+        {
+          "text": "There is no defense once signature, issuer, and audience all check out",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-gmbz",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "assertion-validation",
+        "replay",
+        "destination",
+        "in-response-to"
+      ],
+      "prompt": "Matching the endpoint a message actually arrived at against the endpoint the assertion names, the ___ value, is what stops a message that was captured at one endpoint from being replayed successfully against a different one — an assertion aimed at one SP endpoint, or one URL belonging to the same SP, gains nothing by arriving somewhere else, because that mismatch alone is grounds for rejection.",
+      "source": {
+        "path": "vault/identity/saml/assertion-validation-at-the-sp.md",
+        "block": "card-gmbz"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "Destination"
+    },
+    {
+      "id": "card-ge16",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "assertion-validation",
+        "replay",
+        "destination",
+        "in-response-to"
+      ],
+      "prompt": "An SP operates two endpoints for receiving assertions. An assertion correctly signed, correctly issued, and correctly scoped to this SP is intercepted on its way to the first endpoint and resubmitted to the second one instead, before it expires and before it has been consumed anywhere. Which check catches this?",
+      "source": {
+        "path": "vault/identity/saml/assertion-validation-at-the-sp.md",
+        "block": "card-ge16"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "choices": [
+        {
+          "text": "Matching the endpoint the message arrived at against the Destination named in the assertion",
+          "correct": true
+        },
+        {
+          "text": "The audience check, since the two endpoints belong to different services",
+          "correct": false
+        },
+        {
+          "text": "The replay check, since the assertion has already been \"used\" once",
+          "correct": false
+        },
+        {
+          "text": "The validity-window check, since resubmission takes time",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-4mfq",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "assertion-validation",
+        "replay",
+        "destination",
+        "in-response-to"
+      ],
+      "prompt": "When a flow was initiated by the SP itself, the SP sent a request and is now expecting a specific response back — not just a response from the right issuer, about the right audience, that hasn't expired, but one answering a request this SP can actually point to. What is the SP's obligation with respect to InResponseTo?",
+      "source": {
+        "path": "vault/identity/saml/assertion-validation-at-the-sp.md",
+        "block": "card-4mfq"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "To check that value against the request it itself issued and still holds a record of, rejecting any assertion whose InResponseTo does not match a request this SP actually made."
+    },
+    {
+      "id": "card-ftdq",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "assertion-validation",
+        "replay",
+        "destination",
+        "in-response-to"
+      ],
+      "prompt": "Name the two ways of getting SP-side assertion validation wrong that look, from the outside, exactly like a system working normally — right up until the one request that should have been refused isn't.",
+      "source": {
+        "path": "vault/identity/saml/assertion-validation-at-the-sp.md",
+        "block": "card-ftdq"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "Believing any assertion that merely verifies — signed by some recognized key — without also confirming it was minted for this SP by the issuer this SP expects, addressed to the endpoint it arrived at, and answering a request this SP actually made; and never remembering which assertion ids have already been consumed, so a signed assertion stays reusable indefinitely by anyone who obtains it."
+    },
+    {
+      "id": "card-ia2k",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "attributes",
+        "mapping",
+        "groups",
+        "integration"
+      ],
+      "prompt": "The same fact can arrive under wildly different names depending on which identity provider sent it: a long ___-style name from one, and a short, human-readable name from another for the exact same underlying fact.",
+      "source": {
+        "path": "vault/identity/saml/attribute-statements-and-mapping.md",
+        "block": "card-ia2k"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "URI"
+    },
+    {
+      "id": "card-coal",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "attributes",
+        "mapping",
+        "groups",
+        "integration"
+      ],
+      "prompt": "Same fact, different name depending on the source IdP — what does that mean for a service provider's integration code?",
+      "source": {
+        "path": "vault/identity/saml/attribute-statements-and-mapping.md",
+        "block": "card-coal"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "It can't assume attribute names are standardized across identity providers in practice. It has to map whatever naming convention each IdP actually uses onto its own internal fields, and that mapping is typically per-IdP rather than universal."
+    },
+    {
+      "id": "card-jnpz",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "attributes",
+        "mapping",
+        "groups",
+        "integration"
+      ],
+      "prompt": "A single attribute's value isn't guaranteed to be a lone scalar. It can be ___: one attribute carrying more than one entry at once, as when a user belongs to two groups simultaneously.",
+      "source": {
+        "path": "vault/identity/saml/attribute-statements-and-mapping.md",
+        "block": "card-jnpz"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "multi-valued"
+    },
+    {
+      "id": "card-z8jn",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "attributes",
+        "mapping",
+        "groups",
+        "integration"
+      ],
+      "prompt": "Code that reads a group-membership attribute expecting a single string works fine in testing and then throws in production. What's the most likely cause?",
+      "source": {
+        "path": "vault/identity/saml/attribute-statements-and-mapping.md",
+        "block": "card-z8jn"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "The attribute turned out to be multi-valued for that particular user — someone in two groups instead of one — and the code was never written to handle a list of values instead of a lone string."
+    },
+    {
+      "id": "card-afsi",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "attributes",
+        "mapping",
+        "groups",
+        "integration"
+      ],
+      "prompt": "Explain why mapping an identity provider's groups onto a service provider's roles is described as \"the usual purpose and the usual failure\" of attribute statements.",
+      "source": {
+        "path": "vault/identity/saml/attribute-statements-and-mapping.md",
+        "block": "card-afsi"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ]
+    },
+    {
+      "id": "card-c6oi",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "attributes",
+        "mapping",
+        "groups",
+        "integration"
+      ],
+      "prompt": "An assertion arrives without an attribute the service provider expects to be there. What does OASIS leave up to the SP to decide, rather than prescribing a single correct behavior?",
+      "source": {
+        "path": "vault/identity/saml/attribute-statements-and-mapping.md",
+        "block": "card-c6oi"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ],
+      "choices": [
+        {
+          "text": "Whether to refuse the login outright or admit the user with no permissions — the SP must pick one deliberately, in advance",
+          "correct": true
+        },
+        {
+          "text": "The SP must always refuse the login when any expected attribute is missing",
+          "correct": false
+        },
+        {
+          "text": "The SP must always admit the user and grant default permissions",
+          "correct": false
+        },
+        {
+          "text": "The identity provider is responsible for retrying with the attribute included",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-ums4",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "attributes",
+        "mapping",
+        "groups",
+        "integration"
+      ],
+      "prompt": "A missing attribute leaves a service provider with two possible responses. Name them, and explain the risk of not choosing between them deliberately ahead of time.",
+      "source": {
+        "path": "vault/identity/saml/attribute-statements-and-mapping.md",
+        "block": "card-ums4"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "It can refuse the login outright, or admit the user but grant no permissions. The risk of not deciding on purpose is that some accidental code path decides the answer instead, and the actual behavior gets discovered in production rather than designed in advance."
+    },
+    {
+      "id": "card-e7fn",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "bindings",
+        "relaystate",
+        "redirect",
+        "artifact"
+      ],
+      "prompt": "Why can't HTTP-REDIRECT just carry every message, including a large signed Response, since compression already shrinks it before it goes into the URL?",
+      "source": {
+        "path": "vault/identity/saml/bindings-redirect-post-and-artifact.md",
+        "block": "card-e7fn"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Bindings",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "Because compression reduces the size, it doesn't remove the ceiling — a URL still has a length limit that browsers and intermediate servers enforce, and a large signed Response can still exceed it even deflated. HTTP-POST's form field carries no such ceiling at all, which is why the larger message goes there instead."
+    },
+    {
+      "id": "card-xbx4",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "bindings",
+        "relaystate",
+        "redirect",
+        "artifact"
+      ],
+      "prompt": "HTTP-ARTIFACT sends neither the request nor the response itself through the browser. Instead the browser only carries a short ___, which the receiving party then takes back to the sender directly, outside the browser, to retrieve the actual message. Because the payload itself is fetched over that direct channel, it never passes through the user agent at all — the cost is that the two servers now have to be able to reach each other, which the browser-only bindings never require.",
+      "source": {
+        "path": "vault/identity/saml/bindings-redirect-post-and-artifact.md",
+        "block": "card-xbx4"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Bindings",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "reference"
+    },
+    {
+      "id": "card-thc0",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "bindings",
+        "relaystate",
+        "redirect",
+        "artifact"
+      ],
+      "prompt": "Given a fully populated, signed SAML Response and a hard constraint that it must never appear anywhere in the browser, which of the three bindings satisfies that constraint, and why do the other two fail it regardless of message size?",
+      "source": {
+        "path": "vault/identity/saml/bindings-redirect-post-and-artifact.md",
+        "block": "card-thc0"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Bindings",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "HTTP-ARTIFACT, because it hands the browser only a short reference and fetches the real message over a direct server-to-server exchange. HTTP-REDIRECT and HTTP-POST both fail the constraint independent of size — both put the actual message through the browser itself, one in a URL and one in a form field, so the browser sees the payload either way."
+    },
+    {
+      "id": "card-aosu",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "bindings",
+        "relaystate",
+        "redirect",
+        "artifact"
+      ],
+      "prompt": "A SAML message is small enough to survive URL-length limits after compression, and there is no requirement to keep it off the browser. Which binding is the ordinary choice, and what property of the message made HTTP-POST unnecessary here?",
+      "source": {
+        "path": "vault/identity/saml/bindings-redirect-post-and-artifact.md",
+        "block": "card-aosu"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Bindings",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "choices": [
+        {
+          "text": "HTTP-REDIRECT — the message is small enough that packing it into a query parameter doesn't risk truncation, so POST's larger headroom buys nothing",
+          "correct": true
+        },
+        {
+          "text": "HTTP-ARTIFACT — any message small enough to fit in a URL should be kept off the browser entirely",
+          "correct": false
+        },
+        {
+          "text": "HTTP-POST — forms are always preferred once the message is confirmed to be well under any size limit",
+          "correct": false
+        },
+        {
+          "text": "HTTP-REDIRECT — because Redirect is required for every request regardless of size",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-36s7",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "bindings",
+        "relaystate",
+        "redirect",
+        "artifact"
+      ],
+      "prompt": "Separately from how a message travels, a SAML exchange carries ___ alongside it: an opaque value the receiving party echoes back completely unchanged, whose job is to let the sender pick up where the user's browser left off once the round trip finishes.",
+      "source": {
+        "path": "vault/identity/saml/bindings-redirect-post-and-artifact.md",
+        "block": "card-36s7"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Bindings",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "RelayState"
+    },
+    {
+      "id": "card-c8ry",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "bindings",
+        "relaystate",
+        "redirect",
+        "artifact"
+      ],
+      "prompt": "Why must the value that survives a round trip through the browser between request and response never carry confidential content, no matter how convenient it would be to stash it there?",
+      "source": {
+        "path": "vault/identity/saml/bindings-redirect-post-and-artifact.md",
+        "block": "card-c8ry"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Bindings",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "Because a value carried through the browser is exposed the same way anything else routed through it is — visible in the browser's own history and to whatever sits on the path — so anything placed there has to be safe to have seen, not merely useful for remembering the user's destination."
+    },
+    {
+      "id": "card-oppr",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "bindings",
+        "relaystate",
+        "redirect",
+        "artifact"
+      ],
+      "prompt": "Name the three bindings covered here and, for each, state in one sentence the mechanical fact that decides when it gets used — not which SAML message type \"belongs\" to it as a rule, but the physical constraint driving the choice.",
+      "source": {
+        "path": "vault/identity/saml/bindings-redirect-post-and-artifact.md",
+        "block": "card-oppr"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Bindings",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "HTTP-REDIRECT packs the message into a URL query parameter after compression, so it's chosen when the message is small enough to stay safely under URL-length limits. HTTP-POST places the message in an auto-submitting form field instead, removing that size ceiling, so it's chosen when the message is too large to trust to a URL. HTTP-ARTIFACT sends only a short reference through the browser and fetches the real message through a direct exchange between the two servers, so it's chosen when the requirement is that the message never appear in the browser at all, regardless of its size."
+    },
+    {
+      "id": "card-7r7b",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "nameid",
+        "identity",
+        "persistent",
+        "transient"
+      ],
+      "prompt": "The format that matters most for building a durable identity is ___: it returns the same opaque value for a given user on every login from a given identity provider, which is exactly what makes it usable as a primary key in the service provider's own user table.",
+      "source": {
+        "path": "vault/identity/saml/nameid-formats-and-user-identity.md",
+        "block": "card-7r7b"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "persistent"
+    },
+    {
+      "id": "card-z1dt",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "nameid",
+        "identity",
+        "persistent",
+        "transient"
+      ],
+      "prompt": "The opposite design goal produces ___: a fresh, unlinkable value minted per session, so that two logins by the same person can't be correlated by comparing NameIDs. That deliberate unlinkability is also why it can never serve as a key — there's nothing stable to key on.",
+      "source": {
+        "path": "vault/identity/saml/nameid-formats-and-user-identity.md",
+        "block": "card-z1dt"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "transient"
+    },
+    {
+      "id": "card-hsxr",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "nameid",
+        "identity",
+        "persistent",
+        "transient"
+      ],
+      "prompt": "A service provider needs a value that stays the same across every login by a given user, suitable for looking up that user's row in its own database. Which NameID format fits?",
+      "source": {
+        "path": "vault/identity/saml/nameid-formats-and-user-identity.md",
+        "block": "card-hsxr"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ],
+      "choices": [
+        {
+          "text": "Persistent",
+          "correct": true
+        },
+        {
+          "text": "Transient",
+          "correct": false
+        },
+        {
+          "text": "emailAddress",
+          "correct": false
+        },
+        {
+          "text": "Unspecified",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-xyij",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "nameid",
+        "identity",
+        "persistent",
+        "transient"
+      ],
+      "prompt": "An SP wants to let a user complete a single sensitive one-off action via SSO while explicitly avoiding any way to correlate that session with the person's other visits. Which NameID format serves that goal, and why is it unusable for anything the SP wants to persist?",
+      "source": {
+        "path": "vault/identity/saml/nameid-formats-and-user-identity.md",
+        "block": "card-xyij"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "Transient — it mints a new value per session by design, specifically so sessions can't be linked. That same unlinkability is why the value can't be stored anywhere as a stable reference to the user; next login, it's different."
+    },
+    {
+      "id": "card-miof",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "nameid",
+        "identity",
+        "persistent",
+        "transient"
+      ],
+      "prompt": "What does the unspecified NameID format promise about the value it carries?",
+      "source": {
+        "path": "vault/identity/saml/nameid-formats-and-user-identity.md",
+        "block": "card-miof"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "Nothing in particular — it makes no guarantee about stability, uniqueness, or shape. The SP gets whatever string the IdP decided to send, with no format-level contract behind it."
+    },
+    {
+      "id": "card-7dgf",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "nameid",
+        "identity",
+        "persistent",
+        "transient"
+      ],
+      "prompt": "Using an email address as a user's primary identifier can break in two distinct ways — one when addresses change through ordinary life, and a worse one caused by a self-service email-change feature at the identity provider. Explain both.",
+      "source": {
+        "path": "vault/identity/saml/nameid-formats-and-user-identity.md",
+        "block": "card-7dgf"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ]
+    },
+    {
+      "id": "card-1rnk",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "nameid",
+        "identity",
+        "persistent",
+        "transient"
+      ],
+      "prompt": "Why is a self-service email-change feature at the identity provider dangerous for a service provider that keys identity on the emailAddress NameID format?",
+      "source": {
+        "path": "vault/identity/saml/nameid-formats-and-user-identity.md",
+        "block": "card-1rnk"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "Because a user could change their address at the IdP to one that currently identifies — or previously identified — a different account at the SP. The SP would then treat that incoming assertion as belonging to the account tied to that address, effectively handing over someone else's identity."
+    },
+    {
+      "id": "card-i5in",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "nameid",
+        "identity",
+        "persistent",
+        "transient"
+      ],
+      "prompt": "A NameID isn't a bare string with meaning on its own. It's ___: qualified by the identity provider that issued it, and sometimes by the service provider it was issued for. Two different IdPs minting the identical value therefore doesn't mean they're naming the same person — the string only means something within its issuer's scope.",
+      "source": {
+        "path": "vault/identity/saml/nameid-formats-and-user-identity.md",
+        "block": "card-i5in"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "scoped"
+    },
+    {
+      "id": "card-yada",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "troubleshooting",
+        "clock-skew",
+        "key-rotation",
+        "encoding"
+      ],
+      "prompt": "A SAML login has started failing, but not consistently — it works for some users and fails for others, and retrying a failed login a minute later sometimes succeeds where it just failed. Nothing was deployed or rotated recently. Which cause fits best?",
+      "source": {
+        "path": "vault/identity/saml/saml-integration-failure-modes.md",
+        "block": "card-yada"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "choices": [
+        {
+          "text": "Clock skew — the validity window on an assertion is only a few seconds wide, so whether a given login lands inside or outside it depends on exactly how far apart the two servers' clocks have drifted at that moment",
+          "correct": true
+        },
+        {
+          "text": "Certificate rotation — a key changed on one side and the mismatch is being caught inconsistently",
+          "correct": false
+        },
+        {
+          "text": "The assertion is being posted to the wrong endpoint",
+          "correct": false
+        },
+        {
+          "text": "The assertion's encoding is being corrupted by a proxy in the path",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-f1y3",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "troubleshooting",
+        "clock-skew",
+        "key-rotation",
+        "encoding"
+      ],
+      "prompt": "A validity window that narrow means the failure this produces is ___ by nature, tracking clock drift rather than any single broken component, which is exactly what makes it read as flaky rather than as a bug.",
+      "source": {
+        "path": "vault/identity/saml/saml-integration-failure-modes.md",
+        "block": "card-f1y3"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "intermittent"
+    },
+    {
+      "id": "card-wuph",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "troubleshooting",
+        "clock-skew",
+        "key-rotation",
+        "encoding"
+      ],
+      "prompt": "Every single login through a SAML integration stops working within the same few minutes, across every user and every server, with no code deploy and no configuration change on the service's own side. What's the most likely cause?",
+      "source": {
+        "path": "vault/identity/saml/saml-integration-failure-modes.md",
+        "block": "card-wuph"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "choices": [
+        {
+          "text": "Certificate rotation — the identity provider (or the service) rotated its signing key, and the other side is still validating against the old one",
+          "correct": true
+        },
+        {
+          "text": "Clock skew — two independent clocks drifting apart at the same instant, everywhere, simultaneously",
+          "correct": false
+        },
+        {
+          "text": "The assertion is being posted to the wrong endpoint — that would fail some requests, not every request identically",
+          "correct": false
+        },
+        {
+          "text": "Encoding corruption introduced by a proxy — that typically breaks decoding, not signature validation",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-d87j",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "troubleshooting",
+        "clock-skew",
+        "key-rotation",
+        "encoding"
+      ],
+      "prompt": "A rotated key breaks validation for ___, with no warning, because every assertion signed under the new key fails the same check the moment the old key stops being the one either side is looking for. That signature is the reason expiry dates on a signing certificate belong on a calendar rather than in someone's memory — a rotation that was never scheduled is discovered the moment it breaks every login, not before.",
+      "source": {
+        "path": "vault/identity/saml/saml-integration-failure-modes.md",
+        "block": "card-d87j"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "all at once"
+    },
+    {
+      "id": "card-8qpt",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "troubleshooting",
+        "clock-skew",
+        "key-rotation",
+        "encoding"
+      ],
+      "prompt": "Why does posting an assertion to a URL that isn't the one the service actually expects tend to surface as a bare rejection with little diagnostic detail, rather than a specific \"wrong endpoint\" error?",
+      "source": {
+        "path": "vault/identity/saml/saml-integration-failure-modes.md",
+        "block": "card-8qpt"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "Because the receiving handler is validating something it received at a URL it wasn't necessarily built to explain — from its point of view, a message simply arrived somewhere, and if that somewhere doesn't match what was configured or advertised, the simplest and most common response is a generic rejection rather than a message that names the mismatch. The contents themselves are fine, so signature and condition checks give no hint either."
+    },
+    {
+      "id": "card-qafw",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "troubleshooting",
+        "clock-skew",
+        "key-rotation",
+        "encoding"
+      ],
+      "prompt": "A fourth failure hides in the transport rather than in the assertion or the endpoint. A SAML message is compressed and encoded before it travels — ___ and then base64-encoded — and that two-step packaging is exactly the kind of thing an intermediate proxy, framework, or library \"helpfully\" tries to redo.",
+      "source": {
+        "path": "vault/identity/saml/saml-integration-failure-modes.md",
+        "block": "card-qafw"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "deflated"
+    },
+    {
+      "id": "card-f4r2",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "troubleshooting",
+        "clock-skew",
+        "key-rotation",
+        "encoding"
+      ],
+      "prompt": "A SAML message fails to parse, but only when it passes through one particular piece of infrastructure — a proxy, gateway, or framework layer — that isn't present in a working path. What class of bug does that narrow down to, and why does it produce a parse failure rather than a validation failure?",
+      "source": {
+        "path": "vault/identity/saml/saml-integration-failure-modes.md",
+        "block": "card-f4r2"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "An encoding bug: something in that layer is decoding or re-encoding the deflated, base64 message a second time, or applying the wrong step, so the bytes the receiving end tries to inflate and parse are no longer the bytes that were actually sent. It shows up as a parse failure rather than a signature or validation failure because the message never becomes well-formed XML in the first place — the corruption happens before there's anything to validate."
+    },
+    {
+      "id": "card-hcwo",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "troubleshooting",
+        "clock-skew",
+        "key-rotation",
+        "encoding"
+      ],
+      "prompt": "A user authenticates successfully and lands on the service's default landing page instead of the specific page they were trying to reach before logging in — the login worked, but the trip back to where they started didn't. Why is this not an authentication failure at all, and what actually got lost?",
+      "source": {
+        "path": "vault/identity/saml/saml-integration-failure-modes.md",
+        "block": "card-hcwo"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "Every check that matters passed, and the user is correctly logged in, so nothing about authenticating them failed. What's missing is a value that was supposed to travel alongside the request and come back with the response, carrying where the user was trying to go; when that round-trip value is dropped somewhere along the way, the service has nothing left to send the user back to except its default page."
+    },
+    {
+      "id": "card-qjtq",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "troubleshooting",
+        "clock-skew",
+        "key-rotation",
+        "encoding"
+      ],
+      "prompt": "A SAML login is failing and the cause isn't obvious from the error message alone. What's the most productive first move?",
+      "source": {
+        "path": "vault/identity/saml/saml-integration-failure-modes.md",
+        "block": "card-qjtq"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "choices": [
+        {
+          "text": "Capture the actual assertion or request as it crosses the wire and read it directly, rather than reasoning about what the configuration on either side is probably doing",
+          "correct": true
+        },
+        {
+          "text": "Re-check every configuration value on both sides before looking at any live traffic",
+          "correct": false
+        },
+        {
+          "text": "Restart the identity provider and service and see if the problem recurs",
+          "correct": false
+        },
+        {
+          "text": "Assume it's clock skew, since that's the most common cause of an intermittent failure",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-ve96",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "metadata",
+        "trust-model",
+        "key-rotation",
+        "federation"
+      ],
+      "prompt": "A metadata document names the participant with an ___, a URI that identifies who is speaking rather than where a message should be delivered.",
+      "source": {
+        "path": "vault/identity/saml/saml-metadata-and-trust-establishment.md",
+        "block": "card-ve96"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Metadata",
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "entityID"
+    },
+    {
+      "id": "card-ssan",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "metadata",
+        "trust-model",
+        "key-rotation",
+        "federation"
+      ],
+      "prompt": "What does a SAML metadata document publish about a participant, beyond the URI that names it?",
+      "source": {
+        "path": "vault/identity/saml/saml-metadata-and-trust-establishment.md",
+        "block": "card-ssan"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Metadata",
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "The endpoints where messages should be sent, the bindings supported for delivering them, and the public keys the participant will use to sign or decrypt."
+    },
+    {
+      "id": "card-sk00",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "metadata",
+        "trust-model",
+        "key-rotation",
+        "federation"
+      ],
+      "prompt": "Now the part worth understanding properly, because it breaks from how trust usually works elsewhere on the web. SAML trust is ___.",
+      "source": {
+        "path": "vault/identity/saml/saml-metadata-and-trust-establishment.md",
+        "block": "card-sk00"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Metadata",
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "direct"
+    },
+    {
+      "id": "card-gneu",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "metadata",
+        "trust-model",
+        "key-rotation",
+        "federation"
+      ],
+      "prompt": "A relying party validating a SAML assertion's signature needs to decide which key to trust for that signature. How does it decide?",
+      "source": {
+        "path": "vault/identity/saml/saml-metadata-and-trust-establishment.md",
+        "block": "card-gneu"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Metadata",
+        "OASIS SAML 2.0 Core"
+      ],
+      "choices": [
+        {
+          "text": "It already has that specific key configured, handed to it directly by the signing party — there is no chain to walk and no third party to ask",
+          "correct": true
+        },
+        {
+          "text": "It builds a chain from the signing certificate up to a trusted root, the same way a TLS client does",
+          "correct": false
+        },
+        {
+          "text": "It queries a well-known endpoint at connection time to fetch the current signing key",
+          "correct": false
+        },
+        {
+          "text": "It trusts any key presented, since SAML has no concept of key validation",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-ct3x",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "metadata",
+        "trust-model",
+        "key-rotation",
+        "federation"
+      ],
+      "prompt": "Explain why a self-signed certificate is normal and unremarkable in a SAML deployment, when the same thing would be a serious warning sign for a TLS certificate presented by a public website.",
+      "source": {
+        "path": "vault/identity/saml/saml-metadata-and-trust-establishment.md",
+        "block": "card-ct3x"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Metadata",
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "A TLS client has no prior relationship with the site it's connecting to, so it relies on a chain up to a CA already sitting in its trust store to decide the key is legitimate; a self-signed leaf skips that vouching entirely, which is exactly the failure mode chain validation exists to catch. A SAML relying party never walks a chain at all — it was configured in advance with the specific key it should see, out of band. The certificate is only a wrapper carrying that already-trusted key, so whether it happens to be self-signed says nothing about whether the key inside it is the right one."
+    },
+    {
+      "id": "card-ojrs",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "metadata",
+        "trust-model",
+        "key-rotation",
+        "federation"
+      ],
+      "prompt": "Why does nothing about a SAML relationship's signing keys \"renew itself\" the way a JWKS-based setup might?",
+      "source": {
+        "path": "vault/identity/saml/saml-metadata-and-trust-establishment.md",
+        "block": "card-ojrs"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Metadata",
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "There is no discovery step for either side to repeat — each party's copy of the other's key is a static piece of its own configuration, set once out of band. When a key changes, that configuration has to be edited by hand on both sides; nothing is fetched or re-resolved automatically the way a service consulting an issuer's published key set would."
+    },
+    {
+      "id": "card-vn14",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "metadata",
+        "trust-model",
+        "key-rotation",
+        "federation"
+      ],
+      "prompt": "One IdP in a SAML federation rotates its signing key. What has to happen for every service provider trusting that IdP to keep working?",
+      "source": {
+        "path": "vault/identity/saml/saml-metadata-and-trust-establishment.md",
+        "block": "card-vn14"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Metadata",
+        "OASIS SAML 2.0 Core"
+      ],
+      "choices": [
+        {
+          "text": "Each service provider's own configuration must be updated by hand with the new key — nothing propagates on its own",
+          "correct": true
+        },
+        {
+          "text": "Nothing — the new key is discovered automatically the next time a signature is verified",
+          "correct": false
+        },
+        {
+          "text": "Only the service providers whose certificates are about to expire need to act",
+          "correct": false
+        },
+        {
+          "text": "The identity provider pushes the new key to a shared registry that all service providers poll",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-uyha",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "assertion",
+        "sso",
+        "conditions",
+        "statements"
+      ],
+      "prompt": "The person sitting at the browser is not one of the two parties actively negotiating trust — that's the IdP and SP's job. SAML calls this third party the ___: the user whose browser passes messages back and forth between the other two without itself being party to the trust relationship.",
+      "source": {
+        "path": "vault/identity/saml/saml-roles-and-the-assertion.md",
+        "block": "card-uyha"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "principal"
+    },
+    {
+      "id": "card-y80z",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "assertion",
+        "sso",
+        "conditions",
+        "statements"
+      ],
+      "prompt": "What does the identity provider do, and what does the service provider do with what it produces?",
+      "source": {
+        "path": "vault/identity/saml/saml-roles-and-the-assertion.md",
+        "block": "card-y80z"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "The identity provider authenticates the principal and issues statements vouching for facts about them. The service provider consumes those statements to decide what access to grant, without authenticating the user itself."
+    },
+    {
+      "id": "card-dk82",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "assertion",
+        "sso",
+        "conditions",
+        "statements"
+      ],
+      "prompt": "SAML's assertion is a ___ XML document, which is what lets a service provider act on it having never spoken to the identity provider directly: the document vouches for itself.",
+      "source": {
+        "path": "vault/identity/saml/saml-roles-and-the-assertion.md",
+        "block": "card-dk82"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "signed"
+    },
+    {
+      "id": "card-cfgo",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "assertion",
+        "sso",
+        "conditions",
+        "statements"
+      ],
+      "prompt": "An assertion can carry three kinds of statement. Name them, and name the one that's essentially a dead limb in real deployments.",
+      "source": {
+        "path": "vault/identity/saml/saml-roles-and-the-assertion.md",
+        "block": "card-cfgo"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ]
+    },
+    {
+      "id": "card-bggu",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "assertion",
+        "sso",
+        "conditions",
+        "statements"
+      ],
+      "prompt": "An assertion says: \"this subject authenticated at 14:02, using a password.\" Which statement kind is this?",
+      "source": {
+        "path": "vault/identity/saml/saml-roles-and-the-assertion.md",
+        "block": "card-bggu"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ],
+      "choices": [
+        {
+          "text": "Authentication statement",
+          "correct": true
+        },
+        {
+          "text": "Attribute statement",
+          "correct": false
+        },
+        {
+          "text": "Authorization-decision statement",
+          "correct": false
+        },
+        {
+          "text": "Condition",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-3w5v",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "assertion",
+        "sso",
+        "conditions",
+        "statements"
+      ],
+      "prompt": "An assertion says instead: \"this subject belongs to the group finance-admins.\" Which kind of statement is this, and how does its purpose differ from an authentication statement's?",
+      "source": {
+        "path": "vault/identity/saml/saml-roles-and-the-assertion.md",
+        "block": "card-3w5v"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "An attribute statement — it asserts facts about the subject, rather than describing how or when they authenticated. The third kind, the authorization-decision statement, was meant to convey a yes/no access decision directly, but it's essentially unused in practice."
+    },
+    {
+      "id": "card-npg7",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "assertion",
+        "sso",
+        "conditions",
+        "statements"
+      ],
+      "prompt": "Conditions restrict when and to whom an assertion is valid, and both restrictions matter independently: a `NotBefore`/`NotOnOrAfter` window bounds the time, and an ___ restriction bounds the service provider it may be used at.",
+      "source": {
+        "path": "vault/identity/saml/saml-roles-and-the-assertion.md",
+        "block": "card-npg7"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "audience"
+    },
+    {
+      "id": "card-46ox",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "assertion",
+        "sso",
+        "conditions",
+        "statements"
+      ],
+      "prompt": "An assertion minted for one service provider can't be presented to a different one, even if both trust the same identity provider. Why not?",
+      "source": {
+        "path": "vault/identity/saml/saml-roles-and-the-assertion.md",
+        "block": "card-46ox"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "Because the assertion's Conditions element names an audience restriction that scopes it to the intended SP. A different SP falls outside that audience and must reject the assertion even though it trusts the issuing IdP — trusting the issuer doesn't make an assertion addressed elsewhere valid here."
+    },
+    {
+      "id": "card-faef",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "oidc",
+        "federation",
+        "trust-model",
+        "protocol-comparison"
+      ],
+      "prompt": "SAML's XML, document-signing shape ___ the REST-and-JSON web almost entirely, which is why it still reads like a format built for mail between institutions rather than for a browser tab.",
+      "source": {
+        "path": "vault/identity/saml/saml-versus-oidc.md",
+        "block": "card-faef"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "predates"
+    },
+    {
+      "id": "card-1vbm",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "oidc",
+        "federation",
+        "trust-model",
+        "protocol-comparison"
+      ],
+      "prompt": "An OIDC integration instead starts by fetching the provider's ___ document from a well-known URL, which lists its endpoints and where to find its current signing keys, rotated on the provider's own schedule rather than pinned by the relying party.",
+      "source": {
+        "path": "vault/identity/saml/saml-versus-oidc.md",
+        "block": "card-1vbm"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "discovery"
+    },
+    {
+      "id": "card-0aya",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "oidc",
+        "federation",
+        "trust-model",
+        "protocol-comparison"
+      ],
+      "prompt": "Why is it fair to say a SAML federation is \"a set of deliberate pairings\" while an OIDC integration is \"closer to pointing at a URL,\" even though both end with a service trusting an identity provider?",
+      "source": {
+        "path": "vault/identity/saml/saml-versus-oidc.md",
+        "block": "card-0aya"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "Because a SAML trust relationship has no equivalent of a published discovery source — the two sides exchange metadata and pin each other's certificates by hand, and there's no self-updating document either side can just point at later. An OIDC relying party instead reads a published endpoint listing and refreshes keys automatically, so onboarding a new provider looks much more like consuming a URL than negotiating a bespoke bilateral setup."
+    },
+    {
+      "id": "card-i3ol",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "oidc",
+        "federation",
+        "trust-model",
+        "protocol-comparison"
+      ],
+      "prompt": "A client redeems an authorization code for tokens over a channel the browser never touches. A SAML assertion has no equivalent redemption step — why does it have to be self-contained and signed for direct delivery, when an OIDC code can get away with being a short-lived, opaque reference instead?",
+      "source": {
+        "path": "vault/identity/saml/saml-versus-oidc.md",
+        "block": "card-i3ol"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "Because nothing in a SAML exchange calls the identity provider back to redeem anything — the browser posts the assertion straight to the service, so it has to carry everything the service needs to trust it, signature included, in that one document. An OIDC code can be a bare reference precisely because it's never trusted on its own; it only becomes meaningful once the client presents it directly to the token endpoint, a step SAML's browser-post model has no room for."
+    },
+    {
+      "id": "card-yqlb",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "oidc",
+        "federation",
+        "trust-model",
+        "protocol-comparison"
+      ],
+      "prompt": "A university IT department runs an identity provider already used by a dozen partner institutions, all connected years ago through exchanged XML metadata files and pinned certificates. A new campus portal needs single sign-on against that same identity provider. Which protocol fits with the least new work, and why?",
+      "source": {
+        "path": "vault/identity/saml/saml-versus-oidc.md",
+        "block": "card-yqlb"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "choices": [
+        {
+          "text": "SAML — the identity provider and its partners already speak it, so adding the portal is one more pairing into an existing federation",
+          "correct": true
+        },
+        {
+          "text": "OIDC — JSON is inherently simpler to parse than XML, regardless of what the identity provider already speaks",
+          "correct": false
+        },
+        {
+          "text": "OIDC — mobile-era protocols are always the better choice for a brand-new integration",
+          "correct": false
+        },
+        {
+          "text": "Neither; the identity provider should be replaced before adding any new service",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-8vq0",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "oidc",
+        "federation",
+        "trust-model",
+        "protocol-comparison"
+      ],
+      "prompt": "A small startup is building a mobile app with social login and no enterprise customers, current or planned. Someone suggests supporting SAML \"in case a big customer ever asks for it.\" What's the honest assessment?",
+      "source": {
+        "path": "vault/identity/saml/saml-versus-oidc.md",
+        "block": "card-8vq0"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "choices": [
+        {
+          "text": "Skip it for now — a greenfield consumer app choosing SAML ahead of need is making work for itself; OIDC already fits a mobile, API-shaped product, and SAML support can be added later if an enterprise customer's identity provider actually requires it",
+          "correct": true
+        },
+        {
+          "text": "Build SAML support now, since supporting both protocols from day one is always safer",
+          "correct": false
+        },
+        {
+          "text": "Build SAML support now, since SAML is the more modern, actively developed specification",
+          "correct": false
+        },
+        {
+          "text": "Skip SAML forever — it is deprecated and no enterprise identity provider still requires it",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-n3cr",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "oidc",
+        "federation",
+        "trust-model",
+        "protocol-comparison"
+      ],
+      "prompt": "Someone asks which protocol, SAML or OIDC, is simply the better one to standardize on. What's the honest answer, and what actually decides the choice in a given situation?",
+      "source": {
+        "path": "vault/identity/saml/saml-versus-oidc.md",
+        "block": "card-n3cr"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "Neither is the newer-and-therefore-better option. SAML is not deprecated, and for an enterprise whose identity provider only speaks SAML, it's often the only option on the table. A greenfield consumer application choosing SAML anyway is creating work it doesn't need. What decides the choice in practice is usually who runs the identity provider a given service has to trust — not which specification a team finds more appealing."
+    },
+    {
+      "id": "card-sp4w",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "single-logout",
+        "front-channel",
+        "back-channel",
+        "partial-logout"
+      ],
+      "prompt": "Why is single logout a genuinely hard problem, rather than a feature that a better-specified protocol could simply deliver?",
+      "source": {
+        "path": "vault/identity/saml/single-logout-and-why-it-is-hard.md",
+        "block": "card-sp4w"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "Because there is no single session to terminate — each service provider the user visited established and holds its own independent local session, so ending \"the\" session really means separately reaching every one of those service providers and getting each to end its own record, and any one of them can be unreachable, slow, or unresponsive when that attempt is made."
+    },
+    {
+      "id": "card-b322",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "single-logout",
+        "front-channel",
+        "back-channel",
+        "partial-logout"
+      ],
+      "prompt": "In ___ logout, the identity provider drives the user's own browser through each service provider in turn, so every one of them receives its logout request as a step the browser is redirected through.",
+      "source": {
+        "path": "vault/identity/saml/single-logout-and-why-it-is-hard.md",
+        "block": "card-b322"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "front-channel"
+    },
+    {
+      "id": "card-j9l8",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "single-logout",
+        "front-channel",
+        "back-channel",
+        "partial-logout"
+      ],
+      "prompt": "A user logs out and the identity provider begins driving their browser through five service providers in sequence to notify each one. The third service provider's logout endpoint hangs and never returns. What is the resulting state for the user?",
+      "source": {
+        "path": "vault/identity/saml/single-logout-and-why-it-is-hard.md",
+        "block": "card-j9l8"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "choices": [
+        {
+          "text": "Stranded mid-chain — the first two service providers had their sessions ended, the third is unresolved, and the fourth and fifth were never reached at all",
+          "correct": true
+        },
+        {
+          "text": "All five sessions end anyway, since the identity provider tracks the chain independently of the browser",
+          "correct": false
+        },
+        {
+          "text": "Only the third service provider's session survives; the rest end normally",
+          "correct": false
+        },
+        {
+          "text": "The browser automatically skips the unresponsive service provider and completes the rest of the chain transparently",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-cxr0",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "single-logout",
+        "front-channel",
+        "back-channel",
+        "partial-logout"
+      ],
+      "prompt": "The alternative moves the requests off the user's browser entirely. In ___ logout, the identity provider calls each service provider directly, server to server, with nothing routed through the browser and nothing for the user to sit through or get stuck in the middle of.",
+      "source": {
+        "path": "vault/identity/saml/single-logout-and-why-it-is-hard.md",
+        "block": "card-cxr0"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "back-channel"
+    },
+    {
+      "id": "card-rwcg",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "single-logout",
+        "front-channel",
+        "back-channel",
+        "partial-logout"
+      ],
+      "prompt": "Comparing front-channel and back-channel single logout, what does back-channel logout require that front-channel logout does not?",
+      "source": {
+        "path": "vault/identity/saml/single-logout-and-why-it-is-hard.md",
+        "block": "card-rwcg"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "choices": [
+        {
+          "text": "Every service provider must implement a server-to-server logout endpoint and be reachable when the identity provider calls it directly",
+          "correct": true
+        },
+        {
+          "text": "The user's browser must remain open and connected until every service provider responds",
+          "correct": false
+        },
+        {
+          "text": "The identity provider must know the user's session state at each service provider in advance",
+          "correct": false
+        },
+        {
+          "text": "Service providers must share a single logout endpoint with each other",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-3e93",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "single-logout",
+        "front-channel",
+        "back-channel",
+        "partial-logout"
+      ],
+      "prompt": "Whichever shape is used, the outcome that a deployment should expect as *normal*, not exceptional, is ___: some service providers end their session, and some do not, because one was down, one was slow, or one was never actually loaded in the browser to receive its step of the chain.",
+      "source": {
+        "path": "vault/identity/saml/single-logout-and-why-it-is-hard.md",
+        "block": "card-3e93"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "partial logout"
+    },
+    {
+      "id": "card-f7n9",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "single-logout",
+        "front-channel",
+        "back-channel",
+        "partial-logout"
+      ],
+      "prompt": "The awkward part isn't just that partial logout happens — it's that, from where any single service provider sits, there's no way to tell it apart from complete success. Why can't a service provider tell the difference between \"logout succeeded everywhere\" and \"logout succeeded only here\"?",
+      "source": {
+        "path": "vault/identity/saml/single-logout-and-why-it-is-hard.md",
+        "block": "card-f7n9"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "Because each service provider only ever observes its own local outcome — that its own session was ended — and has no visibility into whether the identity provider's requests to every other service provider in the same logout also succeeded; \"everywhere\" is a property of the whole set, and no single member of that set is positioned to observe the whole set."
+    },
+    {
+      "id": "card-enyy",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "single-logout",
+        "front-channel",
+        "back-channel",
+        "partial-logout"
+      ],
+      "prompt": "Given that single logout can silently degrade to partial logout, and that a service provider has no way to detect when that has happened, explain why many real deployments deliberately choose short session lifetimes over relying on single logout as the mechanism that ends access promptly.",
+      "source": {
+        "path": "vault/identity/saml/single-logout-and-why-it-is-hard.md",
+        "block": "card-enyy"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "A short-lived session bounds how long a session that single logout failed to end can remain usable, without depending on every service provider's logout endpoint working, being implemented at all, or being reachable at the moment it matters. Single logout is best effort by construction — no participant can confirm the others succeeded — so a deployment that needs a reliable bound on stale access gets it from expiry, which degrades predictably, rather than from a logout chain that degrades silently."
+    },
+    {
+      "id": "card-ji14",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "sso",
+        "sp-initiated",
+        "idp-initiated",
+        "correlation"
+      ],
+      "prompt": "When the identity provider finishes, it returns a Response, and that Response carries ___ set to the identifier the SP put in its own request. The SP can check that value against the request it remembers issuing, which is exactly what lets it confirm this credential answers something it actually asked for, and lets it look up what the user was trying to reach so it can send them there once login succeeds.",
+      "source": {
+        "path": "vault/identity/saml/sp-initiated-versus-idp-initiated-sso.md",
+        "block": "card-ji14"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Bindings",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "InResponseTo"
+    },
+    {
+      "id": "card-37n8",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "sso",
+        "sp-initiated",
+        "idp-initiated",
+        "correlation"
+      ],
+      "prompt": "What does matching the returned Response's InResponseTo against its own issued request let the SP do for the user's original destination, beyond simply confirming the credential is genuine?",
+      "source": {
+        "path": "vault/identity/saml/sp-initiated-versus-idp-initiated-sso.md",
+        "block": "card-37n8"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Bindings",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "It lets the SP look up the destination it recorded when it issued that request, so once login succeeds it can send the user on to the resource they originally tried to reach, rather than dropping them at some generic landing page."
+    },
+    {
+      "id": "card-fw31",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "sso",
+        "sp-initiated",
+        "idp-initiated",
+        "correlation"
+      ],
+      "prompt": "Because nothing preceded it, that Response is ___: it has no matching identifier from the SP side at all, and the field that would normally carry one is absent.",
+      "source": {
+        "path": "vault/identity/saml/sp-initiated-versus-idp-initiated-sso.md",
+        "block": "card-fw31"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Bindings",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "unsolicited"
+    },
+    {
+      "id": "card-6cpw",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "sso",
+        "sp-initiated",
+        "idp-initiated",
+        "correlation"
+      ],
+      "prompt": "Why does an SP-initiated Response carrying InResponseTo let the SP do something an IdP-initiated Response structurally cannot?",
+      "source": {
+        "path": "vault/identity/saml/sp-initiated-versus-idp-initiated-sso.md",
+        "block": "card-6cpw"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Bindings",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "The SP-initiated Response's InResponseTo lets the SP match the credential against a request it remembers issuing, confirming this is an answer to something it actually asked for. An IdP-initiated Response has no prior request to match against in the first place, so there is nothing for the SP to correlate it to, no matter how carefully it checks."
+    },
+    {
+      "id": "card-w2j1",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "sso",
+        "sp-initiated",
+        "idp-initiated",
+        "correlation"
+      ],
+      "prompt": "A service provider is configured to accept both SP-initiated and IdP-initiated responses. It receives a Response with no InResponseTo field at all. What is the correct interpretation?",
+      "source": {
+        "path": "vault/identity/saml/sp-initiated-versus-idp-initiated-sso.md",
+        "block": "card-w2j1"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Bindings",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "choices": [
+        {
+          "text": "It's an unsolicited response the SP never requested, so the SP cannot check it against any request it remembers issuing",
+          "correct": true
+        },
+        {
+          "text": "It's a malformed SP-initiated response and should be rejected outright",
+          "correct": false
+        },
+        {
+          "text": "InResponseTo is optional in both flows and its absence carries no meaning",
+          "correct": false
+        },
+        {
+          "text": "The SP should treat it as SP-initiated and search its own logs for a matching request",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-0n5y",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "sso",
+        "sp-initiated",
+        "idp-initiated",
+        "correlation"
+      ],
+      "prompt": "Why must a service provider treat the destination carried by an unsolicited response as untrusted input, even after the credential itself checks out?",
+      "source": {
+        "path": "vault/identity/saml/sp-initiated-versus-idp-initiated-sso.md",
+        "block": "card-0n5y"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Bindings",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "Because a valid credential only proves who the user is, not that the place the response is pointing them toward afterward was chosen safely — with no request of its own behind the response, the SP has no expectation of its own to check that destination against, so it has to validate it independently rather than following it on the strength of the login alone."
+    },
+    {
+      "id": "card-ak0q",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "sso",
+        "sp-initiated",
+        "idp-initiated",
+        "correlation"
+      ],
+      "prompt": "Explain why SP-initiated login is preferred wherever a service provider has the choice, and what an SP that does support the IdP-initiated flow anyway has to do to keep that choice from becoming a weakness.",
+      "source": {
+        "path": "vault/identity/saml/sp-initiated-versus-idp-initiated-sso.md",
+        "block": "card-ak0q"
+      },
+      "citations": [
+        "OASIS SAML 2.0 Bindings",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "answer": "SP-initiated login gives the SP its own request to check an incoming Response against, so it can confirm the Response answers something it asked for and know exactly where the user was headed. IdP-initiated login gives up that basis entirely — the Response arrives unsolicited, with nothing on the SP side to correlate it to. An SP that still wants to support it has to opt in deliberately rather than accept unsolicited responses by default, and must treat whatever destination such a response carries as untrusted rather than following it automatically."
+    },
+    {
+      "id": "card-s0rx",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "xml-signature",
+        "canonicalization",
+        "wrapping-attack",
+        "signing"
+      ],
+      "prompt": "A SAML implementation receives a Response whose Assertion is signed but whose outer Response element carries no signature at all. What should the implementation do?",
+      "source": {
+        "path": "vault/identity/saml/xml-signatures-in-saml.md",
+        "block": "card-s0rx"
+      },
+      "citations": [
+        "W3C XML Signature Syntax and Processing",
+        "OASIS SAML 2.0 Core"
+      ],
+      "choices": [
+        {
+          "text": "Know in advance which element it requires signed, and reject the message if that specific element isn't the one carrying a valid signature",
+          "correct": true
+        },
+        {
+          "text": "Accept it, since some element in the message is signed",
+          "correct": false
+        },
+        {
+          "text": "Reject it automatically, since the outer Response is always the element that must be signed",
+          "correct": false
+        },
+        {
+          "text": "Accept it only if the Assertion's signature also happens to cover the Response",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-2pb3",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "xml-signature",
+        "canonicalization",
+        "wrapping-attack",
+        "signing"
+      ],
+      "prompt": "Before anything is hashed, both sides have to reduce the document to one agreed normal form; that reduction step is ___.",
+      "source": {
+        "path": "vault/identity/saml/xml-signatures-in-saml.md",
+        "block": "card-2pb3"
+      },
+      "citations": [
+        "W3C XML Signature Syntax and Processing",
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "canonicalization"
+    },
+    {
+      "id": "card-oytq",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "xml-signature",
+        "canonicalization",
+        "wrapping-attack",
+        "signing"
+      ],
+      "prompt": "What problem does canonicalization solve for an XML signature, and why can't it be skipped?",
+      "source": {
+        "path": "vault/identity/saml/xml-signatures-in-saml.md",
+        "block": "card-oytq"
+      },
+      "citations": [
+        "W3C XML Signature Syntax and Processing",
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "The same XML content can be serialized many different ways — attribute order, whitespace, namespace prefixes can all differ while representing identical data. A signature is computed over one specific byte sequence, so before hashing, both the signer and the verifier have to reduce the document to one agreed normal form. Skipping that step means a signature made over one valid serialization simply won't verify against another equally valid serialization of the same content."
+    },
+    {
+      "id": "card-3343",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "xml-signature",
+        "canonicalization",
+        "wrapping-attack",
+        "signing"
+      ],
+      "prompt": "An XML signature doesn't sign \"the document\"; it signs one specific element, identified by a ___ inside the signature itself. Nothing stops a document from containing an element that carries a perfectly valid signature alongside a second, different element that the signature says nothing about.",
+      "source": {
+        "path": "vault/identity/saml/xml-signatures-in-saml.md",
+        "block": "card-3343"
+      },
+      "citations": [
+        "W3C XML Signature Syntax and Processing",
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "reference"
+    },
+    {
+      "id": "card-f6vg",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "xml-signature",
+        "canonicalization",
+        "wrapping-attack",
+        "signing"
+      ],
+      "prompt": "Explain how a signature wrapping attack can leave an XML signature check reporting success while the application still consumes attacker-controlled data.",
+      "source": {
+        "path": "vault/identity/saml/xml-signatures-in-saml.md",
+        "block": "card-f6vg"
+      },
+      "citations": [
+        "W3C XML Signature Syntax and Processing",
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "The signature in the document is mathematically valid — it does cover some element, and verifying it against that element succeeds. The attack works by making sure the element the application actually reads is a different one than the element the signature's reference points to: the attacker relocates the originally signed element somewhere the application won't look, and plants a new, unsigned element with their own content in the position the application reads by structure or position instead of by reference. Signature verification passes because it never claimed to say anything about that second element."
+    },
+    {
+      "id": "card-uap6",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "xml-signature",
+        "canonicalization",
+        "wrapping-attack",
+        "signing"
+      ],
+      "prompt": "Why is \"the document contains a valid signature\" not sufficient grounds for an application to trust the data it read from that document?",
+      "source": {
+        "path": "vault/identity/saml/xml-signatures-in-saml.md",
+        "block": "card-uap6"
+      },
+      "citations": [
+        "W3C XML Signature Syntax and Processing",
+        "OASIS SAML 2.0 Core"
+      ],
+      "answer": "A signature only vouches for whichever element its reference names — verifying it just confirms that element wasn't tampered with. If the application reads a different element than the one named in the reference, that data was never covered by the signature at all, no matter how solidly the signature itself checks out elsewhere in the document."
+    },
+    {
+      "id": "card-7o60",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-saml",
+      "tags": [
+        "saml",
+        "xml-signature",
+        "canonicalization",
+        "wrapping-attack",
+        "signing"
+      ],
+      "prompt": "What must a safe implementation check to close the signature wrapping gap, beyond confirming the signature's mathematics are valid?",
+      "source": {
+        "path": "vault/identity/saml/xml-signatures-in-saml.md",
+        "block": "card-7o60"
+      },
+      "citations": [
+        "W3C XML Signature Syntax and Processing",
+        "OASIS SAML 2.0 Core"
+      ],
+      "choices": [
+        {
+          "text": "That the reference inside the signature points to the exact element the application is about to consume",
+          "correct": true
+        },
+        {
+          "text": "That the document contains at least one valid signature somewhere",
+          "correct": false
+        },
+        {
+          "text": "That the signing certificate has not expired",
+          "correct": false
+        },
+        {
+          "text": "That the message was delivered over a channel using transport encryption",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-0xvj",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "cookies",
+        "samesite",
+        "httponly",
+        "cookie-scope"
+      ],
+      "prompt": "A cookie marked ___ will only ever be sent over an encrypted connection; over plain HTTP, the browser withholds it entirely, so a value that never travels in the clear can't be picked off by anyone sitting on the network path between client and server.",
+      "source": {
+        "path": "vault/identity/sessions/cookie-attributes-and-scope.md",
+        "block": "card-0xvj"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ],
+      "answer": "Secure"
+    },
+    {
+      "id": "card-8kvs",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "cookies",
+        "samesite",
+        "httponly",
+        "cookie-scope"
+      ],
+      "prompt": "A cookie marked ___ is invisible to `document.cookie` and to any other page script — it can still be sent as a normal request header, but nothing running in the page can read or copy its value.",
+      "source": {
+        "path": "vault/identity/sessions/cookie-attributes-and-scope.md",
+        "block": "card-8kvs"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ],
+      "answer": "HttpOnly"
+    },
+    {
+      "id": "card-y1oe",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "cookies",
+        "samesite",
+        "httponly",
+        "cookie-scope"
+      ],
+      "prompt": "A site has a stored cross-site scripting flaw: an attacker's injected script now runs in the victim's browser, in the page's own origin, and tries `document.cookie` to steal the session value for exfiltration. Which single attribute defeats exactly this attempt?",
+      "source": {
+        "path": "vault/identity/sessions/cookie-attributes-and-scope.md",
+        "block": "card-y1oe"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ],
+      "choices": [
+        {
+          "text": "HttpOnly, since it hides the value from any script running in the page, regardless of how that script got there",
+          "correct": true
+        },
+        {
+          "text": "Secure, since it only governs whether the cookie travels over plaintext connections",
+          "correct": false
+        },
+        {
+          "text": "SameSite, since it only governs whether the cookie attaches to cross-site requests",
+          "correct": false
+        },
+        {
+          "text": "Path, since it only narrows which URLs on the site receive the cookie",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-yot3",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "cookies",
+        "samesite",
+        "httponly",
+        "cookie-scope"
+      ],
+      "prompt": "Dropping Secure creates a different exposure than dropping HttpOnly: describe what an attacker gains from a missing Secure attribute that a correctly-set HttpOnly attribute does nothing to stop.",
+      "source": {
+        "path": "vault/identity/sessions/cookie-attributes-and-scope.md",
+        "block": "card-yot3"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ],
+      "answer": "An attacker positioned on the network path — an open Wi-Fi network, a compromised router — can read the cookie directly off an unencrypted request, because Secure is what keeps it from ever being sent in the clear in the first place; HttpOnly only stops page scripts from reading it and has no effect on what travels over the wire."
+    },
+    {
+      "id": "card-btou",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "cookies",
+        "samesite",
+        "httponly",
+        "cookie-scope"
+      ],
+      "prompt": "A partner site links directly to an authenticated page on yours, and the click is expected to land the user already signed in — the cookie must attach on that very first cross-site navigation. Which SameSite setting would break this by withholding the cookie even on that top-level click?",
+      "source": {
+        "path": "vault/identity/sessions/cookie-attributes-and-scope.md",
+        "block": "card-btou"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ],
+      "choices": [
+        {
+          "text": "Strict — it withholds the cookie on any cross-site request, including top-level navigation",
+          "correct": true
+        },
+        {
+          "text": "Lax — it still attaches the cookie on top-level cross-site navigation",
+          "correct": false
+        },
+        {
+          "text": "None — it attaches the cookie on every cross-site request",
+          "correct": false
+        },
+        {
+          "text": "None of them affect top-level navigation, only subrequests",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-g18l",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "cookies",
+        "samesite",
+        "httponly",
+        "cookie-scope"
+      ],
+      "prompt": "The most permissive setting, `SameSite=`___, attaches the cookie to every cross-site request, subrequest and top-level navigation alike; because that removes the cross-site restriction entirely, the specification requires pairing it with Secure, and a browser receiving it without that pairing discards the cookie outright rather than honoring a maximally exposed setting over plaintext.",
+      "source": {
+        "path": "vault/identity/sessions/cookie-attributes-and-scope.md",
+        "block": "card-g18l"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ],
+      "answer": "None"
+    },
+    {
+      "id": "card-ttjn",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "cookies",
+        "samesite",
+        "httponly",
+        "cookie-scope"
+      ],
+      "prompt": "The ___ prefix collapses the scope decisions above into browser-enforced constraints instead of conventions a developer can get wrong.",
+      "source": {
+        "path": "vault/identity/sessions/cookie-attributes-and-scope.md",
+        "block": "card-ttjn"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ],
+      "answer": "__Host-"
+    },
+    {
+      "id": "card-v2zc",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "cookies",
+        "samesite",
+        "httponly",
+        "cookie-scope"
+      ],
+      "prompt": "A cookie is set with `Domain=corp.example.com` from an app running at `app.corp.example.com`. An unrelated legacy app at `old.corp.example.com` turns out to receive this cookie on every request too. Explain why this happened, and name the prefix that would have made this exact mistake impossible for the browser to accept.",
+      "source": {
+        "path": "vault/identity/sessions/cookie-attributes-and-scope.md",
+        "block": "card-v2zc"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ]
+    },
+    {
+      "id": "card-ofkx",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "credential-storage",
+        "breach-response",
+        "credential-stuffing",
+        "hash-migration"
+      ],
+      "prompt": "Where does most accidental password disclosure actually happen, and why does hardening the database not prevent it?",
+      "source": {
+        "path": "vault/identity/sessions/credential-storage-and-breach-response.md",
+        "block": "card-ofkx"
+      },
+      "citations": [
+        "OWASP Authentication Cheat Sheet",
+        "OWASP Forgot Password Cheat Sheet"
+      ],
+      "answer": "In application logs, request traces, error reports, and analytics — not the password database. A submitted password passes through a request handler, a validation layer, sometimes a third-party monitoring tool, before it ever reaches the hashing step, and any one of those systems can end up writing the raw value to disk (a debug log line, a stack trace that dumps request parameters, an analytics event that captures form fields) without anyone treating that as a credential-storage decision at all."
+    },
+    {
+      "id": "card-ynia",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "credential-storage",
+        "breach-response",
+        "credential-stuffing",
+        "hash-migration"
+      ],
+      "prompt": "Why can't an existing stored hash simply be recomputed at a higher work factor?",
+      "source": {
+        "path": "vault/identity/sessions/credential-storage-and-breach-response.md",
+        "block": "card-ynia"
+      },
+      "citations": [
+        "OWASP Authentication Cheat Sheet",
+        "OWASP Forgot Password Cheat Sheet"
+      ],
+      "answer": "Hashing is one-directional: the stored value is the output of the old, cheaper computation, and there's no way to run it \"in reverse\" and then forward again at a new setting without the original input. The system would need the plaintext password back, and by design it never kept a copy of that."
+    },
+    {
+      "id": "card-gb0g",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "credential-storage",
+        "breach-response",
+        "credential-stuffing",
+        "hash-migration"
+      ],
+      "prompt": "The only moment that plaintext is available again is the ___, when the user has just typed their password in and the system is holding it in memory anyway, on its way to being verified against the old hash. A system that wants to migrate work factors verifies against the stored parameters as normal, and if that check succeeds, immediately re-hashes the same plaintext at the new setting and overwrites the stored value before discarding it. Accounts that don't log in for a long stretch simply carry an old-parameter hash until they do — there's no way to force the upgrade any sooner.",
+      "source": {
+        "path": "vault/identity/sessions/credential-storage-and-breach-response.md",
+        "block": "card-gb0g"
+      },
+      "citations": [
+        "OWASP Authentication Cheat Sheet",
+        "OWASP Forgot Password Cheat Sheet"
+      ],
+      "answer": "next successful login"
+    },
+    {
+      "id": "card-gezh",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "credential-storage",
+        "breach-response",
+        "credential-stuffing",
+        "hash-migration"
+      ],
+      "prompt": "A team wants to migrate every user's password hash from bcrypt at an old work factor to Argon2 at a new one, but refuses to require a mass password reset. Describe the mechanism that lets them do this gradually, and explain why an account that never logs in again will never be migrated.",
+      "source": {
+        "path": "vault/identity/sessions/credential-storage-and-breach-response.md",
+        "block": "card-gezh"
+      },
+      "citations": [
+        "OWASP Authentication Cheat Sheet",
+        "OWASP Forgot Password Cheat Sheet"
+      ],
+      "answer": "They upgrade opportunistically at login: verify the submitted password against the existing bcrypt hash using its stored parameters, and only if that succeeds, hash the same plaintext with Argon2 at the new settings and store the result in place of the old hash. Migration piggybacks on the one moment the plaintext is briefly available. An account that never authenticates again never provides that plaintext, so its hash is stuck at the old algorithm and work factor indefinitely — there's no other path to strengthen it."
+    },
+    {
+      "id": "card-awql",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "credential-storage",
+        "breach-response",
+        "credential-stuffing",
+        "hash-migration"
+      ],
+      "prompt": "That attack — trying breached username/password pairs from elsewhere against a system that has no flaw of its own — is called ___, and it needs defenses that look nothing like the ones built for guessing.",
+      "source": {
+        "path": "vault/identity/sessions/credential-storage-and-breach-response.md",
+        "block": "card-awql"
+      },
+      "citations": [
+        "OWASP Authentication Cheat Sheet",
+        "OWASP Forgot Password Cheat Sheet"
+      ],
+      "answer": "credential stuffing"
+    },
+    {
+      "id": "card-1qea",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "credential-storage",
+        "breach-response",
+        "credential-stuffing",
+        "hash-migration"
+      ],
+      "prompt": "Why does per-account rate limiting do little to stop credential stuffing, even though it works fine against someone brute-forcing a single account?",
+      "source": {
+        "path": "vault/identity/sessions/credential-storage-and-breach-response.md",
+        "block": "card-1qea"
+      },
+      "citations": [
+        "OWASP Authentication Cheat Sheet",
+        "OWASP Forgot Password Cheat Sheet"
+      ],
+      "answer": "Credential stuffing doesn't repeat attempts against one account — it makes one or two attempts each against a huge number of different accounts, using credentials already known to be valid somewhere. A limit on failed attempts per account never triggers, because no single account ever sees more than a couple of tries. The signal that actually distinguishes this traffic is volume and reputation aggregated across the whole login surface — many accounts being tried from the same IP ranges, credential lists, or automation fingerprints — not the failure count on any one of them."
+    },
+    {
+      "id": "card-qdhd",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "credential-storage",
+        "breach-response",
+        "credential-stuffing",
+        "hash-migration"
+      ],
+      "prompt": "Why is \"the passwords were hashed\" not, by itself, a reassuring response to a breach?",
+      "source": {
+        "path": "vault/identity/sessions/credential-storage-and-breach-response.md",
+        "block": "card-qdhd"
+      },
+      "citations": [
+        "OWASP Authentication Cheat Sheet",
+        "OWASP Forgot Password Cheat Sheet"
+      ],
+      "answer": "Because hashing only slows down offline guessing against the stolen table — it doesn't prevent credential stuffing against other services using the same reused passwords, it doesn't retroactively secure sessions that were already active when the breach happened, and it does nothing for users who never find out their credentials were exposed. A response has to invalidate existing sessions tied to affected accounts, force re-authentication, and disclose the breach so people can change reused passwords elsewhere — hashing quality is one input to how bad the breach is, not a substitute for responding to it."
+    },
+    {
+      "id": "card-7mi1",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "csrf",
+        "request-forgery",
+        "synchronizer-token",
+        "same-site",
+        "state-changing-get"
+      ],
+      "prompt": "The mechanism behind cross-site request forgery starts with one fact about cookies: a browser attaches a site's cookies to a request for that site ___, regardless of what caused the browser to send that request in the first place.",
+      "source": {
+        "path": "vault/identity/sessions/csrf-and-request-forgery.md",
+        "block": "card-7mi1"
+      },
+      "citations": [
+        "OWASP Cross-Site Request Forgery Prevention Cheat Sheet"
+      ],
+      "answer": "automatically"
+    },
+    {
+      "id": "card-e97u",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "csrf",
+        "request-forgery",
+        "synchronizer-token",
+        "same-site",
+        "state-changing-get"
+      ],
+      "prompt": "Why doesn't requiring authentication defend against this on its own?",
+      "source": {
+        "path": "vault/identity/sessions/csrf-and-request-forgery.md",
+        "block": "card-e97u"
+      },
+      "citations": [
+        "OWASP Cross-Site Request Forgery Prevention Cheat Sheet"
+      ],
+      "answer": "Because the forged request is authenticated — it carries the victim's real, valid session cookie, attached automatically by the browser. What's missing isn't proof of who the user is; it's proof that the site's own page, rather than some other page the victim happened to have open, produced the request. Authentication and that second guarantee are different things, and the defenses below exist to supply the one authentication doesn't."
+    },
+    {
+      "id": "card-9h0f",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "csrf",
+        "request-forgery",
+        "synchronizer-token",
+        "same-site",
+        "state-changing-get"
+      ],
+      "prompt": "The standard defense, the ___ pattern, supplies exactly that missing guarantee. The server embeds a secret value in the page it renders — tied to the session, sometimes rotated per request — and requires that same value to come back in the body of any state-changing request. A cross-origin attacker's page can still trigger the request, but it cannot read the token out of the victim's page to include it, since that would mean reading a cross-origin response, which the browser's same-origin rules block. The value only has to be unguessable, the same requirement any secret handed out this way carries; how it's generated isn't this note's concern.",
+      "source": {
+        "path": "vault/identity/sessions/csrf-and-request-forgery.md",
+        "block": "card-9h0f"
+      },
+      "citations": [
+        "OWASP Cross-Site Request Forgery Prevention Cheat Sheet"
+      ],
+      "answer": "synchronizer token"
+    },
+    {
+      "id": "card-qqve",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "csrf",
+        "request-forgery",
+        "synchronizer-token",
+        "same-site",
+        "state-changing-get"
+      ],
+      "prompt": "An attacker cannot read any response from the target site's origin, but can set cookies scoped to that site's domain from a script running on a loosely-controlled sibling subdomain. The target site's only request forgery defense is double-submit: a cookie value copied into the request body. Which statement is correct?",
+      "source": {
+        "path": "vault/identity/sessions/csrf-and-request-forgery.md",
+        "block": "card-qqve"
+      },
+      "citations": [
+        "OWASP Cross-Site Request Forgery Prevention Cheat Sheet"
+      ],
+      "choices": [
+        {
+          "text": "The attacker can plant the same value as both the cookie and the submitted body value, satisfying the check without ever reading the victim's page",
+          "correct": true
+        },
+        {
+          "text": "The defense still holds, because the attacker still cannot read the victim's page",
+          "correct": false
+        },
+        {
+          "text": "A synchronizer token would be equally defeated by this same attacker capability",
+          "correct": false
+        },
+        {
+          "text": "Double-submit is strictly stronger than a synchronizer token in this scenario",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-z8qm",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "csrf",
+        "request-forgery",
+        "synchronizer-token",
+        "same-site",
+        "state-changing-get"
+      ],
+      "prompt": "A site applies its most permissive SameSite setting to its session cookie and adds no other request forgery defense. An attacker's page contains a plain link that, when clicked, performs a top-level navigation to a GET endpoint on the target site that deletes the logged-in user's account. What happens?",
+      "source": {
+        "path": "vault/identity/sessions/csrf-and-request-forgery.md",
+        "block": "card-z8qm"
+      },
+      "citations": [
+        "OWASP Cross-Site Request Forgery Prevention Cheat Sheet"
+      ],
+      "choices": [
+        {
+          "text": "The cookie is still attached, because a top-level cross-site navigation is exactly the case a lenient SameSite setting still allows — the real defect is a GET that changes state at all",
+          "correct": true
+        },
+        {
+          "text": "The cookie is withheld, because SameSite blocks all cross-site requests regardless of how they are triggered",
+          "correct": false
+        },
+        {
+          "text": "The request fails, because GET requests never carry cookies cross-site",
+          "correct": false
+        },
+        {
+          "text": "SameSite alone fully prevents this regardless of how the endpoint is designed",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-ezqv",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "csrf",
+        "request-forgery",
+        "synchronizer-token",
+        "same-site",
+        "state-changing-get"
+      ],
+      "prompt": "What does checking the Origin or Referer header on an incoming request defend against, and why is it treated as a supplementary check rather than a sole defense?",
+      "source": {
+        "path": "vault/identity/sessions/csrf-and-request-forgery.md",
+        "block": "card-ezqv"
+      },
+      "citations": [
+        "OWASP Cross-Site Request Forgery Prevention Cheat Sheet"
+      ],
+      "answer": "It gives the server another way to tell whether a request actually came from its own page, by comparing the header the browser attached against the host it expects — a cross-site forged request typically carries the attacker's origin or none at all. It's supplementary because these headers can be missing or stripped by some legitimate client and proxy configurations too, so an absence isn't automatic proof of forgery; it works best layered alongside a token-based defense rather than in place of one."
+    },
+    {
+      "id": "card-55ic",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "csrf",
+        "request-forgery",
+        "synchronizer-token",
+        "same-site",
+        "state-changing-get"
+      ],
+      "prompt": "Name the distinct categories of defense against cross-site request forgery covered here, and for each one say what specific guarantee it supplies that a forged, cookie-authenticated request otherwise lacks.",
+      "source": {
+        "path": "vault/identity/sessions/csrf-and-request-forgery.md",
+        "block": "card-55ic"
+      },
+      "citations": [
+        "OWASP Cross-Site Request Forgery Prevention Cheat Sheet"
+      ],
+      "answer": "The synchronizer token pattern (and its weaker double-submit variant) supplies proof that the site's own page produced the request, since a cross-origin attacker cannot read, or in the stronger version cannot plant, the value needed to pass the check. SameSite cookie restrictions remove the browser's automatic attachment of the cookie for most cross-site requests in the first place, though not for a top-level navigation. Origin and Referer checking gives the server an independent, if imperfect, signal about where the request actually came from. None of them substitute for the underlying rule that a GET must never change state."
+    },
+    {
+      "id": "card-ukrx",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "jwt",
+        "token-format",
+        "algorithm-confusion",
+        "base64url",
+        "security-pitfalls"
+      ],
+      "prompt": "A JWT is always ___ base64url segments separated by dots — never more, never fewer, regardless of how many claims the payload carries.",
+      "source": {
+        "path": "vault/identity/sessions/jwt-structure-and-pitfalls.md",
+        "block": "card-ukrx"
+      },
+      "citations": [
+        "RFC 7519 (JSON Web Token)",
+        "RFC 8725 (JWT Best Current Practices)"
+      ],
+      "answer": "three"
+    },
+    {
+      "id": "card-tt6e",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "jwt",
+        "token-format",
+        "algorithm-confusion",
+        "base64url",
+        "security-pitfalls"
+      ],
+      "prompt": "Base64url is ___, not encryption.",
+      "source": {
+        "path": "vault/identity/sessions/jwt-structure-and-pitfalls.md",
+        "block": "card-tt6e"
+      },
+      "citations": [
+        "RFC 7519 (JSON Web Token)",
+        "RFC 8725 (JWT Best Current Practices)"
+      ],
+      "answer": "encoding"
+    },
+    {
+      "id": "card-tfhs",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "jwt",
+        "token-format",
+        "algorithm-confusion",
+        "base64url",
+        "security-pitfalls"
+      ],
+      "prompt": "Why is putting a customer's account balance or medical status directly into a JWT's payload a disclosure risk, even if the token's signature is never broken?",
+      "source": {
+        "path": "vault/identity/sessions/jwt-structure-and-pitfalls.md",
+        "block": "card-tfhs"
+      },
+      "citations": [
+        "RFC 7519 (JSON Web Token)",
+        "RFC 8725 (JWT Best Current Practices)"
+      ],
+      "answer": "The payload is base64url-encoded, not encrypted, so decoding it requires no key at all — anyone who obtains the token, whether through a log, a proxy, a browser extension, or a network capture, can read every claim in plain sight. The signature only proves the claims weren't altered; it does nothing to hide them. Putting confidential data there is a disclosure with extra steps."
+    },
+    {
+      "id": "card-ovx8",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "jwt",
+        "token-format",
+        "algorithm-confusion",
+        "base64url",
+        "security-pitfalls"
+      ],
+      "prompt": "A resource server verifies incoming JWTs by reading the `alg` field out of each token's own header and using whatever algorithm it names. An attacker takes a token that was legitimately issued with an RSA signature, strips the signature, sets `alg` to an HMAC scheme, and signs the result using the issuer's RSA *public* key as if it were a shared HMAC secret — since that public key is, well, public. What lets this forged token pass verification?",
+      "source": {
+        "path": "vault/identity/sessions/jwt-structure-and-pitfalls.md",
+        "block": "card-ovx8"
+      },
+      "citations": [
+        "RFC 7519 (JSON Web Token)",
+        "RFC 8725 (JWT Best Current Practices)"
+      ],
+      "choices": [
+        {
+          "text": "The verifier let the token's own header dictate which algorithm to check the signature under, instead of fixing that choice itself",
+          "correct": true
+        },
+        {
+          "text": "HMAC and RSA produce identical signature bytes for the same input, so the forgery is coincidentally valid",
+          "correct": false
+        },
+        {
+          "text": "The attacker guessed the issuer's actual RSA private key",
+          "correct": false
+        },
+        {
+          "text": "This only works if the payload's claims are also left unencrypted",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-fs0e",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "jwt",
+        "token-format",
+        "algorithm-confusion",
+        "base64url",
+        "security-pitfalls"
+      ],
+      "prompt": "That specific attack has a sibling that skips signing entirely. The JWT spec allows an `alg` value of ___, meaning the token asserts outright that no signature was ever applied.",
+      "source": {
+        "path": "vault/identity/sessions/jwt-structure-and-pitfalls.md",
+        "block": "card-fs0e"
+      },
+      "citations": [
+        "RFC 7519 (JSON Web Token)",
+        "RFC 8725 (JWT Best Current Practices)"
+      ],
+      "answer": "none"
+    },
+    {
+      "id": "card-rfv3",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "jwt",
+        "token-format",
+        "algorithm-confusion",
+        "base64url",
+        "security-pitfalls"
+      ],
+      "prompt": "What is the defense against both algorithm confusion and the `none` algorithm, stated as a single principle?",
+      "source": {
+        "path": "vault/identity/sessions/jwt-structure-and-pitfalls.md",
+        "block": "card-rfv3"
+      },
+      "citations": [
+        "RFC 7519 (JSON Web Token)",
+        "RFC 8725 (JWT Best Current Practices)"
+      ],
+      "answer": "The verifier — never the token — decides which algorithm (or short list of algorithms) is acceptable, and rejects anything else outright, including `none`. The token's own `alg` field is treated as untrusted input to be checked against that fixed list, not as an instruction to follow."
+    },
+    {
+      "id": "card-2olv",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "jwt",
+        "token-format",
+        "algorithm-confusion",
+        "base64url",
+        "security-pitfalls"
+      ],
+      "prompt": "Someone justifies a design decision by saying \"we use JWTs, so our tokens are secure.\" Explain why that sentence answers no security question by itself, using the two pitfalls above.",
+      "source": {
+        "path": "vault/identity/sessions/jwt-structure-and-pitfalls.md",
+        "block": "card-2olv"
+      },
+      "citations": [
+        "RFC 7519 (JSON Web Token)",
+        "RFC 8725 (JWT Best Current Practices)"
+      ],
+      "answer": "\"JWT\" names a token *format* — three base64url segments with a header, payload, and signature — not a security guarantee. A system using JWTs can still leak every claim in plain sight, since the encoding isn't encryption, and can still be forged outright if its verifier trusts the token's own header to pick the algorithm, including accepting `none`. Whether JWTs are secure here depends entirely on what's encoded in the payload and how the verifier is configured — questions the phrase \"we use JWTs\" never touches."
+    },
+    {
+      "id": "card-f72z",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "jwt",
+        "token-format",
+        "algorithm-confusion",
+        "base64url",
+        "security-pitfalls"
+      ],
+      "prompt": "Why does it make sense that algorithm confusion and payload disclosure are both described as coming from the \"same root cause,\" even though one is about the header and the other is about the payload?",
+      "source": {
+        "path": "vault/identity/sessions/jwt-structure-and-pitfalls.md",
+        "block": "card-f72z"
+      },
+      "citations": [
+        "RFC 7519 (JSON Web Token)",
+        "RFC 8725 (JWT Best Current Practices)"
+      ],
+      "answer": "Both mistakes trust content that arrived inside the token itself instead of verifying it against something fixed outside the token: algorithm confusion trusts the attacker-controlled `alg` header to say how to check the signature, and payload disclosure implicitly trusts that whoever can see the token isn't supposed to read the claims. In both cases the token is the artifact being examined, so nothing it asserts about itself can be taken as already established."
+    },
+    {
+      "id": "card-8cy4",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "account-recovery",
+        "user-enumeration",
+        "rate-limiting",
+        "step-up-auth"
+      ],
+      "prompt": "Why does a login or reset form that distinguishes \"wrong password\" from \"no such account\" count as a security leak on its own, even before any password is guessed?",
+      "source": {
+        "path": "vault/identity/sessions/login-flows-and-account-recovery.md",
+        "block": "card-8cy4"
+      },
+      "citations": [
+        "OWASP Authentication Cheat Sheet",
+        "OWASP Forgot Password Cheat Sheet"
+      ],
+      "answer": "Because it confirms or denies whether a given address has an account at all, regardless of whether the attacker knows the password. That's membership information — useful for targeting a phishing campaign, confirming a person uses a particular service, or narrowing a credential-stuffing list to addresses known to be live — and it costs the attacker nothing to collect at scale by feeding the form a list of addresses."
+    },
+    {
+      "id": "card-w5wj",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "account-recovery",
+        "user-enumeration",
+        "rate-limiting",
+        "step-up-auth"
+      ],
+      "prompt": "A generic response text has to be paired with a response that's uniform in ___ as well: the registered and unregistered paths need to take roughly the same amount of time, or the wording accomplishes nothing.",
+      "source": {
+        "path": "vault/identity/sessions/login-flows-and-account-recovery.md",
+        "block": "card-w5wj"
+      },
+      "citations": [
+        "OWASP Authentication Cheat Sheet",
+        "OWASP Forgot Password Cheat Sheet"
+      ],
+      "answer": "timing"
+    },
+    {
+      "id": "card-r1ne",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "account-recovery",
+        "user-enumeration",
+        "rate-limiting",
+        "step-up-auth"
+      ],
+      "prompt": "A site locks any account after five failed login attempts, and the lockout message tells the visitor whose account got locked. What can an attacker who merely knows a target's email address, without knowing or guessing anything about their password, now do?",
+      "source": {
+        "path": "vault/identity/sessions/login-flows-and-account-recovery.md",
+        "block": "card-r1ne"
+      },
+      "citations": [
+        "OWASP Authentication Cheat Sheet",
+        "OWASP Forgot Password Cheat Sheet"
+      ],
+      "choices": [
+        {
+          "text": "Nothing — five failed attempts reveals no information without a correct guess",
+          "correct": false
+        },
+        {
+          "text": "Deliberately submit five wrong passwords to lock the victim out of their own account on demand",
+          "correct": true
+        },
+        {
+          "text": "Use the lockout to recover the victim's actual password",
+          "correct": false
+        },
+        {
+          "text": "Bypass the login form entirely once the account is locked",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-rqw0",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "account-recovery",
+        "user-enumeration",
+        "rate-limiting",
+        "step-up-auth"
+      ],
+      "prompt": "List the properties a password-reset token needs to have to be safe, and for each one, name the specific attack it closes off.",
+      "source": {
+        "path": "vault/identity/sessions/login-flows-and-account-recovery.md",
+        "block": "card-rqw0"
+      },
+      "citations": [
+        "OWASP Authentication Cheat Sheet",
+        "OWASP Forgot Password Cheat Sheet"
+      ]
+    },
+    {
+      "id": "card-0wfg",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "account-recovery",
+        "user-enumeration",
+        "rate-limiting",
+        "step-up-auth"
+      ],
+      "prompt": "Why does a reset token need to be explicitly invalidated the instant it's redeemed, rather than relying on its short lifetime to eventually retire it?",
+      "source": {
+        "path": "vault/identity/sessions/login-flows-and-account-recovery.md",
+        "block": "card-0wfg"
+      },
+      "citations": [
+        "OWASP Authentication Cheat Sheet",
+        "OWASP Forgot Password Cheat Sheet"
+      ],
+      "answer": "A short lifetime only bounds how long a token stays valid — it does nothing to stop the same still-valid token from being used more than once within that window. If a token leaked to a second party (an email left open, a proxy that logged the link, a browser history entry), that party could redeem it at any point before expiry unless redemption itself immediately kills the token, closing the window the instant it's used rather than waiting for it to expire on its own."
+    },
+    {
+      "id": "card-1nfb",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "account-recovery",
+        "user-enumeration",
+        "rate-limiting",
+        "step-up-auth"
+      ],
+      "prompt": "Why isn't an unguessable reset token enough on its own, without also strictly binding it to one account?",
+      "source": {
+        "path": "vault/identity/sessions/login-flows-and-account-recovery.md",
+        "block": "card-1nfb"
+      },
+      "citations": [
+        "OWASP Authentication Cheat Sheet",
+        "OWASP Forgot Password Cheat Sheet"
+      ],
+      "answer": "Unguessability only defends against an attacker who has no token at all and has to construct or brute-force one. It doesn't defend against a system that, given a token that legitimately exists, forgets to check which account issued it — a bug like that would let a token generated for one account's reset flow be replayed to reset a completely different account, since nothing about the token's randomness prevents misuse once it's already been accepted as valid."
+    },
+    {
+      "id": "card-7lo8",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "account-recovery",
+        "user-enumeration",
+        "rate-limiting",
+        "step-up-auth"
+      ],
+      "prompt": "___ asks for another proof of identity at the moment an action like changing a password, adding a payment method, or viewing sensitive data is attempted, instead of extending trust from whatever the session proved at login.",
+      "source": {
+        "path": "vault/identity/sessions/login-flows-and-account-recovery.md",
+        "block": "card-7lo8"
+      },
+      "citations": [
+        "OWASP Authentication Cheat Sheet",
+        "OWASP Forgot Password Cheat Sheet"
+      ],
+      "answer": "Step-up authentication"
+    },
+    {
+      "id": "card-e104",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "account-recovery",
+        "user-enumeration",
+        "rate-limiting",
+        "step-up-auth"
+      ],
+      "prompt": "Why should a sensitive action re-verify identity at the moment it's attempted, instead of trusting that the session is still controlled by whoever logged in originally?",
+      "source": {
+        "path": "vault/identity/sessions/login-flows-and-account-recovery.md",
+        "block": "card-e104"
+      },
+      "citations": [
+        "OWASP Authentication Cheat Sheet",
+        "OWASP Forgot Password Cheat Sheet"
+      ],
+      "answer": "A long-lived session's initial proof of identity ages — the device could have been left unlocked, handed off, or compromised sometime after login without the session itself changing state at all. Re-checking at the moment of a high-consequence action confirms the person acting right now still controls the credential, rather than extending indefinite trust from a single check performed possibly hours earlier."
+    },
+    {
+      "id": "card-nhap",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "logout",
+        "session-termination",
+        "revocation",
+        "global-signout"
+      ],
+      "prompt": "Why does clearing a cookie client-side, on its own, fail to actually end a session?",
+      "source": {
+        "path": "vault/identity/sessions/logout-and-session-termination.md",
+        "block": "card-nhap"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ],
+      "answer": "It only removes the client's copy of the identifier; the server-held session it pointed to is untouched and remains valid, so anyone else who had already captured that identifier — through a network capture, a shared device, or a logged proxy — can still present it and be treated as the authenticated user."
+    },
+    {
+      "id": "card-nm7r",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "logout",
+        "session-termination",
+        "revocation",
+        "global-signout"
+      ],
+      "prompt": "An attacker captured a user's session value an hour before the user clicks \"log out,\" which only clears the browser's stored copy. What can the attacker do immediately afterward?",
+      "source": {
+        "path": "vault/identity/sessions/logout-and-session-termination.md",
+        "block": "card-nm7r"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ],
+      "choices": [
+        {
+          "text": "Continue using the captured value normally — the server never invalidated the session it refers to",
+          "correct": true
+        },
+        {
+          "text": "Nothing — the value stopped working the instant the browser cleared its copy",
+          "correct": false
+        },
+        {
+          "text": "Continue using it only until the idle timeout elapses on the attacker's own inactivity, not the user's",
+          "correct": false
+        },
+        {
+          "text": "Nothing — clearing a cookie client-side also broadcasts an invalidation to the server",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-9ad0",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "logout",
+        "session-termination",
+        "revocation",
+        "global-signout"
+      ],
+      "prompt": "Real logout has to reach the server: it must ___ the session record itself, so that the identifier that used to point at valid state now points at nothing, regardless of whether any particular client happens to still be holding it.",
+      "source": {
+        "path": "vault/identity/sessions/logout-and-session-termination.md",
+        "block": "card-9ad0"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ],
+      "answer": "invalidate"
+    },
+    {
+      "id": "card-68bm",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "logout",
+        "session-termination",
+        "revocation",
+        "global-signout"
+      ],
+      "prompt": "Ending one session is not the same problem as ending all of a user's sessions at once. **Global sign-out** — closing every session belonging to a user, on every device, not just the one that clicked logout — is a separate feature with its own requirement: sessions have to be ___ per user, meaning the server can look up every live session tied to a given account rather than only the one identifier a particular request happened to present.",
+      "source": {
+        "path": "vault/identity/sessions/logout-and-session-termination.md",
+        "block": "card-68bm"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ],
+      "answer": "enumerable"
+    },
+    {
+      "id": "card-ap5n",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "logout",
+        "session-termination",
+        "revocation",
+        "global-signout"
+      ],
+      "prompt": "Why can't an ordinary per-request logout implementation automatically provide global sign-out as a side effect?",
+      "source": {
+        "path": "vault/identity/sessions/logout-and-session-termination.md",
+        "block": "card-ap5n"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ],
+      "answer": "An ordinary logout only knows the one identifier presented on the current request and invalidates that single record; global sign-out requires a separate index from user to all of their live sessions, which an implementation that only ever looks up sessions by their own identifier has no way to walk."
+    },
+    {
+      "id": "card-d9pq",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "logout",
+        "session-termination",
+        "revocation",
+        "global-signout"
+      ],
+      "prompt": "Besides an explicit user-initiated logout, name two events after which a session should be terminated server-side even though the user never clicked anything, and explain in one sentence each why waiting for natural expiry would leave a window of risk open.",
+      "source": {
+        "path": "vault/identity/sessions/logout-and-session-termination.md",
+        "block": "card-d9pq"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ],
+      "answer": "A password change: if the account was compromised and the attacker is using it through an existing session, changing the password alone leaves that session running, so the attacker keeps access until it happens to expire on its own. A detected credential compromise more generally: whatever let the attacker in the first time may not recur, but the session they already established has no reason to end just because the credential that created it is now known to be bad."
+    },
+    {
+      "id": "card-p7bk",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "logout",
+        "session-termination",
+        "revocation",
+        "global-signout"
+      ],
+      "prompt": "Every case so far assumes there is a server-held record to delete. That assumption breaks down for a ___ credential — one that carries its own claims and its own expiry baked into the value itself, verified by checking a signature rather than by looking anything up. Nothing server-side ever pointed at that credential, so there is nothing server-side to remove.",
+      "source": {
+        "path": "vault/identity/sessions/logout-and-session-termination.md",
+        "block": "card-p7bk"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ],
+      "answer": "self-contained"
+    },
+    {
+      "id": "card-cz9f",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "logout",
+        "session-termination",
+        "revocation",
+        "global-signout"
+      ],
+      "prompt": "What does it mean to say that a revocation list is the point where \"stateless stops being free\"?",
+      "source": {
+        "path": "vault/identity/sessions/logout-and-session-termination.md",
+        "block": "card-cz9f"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ],
+      "answer": "A revocation list reintroduces the server-side lookup on every request that a self-contained credential existed specifically to avoid — the credential is still self-contained in format, but early termination now costs the same per-request state check that a server-held session required all along."
+    },
+    {
+      "id": "card-31oh",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "mfa",
+        "totp",
+        "sms",
+        "phishing",
+        "push-fatigue"
+      ],
+      "prompt": "A site requires both a password and a secret PIN memorized separately to log in. Is this multi-factor authentication?",
+      "source": {
+        "path": "vault/identity/sessions/multi-factor-authentication-and-totp.md",
+        "block": "card-31oh"
+      },
+      "citations": [
+        "RFC 6238 (TOTP)",
+        "W3C Web Authentication (WebAuthn)"
+      ],
+      "choices": [
+        {
+          "text": "No — both are something you know, so one compromise route (the user disclosing or writing down secrets, or a keylogger capturing keystrokes) can take both at once",
+          "correct": true
+        },
+        {
+          "text": "Yes, because two separate secrets are required instead of one",
+          "correct": false
+        },
+        {
+          "text": "Yes, as long as the PIN and password are different lengths",
+          "correct": false
+        },
+        {
+          "text": "No, but only because PINs are shorter than passwords",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-m5te",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "mfa",
+        "totp",
+        "sms",
+        "phishing",
+        "push-fatigue"
+      ],
+      "prompt": "That's why a TOTP code changes on a fixed ___ step rather than on every use: generate it twice within the same window and it comes back identical, generate it a window later and it's completely different, whether or not anyone ever verified the first one.",
+      "source": {
+        "path": "vault/identity/sessions/multi-factor-authentication-and-totp.md",
+        "block": "card-m5te"
+      },
+      "citations": [
+        "RFC 6238 (TOTP)",
+        "W3C Web Authentication (WebAuthn)"
+      ],
+      "answer": "time"
+    },
+    {
+      "id": "card-f0fu",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "mfa",
+        "totp",
+        "sms",
+        "phishing",
+        "push-fatigue"
+      ],
+      "prompt": "Why does verifying a submitted TOTP code require checking a small window of adjacent time steps instead of one exact time step?",
+      "source": {
+        "path": "vault/identity/sessions/multi-factor-authentication-and-totp.md",
+        "block": "card-f0fu"
+      },
+      "citations": [
+        "RFC 6238 (TOTP)",
+        "W3C Web Authentication (WebAuthn)"
+      ],
+      "answer": "The server's clock and the device's clock are never perfectly in sync, and neither is instantaneous — a code computed a second before the step boundary and checked a second after it would otherwise be wrongly rejected. Accepting the current step plus one step on either side absorbs that drift without letting the tolerance grow so wide that old codes stay valid long after they should have expired."
+    },
+    {
+      "id": "card-jxr1",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "mfa",
+        "totp",
+        "sms",
+        "phishing",
+        "push-fatigue"
+      ],
+      "prompt": "A user receives a fake login page that looks identical to their bank's site. They enter their password and current TOTP code. The page immediately forwards both to the real bank. What happens?",
+      "source": {
+        "path": "vault/identity/sessions/multi-factor-authentication-and-totp.md",
+        "block": "card-jxr1"
+      },
+      "citations": [
+        "RFC 6238 (TOTP)",
+        "W3C Web Authentication (WebAuthn)"
+      ],
+      "choices": [
+        {
+          "text": "The attacker logs in successfully, because the relayed TOTP code is still valid for the remainder of its time step",
+          "correct": true
+        },
+        {
+          "text": "The login fails, because TOTP codes are only valid on the device that generated them",
+          "correct": false
+        },
+        {
+          "text": "The login fails, because the bank's server can tell the request didn't originate from the user's own browser",
+          "correct": false
+        },
+        {
+          "text": "The attacker gets access to the account's future logins but not this one",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-c2b8",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "mfa",
+        "totp",
+        "sms",
+        "phishing",
+        "push-fatigue"
+      ],
+      "prompt": "A ___ — convincing a carrier to move a victim's phone number onto a SIM the attacker controls — hands over every future SMS code without the attacker ever touching or infecting the victim's actual phone.",
+      "source": {
+        "path": "vault/identity/sessions/multi-factor-authentication-and-totp.md",
+        "block": "card-c2b8"
+      },
+      "citations": [
+        "RFC 6238 (TOTP)",
+        "W3C Web Authentication (WebAuthn)"
+      ],
+      "answer": "SIM swap"
+    },
+    {
+      "id": "card-hjj2",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "mfa",
+        "totp",
+        "sms",
+        "phishing",
+        "push-fatigue"
+      ],
+      "prompt": "What does an SMS-delivered one-time code actually authenticate as possession of, and why does that make carrier-side attacks relevant to an otherwise sound MFA design?",
+      "source": {
+        "path": "vault/identity/sessions/multi-factor-authentication-and-totp.md",
+        "block": "card-hjj2"
+      },
+      "citations": [
+        "RFC 6238 (TOTP)",
+        "W3C Web Authentication (WebAuthn)"
+      ],
+      "answer": "Possession of a phone number, not possession of a specific device. Since the number's routing is controlled by the carrier rather than the user, an attacker who compromises that routing (for example through a SIM swap or an inside job at the carrier) receives the codes without ever needing the victim's physical phone."
+    },
+    {
+      "id": "card-9fr5",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "mfa",
+        "totp",
+        "sms",
+        "phishing",
+        "push-fatigue"
+      ],
+      "prompt": "Explain why recovery codes are simultaneously a necessary part of an MFA scheme and a security weakness in it. What single property do they have that undermines the \"second factor\" guarantee?",
+      "source": {
+        "path": "vault/identity/sessions/multi-factor-authentication-and-totp.md",
+        "block": "card-9fr5"
+      },
+      "citations": [
+        "RFC 6238 (TOTP)",
+        "W3C Web Authentication (WebAuthn)"
+      ]
+    },
+    {
+      "id": "card-1kvt",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "mfa",
+        "totp",
+        "sms",
+        "phishing",
+        "push-fatigue"
+      ],
+      "prompt": "What makes push fatigue an effective attack even when the underlying push-approval mechanism is implemented correctly?",
+      "source": {
+        "path": "vault/identity/sessions/multi-factor-authentication-and-totp.md",
+        "block": "card-1kvt"
+      },
+      "citations": [
+        "RFC 6238 (TOTP)",
+        "W3C Web Authentication (WebAuthn)"
+      ],
+      "answer": "It doesn't attack the mechanism at all — it attacks the user's attention by repeating a correct request until they approve one out of annoyance or confusion, so no flaw in the push protocol needs to exist for the attack to succeed."
+    },
+    {
+      "id": "card-0mx2",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "sessions",
+        "authentication",
+        "session-fixation",
+        "timeouts"
+      ],
+      "prompt": "A session is state the server holds about a user it has already authenticated — who they are, when they signed in, whatever else the application needs to remember between requests. The client's only copy of that relationship is a token it presents on each request, and that token is a ___: possession alone is proof. The server has no way to check that the party presenting it is the same party it was issued to, so whoever holds it is treated as that user, full stop.",
+      "source": {
+        "path": "vault/identity/sessions/sessions-and-the-session-identifier.md",
+        "block": "card-0mx2"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ],
+      "answer": "bearer credential"
+    },
+    {
+      "id": "card-ehv4",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "sessions",
+        "authentication",
+        "session-fixation",
+        "timeouts"
+      ],
+      "prompt": "An ___ timeout counts from the moment of last activity: every request resets the clock, and the session only lapses once a gap that long passes with nothing happening.",
+      "source": {
+        "path": "vault/identity/sessions/sessions-and-the-session-identifier.md",
+        "block": "card-ehv4"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ],
+      "answer": "idle"
+    },
+    {
+      "id": "card-bf4f",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "sessions",
+        "authentication",
+        "session-fixation",
+        "timeouts"
+      ],
+      "prompt": "A separate, ___ timeout counts from the moment the session was created and never resets, no matter how continuously the user keeps working — enough elapsed wall-clock time ends it regardless of activity.",
+      "source": {
+        "path": "vault/identity/sessions/sessions-and-the-session-identifier.md",
+        "block": "card-bf4f"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ],
+      "answer": "absolute"
+    },
+    {
+      "id": "card-j9rt",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "sessions",
+        "authentication",
+        "session-fixation",
+        "timeouts"
+      ],
+      "prompt": "A session has an idle timeout of 30 minutes and an absolute timeout of 8 hours. A user has been actively working, one request every few minutes, for 9 hours straight. What happens?",
+      "source": {
+        "path": "vault/identity/sessions/sessions-and-the-session-identifier.md",
+        "block": "card-j9rt"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ],
+      "choices": [
+        {
+          "text": "The session ends when the 8-hour absolute timeout is reached, even though the user was never idle",
+          "correct": true
+        },
+        {
+          "text": "The session stays valid indefinitely as long as requests keep arriving within 30 minutes of each other",
+          "correct": false
+        },
+        {
+          "text": "The idle timer being repeatedly reset also resets the absolute timer",
+          "correct": false
+        },
+        {
+          "text": "Only the idle timeout applies once the user has proven they are actively working",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-4pfo",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "sessions",
+        "authentication",
+        "session-fixation",
+        "timeouts"
+      ],
+      "prompt": "Why does an absolute timeout exist at all, given that an idle timeout already ends abandoned sessions?",
+      "source": {
+        "path": "vault/identity/sessions/sessions-and-the-session-identifier.md",
+        "block": "card-4pfo"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ],
+      "answer": "It bounds how long a single stolen or lingering session identifier stays usable regardless of activity, capping the damage from a credential that keeps getting silently reused rather than trusting that continued activity means it's still the legitimate user."
+    },
+    {
+      "id": "card-m6iz",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "sessions",
+        "authentication",
+        "session-fixation",
+        "timeouts"
+      ],
+      "prompt": "A distinct attack targets the moment of authentication rather than an existing session. If an attacker can get a victim to authenticate while using an identifier the attacker already knows — planted via a crafted link, a shared device, or an identifier that isn't replaced at login — the attacker can then use that same known value and finds it valid. This is ___. Once that authentication completes, the attacker needs to do nothing more clever than present that same known value themselves — the server now considers it authenticated as the victim.",
+      "source": {
+        "path": "vault/identity/sessions/sessions-and-the-session-identifier.md",
+        "block": "card-m6iz"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ],
+      "answer": "session fixation"
+    },
+    {
+      "id": "card-v4bp",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "sessions",
+        "authentication",
+        "session-fixation",
+        "timeouts"
+      ],
+      "prompt": "Explain the defense against session fixation, and why it must apply at every privilege change and not only at login.",
+      "source": {
+        "path": "vault/identity/sessions/sessions-and-the-session-identifier.md",
+        "block": "card-v4bp"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ],
+      "answer": "The server must issue a brand-new identifier whenever the user's privilege level changes, discarding whatever value was in use beforehand. Login is the most important case, since it is the moment an anonymous session becomes an authenticated one, but any later elevation (for example, stepping up to an administrative capability) creates the same opportunity: if the pre-elevation value survives unchanged, an attacker who fixed that value before the elevation inherits the higher privilege the same way they would have inherited a login."
+    },
+    {
+      "id": "card-q2sd",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "session-architecture",
+        "revocation",
+        "horizontal-scaling",
+        "token-size",
+        "hybrid-credential"
+      ],
+      "prompt": "A team is building the login system for an internal admin console. Compromised sessions must stop working within seconds of an operator clicking \"revoke,\" and the handful of servers involved already share a fast, low-latency data store. Which architecture fits this requirement more directly?",
+      "source": {
+        "path": "vault/identity/sessions/stateless-tokens-versus-server-sessions.md",
+        "block": "card-q2sd"
+      },
+      "citations": [
+        "RFC 7519 (JSON Web Token)",
+        "RFC 8725 (JWT Best Current Practices)",
+        "OWASP Session Management Cheat Sheet"
+      ],
+      "choices": [
+        {
+          "text": "A server-side session — revocation is deleting a row, and the shared store the fleet already has removes the usual objection to paying a lookup on every request",
+          "correct": true
+        },
+        {
+          "text": "A self-contained credential — it avoids the lookup entirely, which is the more important property here",
+          "correct": false
+        },
+        {
+          "text": "Either one, since a shared data store makes the two architectures equivalent",
+          "correct": false
+        },
+        {
+          "text": "Neither; instant revocation is only possible without any credential at all",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-u6wg",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "session-architecture",
+        "revocation",
+        "horizontal-scaling",
+        "token-size",
+        "hybrid-credential"
+      ],
+      "prompt": "The credential remains valid until its own stated ___, no matter what happens on the server in the meantime.",
+      "source": {
+        "path": "vault/identity/sessions/stateless-tokens-versus-server-sessions.md",
+        "block": "card-u6wg"
+      },
+      "citations": [
+        "RFC 7519 (JSON Web Token)",
+        "RFC 8725 (JWT Best Current Practices)",
+        "OWASP Session Management Cheat Sheet"
+      ],
+      "answer": "expiry"
+    },
+    {
+      "id": "card-445s",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "session-architecture",
+        "revocation",
+        "horizontal-scaling",
+        "token-size",
+        "hybrid-credential"
+      ],
+      "prompt": "A public API serves millions of read-mostly requests per second across a fleet that autoscales aggressively and has no shared session store by design. Session revocation, when it happens at all, is tolerable within a few minutes rather than instantly. Which architecture fits?",
+      "source": {
+        "path": "vault/identity/sessions/stateless-tokens-versus-server-sessions.md",
+        "block": "card-445s"
+      },
+      "citations": [
+        "RFC 7519 (JSON Web Token)",
+        "RFC 8725 (JWT Best Current Practices)",
+        "OWASP Session Management Cheat Sheet"
+      ],
+      "choices": [
+        {
+          "text": "A self-contained credential — no per-request lookup matches the scale, and the tolerance for a delayed revocation absorbs the one thing this approach can't do instantly",
+          "correct": true
+        },
+        {
+          "text": "A server-side session — the scale argues against it, but the lack of a shared store argues against it even more directly",
+          "correct": false
+        },
+        {
+          "text": "A server-side session, because revocation tolerance is irrelevant to the choice",
+          "correct": false
+        },
+        {
+          "text": "Neither approach can serve a fleet this large",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-n06m",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "session-architecture",
+        "revocation",
+        "horizontal-scaling",
+        "token-size",
+        "hybrid-credential"
+      ],
+      "prompt": "What actually drives the choice between the two, stated as the two questions that matter",
+      "source": {
+        "path": "vault/identity/sessions/stateless-tokens-versus-server-sessions.md",
+        "block": "card-n06m"
+      },
+      "citations": [
+        "RFC 7519 (JSON Web Token)",
+        "RFC 8725 (JWT Best Current Practices)",
+        "OWASP Session Management Cheat Sheet"
+      ],
+      "answer": "How fast a revoked login must stop working — instantly, or is a bounded delay acceptable — and whether the fleet already has, or is willing to run, storage every instance can reach for a lookup. Everything else in the comparison (lookup cost, scaling ease) follows from the answers to those two questions rather than standing on its own."
+    },
+    {
+      "id": "card-v5js",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "session-architecture",
+        "revocation",
+        "horizontal-scaling",
+        "token-size",
+        "hybrid-credential"
+      ],
+      "prompt": "The usual response to \"we need to revoke a self-contained credential early\" is to keep a ___ of tokens that must be rejected even though they haven't expired yet.",
+      "source": {
+        "path": "vault/identity/sessions/stateless-tokens-versus-server-sessions.md",
+        "block": "card-v5js"
+      },
+      "citations": [
+        "RFC 7519 (JSON Web Token)",
+        "RFC 8725 (JWT Best Current Practices)",
+        "OWASP Session Management Cheat Sheet"
+      ],
+      "answer": "revocation list"
+    },
+    {
+      "id": "card-1u5f",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "session-architecture",
+        "revocation",
+        "horizontal-scaling",
+        "token-size",
+        "hybrid-credential"
+      ],
+      "prompt": "Why does adding a revocation list to a self-contained-credential system undo the appeal of choosing that architecture in the first place?",
+      "source": {
+        "path": "vault/identity/sessions/stateless-tokens-versus-server-sessions.md",
+        "block": "card-1u5f"
+      },
+      "citations": [
+        "RFC 7519 (JSON Web Token)",
+        "RFC 8725 (JWT Best Current Practices)",
+        "OWASP Session Management Cheat Sheet"
+      ],
+      "answer": "The entire point of a self-contained credential was skipping the per-request lookup. A revocation list has to be checked on every request to catch an early-revoked credential before it's honored, which brings the lookup straight back — for the one case, early revocation, that motivated wanting it \"stateless\" at all. The system ends up paying the server-side session's cost while keeping the self-contained credential's downsides, like still needing to check that list against wherever it's kept."
+    },
+    {
+      "id": "card-s51f",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "session-architecture",
+        "revocation",
+        "horizontal-scaling",
+        "token-size",
+        "hybrid-credential"
+      ],
+      "prompt": "Why does it matter more that a self-contained credential grows with every claim added than it would for an ordinary piece of request data of the same size?",
+      "source": {
+        "path": "vault/identity/sessions/stateless-tokens-versus-server-sessions.md",
+        "block": "card-s51f"
+      },
+      "citations": [
+        "RFC 7519 (JSON Web Token)",
+        "RFC 8725 (JWT Best Current Practices)",
+        "OWASP Session Management Cheat Sheet"
+      ],
+      "answer": "Because the credential rides along on every request the client makes for as long as the login lasts, not just once — so a credential that accumulates claims over time doesn't cost extra bytes on one transfer, it costs those extra bytes on every request, indefinitely, for every client carrying one."
+    },
+    {
+      "id": "card-6qx0",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "session-architecture",
+        "revocation",
+        "horizontal-scaling",
+        "token-size",
+        "hybrid-credential"
+      ],
+      "prompt": "Describe the common hybrid pattern teams reach for once they've felt both the revocation-list irony and the token-size cost of a purely self-contained credential, and explain what role a short lifetime plays in it.",
+      "source": {
+        "path": "vault/identity/sessions/stateless-tokens-versus-server-sessions.md",
+        "block": "card-6qx0"
+      },
+      "citations": [
+        "RFC 7519 (JSON Web Token)",
+        "RFC 8725 (JWT Best Current Practices)",
+        "OWASP Session Management Cheat Sheet"
+      ],
+      "answer": "Issue a self-contained credential with a short lifetime, and pair it with a separate, stateful mechanism — typically called a refresh step — that the client uses to obtain a new one once the short-lived credential expires. The short lifetime bounds how long a revoked login can keep working without any revocation list at all: the credential simply stops being honored once it expires, and revocation only has to reach the stateful refresh step, not every resource server checking the short-lived credential itself. This trades a little steady-state lookup cost, at refresh time, for keeping the per-request path lookup-free."
+    },
+    {
+      "id": "card-1tmj",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "token-storage",
+        "local-storage",
+        "backend-for-frontend",
+        "script-injection",
+        "in-memory"
+      ],
+      "prompt": "What can read a credential stored in localStorage or sessionStorage, and what does a single script injection cost the application that stores it there?",
+      "source": {
+        "path": "vault/identity/sessions/token-storage-in-the-browser.md",
+        "block": "card-1tmj"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "OWASP Cross-Site Request Forgery Prevention Cheat Sheet"
+      ],
+      "answer": "Any script running on the page, regardless of what it's actually there to do — neither storage mechanism restricts access based on which code is asking. A single script injection is enough to read the value out and exfiltrate it once, and the credential stays compromised until it's revoked or expires, not just for the moment that script happens to run."
+    },
+    {
+      "id": "card-r60u",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "token-storage",
+        "local-storage",
+        "backend-for-frontend",
+        "script-injection",
+        "in-memory"
+      ],
+      "prompt": "A team moves its session credential from localStorage to an HttpOnly cookie. What has this move traded away, and what has it gained?",
+      "source": {
+        "path": "vault/identity/sessions/token-storage-in-the-browser.md",
+        "block": "card-r60u"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "OWASP Cross-Site Request Forgery Prevention Cheat Sheet"
+      ],
+      "choices": [
+        {
+          "text": "It removes the script-injection exfiltration path, but the browser now attaches the credential automatically, which is exactly the property that enables cross-site request forgery",
+          "correct": true
+        },
+        {
+          "text": "It removes both the script-injection exposure and the forgery exposure, since the credential is no longer readable by any script at all",
+          "correct": false
+        },
+        {
+          "text": "It gains nothing, since a page script can still read any cookie regardless of how it is marked",
+          "correct": false
+        },
+        {
+          "text": "It only matters for first-party scripts; a cross-site forged request would not be affected either way",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-uim8",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "token-storage",
+        "local-storage",
+        "backend-for-frontend",
+        "script-injection",
+        "in-memory"
+      ],
+      "prompt": "Keeping the credential ___ only — a variable that lives inside the running page and nowhere else — avoids both exposure surfaces at once: there's no persistent location for an injected script to read from, and nothing for the browser to attach on its own to an unrelated request. The cost is that it doesn't outlive a page reload or survive being opened in a new tab, so the application has to re-establish it every time the page context resets.",
+      "source": {
+        "path": "vault/identity/sessions/token-storage-in-the-browser.md",
+        "block": "card-uim8"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "OWASP Cross-Site Request Forgery Prevention Cheat Sheet"
+      ],
+      "answer": "in memory"
+    },
+    {
+      "id": "card-d6vx",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "token-storage",
+        "local-storage",
+        "backend-for-frontend",
+        "script-injection",
+        "in-memory"
+      ],
+      "prompt": "Why is keeping a session credential only in memory described as leaking the least of the in-browser options, despite being impractical for most applications on its own?",
+      "source": {
+        "path": "vault/identity/sessions/token-storage-in-the-browser.md",
+        "block": "card-d6vx"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "OWASP Cross-Site Request Forgery Prevention Cheat Sheet"
+      ],
+      "answer": "Because it removes both exposure surfaces at once — there is no persistent, script-readable location and no ambient value the browser attaches to requests by itself — so neither a script injection nor a forged cross-site request has anything to reach for. The cost is that the value is gone the moment the page reloads or a new tab is opened, so it has to be re-obtained on every reset of the page context, which is why it rarely stands alone for anything beyond a short-lived, single-tab flow."
+    },
+    {
+      "id": "card-pinq",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "token-storage",
+        "local-storage",
+        "backend-for-frontend",
+        "script-injection",
+        "in-memory"
+      ],
+      "prompt": "The ___ pattern sidesteps the choice rather than resolving it: a server-side component holds the real credential, and the browser holds only a conventional session cookie scoped to that component, never the value a downstream API actually checks.",
+      "source": {
+        "path": "vault/identity/sessions/token-storage-in-the-browser.md",
+        "block": "card-pinq"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "OWASP Cross-Site Request Forgery Prevention Cheat Sheet"
+      ],
+      "answer": "backend-for-frontend"
+    },
+    {
+      "id": "card-q7p0",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "token-storage",
+        "local-storage",
+        "backend-for-frontend",
+        "script-injection",
+        "in-memory"
+      ],
+      "prompt": "Why does backend-for-frontend count as avoiding the storage decision rather than picking a side of it?",
+      "source": {
+        "path": "vault/identity/sessions/token-storage-in-the-browser.md",
+        "block": "card-q7p0"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "OWASP Cross-Site Request Forgery Prevention Cheat Sheet"
+      ],
+      "answer": "Because the credential a downstream API actually checks never reaches browser-accessible storage or page script context at all — it stays on the server-side component. The browser only ever holds a cookie tied to that intermediary, so neither the script-injection exposure of script-readable storage nor the forgery exposure of an automatically-attached credential ever applies to the real credential; the trade is pushed onto infrastructure instead of being made in the browser."
+    },
+    {
+      "id": "card-wnkr",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "token-storage",
+        "local-storage",
+        "backend-for-frontend",
+        "script-injection",
+        "in-memory"
+      ],
+      "prompt": "A browser-based application needs to keep a session credential somewhere. Lay out the exposure each in-browser option carries — script-readable storage, a cookie page script cannot read, and an in-memory variable — and explain what lets backend-for-frontend avoid having to pick among them.",
+      "source": {
+        "path": "vault/identity/sessions/token-storage-in-the-browser.md",
+        "block": "card-wnkr"
+      },
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "OWASP Cross-Site Request Forgery Prevention Cheat Sheet"
+      ],
+      "answer": "Script-readable storage such as localStorage or sessionStorage is exposed to any script running on the page, so one injection leaks the credential permanently. A cookie page script cannot read removes that exposure but is attached to requests automatically by the browser, which is the exact property that enables cross-site request forgery, so it needs a forgery defense alongside it. An in-memory variable leaks the least of the three but survives neither a reload nor a new tab. Backend-for-frontend avoids the choice by keeping the real credential server-side entirely, so the browser never holds anything a script or a forged request could get real use out of."
+    },
+    {
+      "id": "card-n0hw",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "webauthn",
+        "passkeys",
+        "origin-binding",
+        "phishing-resistance"
+      ],
+      "prompt": "What does a WebAuthn relying party store for each registered credential, and why does that make a stolen authentication database far less damaging than a stolen password database?",
+      "source": {
+        "path": "vault/identity/sessions/webauthn-and-passkeys.md",
+        "block": "card-n0hw"
+      },
+      "citations": [
+        "RFC 6238 (TOTP)",
+        "W3C Web Authentication (WebAuthn)"
+      ],
+      "answer": "Only the public key. A public key on its own doesn't let whoever steals the database authenticate as the user, and because there's no shared secret sitting in that database at all, there's nothing to phish out of the user later either — unlike a password or a TOTP seed, which are secrets by themselves."
+    },
+    {
+      "id": "card-t0dl",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "webauthn",
+        "passkeys",
+        "origin-binding",
+        "phishing-resistance"
+      ],
+      "prompt": "A WebAuthn credential is bound to the ___ it was created for, and the browser enforces that binding itself, refusing to produce a usable response for any lookalike no matter what the page asks for.",
+      "source": {
+        "path": "vault/identity/sessions/webauthn-and-passkeys.md",
+        "block": "card-t0dl"
+      },
+      "citations": [
+        "RFC 6238 (TOTP)",
+        "W3C Web Authentication (WebAuthn)"
+      ],
+      "answer": "origin"
+    },
+    {
+      "id": "card-c2nu",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "webauthn",
+        "passkeys",
+        "origin-binding",
+        "phishing-resistance"
+      ],
+      "prompt": "A user is fooled by a pixel-perfect phishing copy of their bank's site, served from a different domain, and attempts to log in with WebAuthn. What happens?",
+      "source": {
+        "path": "vault/identity/sessions/webauthn-and-passkeys.md",
+        "block": "card-c2nu"
+      },
+      "citations": [
+        "RFC 6238 (TOTP)",
+        "W3C Web Authentication (WebAuthn)"
+      ],
+      "choices": [
+        {
+          "text": "The browser won't produce a usable assertion at all, because the phishing page's origin doesn't match the origin the credential was registered to",
+          "correct": true
+        },
+        {
+          "text": "The authenticator signs the request anyway, and the attacker relays it to the real site within a short window",
+          "correct": false
+        },
+        {
+          "text": "The login succeeds only if the user doesn't notice the URL is wrong",
+          "correct": false
+        },
+        {
+          "text": "The credential works on any origin, so the phishing page can capture and reuse it",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-v26u",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "webauthn",
+        "passkeys",
+        "origin-binding",
+        "phishing-resistance"
+      ],
+      "prompt": "Why does the authenticator require a user gesture immediately before signing the challenge, instead of signing automatically as soon as a challenge arrives?",
+      "source": {
+        "path": "vault/identity/sessions/webauthn-and-passkeys.md",
+        "block": "card-v26u"
+      },
+      "citations": [
+        "RFC 6238 (TOTP)",
+        "W3C Web Authentication (WebAuthn)"
+      ],
+      "answer": "Without it, any process capable of reaching the authenticator — malware running on the device, for instance — could request signatures on its own, with no way to distinguish that from a real login. Requiring a touch, PIN, or biometric at the moment of signing ties each signature to a live, present person choosing to authenticate right then."
+    },
+    {
+      "id": "card-lktp",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "webauthn",
+        "passkeys",
+        "origin-binding",
+        "phishing-resistance"
+      ],
+      "prompt": "What is the defining difference between a platform authenticator and a roaming authenticator?",
+      "source": {
+        "path": "vault/identity/sessions/webauthn-and-passkeys.md",
+        "block": "card-lktp"
+      },
+      "citations": [
+        "RFC 6238 (TOTP)",
+        "W3C Web Authentication (WebAuthn)"
+      ],
+      "choices": [
+        {
+          "text": "A platform authenticator is built into one specific device and can't move; a roaming authenticator is separate hardware a user carries between devices",
+          "correct": true
+        },
+        {
+          "text": "A platform authenticator works over the network; a roaming authenticator only works offline",
+          "correct": false
+        },
+        {
+          "text": "A roaming authenticator stores the site's public key; a platform authenticator doesn't",
+          "correct": false
+        },
+        {
+          "text": "They differ only in which biometric method they support",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-ijhd",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "webauthn",
+        "passkeys",
+        "origin-binding",
+        "phishing-resistance"
+      ],
+      "prompt": "___ credentials are what make username-less sign-in possible: the authenticator can enumerate its own stored credentials for the current origin and let the user pick one, instead of the site needing to already know who's logging in before it can ask.",
+      "source": {
+        "path": "vault/identity/sessions/webauthn-and-passkeys.md",
+        "block": "card-ijhd"
+      },
+      "citations": [
+        "RFC 6238 (TOTP)",
+        "W3C Web Authentication (WebAuthn)"
+      ],
+      "answer": "Discoverable"
+    },
+    {
+      "id": "card-yclt",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "tags": [
+        "webauthn",
+        "passkeys",
+        "origin-binding",
+        "phishing-resistance"
+      ],
+      "prompt": "Explain the tradeoff passkey syncing makes relative to a credential that lives on a single hardware authenticator and never leaves it. What does syncing gain, and what guarantee does it give up to gain it?",
+      "source": {
+        "path": "vault/identity/sessions/webauthn-and-passkeys.md",
+        "block": "card-yclt"
+      },
+      "citations": [
+        "RFC 6238 (TOTP)",
+        "W3C Web Authentication (WebAuthn)"
+      ],
+      "answer": "A single-device credential offers a strong guarantee that the private key exists in exactly one place and can never be extracted or copied elsewhere — losing that device means losing the credential entirely, with no path back except a separate recovery mechanism. Syncing a passkey across a user's devices through a provider trades that single-location guarantee for recoverability: losing one device no longer strands the user, but the private key now exists wherever the provider has synced it, so the guarantee shifts from \"physically confined to one authenticator\" to \"as strong as the provider's own sync and account security.\""
     },
     {
       "id": "card-h8m6",
