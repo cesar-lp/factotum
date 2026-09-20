@@ -20,6 +20,14 @@ import type { Deck } from '../../pipeline/src/types.js';
 
 const REPO = 'cesar-lp/factotum';
 
+// Bumped on every entry into the `topics` branch below. A note fetch kicked
+// off by an older visit to the topics screen (mute toggle -> save -> a fresh
+// route() call, or a plain re-visit) must not clobber a newer visit's render
+// with its own stale `disabled` set once it finally resolves -- comparing
+// against `window.location.hash` alone catches "navigated away" but not
+// "back on #topics via a different route() call in the meantime".
+let topicsRenderId = 0;
+
 /**
  * Fetches and merges the deck. Never throws: a failed fetch/parse is a
  * normal offline condition, and the previously merged deck in IndexedDB
@@ -131,7 +139,7 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
   if (decision.kind === 'topics') {
     const settings = await getSettings(db);
     const disabled = new Set(settings.disabledCategories);
-    const notes = await loadNotes();
+    const renderId = ++topicsRenderId;
 
     const save = async (next: Set<string>): Promise<void> => {
       // Re-read so this write carries whatever the settings form may have
@@ -141,29 +149,54 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
       await route(appRoot, db, deckUnavailable);
     };
 
-    renderTopics(appRoot, {
-      topics: state.topics,
-      disabled,
-      onToggleCategory: (category, nextDisabled) => {
-        const next = new Set(disabled);
-        if (nextDisabled) next.add(category);
-        else next.delete(category);
-        void save(next);
-      },
-      onToggleTopic: (topic, nextDisabled) => {
-        const next = new Set(disabled);
-        const summary = state.topics.find((t) => t.topic === topic);
-        for (const c of summary?.categories ?? []) {
-          if (nextDisabled) next.add(c.category);
-          else next.delete(c.category);
-        }
-        void save(next);
-      },
-      onLearn: (category) => { window.location.hash = focusHash(category); },
-      onBack: () => { window.location.hash = ''; },
-      notes: notes ? notesByCategory(notes) : new Map(),
-      onOpenNote: (path) => { window.location.hash = noteHash(path); }
+    const renderWithNotes = (notes: ReadonlyMap<string, { path: string; title: string }[]>): void => {
+      renderTopics(appRoot, {
+        topics: state.topics,
+        disabled,
+        onToggleCategory: (category, nextDisabled) => {
+          const next = new Set(disabled);
+          if (nextDisabled) next.add(category);
+          else next.delete(category);
+          void save(next);
+        },
+        onToggleTopic: (topic, nextDisabled) => {
+          const next = new Set(disabled);
+          const summary = state.topics.find((t) => t.topic === topic);
+          for (const c of summary?.categories ?? []) {
+            if (nextDisabled) next.add(c.category);
+            else next.delete(c.category);
+          }
+          void save(next);
+        },
+        onLearn: (category) => { window.location.hash = focusHash(category); },
+        onBack: () => { window.location.hash = ''; },
+        notes,
+        onOpenNote: (path) => { window.location.hash = noteHash(path); }
+      });
+    };
+
+    // Render immediately with no note lists -- notes.json is ~1MB and
+    // lazily fetched, and nothing else on this screen (mute toggles, shelf
+    // toggles, "learn" buttons) has anything to do with it. This is the
+    // same graceful-degradation markup as a permanently-offline notes.json;
+    // it is just the FIRST state here rather than a fallback.
+    renderWithNotes(new Map());
+
+    void loadNotes().then((notes) => {
+      // Offline with nothing cached: stay exactly as already rendered, no
+      // error state -- the note viewer already owns "notes unavailable".
+      if (notes === null) return;
+      // Superseded by a newer visit to this branch (mute toggle -> save ->
+      // a fresh route() call, or the reader left and came back) whose own
+      // disabled set and closures are the ones that should end up on
+      // screen, not this stale fetch's.
+      if (renderId !== topicsRenderId) return;
+      // The reader tapped a note, a "learn" button, or the back button
+      // while this was in flight -- do not yank them back onto #topics.
+      if (window.location.hash !== '#topics') return;
+      renderWithNotes(notesByCategory(notes));
     });
+
     return;
   }
 
