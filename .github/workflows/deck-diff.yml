@@ -1,0 +1,76 @@
+# .github/workflows/deck-diff.yml
+name: Deck diff
+
+# Computes the per-note card-count diff a PR makes to deck/deck.json and
+# uploads it as an artifact. A second workflow (deck-diff-comment.yml) posts
+# it, because posting needs write permission and this workflow must not have
+# any -- see the security note there.
+#
+# Why this is worth a workflow at all: deck/deck.json is a single 1.2MB
+# generated file that every content PR rewrites, so GitHub's own diff view
+# is useless on it, and the one number a reviewer actually wants -- how many
+# cards landed, in which notes -- is invisible. CLAUDE.md records a
+# build:deck run that silently swept twelve untracked drafts into a
+# docs-only change; it was caught "by luck rather than by process". This is
+# the process.
+on:
+  pull_request:
+    branches: [main]
+
+# Read-only, and deliberately so. This workflow runs against PR-authored
+# content on a public repo, including from forks. It never installs
+# dependencies and never runs repo code -- it reads two committed JSON files
+# with jq. See deck-diff-comment.yml for where the write token lives.
+permissions:
+  contents: read
+
+concurrency:
+  group: deck-diff-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deck-diff:
+    name: Deck diff
+    runs-on: ubuntu-latest
+    steps:
+      # fetch-depth: 0 because the diff needs the base commit's deck.json,
+      # and the default shallow fetch of the PR merge ref does not include
+      # it.
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Render deck diff
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          # The checkout is the PR's merge ref, so the working-tree deck is
+          # the deck as it would land on main -- the right "after" side.
+          #
+          # The base deck is read out of the base commit rather than the
+          # working tree. The fallback covers the one case where it is
+          # absent (a PR based on history from before deck.json existed),
+          # which would otherwise fail the whole job over nothing.
+          git show "$BASE_SHA:deck/deck.json" > base-deck.json 2>/dev/null \
+            || echo '{"cards":[]}' > base-deck.json
+
+          # The script writes the markdown to comment.md and prints
+          # changed=true|false, which the commenting job uses to stay quiet
+          # on PRs that don't touch the deck at all.
+          .github/scripts/deck-diff.sh base-deck.json deck/deck.json comment.md > changed.txt
+          cat changed.txt
+          echo "$PR_NUMBER" > pr-number.txt
+
+          # Also surface it on this run's own summary page, so the numbers
+          # are readable even if the comment job is skipped or fails.
+          cat comment.md >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: deck-diff
+          path: |
+            comment.md
+            changed.txt
+            pr-number.txt
+          retention-days: 1

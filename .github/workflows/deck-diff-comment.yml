@@ -1,0 +1,94 @@
+# .github/workflows/deck-diff-comment.yml
+name: Deck diff comment
+
+# Posts the artifact produced by deck-diff.yml as a PR comment.
+#
+# SECURITY: the split between these two workflows is the whole point, and
+# collapsing them back into one would introduce the exact vulnerability it
+# avoids. Posting a comment needs `pull-requests: write`. On a public repo,
+# a `pull_request` run of a fork PR gets a read-only token and no secrets,
+# so the write token cannot live there. The usual "fix" is
+# `pull_request_target`, which runs with full write permissions and secrets
+# -- and, if it checks out or executes the PR's code, hands repository write
+# access to anyone who opens a PR. That is the single most exploited
+# misconfiguration in GitHub Actions.
+#
+# So: deck-diff.yml handles PR content with no permissions, and this
+# workflow holds the write token but never checks out or runs PR code. It
+# only downloads an artifact and posts its text. Do not add a checkout step
+# here, and do not run anything from the PR.
+on:
+  workflow_run:
+    workflows: ["Deck diff"]
+    types: [completed]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  # Keyed on the triggering run's head branch, so rapid pushes to one PR
+  # don't race each other into duplicate comments.
+  group: deck-diff-comment-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: true
+
+jobs:
+  comment:
+    name: Post deck diff
+    runs-on: ubuntu-latest
+    # Nothing to post if the diff job failed or was cancelled.
+    if: github.event.workflow_run.conclusion == 'success'
+    steps:
+      - name: Download deck diff
+        uses: actions/download-artifact@v5
+        with:
+          name: deck-diff
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('fs');
+
+            const marker = '<!-- deck-diff -->';
+            const body = fs.readFileSync('comment.md', 'utf8');
+            const changed = fs.readFileSync('changed.txt', 'utf8').trim() === 'changed=true';
+            const issue_number = Number(fs.readFileSync('pr-number.txt', 'utf8').trim());
+
+            if (!Number.isInteger(issue_number) || issue_number <= 0) {
+              core.setFailed(`Bad PR number in artifact: ${issue_number}`);
+              return;
+            }
+
+            // One comment per PR, edited in place. Without this a PR that
+            // gets pushed to six times ends up with six stale card counts
+            // and no indication which is current.
+            const comments = await github.paginate(
+              github.rest.issues.listComments,
+              { ...context.repo, issue_number, per_page: 100 },
+            );
+            const existing = comments.find(
+              (c) => c.user.type === 'Bot' && c.body?.includes(marker),
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                ...context.repo, comment_id: existing.id, body,
+              });
+              core.info(`Updated comment ${existing.id}.`);
+              return;
+            }
+
+            // A PR that never touches the deck gets no comment at all --
+            // docs-only PRs shouldn't collect a "no change" note. But if a
+            // comment already exists (above), it is still updated, so a PR
+            // that adds cards and then drops them again ends up saying so
+            // rather than showing a stale count.
+            if (!changed) {
+              core.info('Deck unchanged and no existing comment; staying quiet.');
+              return;
+            }
+
+            await github.rest.issues.createComment({ ...context.repo, issue_number, body });
+            core.info('Created deck diff comment.');
