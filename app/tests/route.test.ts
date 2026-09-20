@@ -20,6 +20,10 @@ const state = (
   session,
   extension,
   newCardsSeenToday: 0,
+  // Routing never reads these; they ride along on DashboardState because the
+  // dashboard renders them from the same load.
+  streak: 0,
+  lastSevenDays: [],
   topics: topicList
 });
 

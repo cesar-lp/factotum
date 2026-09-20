@@ -1,0 +1,38 @@
+/* The dashboard screen. */
+
+.due-count { font-size: var(--text-display); font-weight: 600; line-height: 1; }
+
+.stats { margin-top: var(--s5); display: flex; flex-direction: column; align-items: center; gap: var(--s3); }
+
+.streak { display: flex; align-items: baseline; gap: var(--s1); color: var(--dim); }
+.streak-count { font-size: var(--text-prompt); font-weight: 600; color: var(--text); }
+.streak-label { font-size: var(--text-label); }
+
+.week-bars { display: flex; align-items: flex-end; gap: var(--s2); height: 56px; }
+
+.week-bar {
+  display: flex; flex-direction: column-reverse; align-items: center; gap: var(--s1);
+  width: 20px; height: 100%;
+}
+
+.week-bar-fill {
+  width: 100%; min-height: 2px; border-radius: var(--r-sm) var(--r-sm) 0 0;
+  background: var(--line);
+}
+
+.week-bar-today .week-bar-fill { background: var(--accent); }
+
+.week-bar-label { font-size: var(--text-micro); color: var(--dim); }
+
+/* The genuinely-nothing-left and due-queue-clear states: a real, static
+   line rather than a disabled button pretending to still be actionable. */
+.all-clear {
+  display: flex; align-items: center; justify-content: center; gap: var(--s2);
+  color: var(--dim); font-size: var(--text-body); padding: var(--s4) 0;
+}
+
+.all-clear-mark {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--ok-soft); color: var(--ok); font-weight: 700; font-size: var(--text-label);
+}

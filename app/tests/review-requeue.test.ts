@@ -1,5 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { shouldRequeue, requeueIndex, REQUEUE_GAP, MAX_REQUEUES_PER_CARD } from '../src/ui/review.js';
+import {
+  shouldRequeue,
+  requeueIndex,
+  REQUEUE_GAP,
+  MAX_REQUEUES_PER_CARD,
+  distinctCardCount,
+  distinctPosition
+} from '../src/ui/review.js';
 import { buildSession, buildExtension } from '../src/scheduler/queue.js';
 import { recordReview, newCardsSeenToday } from '../src/db/reviews.js';
 import { initialState } from '../src/scheduler/fsrs.js';
@@ -191,6 +198,44 @@ describe('session-level re-queue behaviour (simulated, mirrors submit())', () =>
     simulateSubmit(session, extIndex, session[extIndex] as StoredCard, learningState, counts);
     expect(session).toHaveLength(4);
     expect(session[session.length - 1]?.id).toBe('new-2');
+  });
+});
+
+describe('distinct progress counter (header "N / total", stable across requeues)', () => {
+  it('distinctCardCount counts unique card ids, not array length', () => {
+    const [a, b, c] = [card('card-a'), card('card-b'), card('card-c')];
+    expect(distinctCardCount([a, b, c])).toBe(3);
+    // A duplicate id (as a requeued session would already contain) does not
+    // inflate the count.
+    expect(distinctCardCount([a, b, c, a])).toBe(3);
+  });
+
+  it('distinctPosition does not advance when a requeued card reoccupies a later slot', () => {
+    const [a, b, c, d, e] = [card('card-a'), card('card-b'), card('card-c'), card('card-d'), card('card-e')];
+    const session = [a, b, c, d, e];
+    const counts = new Map<string, number>();
+    const total = distinctCardCount(session); // captured before any requeue, per the header's contract
+
+    // Position at each of the first three cards climbs 1, 2, 3 as normal.
+    expect(distinctPosition(session, 0)).toBe(1);
+    expect(distinctPosition(session, 1)).toBe(2);
+    expect(distinctPosition(session, 2)).toBe(3);
+
+    // card-a is rated Again/Hard/Good (still learning) and gets re-queued.
+    simulateSubmit(session, 0, a, learningState, counts);
+    expect(session).toHaveLength(6); // one requeue spliced in
+    expect(total).toBe(5); // denominator captured up front never grows
+
+    // Walking through the rest of the (now 6-card) session: position must
+    // reach 5 (all distinct cards seen) and never exceed it, including at
+    // the slot where card-a's requeued copy reappears.
+    const positions = session.map((_, i) => distinctPosition(session, i));
+    expect(positions[positions.length - 1]).toBe(5);
+    expect(Math.max(...positions)).toBe(5);
+    // The position does not advance between the slot right before and the
+    // slot where the requeued card-a reappears -- it's already been counted.
+    const requeuedIndex = session.findIndex((c, i) => c.id === 'card-a' && i > 0);
+    expect(distinctPosition(session, requeuedIndex)).toBe(distinctPosition(session, requeuedIndex - 1));
   });
 });
 

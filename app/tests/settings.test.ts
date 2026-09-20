@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { openDb } from '../src/db/schema.js';
 import { getSettings, saveSettings, sanitizeSettings, DEFAULT_SETTINGS } from '../src/db/settings.js';
-import { clampSettings } from '../src/ui/settings.js';
+import { clampSettings, retentionPercentBounds } from '../src/ui/settings.js';
 
 beforeEach(async () => {
   indexedDB = new IDBFactory();
@@ -146,5 +146,11 @@ describe('clampSettings', () => {
       disabledCategories: ['amp']
     });
     expect(result.disabledCategories).toEqual(['amp']);
+  });
+});
+
+describe('retentionPercentBounds', () => {
+  it('derives the slider bounds from sanitizeSettings’s own clamp, not a second copy', () => {
+    expect(retentionPercentBounds()).toEqual({ min: 70, max: 97 });
   });
 });

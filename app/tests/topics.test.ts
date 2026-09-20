@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { summarizeTopics, hasFocusableCards } from '../src/topics.js';
+import { shelfCounts } from '../src/ui/topics.js';
 import { initialState } from '../src/scheduler/fsrs.js';
 import type { StoredCard, ReviewState } from '../src/db/schema.js';
 
@@ -111,5 +112,20 @@ describe('hasFocusableCards', () => {
       now
     );
     expect(hasFocusableCards(settled, 'amp')).toBe(false);
+  });
+});
+
+describe('shelfCounts', () => {
+  it('sums due and new across a shelf’s categories', () => {
+    expect(
+      shelfCounts([
+        { category: 'amp', dueCount: 2, newCount: 3 },
+        { category: 'os-concurrency', dueCount: 0, newCount: 5 }
+      ])
+    ).toEqual({ due: 2, new: 8 });
+  });
+
+  it('is zero for a shelf with no categories', () => {
+    expect(shelfCounts([])).toEqual({ due: 0, new: 0 });
   });
 });

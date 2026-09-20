@@ -5,7 +5,9 @@ import {
   isNumericAnswer,
   renderPrompt,
   renderActions,
-  shuffle
+  shuffle,
+  inlineMarkup,
+  escapeHtml
 } from '../src/ui/renderers.js';
 import { issueUrl } from '../src/ui/flag.js';
 import type { StoredCard } from '../src/db/schema.js';
@@ -81,11 +83,12 @@ describe('renderActions', () => {
     expect((html.match(/data-choice=/g) ?? [])).toHaveLength(2);
   });
 
-  it('shows citations and a continue button once an mcq is revealed', () => {
+  it('shows a continue button once an mcq is revealed (citations render in renderPrompt now)', () => {
     const html = renderActions(mcq, true);
-    expect(html).toContain('RFC 9293');
     expect(html).toContain('data-outcome="continue"');
     expect(html).toContain('disabled');
+    const promptHtml = renderPrompt(mcq, true);
+    expect(promptHtml).toContain('RFC 9293');
   });
 
   it('renders mcq choices in the order it is given, not deck order', () => {
@@ -94,7 +97,7 @@ describe('renderActions', () => {
     // (review.ts), which is where the actual shuffle happens.
     const reordered: Choice[] = [mcq.choices![1]!, mcq.choices![0]!];
     const html = renderActions(mcq, false, reordered);
-    const texts = [...html.matchAll(/data-correct="(true|false)"[^>]*>\s*([^<]+?)\s*</g)].map((m) => m[2]);
+    const texts = [...html.matchAll(/<span class="choice-text">([^<]+)<\/span>/g)].map((m) => m[1]!.trim());
     expect(texts).toEqual(['Network', 'Transport']);
   });
 
@@ -146,21 +149,63 @@ describe('renderActions', () => {
   });
 
   describe('revealed cloze feedback (the correct-path bug this branch fixes)', () => {
-    it('a correct answer shows the expected answer and citations, and suppresses the override', () => {
+    it('a correct answer substitutes into the prompt (tinted ok) and shows citations, and suppresses the override', () => {
+      const promptHtml = renderPrompt(cloze, true, { outcome: 'correct' });
+      expect(promptHtml).toContain('1500 bytes'); // substituted into the blank now, not a detached paragraph
+      expect(promptHtml).toContain('cloze-fill is-ok');
+      expect(promptHtml).toContain('RFC 9293'); // citation — this is the bug: it never rendered before
+
       const html = renderActions(cloze, true, undefined, 'correct');
-      expect(html).toContain('1500 bytes'); // expected answer still shown
-      expect(html).toContain('RFC 9293'); // citation — this is the bug: it never rendered before
       expect(html).toContain('data-outcome="continue"');
       expect(html).not.toContain('data-outcome="override"'); // meaningless when already correct
-      expect(html.toLowerCase()).toContain('correct');
     });
 
-    it('a wrong answer shows the override alongside Continue and citations', () => {
+    it('a wrong answer shows the override alongside Continue, citations, and what was typed', () => {
+      const promptHtml = renderPrompt(cloze, true, { outcome: 'wrong', typedAnswer: '1400 bytes' });
+      expect(promptHtml).toContain('1500 bytes'); // correct answer substituted in
+      expect(promptHtml).toContain('cloze-fill is-accent');
+      expect(promptHtml).toContain('You typed: 1400 bytes'); // previously discarded entirely
+      expect(promptHtml).toContain('RFC 9293');
+
       const html = renderActions(cloze, true, undefined, 'wrong');
-      expect(html).toContain('1500 bytes');
-      expect(html).toContain('RFC 9293');
       expect(html).toContain('data-outcome="continue"');
       expect(html).toContain('data-outcome="override"');
+    });
+  });
+
+  describe('cloze reveal state label (WCAG 1.4.1 — colour is never the only signal)', () => {
+    // correct and self-graded differ ONLY by --ok green vs --accent ochre
+    // otherwise (no typed line, no override on either), so each of the
+    // three reveal states must carry distinguishing TEXT, not just a class
+    // name a sighted user with typical colour vision would read as intent.
+    it('a correct reveal is labelled "Correct" in an aria-live region', () => {
+      const html = renderPrompt(cloze, true, { outcome: 'correct' });
+      expect(html).toMatch(/aria-live="polite"[^>]*>Correct</);
+    });
+
+    it('a self-graded reveal is labelled distinctly from "Correct", in an aria-live region', () => {
+      const html = renderPrompt(cloze, true, { outcome: 'self-graded' });
+      expect(html).toMatch(/aria-live="polite"[^>]*>Answer revealed</);
+      expect(html).not.toContain('>Correct<');
+    });
+
+    it('a wrong reveal is labelled "Not quite" in an aria-live region', () => {
+      const html = renderPrompt(cloze, true, { outcome: 'wrong', typedAnswer: '1400 bytes' });
+      expect(html).toMatch(/aria-live="polite"[^>]*>Not quite</);
+    });
+
+    it('the three reveal states are all textually distinct from one another', () => {
+      const correct = renderPrompt(cloze, true, { outcome: 'correct' });
+      const wrong = renderPrompt(cloze, true, { outcome: 'wrong' });
+      const selfGraded = renderPrompt(cloze, true, { outcome: 'self-graded' });
+      const extractLabel = (html: string): string | undefined => html.match(/class="cloze-state[^>]*>([^<]+)</)?.[1];
+      const labels = [extractLabel(correct), extractLabel(wrong), extractLabel(selfGraded)];
+      expect(labels).toEqual(['Correct', 'Not quite', 'Answer revealed']);
+      expect(new Set(labels).size).toBe(3);
+    });
+
+    it('an unrevealed cloze has no state label at all', () => {
+      expect(renderPrompt(cloze, false)).not.toContain('cloze-state');
     });
   });
 
@@ -191,9 +236,12 @@ describe('renderActions', () => {
       expect(html).toContain('data-role="reveal"');
     });
 
-    it('a self-graded reveal shows the answer and a rating row', () => {
+    it('a self-graded reveal substitutes the answer (tinted accent) and shows a rating row', () => {
+      const promptHtml = renderPrompt(cloze, true, { outcome: 'self-graded' });
+      expect(promptHtml).toContain('1500 bytes');
+      expect(promptHtml).toContain('cloze-fill is-accent');
+
       const html = renderActions(cloze, true, undefined, 'self-graded');
-      expect(html).toContain('1500 bytes');
       for (const outcome of ['again', 'hard', 'good', 'easy']) {
         expect(html).toContain(`data-outcome="${outcome}"`);
       }
@@ -213,9 +261,10 @@ describe('renderActions', () => {
     it('does not throw, and renders no answer paragraph', () => {
       const qaNoAnswer: StoredCard = { ...qa, answer: undefined };
       expect(() => renderActions(qaNoAnswer, true)).not.toThrow();
-      const html = renderActions(qaNoAnswer, true);
-      expect(html).not.toContain('class="expected"');
+      expect(() => renderPrompt(qaNoAnswer, true)).not.toThrow();
+      expect(renderPrompt(qaNoAnswer, true)).not.toContain('class="expected"');
       // still gets the rating row — nothing about the missing answer breaks the reveal
+      const html = renderActions(qaNoAnswer, true);
       for (const outcome of ['again', 'hard', 'good', 'easy']) {
         expect(html).toContain(`data-outcome="${outcome}"`);
       }
@@ -280,6 +329,122 @@ describe('shuffle', () => {
       expect(count / runs).toBeGreaterThan(0.18);
       expect(count / runs).toBeLessThan(0.32);
     }
+  });
+});
+
+describe('inlineMarkup', () => {
+  it('renders a code span', () => {
+    expect(inlineMarkup('use `PutItem` here')).toBe('use <code>PutItem</code> here');
+  });
+
+  it('renders bold', () => {
+    expect(inlineMarkup('this is **important**')).toBe('this is <strong>important</strong>');
+  });
+
+  it('renders italic', () => {
+    expect(inlineMarkup('this is *subtle*')).toBe('this is <em>subtle</em>');
+  });
+
+  it('tries ** before * so bold does not become nested italics', () => {
+    expect(inlineMarkup('**x**')).toBe('<strong>x</strong>');
+  });
+
+  it('keeps emphasis markers inside a code span literal', () => {
+    expect(inlineMarkup('`a * b`')).toBe('<code>a * b</code>');
+    expect(inlineMarkup('`a ** b`')).toBe('<code>a ** b</code>');
+  });
+
+  it('leaves an unmatched single asterisk literal without swallowing the rest of the line', () => {
+    expect(inlineMarkup('this * that stays plain')).toBe('this * that stays plain');
+  });
+
+  it('leaves an unmatched backtick literal', () => {
+    expect(inlineMarkup('this ` that stays plain')).toBe('this ` that stays plain');
+  });
+
+  it('leaves an unmatched ** literal', () => {
+    expect(inlineMarkup('this ** that stays plain')).toBe('this ** that stays plain');
+  });
+
+  it('does not corrupt already-escaped HTML entities', () => {
+    const escaped = escapeHtml('<script>alert(1)</script>');
+    expect(inlineMarkup(escaped)).toBe(escaped);
+  });
+
+  it('handles escaped entities alongside markup', () => {
+    const escaped = escapeHtml('a *b* & <c>');
+    expect(inlineMarkup(escaped)).toBe('a <em>b</em> &amp; &lt;c&gt;');
+  });
+
+  it('handles real deck fixtures: code spans with punctuation', () => {
+    const input = 'A ___ attached to a write (`PutItem`, `UpdateItem`, `DeleteItem`) makes the write fail';
+    expect(inlineMarkup(escapeHtml(input))).toBe(
+      'A ___ attached to a write (<code>PutItem</code>, <code>UpdateItem</code>, <code>DeleteItem</code>) makes the write fail'
+    );
+  });
+
+  it('handles real deck fixtures: code span containing operators', () => {
+    const input = 'defined as `actual_cost + Phi(after) - Phi(before)`';
+    expect(inlineMarkup(escapeHtml(input))).toBe(
+      'defined as <code>actual_cost + Phi(after) - Phi(before)</code>'
+    );
+  });
+
+  it('regression: card-8kx7 — multiplication asterisks in c*g(n) must not pair with *every*', () => {
+    const input =
+      'The strict versions tighten the inequality itself, not just which side it bounds. ___ requires f(n) < c*g(n) for *every* positive constant c, eventually, meaning f(n) becomes insignificant relative to g(n) as n grows. Its mirror is little-omega, requiring f(n) > c*g(n) for every constant c; in both strict cases the bound can never be met with equality in the limit, unlike O and Omega where it can.';
+    const out = inlineMarkup(escapeHtml(input));
+    expect(out).toContain('c*g(n)');
+    expect(out).toContain('<em>every</em>');
+    expect(out).not.toMatch(/<em>g\(n\)/);
+  });
+
+  it('regression: card-r04a — same c*g(n) / *every* shape', () => {
+    const input =
+      'Why does little-o require the inequality f(n) < c*g(n) to hold for *every* positive constant c, rather than just some constant c the way O(g(n)) does?';
+    const out = inlineMarkup(escapeHtml(input));
+    expect(out).toContain('c*g(n)');
+    expect(out).toContain('<em>every</em>');
+  });
+
+  it('regression: card-q592 — O(E * |f*|) must not be mangled, *which* still italicises', () => {
+    const input =
+      'It leaves the choice of *which* augmenting path unspecified, and that choice matters: with a poor choice, its running time can be as bad as O(E * |f*|), where |f*| is the value of the maximum flow, since integer capacities can force one unit of flow to be added per iteration in the worst case.';
+    const out = inlineMarkup(escapeHtml(input));
+    expect(out).toContain('<em>which</em>');
+    expect(out).toContain('O(E * |f*|)');
+    expect(out).toContain('|f*| is the value');
+    expect(out).not.toMatch(/<em>\s*\|f/);
+  });
+
+  it('applies multiple code spans and emphasis in the same string', () => {
+    expect(inlineMarkup('`a` and **b** and *c*')).toBe(
+      '<code>a</code> and <strong>b</strong> and <em>c</em>'
+    );
+  });
+});
+
+describe('inlineMarkup wired into renderers', () => {
+  it('renders bold/italic/code in the prompt', () => {
+    const card: StoredCard = { ...base, id: 'card-eeee', format: 'qa', prompt: 'What is **MTU** in `IP`?', answer: 'x' };
+    const html = renderPrompt(card);
+    expect(html).toContain('<strong>MTU</strong>');
+    expect(html).toContain('<code>IP</code>');
+  });
+
+  it('renders markup in the answer paragraph', () => {
+    const card: StoredCard = { ...base, id: 'card-ffff', format: 'qa', prompt: 'p', answer: 'It is `1500 bytes`' };
+    const html = renderPrompt(card, true);
+    expect(html).toContain('<code>1500 bytes</code>');
+  });
+
+  it('renders markup in mcq choice text', () => {
+    const card: StoredCard = {
+      ...base, id: 'card-gggg', format: 'mcq', prompt: 'p',
+      choices: [{ text: 'The `Transport` layer', correct: true }, { text: 'Network', correct: false }]
+    };
+    const html = renderActions(card, false);
+    expect(html).toContain('<code>Transport</code>');
   });
 });
 

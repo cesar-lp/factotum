@@ -36,7 +36,7 @@ export interface RecordReviewArgs {
  */
 export async function recordReview(db: FactotumDb, args: RecordReviewArgs): Promise<ReviewState> {
   const { card, outcome, now, desiredRetention, durationMs } = args;
-  const rating = ratingFor(card.format, outcome);
+  const rating = ratingFor(outcome);
 
   const tx = db.transaction(['reviews', 'reviewLog', 'meta'], 'readwrite');
   const reviewsStore = tx.objectStore('reviews');

@@ -1,3 +1,5 @@
+import type { DayCount } from '../db/stats.js';
+
 export interface DashboardProps {
   dueCount: number;
   /**
@@ -9,6 +11,20 @@ export interface DashboardProps {
   newCardsRemaining: number;
   /** Today's new-card count so far, so unlimited "keep going" stays honest. */
   newCardsSeenToday: number;
+  /**
+   * Consecutive days with at least one review, counted back from today —
+   * see `computeStreak` in `db/stats.ts` for exactly how a gap or an
+   * unreviewed-so-far today are handled. Optional/defaulted to 0 the same
+   * way `deckUnavailable` is below, so this renderer keeps compiling for
+   * any caller not yet passing it.
+   */
+  streak?: number;
+  /**
+   * Per-day review counts for the last 7 days, oldest first, today last.
+   * Optional/defaulted to an empty list (renders the streak with no bar
+   * row) for the same reason as `streak`.
+   */
+  lastSevenDays?: DayCount[];
   onStart: () => void;
   onKeepGoing: () => void;
   onTopics: () => void;
@@ -22,6 +38,38 @@ export interface DashboardProps {
   deckUnavailable?: boolean;
 }
 
+function weekdayLabel(dayKey: string): string {
+  const [y, m, d] = dayKey.split('-').map(Number);
+  const date = new Date(y ?? 1970, (m ?? 1) - 1, d ?? 1);
+  return date.toLocaleDateString(undefined, { weekday: 'narrow' });
+}
+
+function renderStats(streak: number, lastSevenDays: DayCount[]): string {
+  const max = Math.max(1, ...lastSevenDays.map((d) => d.count));
+  const todayKey = lastSevenDays[lastSevenDays.length - 1]?.dayKey;
+
+  const bars = lastSevenDays
+    .map((d) => {
+      const heightPct = Math.round((d.count / max) * 100);
+      const isToday = d.dayKey === todayKey;
+      return `
+        <div class="week-bar${isToday ? ' week-bar-today' : ''}" title="${d.count} review${d.count === 1 ? '' : 's'}">
+          <div class="week-bar-fill" style="height:${d.count > 0 ? Math.max(heightPct, 8) : 2}%"></div>
+          <span class="week-bar-label">${weekdayLabel(d.dayKey)}</span>
+        </div>`;
+    })
+    .join('');
+
+  return `
+    <div class="stats">
+      <div class="streak">
+        <span class="streak-count">${streak}</span>
+        <span class="streak-label">day streak</span>
+      </div>
+      <div class="week-bars">${bars}</div>
+    </div>`;
+}
+
 export function renderDashboard(root: HTMLElement, props: DashboardProps): void {
   const deckUnavailable = props.deckUnavailable ?? false;
   const queueEmpty = props.dueCount === 0;
@@ -29,18 +77,12 @@ export function renderDashboard(root: HTMLElement, props: DashboardProps): void 
   // Distinct from both "all clear" (queue empty, nothing left to take on)
   // and the failed-first-load state, and only ever an opt-in action.
   const canKeepGoing = !deckUnavailable && queueEmpty && props.newCardsRemaining > 0;
+  // Genuinely nothing left to do today: queue empty, no new cards to opt
+  // into, and the deck loaded fine. This is the only state that gets the
+  // "all clear" treatment below.
+  const allClear = !deckUnavailable && queueEmpty && !canKeepGoing;
 
-  const startDisabled = deckUnavailable || queueEmpty;
-  // "All clear" is reserved for genuinely nothing left to do. When new
-  // cards are still sitting there for the taking (canKeepGoing), saying
-  // "All clear" directly above a "Keep going — N new cards left" button
-  // reads as a contradiction, so this state gets its own accurate label —
-  // the due queue specifically is clear, not the day.
-  const startLabel = deckUnavailable
-    ? 'Start review'
-    : queueEmpty
-      ? (canKeepGoing ? 'Due queue clear' : 'All clear')
-      : 'Start review';
+  const startDisabled = deckUnavailable;
 
   const message = deckUnavailable
     ? '<div class="due-count">--</div><div style="color:var(--dim)">couldn’t load the deck &mdash; check your connection</div>'
@@ -52,11 +94,38 @@ export function renderDashboard(root: HTMLElement, props: DashboardProps): void 
         props.newCardsSeenToday === 1 ? '' : 's'
       } today</div>`;
 
+  const statsBlock = deckUnavailable ? '' : renderStats(props.streak ?? 0, props.lastSevenDays ?? []);
+
   const keepGoingButton = canKeepGoing
-    ? `<button class="btn" id="keep-going" style="margin-top:8px">Keep going &mdash; ${
+    ? `<button class="btn-secondary" id="keep-going" style="margin-top:8px">Keep going &mdash; ${
         props.newCardsRemaining
       } new card${props.newCardsRemaining === 1 ? '' : 's'} left</button>`
     : '';
+
+  // "All clear" is reserved for genuinely nothing left to do. A disabled
+  // button labelled "All clear" reads as broken -- success reported by a
+  // dead control -- so this is a real state instead: a mark and a message,
+  // no button at all. When new cards are still sitting there for the
+  // taking (canKeepGoing), this block is skipped entirely and "Keep going"
+  // is the only control on screen, so there's no "All clear" sitting
+  // directly above an action that contradicts it.
+  const allClearBlock = allClear
+    ? `<div class="all-clear"><span class="all-clear-mark">&#10003;</span><span>All clear &mdash; nothing due today</span></div>`
+    : '';
+
+  // The due-queue-specifically-clear variant of the same idea: the due
+  // queue is done, but it isn't the whole day, so it gets its own accurate
+  // (non-button) label rather than reusing "All clear".
+  const dueQueueClearBlock = canKeepGoing
+    ? `<div class="all-clear"><span>Due queue clear</span></div>`
+    : '';
+
+  const startButton =
+    allClear || canKeepGoing
+      ? ''
+      : `<button class="btn" id="start" ${startDisabled ? 'disabled' : ''}>
+          Start review
+        </button>`;
 
   root.innerHTML = `
     <section class="screen">
@@ -71,11 +140,12 @@ export function renderDashboard(root: HTMLElement, props: DashboardProps): void 
       <div style="text-align:center">
         ${message}
         ${newCardsLine}
+        ${statsBlock}
       </div>
       <div class="spacer"></div>
-      <button class="btn" id="start" ${startDisabled ? 'disabled' : ''}>
-        ${startLabel}
-      </button>
+      ${allClearBlock}
+      ${dueQueueClearBlock}
+      ${startButton}
       ${keepGoingButton}
     </section>
   `;
