@@ -46,10 +46,7 @@ key on.
 | 5 | `api-design` | `api-rest` | REST constraints, resource modelling, safe vs. idempotent methods, pagination, versioning, error formats, conditional requests and concurrency, HATEOAS in practice |
 | 6 | `api-design` | `api-grpc` | Protobuf wire format and schema evolution, the four call types, streaming, deadlines and cancellation, metadata, status codes, gRPC-web, choosing among gRPC/REST/GraphQL |
 | 7 | `aws` | `aws-networking` | VPC, subnets, route tables, IGW/NAT, SGs vs. NACLs, VPC endpoints, PrivateLink, peering/TGW |
-| 8 | `identity` | `http-protocol` | RFCs 9110–9114 (HTTP semantics, /1.1, /2, /3) |
-| `api-rest` | Fielding's dissertation, ch. 5; RFC 9110 |
-| `api-grpc` | grpc.io documentation; Protocol Buffers language guide |
-| `identity-oauth` | Authorization code + PKCE, client credentials, device code, refresh rotation, scopes vs. audience, ID vs. access token, front/back channel |
+| 8 | `identity` | `identity-oauth` | Authorization code + PKCE, client credentials, device code, refresh rotation, scopes vs. audience, ID vs. access token, front/back channel |
 | 9 | `identity` | `identity-sessions` | Cookie attributes, CSRF, token storage, password hashing, TOTP/WebAuthn, JWT-vs-session |
 | 10 | `identity` | `identity-saml` | Assertions, SP- vs. IdP-initiated, bindings, metadata, NameID, SLO, SAML-vs-OIDC |
 | 11 | `identity` | `identity-auth0` | Tenants, apps vs. APIs, connections, Actions pipeline, Universal Login, namespaced claims, Organizations, RBAC |
