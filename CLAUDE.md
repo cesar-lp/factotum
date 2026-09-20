@@ -108,9 +108,15 @@ the moment someone merges:
 git fetch origin && git rebase origin/main
 ```
 
-This matters more here than in most repos, for two reasons. Worktrees
-are long-lived: one created days ago starts from whatever `main` was
-then, and nothing about working inside it ever advances that base. And
+This matters more here than in most repos, for three reasons. `main`
+advances with no human merge at all: `build-deck.yml` runs on every push
+to `main` touching `vault/`, `pipeline/` or `package.json`, and commits
+back both `deck/deck.json` and the `^card-xxxx` anchors it minted into
+`vault/`, so a `chore: rebuild deck` commit can land while nobody has
+merged anything. Worktrees are long-lived: one created days ago starts
+from whatever `main` was then, and nothing about working inside it ever
+advances that base — and it is the worktree's own refs the build runs
+against, so fetching in the main checkout does nothing for it. And
 `deck/deck.json` is a single generated file that every content PR
 rewrites, so two branches cut from different bases conflict there
 almost by construction — rebasing late means resolving a machine-
