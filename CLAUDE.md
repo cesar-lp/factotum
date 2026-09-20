@@ -30,6 +30,29 @@ Commit messages follow the same Conventional Commits types (`feat:`,
 body — this repo's history is the main record of why a design is the way it
 is, and several non-obvious decisions are only documented there.
 
+## Node version
+
+`.nvmrc` is the single source of truth for the Node version, and it holds a
+**fully-qualified** version (`22.23.2`), not a bare major. All three
+workflows that run Node — `ci.yml`, `build-deck.yml`, `deploy.yml` — read it
+via `setup-node`'s `node-version-file`, so CI and local development cannot
+drift apart. Bumping Node means editing this one file.
+
+**Do not shorten it back to `20`.** nvm resolves a bare major to the newest
+matching install, but asdf does not: with `legacy_version_file = yes` asdf
+reads `.nvmrc` as a version source and looks for a runtime named exactly
+`20`, which never exists. The result is `No version is set for command node`
+and every `npm` command failing — including the whole pre-PR gate below.
+
+That failure is easy to paper over, and has been papered over repeatedly:
+running `asdf set` in a worktree writes an untracked `.tool-versions` that
+fixes that one directory. The repo looks fine, the next checkout breaks
+again, and the stray file eventually gets deleted as debris, which brings
+the breakage back. If you find yourself writing a `.tool-versions`, the
+tracked version file is wrong — fix that instead. Do not commit a
+`.tool-versions`: two version files that can disagree is the trap this
+setup exists to avoid.
+
 ## Pull requests
 
 All work lands through a PR into `main`. Do not push to `main` directly —
