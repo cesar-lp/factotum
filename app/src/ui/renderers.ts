@@ -54,6 +54,10 @@ function flagButton(): string {
   return `<button class="btn-quiet" data-role="flag">⚑ looks wrong</button>`;
 }
 
+function sourceButton(): string {
+  return `<button class="btn-quiet" data-role="source">open note</button>`;
+}
+
 function citations(card: StoredCard): string {
   if (card.citations.length === 0) return '';
   return `<p class="citation">${escapeHtml(card.citations.join(' · '))}</p>`;
@@ -92,7 +96,13 @@ export function renderActions(
   mcqChoices?: Choice[],
   clozeOutcome?: 'correct' | 'wrong' | 'self-graded'
 ): string {
-  const tail = `${citations(card)}${flagButton()}`;
+  // `sourceButton()` lives ONLY in `tail`, which is used exclusively by the
+  // revealed branches below. The pre-reveal branches call `flagButton()`
+  // directly instead of `tail`, deliberately excluding the source link —
+  // the linked note contains the answer, so surfacing it before the reader
+  // has committed to a guess would be a one-tap spoiler. Do not fold this
+  // into a shared "always shown" button set.
+  const tail = `${citations(card)}${flagButton()}${sourceButton()}`;
 
   if (card.format === 'mcq') {
     const choiceList = mcqChoices ?? card.choices ?? [];

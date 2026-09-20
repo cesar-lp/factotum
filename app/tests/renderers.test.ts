@@ -124,6 +124,27 @@ describe('renderActions', () => {
     expect(renderActions(recall, true)).toContain('data-role="flag"');
   });
 
+  describe('source button: only ever shown after reveal, never before (spoiler risk)', () => {
+    it('qa/recall: absent before reveal, present after', () => {
+      expect(renderActions(recall, false)).not.toContain('data-role="source"');
+      expect(renderActions(qa, false)).not.toContain('data-role="source"');
+      expect(renderActions(recall, true)).toContain('data-role="source"');
+      expect(renderActions(qa, true)).toContain('data-role="source"');
+    });
+
+    it('cloze: absent before reveal (including the self-graded "Show answer" control) and present after every revealed branch', () => {
+      expect(renderActions(cloze, false)).not.toContain('data-role="source"');
+      expect(renderActions(cloze, true, undefined, 'correct')).toContain('data-role="source"');
+      expect(renderActions(cloze, true, undefined, 'wrong')).toContain('data-role="source"');
+      expect(renderActions(cloze, true, undefined, 'self-graded')).toContain('data-role="source"');
+    });
+
+    it('mcq: absent before reveal, present after', () => {
+      expect(renderActions(mcq, false)).not.toContain('data-role="source"');
+      expect(renderActions(mcq, true)).toContain('data-role="source"');
+    });
+  });
+
   describe('revealed cloze feedback (the correct-path bug this branch fixes)', () => {
     it('a correct answer shows the expected answer and citations, and suppresses the override', () => {
       const html = renderActions(cloze, true, undefined, 'correct');

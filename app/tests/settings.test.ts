@@ -10,16 +10,49 @@ beforeEach(async () => {
 describe('sanitizeSettings', () => {
   it('coerces a corrupt stored record to defaults/clamps', () => {
     const result = sanitizeSettings({ newCardsPerDay: 'ten', desiredRetention: 99, theme: 'chartreuse' });
-    expect(result).toEqual({ desiredRetention: 0.97, newCardsPerDay: 10, theme: 'auto', disabledCategories: [] });
+    expect(result).toEqual({
+      desiredRetention: 0.97, newCardsPerDay: 10, theme: 'auto', disabledCategories: [], obsidianVault: 'vault'
+    });
   });
 
   it('round-trips a valid record unchanged', () => {
-    const valid = { desiredRetention: 0.85, newCardsPerDay: 20, theme: 'night' as const, disabledCategories: [] };
+    const valid = {
+      desiredRetention: 0.85, newCardsPerDay: 20, theme: 'night' as const, disabledCategories: [],
+      obsidianVault: 'second-brain'
+    };
     expect(sanitizeSettings(valid)).toEqual(valid);
   });
 
   it('yields defaults for an absent record', () => {
     expect(sanitizeSettings(undefined)).toEqual(DEFAULT_SETTINGS);
+  });
+});
+
+describe('sanitizeSettings — obsidianVault', () => {
+  it('defaults to "vault"', () => {
+    expect(sanitizeSettings({}).obsidianVault).toBe('vault');
+  });
+
+  it('keeps a valid custom name', () => {
+    expect(sanitizeSettings({ obsidianVault: 'My Notes' }).obsidianVault).toBe('My Notes');
+  });
+
+  it('falls back to the default for a non-string', () => {
+    expect(sanitizeSettings({ obsidianVault: 42 }).obsidianVault).toBe('vault');
+  });
+
+  it('falls back to the default for a blank (whitespace-only) string', () => {
+    expect(sanitizeSettings({ obsidianVault: '   ' }).obsidianVault).toBe('vault');
+  });
+
+  it('trims surrounding whitespace from an otherwise valid name', () => {
+    expect(sanitizeSettings({ obsidianVault: '  my-vault  ' }).obsidianVault).toBe('my-vault');
+  });
+
+  it('caps an over-long name', () => {
+    const long = 'a'.repeat(500);
+    const result = sanitizeSettings({ obsidianVault: long }).obsidianVault;
+    expect(result.length).toBeLessThan(500);
   });
 });
 
@@ -62,21 +95,30 @@ describe('getSettings / saveSettings', () => {
   it('getSettings sanitizes a corrupt record already in the store', async () => {
     const db = await openDb();
     await db.put('meta', { newCardsPerDay: 'ten', desiredRetention: 99, theme: 'chartreuse' }, 'settings');
-    expect(await getSettings(db)).toEqual({ desiredRetention: 0.97, newCardsPerDay: 10, theme: 'auto', disabledCategories: [] });
+    expect(await getSettings(db)).toEqual({
+      desiredRetention: 0.97, newCardsPerDay: 10, theme: 'auto', disabledCategories: [], obsidianVault: 'vault'
+    });
   });
 
   it('saveSettings sanitizes before writing so a bad value never lands in the store', async () => {
     const db = await openDb();
-    await saveSettings(db, { desiredRetention: 99 as unknown as number, newCardsPerDay: -5, theme: 'auto', disabledCategories: [] });
+    await saveSettings(db, {
+      desiredRetention: 99 as unknown as number, newCardsPerDay: -5, theme: 'auto', disabledCategories: [],
+      obsidianVault: 'vault'
+    });
     const stored = await db.get('meta', 'settings');
-    expect(stored).toEqual({ desiredRetention: 0.97, newCardsPerDay: 0, theme: 'auto', disabledCategories: [] });
+    expect(stored).toEqual({
+      desiredRetention: 0.97, newCardsPerDay: 0, theme: 'auto', disabledCategories: [], obsidianVault: 'vault'
+    });
   });
 });
 
 describe('clampSettings', () => {
   it('keeps valid values', () => {
     expect(clampSettings({ desiredRetention: 0.85, newCardsPerDay: 20, theme: 'night' }))
-      .toEqual({ desiredRetention: 0.85, newCardsPerDay: 20, theme: 'night', disabledCategories: [] });
+      .toEqual({
+        desiredRetention: 0.85, newCardsPerDay: 20, theme: 'night', disabledCategories: [], obsidianVault: 'vault'
+      });
   });
 
   it('clamps retention into 0.70–0.97', () => {
@@ -90,7 +132,9 @@ describe('clampSettings', () => {
   });
 
   it('falls back to defaults for missing or invalid fields', () => {
-    expect(clampSettings({})).toEqual({ desiredRetention: 0.9, newCardsPerDay: 10, theme: 'auto', disabledCategories: [] });
+    expect(clampSettings({})).toEqual({
+      desiredRetention: 0.9, newCardsPerDay: 10, theme: 'auto', disabledCategories: [], obsidianVault: 'vault'
+    });
     expect(clampSettings({ theme: 'chartreuse' as never }).theme).toBe('auto');
   });
 

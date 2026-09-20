@@ -283,6 +283,24 @@ pushes or commits, unlike `build-deck.yml`.
      script-writable storage eviction. Without it, review history can be
      silently wiped by Safari itself.
 
+## Opening a note from a card
+
+Every card, once revealed, shows an **open note** link back to the
+Obsidian note it came from — for when you half-remember something and want
+the full explanation instead of guessing whether your recall was good
+enough. It opens via an `obsidian://open` deep link, so Obsidian (installed
+on the device) must handle it; there's no in-app viewer. It's shown only
+after reveal, deliberately — the note contains the answer, so surfacing it
+beforehand would spoil the card.
+
+The link's `vault` parameter comes from **Settings → Obsidian vault
+name**, which defaults to `vault` — matching the [Vault and
+authoring](#vault-and-authoring) instructions above to open this repo's
+`vault/` folder directly as your Obsidian vault. If you opened it under a
+different vault name (or your vault has a different structure entirely),
+the default link won't resolve; update the setting to match what Obsidian
+calls that vault.
+
 ## Backup
 
 **Settings → Export** is the only copy of your review history. There is no
