@@ -269,8 +269,13 @@ anyone who opens a PR.
 **`auto-merge.yml`** turns on GitHub's native auto-merge for PRs the
 maintainer opens from a branch in this repo, so they land by themselves
 once every required check is green. It needs a repo secret
-`AUTO_MERGE_TOKEN` — a fine-grained PAT with `Pull requests: Read and
-write` — and does nothing when that secret is absent.
+`AUTO_MERGE_TOKEN` — a fine-grained PAT scoped to this repo with
+**`Contents: Read and write`** and **`Pull requests: Read and write`** —
+and does nothing when that secret is absent. Contents write is not
+optional and is easy to miss: arming auto-merge queues a change to
+`main`, so GitHub treats it as a repository write and rejects a
+pull-requests-only token with `Resource not accessible by personal
+access token (enablePullRequestAutoMerge)`.
 
 It does **not** fall back to `GITHUB_TOKEN`, and the reason matters.
 Auto-merge performs the merge as whoever enabled it, and pushes by

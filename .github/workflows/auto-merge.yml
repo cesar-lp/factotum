@@ -86,4 +86,15 @@ jobs:
           # them GitHub has nothing to wait for and rejects the request,
           # which is the correct outcome -- silently merging on open is not
           # what anyone wants.
-          gh pr merge "$PR_URL" --auto --merge
+          if ! gh pr merge "$PR_URL" --auto --merge; then
+            echo "::error::Could not enable auto-merge. The two things that cause this:"
+            echo "1. AUTO_MERGE_TOKEN is missing a permission. 'Resource not accessible"
+            echo "   by personal access token (enablePullRequestAutoMerge)' means exactly"
+            echo "   this. Arming auto-merge is a WRITE to the repo -- it queues a change"
+            echo "   to main -- so 'Pull requests: Read and write' alone is not enough."
+            echo "   The token needs 'Contents: Read and write' as well."
+            echo "2. 'Allow auto-merge' is unticked in Settings -> General -> Pull"
+            echo "   Requests, or main has no required status checks, leaving auto-merge"
+            echo "   with nothing to wait on."
+            exit 1
+          fi
