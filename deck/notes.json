@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-20T22:45:02.355Z",
+  "generatedAt": "2026-09-20T23:44:07.056Z",
   "notes": [
     {
       "path": "vault/api/grpc/choosing-between-grpc-rest-and-graphql.md",
@@ -22315,6 +22315,1418 @@
           "kind": "prose",
           "text": "Two ways of getting this wrong look, from the outside, exactly like a working system, which is what makes them the most dangerous: accepting any token that merely verifies without checking who it's for or whether it's expired, and checking everything except scope. Both let every request through looking completely normal, right up until the first request that should have been refused isn't.",
           "clozes": []
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/saml/assertion-validation-at-the-sp.md",
+      "title": "Assertion Validation at the Service Provider",
+      "topic": "identity",
+      "category": "identity-saml",
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Assertion Validation at the Service Provider"
+        },
+        {
+          "kind": "prose",
+          "text": "A service provider (SP) that receives an assertion cannot treat \"it verifies\" as \"I should believe it.\" Each check below exists because skipping it lets through one specific, concrete kind of forged, misdirected, or reused assertion — the list is really a list of failures being prevented, not a formality to tick off.",
+          "clozes": []
+        },
+        {
+          "kind": "code",
+          "lang": null,
+          "text": "1. signature   present where the SP requires it, made with the key\n               configured for that issuer\n2. issuer      the expected party, not merely a party that signed\n               something\n3. audience    names this SP specifically\n4. validity    not expired, small clock-skew allowance\n5. InResponseTo  matches a request this SP actually issued\n6. Destination matches the endpoint the message arrived at\n7. replay      assertion id not already consumed"
+        },
+        {
+          "kind": "prose",
+          "text": "Checking that a signature verifies is not the same as checking that the SP looked in the right place for it. An SP that accepts any signature found anywhere in the document — rather than requiring the specific element it reads to carry one, made with the key it has on file for that issuer — can be handed a message where the part that verifies and the part the SP actually trusts are not the same part.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-c94c",
+          "format": "mcq",
+          "prompt": "An SP's response-handling code checks \"does this document contain a valid signature from a key I recognize?\" and, finding one, proceeds to read claims out of an assertion element elsewhere in the same document — one the signature does not cover. Which check was implemented wrong?",
+          "choices": [
+            {
+              "text": "The signature check — the SP must require the signature over the specific element it reads, not merely find one somewhere in the document",
+              "correct": true
+            },
+            {
+              "text": "The issuer check — the key belongs to an untrusted party",
+              "correct": false
+            },
+            {
+              "text": "The audience check — the assertion was minted for a different SP",
+              "correct": false
+            },
+            {
+              "text": "Nothing was implemented wrong; a valid signature anywhere in the document is sufficient",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "An assertion whose issuer, audience, and signature all check out can still be replayed weeks later against the exact same SP, on the exact same day it was minted, because none of those checks say anything about whether this particular assertion has been *seen before*. That requires a fourth kind of state entirely: a record of consumed assertion ids.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Guarding against reuse means the SP has to remember the identifier of every replay it has already accepted, for at least as long as the assertion's stated validity window remains open — a signed assertion is otherwise just as usable the second time it's presented as the first, since nothing about its signature changes between uses.",
+          "clozes": [
+            {
+              "start": 76,
+              "end": 82,
+              "answer": "replay",
+              "cardId": "card-w3qs"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-hpee",
+          "format": "mcq",
+          "prompt": "An attacker captures a legitimately issued assertion in transit while it is still inside its validity window, and resubmits the identical assertion to the same SP a minute later. Its signature verifies, its issuer and audience are correct, and it has not expired. What is the SP's last line of defense here?",
+          "choices": [
+            {
+              "text": "Recognizing that this assertion's id has already been consumed and rejecting the resubmission",
+              "correct": true
+            },
+            {
+              "text": "The expiry check, since a minute is close to the clock-skew allowance",
+              "correct": false
+            },
+            {
+              "text": "The audience check, since a captured assertion was not minted for the attacker",
+              "correct": false
+            },
+            {
+              "text": "There is no defense once signature, issuer, and audience all check out",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Matching the endpoint a message actually arrived at against the endpoint the assertion names, the Destination value, is what stops a message that was captured at one endpoint from being replayed successfully against a different one — an assertion aimed at one SP endpoint, or one URL belonging to the same SP, gains nothing by arriving somewhere else, because that mismatch alone is grounds for rejection.",
+          "clozes": [
+            {
+              "start": 98,
+              "end": 109,
+              "answer": "Destination",
+              "cardId": "card-gmbz"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-ge16",
+          "format": "mcq",
+          "prompt": "An SP operates two endpoints for receiving assertions. An assertion correctly signed, correctly issued, and correctly scoped to this SP is intercepted on its way to the first endpoint and resubmitted to the second one instead, before it expires and before it has been consumed anywhere. Which check catches this?",
+          "choices": [
+            {
+              "text": "Matching the endpoint the message arrived at against the Destination named in the assertion",
+              "correct": true
+            },
+            {
+              "text": "The audience check, since the two endpoints belong to different services",
+              "correct": false
+            },
+            {
+              "text": "The replay check, since the assertion has already been \"used\" once",
+              "correct": false
+            },
+            {
+              "text": "The validity-window check, since resubmission takes time",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-4mfq",
+          "prompt": "When a flow was initiated by the SP itself, the SP sent a request and is now expecting a specific response back — not just a response from the right issuer, about the right audience, that hasn't expired, but one answering a request this SP can actually point to. What is the SP's obligation with respect to InResponseTo?",
+          "answer": "To check that value against the request it itself issued and still holds a record of, rejecting any assertion whose InResponseTo does not match a request this SP actually made."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-ftdq",
+          "format": "recall",
+          "prompt": "Name the two ways of getting SP-side assertion validation wrong that look, from the outside, exactly like a system working normally — right up until the one request that should have been refused isn't.",
+          "answer": "Believing any assertion that merely verifies — signed by some recognized key — without also confirming it was minted for this SP by the issuer this SP expects, addressed to the endpoint it arrived at, and answering a request this SP actually made; and never remembering which assertion ids have already been consumed, so a signed assertion stays reusable indefinitely by anyone who obtains it."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/saml/attribute-statements-and-mapping.md",
+      "title": "Attribute statements and mapping",
+      "topic": "identity",
+      "category": "identity-saml",
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Attribute statements and mapping"
+        },
+        {
+          "kind": "prose",
+          "text": "Attribute statements carry everything about a subject beyond who they are, and they're where a SAML integration's real work — and its real breakage — tends to live. Names, groups, department, entitlements: whatever an application needs to make a decision beyond \"is this person authenticated\" arrives here.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The same fact can arrive under wildly different names depending on which identity provider sent it: a long URI-style name from one, and a short, human-readable name from another for the exact same underlying fact.",
+          "clozes": [
+            {
+              "start": 107,
+              "end": 110,
+              "answer": "URI",
+              "cardId": "card-ia2k"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-coal",
+          "prompt": "Same fact, different name depending on the source IdP — what does that mean for a service provider's integration code?",
+          "answer": "It can't assume attribute names are standardized across identity providers in practice. It has to map whatever naming convention each IdP actually uses onto its own internal fields, and that mapping is typically per-IdP rather than universal."
+        },
+        {
+          "kind": "prose",
+          "text": "A single attribute's value isn't guaranteed to be a lone scalar. It can be multi-valued: one attribute carrying more than one entry at once, as when a user belongs to two groups simultaneously.",
+          "clozes": [
+            {
+              "start": 75,
+              "end": 87,
+              "answer": "multi-valued",
+              "cardId": "card-jnpz"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-z8jn",
+          "prompt": "Code that reads a group-membership attribute expecting a single string works fine in testing and then throws in production. What's the most likely cause?",
+          "answer": "The attribute turned out to be multi-valued for that particular user — someone in two groups instead of one — and the code was never written to handle a list of values instead of a lone string."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-afsi",
+          "format": "recall",
+          "prompt": "Explain why mapping an identity provider's groups onto a service provider's roles is described as \"the usual purpose and the usual failure\" of attribute statements."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-c6oi",
+          "format": "mcq",
+          "prompt": "An assertion arrives without an attribute the service provider expects to be there. What does OASIS leave up to the SP to decide, rather than prescribing a single correct behavior?",
+          "choices": [
+            {
+              "text": "Whether to refuse the login outright or admit the user with no permissions — the SP must pick one deliberately, in advance",
+              "correct": true
+            },
+            {
+              "text": "The SP must always refuse the login when any expected attribute is missing",
+              "correct": false
+            },
+            {
+              "text": "The SP must always admit the user and grant default permissions",
+              "correct": false
+            },
+            {
+              "text": "The identity provider is responsible for retrying with the attribute included",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-ums4",
+          "prompt": "A missing attribute leaves a service provider with two possible responses. Name them, and explain the risk of not choosing between them deliberately ahead of time.",
+          "answer": "It can refuse the login outright, or admit the user but grant no permissions. The risk of not deciding on purpose is that some accidental code path decides the answer instead, and the actual behavior gets discovered in production rather than designed in advance."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/saml/bindings-redirect-post-and-artifact.md",
+      "title": "Bindings: Redirect, POST, and Artifact",
+      "topic": "identity",
+      "category": "identity-saml",
+      "citations": [
+        "OASIS SAML 2.0 Bindings",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Bindings: Redirect, POST, and Artifact"
+        },
+        {
+          "kind": "prose",
+          "text": "A binding is how a SAML message physically travels between the two parties, and the choice of binding is driven by one thing: what has to happen to the message before it can survive that trip.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "HTTP-REDIRECT deflates and encodes the message and packs the result into a URL query parameter, riding along on an ordinary redirect. That parameter is subject to the length limits browsers and intermediate servers impose on URLs, which is exactly why this binding carries the small AuthnRequest rather than a signed Response — a request is short enough to survive compression into a query string, and a signed Response, padded out by its signature, is not a safe bet against that same limit.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "HTTP-POST instead places the message as a field in an HTML form on a page that auto-submits itself, which has no comparable size ceiling to worry about. That headroom is what lets it carry the far larger signed Response, where Redirect's URL-length constraint would be a real risk.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-e7fn",
+          "prompt": "Why can't HTTP-REDIRECT just carry every message, including a large signed Response, since compression already shrinks it before it goes into the URL?",
+          "answer": "Because compression reduces the size, it doesn't remove the ceiling — a URL still has a length limit that browsers and intermediate servers enforce, and a large signed Response can still exceed it even deflated. HTTP-POST's form field carries no such ceiling at all, which is why the larger message goes there instead."
+        },
+        {
+          "kind": "prose",
+          "text": "HTTP-ARTIFACT sends neither the request nor the response itself through the browser. Instead the browser only carries a short reference, which the receiving party then takes back to the sender directly, outside the browser, to retrieve the actual message. Because the payload itself is fetched over that direct channel, it never passes through the user agent at all — the cost is that the two servers now have to be able to reach each other, which the browser-only bindings never require.",
+          "clozes": [
+            {
+              "start": 126,
+              "end": 135,
+              "answer": "reference",
+              "cardId": "card-xbx4"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-thc0",
+          "prompt": "Given a fully populated, signed SAML Response and a hard constraint that it must never appear anywhere in the browser, which of the three bindings satisfies that constraint, and why do the other two fail it regardless of message size?",
+          "answer": "HTTP-ARTIFACT, because it hands the browser only a short reference and fetches the real message over a direct server-to-server exchange. HTTP-REDIRECT and HTTP-POST both fail the constraint independent of size — both put the actual message through the browser itself, one in a URL and one in a form field, so the browser sees the payload either way."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-aosu",
+          "format": "mcq",
+          "prompt": "A SAML message is small enough to survive URL-length limits after compression, and there is no requirement to keep it off the browser. Which binding is the ordinary choice, and what property of the message made HTTP-POST unnecessary here?",
+          "choices": [
+            {
+              "text": "HTTP-REDIRECT — the message is small enough that packing it into a query parameter doesn't risk truncation, so POST's larger headroom buys nothing",
+              "correct": true
+            },
+            {
+              "text": "HTTP-ARTIFACT — any message small enough to fit in a URL should be kept off the browser entirely",
+              "correct": false
+            },
+            {
+              "text": "HTTP-POST — forms are always preferred once the message is confirmed to be well under any size limit",
+              "correct": false
+            },
+            {
+              "text": "HTTP-REDIRECT — because Redirect is required for every request regardless of size",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Separately from how a message travels, a SAML exchange carries RelayState alongside it: an opaque value the receiving party echoes back completely unchanged, whose job is to let the sender pick up where the user's browser left off once the round trip finishes.",
+          "clozes": [
+            {
+              "start": 63,
+              "end": 73,
+              "answer": "RelayState",
+              "cardId": "card-36s7"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Because RelayState makes that round trip through the browser exactly like the message itself does, the party that gets it back has to treat it exactly the way anything else arriving via that path is treated: assume it could have been read or replaced in transit, and never place anything in it whose value depends on staying secret.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-c8ry",
+          "prompt": "Why must the value that survives a round trip through the browser between request and response never carry confidential content, no matter how convenient it would be to stash it there?",
+          "answer": "Because a value carried through the browser is exposed the same way anything else routed through it is — visible in the browser's own history and to whatever sits on the path — so anything placed there has to be safe to have seen, not merely useful for remembering the user's destination."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-oppr",
+          "format": "recall",
+          "prompt": "Name the three bindings covered here and, for each, state in one sentence the mechanical fact that decides when it gets used — not which SAML message type \"belongs\" to it as a rule, but the physical constraint driving the choice.",
+          "answer": "HTTP-REDIRECT packs the message into a URL query parameter after compression, so it's chosen when the message is small enough to stay safely under URL-length limits. HTTP-POST places the message in an auto-submitting form field instead, removing that size ceiling, so it's chosen when the message is too large to trust to a URL. HTTP-ARTIFACT sends only a short reference through the browser and fetches the real message through a direct exchange between the two servers, so it's chosen when the requirement is that the message never appear in the browser at all, regardless of its size."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/saml/nameid-formats-and-user-identity.md",
+      "title": "NameID formats and user identity",
+      "topic": "identity",
+      "category": "identity-saml",
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "NameID formats and user identity"
+        },
+        {
+          "kind": "prose",
+          "text": "Every assertion's `Subject` has to answer one question: who is this? The NameID is that answer, and the format an integration picks for it is a decision with consequences that outlast the integration that made it — get it wrong and every downstream record keyed on that value inherits the mistake.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The format that matters most for building a durable identity is persistent: it returns the same opaque value for a given user on every login from a given identity provider, which is exactly what makes it usable as a primary key in the service provider's own user table.",
+          "clozes": [
+            {
+              "start": 64,
+              "end": 74,
+              "answer": "persistent",
+              "cardId": "card-7r7b"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "The opposite design goal produces transient: a fresh, unlinkable value minted per session, so that two logins by the same person can't be correlated by comparing NameIDs. That deliberate unlinkability is also why it can never serve as a key — there's nothing stable to key on.",
+          "clozes": [
+            {
+              "start": 34,
+              "end": 43,
+              "answer": "transient",
+              "cardId": "card-z1dt"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-hsxr",
+          "format": "mcq",
+          "prompt": "A service provider needs a value that stays the same across every login by a given user, suitable for looking up that user's row in its own database. Which NameID format fits?",
+          "choices": [
+            {
+              "text": "Persistent",
+              "correct": true
+            },
+            {
+              "text": "Transient",
+              "correct": false
+            },
+            {
+              "text": "emailAddress",
+              "correct": false
+            },
+            {
+              "text": "Unspecified",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-xyij",
+          "prompt": "An SP wants to let a user complete a single sensitive one-off action via SSO while explicitly avoiding any way to correlate that session with the person's other visits. Which NameID format serves that goal, and why is it unusable for anything the SP wants to persist?",
+          "answer": "Transient — it mints a new value per session by design, specifically so sessions can't be linked. That same unlinkability is why the value can't be stored anywhere as a stable reference to the user; next login, it's different."
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-miof",
+          "prompt": "What does the unspecified NameID format promise about the value it carries?",
+          "answer": "Nothing in particular — it makes no guarantee about stability, uniqueness, or shape. The SP gets whatever string the IdP decided to send, with no format-level contract behind it."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-7dgf",
+          "format": "recall",
+          "prompt": "Using an email address as a user's primary identifier can break in two distinct ways — one when addresses change through ordinary life, and a worse one caused by a self-service email-change feature at the identity provider. Explain both."
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-1rnk",
+          "prompt": "Why is a self-service email-change feature at the identity provider dangerous for a service provider that keys identity on the emailAddress NameID format?",
+          "answer": "Because a user could change their address at the IdP to one that currently identifies — or previously identified — a different account at the SP. The SP would then treat that incoming assertion as belonging to the account tied to that address, effectively handing over someone else's identity."
+        },
+        {
+          "kind": "prose",
+          "text": "A NameID isn't a bare string with meaning on its own. It's scoped: qualified by the identity provider that issued it, and sometimes by the service provider it was issued for. Two different IdPs minting the identical value therefore doesn't mean they're naming the same person — the string only means something within its issuer's scope.",
+          "clozes": [
+            {
+              "start": 59,
+              "end": 65,
+              "answer": "scoped",
+              "cardId": "card-i5in"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/saml/saml-integration-failure-modes.md",
+      "title": "SAML integration failure modes",
+      "topic": "identity",
+      "category": "identity-saml",
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "SAML integration failure modes"
+        },
+        {
+          "kind": "prose",
+          "text": "The siblings in this category cover what a correct exchange looks like: the assertion's conditions, the trust model behind a signature, what RelayState carries and why it's untrusted input. This note covers what happens when an integration is *almost* correct — because SAML tends to fail in ways that hide their own cause, and the same visible symptom, \"login doesn't work,\" can point at several completely different problems.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The first distinguishing feature of a failure worth knowing is whether it happens to everyone at once or only sometimes.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-yada",
+          "format": "mcq",
+          "prompt": "A SAML login has started failing, but not consistently — it works for some users and fails for others, and retrying a failed login a minute later sometimes succeeds where it just failed. Nothing was deployed or rotated recently. Which cause fits best?",
+          "choices": [
+            {
+              "text": "Clock skew — the validity window on an assertion is only a few seconds wide, so whether a given login lands inside or outside it depends on exactly how far apart the two servers' clocks have drifted at that moment",
+              "correct": true
+            },
+            {
+              "text": "Certificate rotation — a key changed on one side and the mismatch is being caught inconsistently",
+              "correct": false
+            },
+            {
+              "text": "The assertion is being posted to the wrong endpoint",
+              "correct": false
+            },
+            {
+              "text": "The assertion's encoding is being corrupted by a proxy in the path",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "A validity window that narrow means the failure this produces is intermittent by nature, tracking clock drift rather than any single broken component, which is exactly what makes it read as flaky rather than as a bug.",
+          "clozes": [
+            {
+              "start": 65,
+              "end": 77,
+              "answer": "intermittent",
+              "cardId": "card-f1y3"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Contrast that with what happens when a signing key changes.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-wuph",
+          "format": "mcq",
+          "prompt": "Every single login through a SAML integration stops working within the same few minutes, across every user and every server, with no code deploy and no configuration change on the service's own side. What's the most likely cause?",
+          "choices": [
+            {
+              "text": "Certificate rotation — the identity provider (or the service) rotated its signing key, and the other side is still validating against the old one",
+              "correct": true
+            },
+            {
+              "text": "Clock skew — two independent clocks drifting apart at the same instant, everywhere, simultaneously",
+              "correct": false
+            },
+            {
+              "text": "The assertion is being posted to the wrong endpoint — that would fail some requests, not every request identically",
+              "correct": false
+            },
+            {
+              "text": "Encoding corruption introduced by a proxy — that typically breaks decoding, not signature validation",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "A rotated key breaks validation for all at once, with no warning, because every assertion signed under the new key fails the same check the moment the old key stops being the one either side is looking for. That signature is the reason expiry dates on a signing certificate belong on a calendar rather than in someone's memory — a rotation that was never scheduled is discovered the moment it breaks every login, not before.",
+          "clozes": [
+            {
+              "start": 36,
+              "end": 47,
+              "answer": "all at once",
+              "cardId": "card-d87j"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "A third symptom looks like neither of those: no timing pattern, no sudden across-the-board outage, just a rejection with no useful detail in the error the service returns.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-8qpt",
+          "prompt": "Why does posting an assertion to a URL that isn't the one the service actually expects tend to surface as a bare rejection with little diagnostic detail, rather than a specific \"wrong endpoint\" error?",
+          "answer": "Because the receiving handler is validating something it received at a URL it wasn't necessarily built to explain — from its point of view, a message simply arrived somewhere, and if that somewhere doesn't match what was configured or advertised, the simplest and most common response is a generic rejection rather than a message that names the mismatch. The contents themselves are fine, so signature and condition checks give no hint either."
+        },
+        {
+          "kind": "prose",
+          "text": "A fourth failure hides in the transport rather than in the assertion or the endpoint. A SAML message is compressed and encoded before it travels — deflated and then base64-encoded — and that two-step packaging is exactly the kind of thing an intermediate proxy, framework, or library \"helpfully\" tries to redo.",
+          "clozes": [
+            {
+              "start": 147,
+              "end": 155,
+              "answer": "deflated",
+              "cardId": "card-qafw"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-f4r2",
+          "format": "recall",
+          "prompt": "A SAML message fails to parse, but only when it passes through one particular piece of infrastructure — a proxy, gateway, or framework layer — that isn't present in a working path. What class of bug does that narrow down to, and why does it produce a parse failure rather than a validation failure?",
+          "answer": "An encoding bug: something in that layer is decoding or re-encoding the deflated, base64 message a second time, or applying the wrong step, so the bytes the receiving end tries to inflate and parse are no longer the bytes that were actually sent. It shows up as a parse failure rather than a signature or validation failure because the message never becomes well-formed XML in the first place — the corruption happens before there's anything to validate."
+        },
+        {
+          "kind": "prose",
+          "text": "The last failure mode is the one most likely to be reported as a bug in the login itself, when it isn't one.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-hcwo",
+          "prompt": "A user authenticates successfully and lands on the service's default landing page instead of the specific page they were trying to reach before logging in — the login worked, but the trip back to where they started didn't. Why is this not an authentication failure at all, and what actually got lost?",
+          "answer": "Every check that matters passed, and the user is correctly logged in, so nothing about authenticating them failed. What's missing is a value that was supposed to travel alongside the request and come back with the response, carrying where the user was trying to go; when that round-trip value is dropped somewhere along the way, the service has nothing left to send the user back to except its default page."
+        },
+        {
+          "kind": "prose",
+          "text": "The common thread across all five is that SAML's messages are not a black box. They're inspectable, signed XML sitting in a browser request the moment something goes wrong.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-qjtq",
+          "format": "mcq",
+          "prompt": "A SAML login is failing and the cause isn't obvious from the error message alone. What's the most productive first move?",
+          "choices": [
+            {
+              "text": "Capture the actual assertion or request as it crosses the wire and read it directly, rather than reasoning about what the configuration on either side is probably doing",
+              "correct": true
+            },
+            {
+              "text": "Re-check every configuration value on both sides before looking at any live traffic",
+              "correct": false
+            },
+            {
+              "text": "Restart the identity provider and service and see if the problem recurs",
+              "correct": false
+            },
+            {
+              "text": "Assume it's clock skew, since that's the most common cause of an intermittent failure",
+              "correct": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/saml/saml-metadata-and-trust-establishment.md",
+      "title": "SAML Metadata and Trust Establishment",
+      "topic": "identity",
+      "category": "identity-saml",
+      "citations": [
+        "OASIS SAML 2.0 Metadata",
+        "OASIS SAML 2.0 Core"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "SAML Metadata and Trust Establishment"
+        },
+        {
+          "kind": "prose",
+          "text": "An identity provider and a service provider have to agree on a pile of configuration before either one can accept a message from the other: where to send things, how to address the sender, which key signed what. Metadata is the document each side publishes so the other can be configured without a phone call.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "A metadata document names the participant with an entityID, a URI that identifies who is speaking rather than where a message should be delivered.",
+          "clozes": [
+            {
+              "start": 50,
+              "end": 58,
+              "answer": "entityID",
+              "cardId": "card-ve96"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Beyond that name, the same document lists the endpoints a message should be sent to, which bindings the participant supports for delivering it, and the public keys it will use to sign or decrypt.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-ssan",
+          "prompt": "What does a SAML metadata document publish about a participant, beyond the URI that names it?",
+          "answer": "The endpoints where messages should be sent, the bindings supported for delivering them, and the public keys the participant will use to sign or decrypt."
+        },
+        {
+          "kind": "prose",
+          "text": "Now the part worth understanding properly, because it breaks from how trust usually works elsewhere on the web. SAML trust is direct.",
+          "clozes": [
+            {
+              "start": 126,
+              "end": 132,
+              "answer": "direct",
+              "cardId": "card-sk00"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Each side is configured with the exact key the other one will use — not a policy for discovering that key, the key itself, handed over out of band and dropped straight into the other party's configuration.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-gneu",
+          "format": "mcq",
+          "prompt": "A relying party validating a SAML assertion's signature needs to decide which key to trust for that signature. How does it decide?",
+          "choices": [
+            {
+              "text": "It already has that specific key configured, handed to it directly by the signing party — there is no chain to walk and no third party to ask",
+              "correct": true
+            },
+            {
+              "text": "It builds a chain from the signing certificate up to a trusted root, the same way a TLS client does",
+              "correct": false
+            },
+            {
+              "text": "It queries a well-known endpoint at connection time to fetch the current signing key",
+              "correct": false
+            },
+            {
+              "text": "It trusts any key presented, since SAML has no concept of key validation",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Because there is no authority in the path vouching for the key, a self-signed certificate carries no red flag in SAML the way it would in a browser validating a TLS chain. The certificate here is just a container for a key both sides were separately told to expect, not a claim some third party is backing.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-ct3x",
+          "format": "recall",
+          "prompt": "Explain why a self-signed certificate is normal and unremarkable in a SAML deployment, when the same thing would be a serious warning sign for a TLS certificate presented by a public website.",
+          "answer": "A TLS client has no prior relationship with the site it's connecting to, so it relies on a chain up to a CA already sitting in its trust store to decide the key is legitimate; a self-signed leaf skips that vouching entirely, which is exactly the failure mode chain validation exists to catch. A SAML relying party never walks a chain at all — it was configured in advance with the specific key it should see, out of band. The certificate is only a wrapper carrying that already-trusted key, so whether it happens to be self-signed says nothing about whether the key inside it is the right one."
+        },
+        {
+          "kind": "prose",
+          "text": "Directness has an unglamorous consequence: nothing about a SAML key renews itself.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-ojrs",
+          "prompt": "Why does nothing about a SAML relationship's signing keys \"renew itself\" the way a JWKS-based setup might?",
+          "answer": "There is no discovery step for either side to repeat — each party's copy of the other's key is a static piece of its own configuration, set once out of band. When a key changes, that configuration has to be edited by hand on both sides; nothing is fetched or re-resolved automatically the way a service consulting an issuer's published key set would."
+        },
+        {
+          "kind": "prose",
+          "text": "A federation of even a handful of parties turns that structural fact into its real operational headache: not designing the trust model, but coordinating the update.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-vn14",
+          "format": "mcq",
+          "prompt": "One IdP in a SAML federation rotates its signing key. What has to happen for every service provider trusting that IdP to keep working?",
+          "choices": [
+            {
+              "text": "Each service provider's own configuration must be updated by hand with the new key — nothing propagates on its own",
+              "correct": true
+            },
+            {
+              "text": "Nothing — the new key is discovered automatically the next time a signature is verified",
+              "correct": false
+            },
+            {
+              "text": "Only the service providers whose certificates are about to expire need to act",
+              "correct": false
+            },
+            {
+              "text": "The identity provider pushes the new key to a shared registry that all service providers poll",
+              "correct": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/saml/saml-roles-and-the-assertion.md",
+      "title": "SAML roles and the assertion",
+      "topic": "identity",
+      "category": "identity-saml",
+      "citations": [
+        "OASIS SAML 2.0 Core"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "SAML roles and the assertion"
+        },
+        {
+          "kind": "prose",
+          "text": "SAML names three actors, and it's worth being precise about what each one does before anything else in this category makes sense. The **identity provider** authenticates the person and is willing to make statements about them. The **service provider** doesn't authenticate anyone itself — it consumes those statements and decides, on the strength of them, what access to grant. Neither of those two is the one carrying messages between them.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The person sitting at the browser is not one of the two parties actively negotiating trust — that's the IdP and SP's job. SAML calls this third party the principal: the user whose browser passes messages back and forth between the other two without itself being party to the trust relationship.",
+          "clozes": [
+            {
+              "start": 154,
+              "end": 163,
+              "answer": "principal",
+              "cardId": "card-uyha"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-y80z",
+          "prompt": "What does the identity provider do, and what does the service provider do with what it produces?",
+          "answer": "The identity provider authenticates the principal and issues statements vouching for facts about them. The service provider consumes those statements to decide what access to grant, without authenticating the user itself."
+        },
+        {
+          "kind": "prose",
+          "text": "The **assertion** is the whole point of SAML: the artifact everything else in this category exists to produce, transmit, or check. It's an XML document in which the identity provider states things it is willing to vouch for about a given subject.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "SAML's assertion is a signed XML document, which is what lets a service provider act on it having never spoken to the identity provider directly: the document vouches for itself.",
+          "clozes": [
+            {
+              "start": 22,
+              "end": 28,
+              "answer": "signed",
+              "cardId": "card-dk82"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "An assertion can carry a `Subject`, a set of `Conditions`, and one or more statements about the subject. In outline:",
+          "clozes": []
+        },
+        {
+          "kind": "code",
+          "lang": "xml",
+          "text": "<saml:Assertion>\n  <saml:Subject>...</saml:Subject>\n  <saml:Conditions NotBefore=\"...\" NotOnOrAfter=\"...\">\n    <saml:AudienceRestriction>\n      <saml:Audience>https://sp.example.org</saml:Audience>\n    </saml:AudienceRestriction>\n  </saml:Conditions>\n  <saml:AuthnStatement>...</saml:AuthnStatement>\n  <saml:AttributeStatement>...</saml:AttributeStatement>\n</saml:Assertion>"
+        },
+        {
+          "kind": "card",
+          "cardId": "card-cfgo",
+          "format": "recall",
+          "prompt": "An assertion can carry three kinds of statement. Name them, and name the one that's essentially a dead limb in real deployments."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-bggu",
+          "format": "mcq",
+          "prompt": "An assertion says: \"this subject authenticated at 14:02, using a password.\" Which statement kind is this?",
+          "choices": [
+            {
+              "text": "Authentication statement",
+              "correct": true
+            },
+            {
+              "text": "Attribute statement",
+              "correct": false
+            },
+            {
+              "text": "Authorization-decision statement",
+              "correct": false
+            },
+            {
+              "text": "Condition",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-3w5v",
+          "prompt": "An assertion says instead: \"this subject belongs to the group finance-admins.\" Which kind of statement is this, and how does its purpose differ from an authentication statement's?",
+          "answer": "An attribute statement — it asserts facts about the subject, rather than describing how or when they authenticated. The third kind, the authorization-decision statement, was meant to convey a yes/no access decision directly, but it's essentially unused in practice."
+        },
+        {
+          "kind": "prose",
+          "text": "Conditions restrict when and to whom an assertion is valid, and both restrictions matter independently: a `NotBefore`/`NotOnOrAfter` window bounds the time, and an audience restriction bounds the service provider it may be used at.",
+          "clozes": [
+            {
+              "start": 164,
+              "end": 172,
+              "answer": "audience",
+              "cardId": "card-npg7"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-46ox",
+          "prompt": "An assertion minted for one service provider can't be presented to a different one, even if both trust the same identity provider. Why not?",
+          "answer": "Because the assertion's Conditions element names an audience restriction that scopes it to the intended SP. A different SP falls outside that audience and must reject the assertion even though it trusts the issuing IdP — trusting the issuer doesn't make an assertion addressed elsewhere valid here."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/saml/saml-versus-oidc.md",
+      "title": "SAML versus OIDC",
+      "topic": "identity",
+      "category": "identity-saml",
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "SAML versus OIDC"
+        },
+        {
+          "kind": "prose",
+          "text": "`id-tokens-and-oidc.md` and `the-authorization-code-flow.md` already cover what OIDC actually does — its token, its claims, its redirect sequence. This note takes that mechanism as given and asks a different question: of everything that differs between SAML and OIDC, which differences change what actually gets built, and which one usually ends up deciding the choice.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Format and era are the most visible difference, and the least useful one to argue about. SAML is XML, shaped by an enterprise world where documents got signed and exchanged between institutions long before REST APIs existed. OIDC is JSON, carried over ordinary web redirects with a token endpoint, specified after mobile apps and browser-based single-page apps were already the normal shape of a client.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "SAML's XML, document-signing shape predates the REST-and-JSON web almost entirely, which is why it still reads like a format built for mail between institutions rather than for a browser tab.",
+          "clozes": [
+            {
+              "start": 35,
+              "end": 43,
+              "answer": "predates",
+              "cardId": "card-faef"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Where the two diverge in practice, more than in format, is how trust gets set up in the first place. A SAML relationship is built by two parties deliberately exchanging configuration — metadata files, certificates pinned by hand on both sides — so a SAML federation is a fixed set of pairings, each one set up on purpose, one at a time.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "An OIDC integration instead starts by fetching the provider's discovery document from a well-known URL, which lists its endpoints and where to find its current signing keys, rotated on the provider's own schedule rather than pinned by the relying party.",
+          "clozes": [
+            {
+              "start": 62,
+              "end": 71,
+              "answer": "discovery",
+              "cardId": "card-1vbm"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-0aya",
+          "prompt": "Why is it fair to say a SAML federation is \"a set of deliberate pairings\" while an OIDC integration is \"closer to pointing at a URL,\" even though both end with a service trusting an identity provider?",
+          "answer": "Because a SAML trust relationship has no equivalent of a published discovery source — the two sides exchange metadata and pin each other's certificates by hand, and there's no self-updating document either side can just point at later. An OIDC relying party instead reads a published endpoint listing and refreshes keys automatically, so onboarding a new provider looks much more like consuming a URL than negotiating a bespoke bilateral setup."
+        },
+        {
+          "kind": "prose",
+          "text": "That difference in how trust is set up shows up again in what actually arrives at the service during a login. A SAML identity provider hands back a signed XML document that the user's browser itself posts straight to the service. An OIDC provider hands back a code, and the code is redeemed for tokens in a direct call the browser never sees.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-i3ol",
+          "prompt": "A client redeems an authorization code for tokens over a channel the browser never touches. A SAML assertion has no equivalent redemption step — why does it have to be self-contained and signed for direct delivery, when an OIDC code can get away with being a short-lived, opaque reference instead?",
+          "answer": "Because nothing in a SAML exchange calls the identity provider back to redeem anything — the browser posts the assertion straight to the service, so it has to carry everything the service needs to trust it, signature included, in that one document. An OIDC code can be a bare reference precisely because it's never trusted on its own; it only becomes meaningful once the client presents it directly to the token endpoint, a step SAML's browser-post model has no room for."
+        },
+        {
+          "kind": "prose",
+          "text": "None of that says where each protocol actually lives today. SAML remains entrenched in enterprise and education, because that is where the identity providers and the procurement relationships already are. OIDC is entrenched in consumer, mobile, and API-shaped work, because that is the world it was specified for.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-yqlb",
+          "format": "mcq",
+          "prompt": "A university IT department runs an identity provider already used by a dozen partner institutions, all connected years ago through exchanged XML metadata files and pinned certificates. A new campus portal needs single sign-on against that same identity provider. Which protocol fits with the least new work, and why?",
+          "choices": [
+            {
+              "text": "SAML — the identity provider and its partners already speak it, so adding the portal is one more pairing into an existing federation",
+              "correct": true
+            },
+            {
+              "text": "OIDC — JSON is inherently simpler to parse than XML, regardless of what the identity provider already speaks",
+              "correct": false
+            },
+            {
+              "text": "OIDC — mobile-era protocols are always the better choice for a brand-new integration",
+              "correct": false
+            },
+            {
+              "text": "Neither; the identity provider should be replaced before adding any new service",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-8vq0",
+          "format": "mcq",
+          "prompt": "A small startup is building a mobile app with social login and no enterprise customers, current or planned. Someone suggests supporting SAML \"in case a big customer ever asks for it.\" What's the honest assessment?",
+          "choices": [
+            {
+              "text": "Skip it for now — a greenfield consumer app choosing SAML ahead of need is making work for itself; OIDC already fits a mobile, API-shaped product, and SAML support can be added later if an enterprise customer's identity provider actually requires it",
+              "correct": true
+            },
+            {
+              "text": "Build SAML support now, since supporting both protocols from day one is always safer",
+              "correct": false
+            },
+            {
+              "text": "Build SAML support now, since SAML is the more modern, actively developed specification",
+              "correct": false
+            },
+            {
+              "text": "Skip SAML forever — it is deprecated and no enterprise identity provider still requires it",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-n3cr",
+          "format": "recall",
+          "prompt": "Someone asks which protocol, SAML or OIDC, is simply the better one to standardize on. What's the honest answer, and what actually decides the choice in a given situation?",
+          "answer": "Neither is the newer-and-therefore-better option. SAML is not deprecated, and for an enterprise whose identity provider only speaks SAML, it's often the only option on the table. A greenfield consumer application choosing SAML anyway is creating work it doesn't need. What decides the choice in practice is usually who runs the identity provider a given service has to trust — not which specification a team finds more appealing."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/saml/single-logout-and-why-it-is-hard.md",
+      "title": "Single Logout and Why It Is Hard",
+      "topic": "identity",
+      "category": "identity-saml",
+      "citations": [
+        "OASIS SAML 2.0 Core",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Single Logout and Why It Is Hard"
+        },
+        {
+          "kind": "prose",
+          "text": "Single logout promises that ending a session in one place ends it everywhere. In practice it largely does not deliver on that promise, and the reason starts well before any protocol detail: a user who signed in to several service providers through one identity provider does not have one session to end. Each SP established and holds its own local session independently, so \"log the user out\" is really \"reach every one of those SPs and get each one to end its own record\" — a fundamentally different, and much harder, problem than ending a session at a single application.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-sp4w",
+          "prompt": "Why is single logout a genuinely hard problem, rather than a feature that a better-specified protocol could simply deliver?",
+          "answer": "Because there is no single session to terminate — each service provider the user visited established and holds its own independent local session, so ending \"the\" session really means separately reaching every one of those service providers and getting each to end its own record, and any one of them can be unreachable, slow, or unresponsive when that attempt is made."
+        },
+        {
+          "kind": "prose",
+          "text": "Two shapes exist for making that attempt, and they differ in exactly where the unreliability shows up.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "In front-channel logout, the identity provider drives the user's own browser through each service provider in turn, so every one of them receives its logout request as a step the browser is redirected through.",
+          "clozes": [
+            {
+              "start": 3,
+              "end": 16,
+              "answer": "front-channel",
+              "cardId": "card-b322"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "That chain is only as strong as its weakest link: if any single service provider along the way is slow to respond, broken, or simply never finished loading in the browser, the chain stalls right there.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-j9l8",
+          "format": "mcq",
+          "prompt": "A user logs out and the identity provider begins driving their browser through five service providers in sequence to notify each one. The third service provider's logout endpoint hangs and never returns. What is the resulting state for the user?",
+          "choices": [
+            {
+              "text": "Stranded mid-chain — the first two service providers had their sessions ended, the third is unresolved, and the fourth and fifth were never reached at all",
+              "correct": true
+            },
+            {
+              "text": "All five sessions end anyway, since the identity provider tracks the chain independently of the browser",
+              "correct": false
+            },
+            {
+              "text": "Only the third service provider's session survives; the rest end normally",
+              "correct": false
+            },
+            {
+              "text": "The browser automatically skips the unresponsive service provider and completes the rest of the chain transparently",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "The alternative moves the requests off the user's browser entirely. In back-channel logout, the identity provider calls each service provider directly, server to server, with nothing routed through the browser and nothing for the user to sit through or get stuck in the middle of.",
+          "clozes": [
+            {
+              "start": 71,
+              "end": 83,
+              "answer": "back-channel",
+              "cardId": "card-cxr0"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "That directness is also what makes it more robust than driving the user's browser through every stop — but robustness here isn't free: it depends on every one of those service providers having implemented a listener for this kind of request in the first place, and being reachable when the identity provider calls it.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-rwcg",
+          "format": "mcq",
+          "prompt": "Comparing front-channel and back-channel single logout, what does back-channel logout require that front-channel logout does not?",
+          "choices": [
+            {
+              "text": "Every service provider must implement a server-to-server logout endpoint and be reachable when the identity provider calls it directly",
+              "correct": true
+            },
+            {
+              "text": "The user's browser must remain open and connected until every service provider responds",
+              "correct": false
+            },
+            {
+              "text": "The identity provider must know the user's session state at each service provider in advance",
+              "correct": false
+            },
+            {
+              "text": "Service providers must share a single logout endpoint with each other",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Whichever shape is used, the outcome that a deployment should expect as *normal*, not exceptional, is partial logout: some service providers end their session, and some do not, because one was down, one was slow, or one was never actually loaded in the browser to receive its step of the chain.",
+          "clozes": [
+            {
+              "start": 102,
+              "end": 116,
+              "answer": "partial logout",
+              "cardId": "card-3e93"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-f7n9",
+          "prompt": "The awkward part isn't just that partial logout happens — it's that, from where any single service provider sits, there's no way to tell it apart from complete success. Why can't a service provider tell the difference between \"logout succeeded everywhere\" and \"logout succeeded only here\"?",
+          "answer": "Because each service provider only ever observes its own local outcome — that its own session was ended — and has no visibility into whether the identity provider's requests to every other service provider in the same logout also succeeded; \"everywhere\" is a property of the whole set, and no single member of that set is positioned to observe the whole set."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-enyy",
+          "format": "recall",
+          "prompt": "Given that single logout can silently degrade to partial logout, and that a service provider has no way to detect when that has happened, explain why many real deployments deliberately choose short session lifetimes over relying on single logout as the mechanism that ends access promptly.",
+          "answer": "A short-lived session bounds how long a session that single logout failed to end can remain usable, without depending on every service provider's logout endpoint working, being implemented at all, or being reachable at the moment it matters. Single logout is best effort by construction — no participant can confirm the others succeeded — so a deployment that needs a reliable bound on stale access gets it from expiry, which degrades predictably, rather than from a logout chain that degrades silently."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/saml/sp-initiated-versus-idp-initiated-sso.md",
+      "title": "SP-initiated versus IdP-initiated SSO",
+      "topic": "identity",
+      "category": "identity-saml",
+      "citations": [
+        "OASIS SAML 2.0 Bindings",
+        "OASIS SAML 2.0 Profiles"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "SP-initiated versus IdP-initiated SSO"
+        },
+        {
+          "kind": "prose",
+          "text": "A SAML login can start from either end, and which end it starts from is not a matter of convenience — it changes what the service provider is able to verify about the response it eventually gets back.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "In the SP-initiated flow, the user arrives at the service provider first. The SP has no session for them yet, so it issues an AuthnRequest of its own, carrying a fresh identifier, and sends the user on to the identity provider to authenticate.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "When the identity provider finishes, it returns a Response, and that Response carries InResponseTo set to the identifier the SP put in its own request. The SP can check that value against the request it remembers issuing, which is exactly what lets it confirm this credential answers something it actually asked for, and lets it look up what the user was trying to reach so it can send them there once login succeeds.",
+          "clozes": [
+            {
+              "start": 86,
+              "end": 98,
+              "answer": "InResponseTo",
+              "cardId": "card-ji14"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-37n8",
+          "prompt": "What does matching the returned Response's InResponseTo against its own issued request let the SP do for the user's original destination, beyond simply confirming the credential is genuine?",
+          "answer": "It lets the SP look up the destination it recorded when it issued that request, so once login succeeds it can send the user on to the resource they originally tried to reach, rather than dropping them at some generic landing page."
+        },
+        {
+          "kind": "prose",
+          "text": "In the IdP-initiated flow, there is no earlier request for a Response to answer. The user starts at the identity provider's own portal, picks an application, and the IdP simply posts a Response at that service provider directly.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Because nothing preceded it, that Response is unsolicited: it has no matching identifier from the SP side at all, and the field that would normally carry one is absent.",
+          "clozes": [
+            {
+              "start": 46,
+              "end": 57,
+              "answer": "unsolicited",
+              "cardId": "card-fw31"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-6cpw",
+          "prompt": "Why does an SP-initiated Response carrying InResponseTo let the SP do something an IdP-initiated Response structurally cannot?",
+          "answer": "The SP-initiated Response's InResponseTo lets the SP match the credential against a request it remembers issuing, confirming this is an answer to something it actually asked for. An IdP-initiated Response has no prior request to match against in the first place, so there is nothing for the SP to correlate it to, no matter how carefully it checks."
+        },
+        {
+          "kind": "prose",
+          "text": "An SP that accepts a Response with no preceding request is accepting a credential it never asked for. Nothing is wrong with that by itself — portal-driven login is a legitimate use case — but the SP has to treat it deliberately rather than by default: honor unsolicited responses only where it has explicitly opted in to that behavior, and never assume that the destination such a response points the user toward is safe just because the credential is valid (a valid login says nothing about whether the follow-on redirect target was chosen safely). Keeping the acceptance window for such a response tight cuts down how long a captured one stays usable.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-w2j1",
+          "format": "mcq",
+          "prompt": "A service provider is configured to accept both SP-initiated and IdP-initiated responses. It receives a Response with no InResponseTo field at all. What is the correct interpretation?",
+          "choices": [
+            {
+              "text": "It's an unsolicited response the SP never requested, so the SP cannot check it against any request it remembers issuing",
+              "correct": true
+            },
+            {
+              "text": "It's a malformed SP-initiated response and should be rejected outright",
+              "correct": false
+            },
+            {
+              "text": "InResponseTo is optional in both flows and its absence carries no meaning",
+              "correct": false
+            },
+            {
+              "text": "The SP should treat it as SP-initiated and search its own logs for a matching request",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-0n5y",
+          "prompt": "Why must a service provider treat the destination carried by an unsolicited response as untrusted input, even after the credential itself checks out?",
+          "answer": "Because a valid credential only proves who the user is, not that the place the response is pointing them toward afterward was chosen safely — with no request of its own behind the response, the SP has no expectation of its own to check that destination against, so it has to validate it independently rather than following it on the strength of the login alone."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-ak0q",
+          "format": "recall",
+          "prompt": "Explain why SP-initiated login is preferred wherever a service provider has the choice, and what an SP that does support the IdP-initiated flow anyway has to do to keep that choice from becoming a weakness.",
+          "answer": "SP-initiated login gives the SP its own request to check an incoming Response against, so it can confirm the Response answers something it asked for and know exactly where the user was headed. IdP-initiated login gives up that basis entirely — the Response arrives unsolicited, with nothing on the SP side to correlate it to. An SP that still wants to support it has to opt in deliberately rather than accept unsolicited responses by default, and must treat whatever destination such a response carries as untrusted rather than following it automatically."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/saml/xml-signatures-in-saml.md",
+      "title": "XML Signatures in SAML",
+      "topic": "identity",
+      "category": "identity-saml",
+      "citations": [
+        "W3C XML Signature Syntax and Processing",
+        "OASIS SAML 2.0 Core"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "XML Signatures in SAML"
+        },
+        {
+          "kind": "prose",
+          "text": "Take a signature over some data as a settled primitive: it proves a private key produced a tag over a specific set of bytes, and anyone holding the matching public key can check that. Signing an XML document is harder than signing bytes, and SAML's failure modes come from exactly that gap.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The first source of trouble is that a SAML message doesn't have one fixed place a signature must live. Either the Response, the Assertion it wraps, or both can carry a signature, and nothing about the wire format forces one particular arrangement.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-s0rx",
+          "format": "mcq",
+          "prompt": "A SAML implementation receives a Response whose Assertion is signed but whose outer Response element carries no signature at all. What should the implementation do?",
+          "choices": [
+            {
+              "text": "Know in advance which element it requires signed, and reject the message if that specific element isn't the one carrying a valid signature",
+              "correct": true
+            },
+            {
+              "text": "Accept it, since some element in the message is signed",
+              "correct": false
+            },
+            {
+              "text": "Reject it automatically, since the outer Response is always the element that must be signed",
+              "correct": false
+            },
+            {
+              "text": "Accept it only if the Assertion's signature also happens to cover the Response",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Whatever is signed can't be hashed as it sits on the wire, either. The same logical XML content can be serialized in more than one way — attributes in a different order, different whitespace, different namespace prefixes — and all of those byte-for-byte-different serializations represent the identical document.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Before anything is hashed, both sides have to reduce the document to one agreed normal form; that reduction step is canonicalization.",
+          "clozes": [
+            {
+              "start": 116,
+              "end": 132,
+              "answer": "canonicalization",
+              "cardId": "card-2pb3"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Skipping or mismatching that step isn't a formatting nitpick — a signature computed over one serialization won't verify against a different, equally valid serialization of the exact same content, so canonicalization has to be a fixed, shared algorithm rather than something each implementation picks for itself.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-oytq",
+          "prompt": "What problem does canonicalization solve for an XML signature, and why can't it be skipped?",
+          "answer": "The same XML content can be serialized many different ways — attribute order, whitespace, namespace prefixes can all differ while representing identical data. A signature is computed over one specific byte sequence, so before hashing, both the signer and the verifier have to reduce the document to one agreed normal form. Skipping that step means a signature made over one valid serialization simply won't verify against another equally valid serialization of the same content."
+        },
+        {
+          "kind": "prose",
+          "text": "The sharpest hazard, though, isn't about serialization at all — it's about which element the application ends up reading.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "An XML signature doesn't sign \"the document\"; it signs one specific element, identified by a reference inside the signature itself. Nothing stops a document from containing an element that carries a perfectly valid signature alongside a second, different element that the signature says nothing about.",
+          "clozes": [
+            {
+              "start": 93,
+              "end": 102,
+              "answer": "reference",
+              "cardId": "card-3343"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "That gap is exactly what a signature wrapping attack exploits: an attacker takes a legitimately signed Assertion, moves it elsewhere in the document — say, into a comment or an unused branch — and inserts a new, unsigned Assertion with attacker-chosen content in the position the application actually reads from. The signature over the original, now-relocated element still checks out perfectly; the application never looks at that element, only at the one sitting where it expects one to be.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-f6vg",
+          "format": "recall",
+          "prompt": "Explain how a signature wrapping attack can leave an XML signature check reporting success while the application still consumes attacker-controlled data.",
+          "answer": "The signature in the document is mathematically valid — it does cover some element, and verifying it against that element succeeds. The attack works by making sure the element the application actually reads is a different one than the element the signature's reference points to: the attacker relocates the originally signed element somewhere the application won't look, and plants a new, unsigned element with their own content in the position the application reads by structure or position instead of by reference. Signature verification passes because it never claimed to say anything about that second element."
+        },
+        {
+          "kind": "prose",
+          "text": "The rule that follows from this is the one worth carrying forward: confirming a document contains a valid signature is not the same claim as confirming the data an application consumed was the data that signature covered.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-uap6",
+          "prompt": "Why is \"the document contains a valid signature\" not sufficient grounds for an application to trust the data it read from that document?",
+          "answer": "A signature only vouches for whichever element its reference names — verifying it just confirms that element wasn't tampered with. If the application reads a different element than the one named in the reference, that data was never covered by the signature at all, no matter how solidly the signature itself checks out elsewhere in the document."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-7o60",
+          "format": "mcq",
+          "prompt": "What must a safe implementation check to close the signature wrapping gap, beyond confirming the signature's mathematics are valid?",
+          "choices": [
+            {
+              "text": "That the reference inside the signature points to the exact element the application is about to consume",
+              "correct": true
+            },
+            {
+              "text": "That the document contains at least one valid signature somewhere",
+              "correct": false
+            },
+            {
+              "text": "That the signing certificate has not expired",
+              "correct": false
+            },
+            {
+              "text": "That the message was delivered over a channel using transport encryption",
+              "correct": false
+            }
+          ]
         }
       ]
     },
