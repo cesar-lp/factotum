@@ -23,6 +23,60 @@ export function escapeHtml(value: string): string {
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
+/**
+ * Applies exactly three inline markup constructs to already-escaped text:
+ * `code` -> <code>code</code>, **bold** -> <strong>bold</strong>, and
+ * *italic* -> <em>italic</em>. Must run AFTER escapeHtml — it never escapes
+ * anything itself, it only wraps spans in the three tags above, so it can
+ * never reintroduce an HTML injection path.
+ *
+ * Approach: tokenize backtick code spans first (splitting the string into
+ * literal-code chunks and the plain-text gaps between them), then run
+ * emphasis (** before *) only over the gap chunks. This guarantees markers
+ * inside a code span are never touched, and that `**` is preferred over `*`
+ * so `**x**` becomes <strong>x</strong> rather than <em>*x*</em>.
+ *
+ * Emphasis markers require flanking, deliberately stricter than CommonMark:
+ * an opening marker must be preceded by start-of-string/whitespace/opening
+ * punctuation and followed by a non-space character; a closing marker must
+ * be preceded by a non-space character and followed by end-of-string,
+ * whitespace, or punctuation. This is what keeps `*` used as multiplication
+ * or a pointer/dereference sigil (e.g. `c*g(n)`, `O(E * |f*|)`) from being
+ * mistaken for an emphasis delimiter — this deck's algorithm notation uses
+ * bare `*` for arithmetic far more often than for italics, so a marker
+ * without both sides properly flanked is left completely literal, even if
+ * an unrelated marker later in the string could otherwise "close" it.
+ */
+export function inlineMarkup(value: string): string {
+  // Split on complete backtick spans: `...`. Odd-indexed pieces are code.
+  const parts = value.split(/(`[^`]+`)/g);
+  return parts
+    .map((part) => {
+      if (part.startsWith('`') && part.endsWith('`') && part.length >= 2) {
+        return `<code>${part.slice(1, -1)}</code>`;
+      }
+      return applyEmphasis(part);
+    })
+    .join('');
+}
+
+// A marker "opens" only right after start-of-string, whitespace, or opening
+// punctuation, and only when immediately followed by a non-space character.
+const OPEN_BEFORE = String.raw`(?<=^|[\s(\[{"'“‘])`;
+// A marker "closes" only right before end-of-string, whitespace, or
+// punctuation, and only when immediately preceded by a non-space character
+// (guaranteed by requiring the content to start/end on \S below).
+const CLOSE_AFTER = String.raw`(?=$|[\s\p{P}])`;
+const BOLD_RE = new RegExp(String.raw`${OPEN_BEFORE}\*\*(\S(?:[^*]*\S)?)\*\*${CLOSE_AFTER}`, 'gu');
+const ITALIC_RE = new RegExp(String.raw`${OPEN_BEFORE}\*(\S(?:[^*]*\S)?)\*${CLOSE_AFTER}`, 'gu');
+
+function applyEmphasis(text: string): string {
+  // ** before *, each only replacing flanked pairs (see regexes above).
+  let result = text.replace(BOLD_RE, '<strong>$1</strong>');
+  result = result.replace(ITALIC_RE, '<em>$1</em>');
+  return result;
+}
+
 export function normalizeAnswer(value: string): string {
   return value.trim().toLowerCase().replace(/\s+/g, ' ');
 }
@@ -45,7 +99,7 @@ export function renderPrompt(card: StoredCard): string {
   return `
     <div class="prompt-area">
       <span class="chip">${escapeHtml(card.category)}</span>
-      <p class="prompt">${escapeHtml(card.prompt)}</p>
+      <p class="prompt">${inlineMarkup(escapeHtml(card.prompt))}</p>
     </div>
   `;
 }
@@ -100,7 +154,7 @@ export function renderActions(
       .map((choice, index) =>
         `<button class="choice" data-choice="${index}" data-correct="${choice.correct}"
                  ${revealed ? 'disabled' : ''}>
-           ${escapeHtml(choice.text)}
+           ${inlineMarkup(escapeHtml(choice.text))}
          </button>`
       )
       .join('');
@@ -133,7 +187,7 @@ export function renderActions(
     if (clozeOutcome === 'self-graded') {
       return `
         <div class="action-area">
-          <p class="expected">${escapeHtml(card.answer ?? '')}</p>
+          <p class="expected">${inlineMarkup(escapeHtml(card.answer ?? ''))}</p>
           ${ratingRow()}
           ${tail}
         </div>
@@ -153,7 +207,7 @@ export function renderActions(
     return `
       <div class="action-area">
         ${feedback}
-        <p class="expected">${escapeHtml(card.answer ?? '')}</p>
+        <p class="expected">${inlineMarkup(escapeHtml(card.answer ?? ''))}</p>
         <button class="btn" data-outcome="continue">Continue</button>
         ${override}
         ${tail}
@@ -182,7 +236,7 @@ export function renderActions(
       : '';
   return `
     <div class="action-area">
-      ${card.answer ? `<p class="expected">${escapeHtml(card.answer)}</p>` : ''}
+      ${card.answer ? `<p class="expected">${inlineMarkup(escapeHtml(card.answer))}</p>` : ''}
       ${recallHint}
       ${ratingRow()}
       ${tail}
