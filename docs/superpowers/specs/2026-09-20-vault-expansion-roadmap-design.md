@@ -1,8 +1,8 @@
 # Vault expansion roadmap
 
 A standing backlog of new vault categories, ordered by dependency, plus
-the authoring conventions two of them need. Nineteen categories and
-roughly 170 notes — it roughly doubles the vault. Treat it as a queue to
+the authoring conventions two of them need. Twenty-two categories and
+roughly 200 notes — it roughly doubles the vault, from 20 categories to 42. Treat it as a queue to
 draw from, not a project with a completion date: the ordering is the
 deliverable, finishing it is not.
 
@@ -13,7 +13,7 @@ than a feature, for reasons in §3.
 
 ## 1. Motivation
 
-The vault today is 170 notes across 26 categories, strong on how
+The vault today is 178 notes across 20 categories and 7 topics, strong on how
 machines work: operating systems, algorithms, networking, data systems,
 concurrency, and eight AWS services. It has three kinds of gap.
 
@@ -42,24 +42,30 @@ key on.
 | 1 | `math` | `math-probability` | Sample spaces, conditional probability, Bayes, expectation/variance/linearity, common distributions, tail bounds, CLT, indicator variables |
 | 2 | `security` | `security-crypto` | Hashes, HMAC, symmetric vs. asymmetric, signatures, KDFs, CSPRNGs, AEAD, key rotation, what each primitive does *not* give you |
 | 3 | `security` | `security-tls` | Handshake 1.2 vs. 1.3, cert chains and PKI, cipher suites, SNI, ALPN, forward secrecy, revocation, mTLS |
-| 4 | `aws` | `aws-networking` | VPC, subnets, route tables, IGW/NAT, SGs vs. NACLs, VPC endpoints, PrivateLink, peering/TGW |
-| 5 | `identity` | `identity-oauth` | Authorization code + PKCE, client credentials, device code, refresh rotation, scopes vs. audience, ID vs. access token, front/back channel |
-| 6 | `identity` | `identity-sessions` | Cookie attributes, CSRF, token storage, password hashing, TOTP/WebAuthn, JWT-vs-session |
-| 7 | `identity` | `identity-saml` | Assertions, SP- vs. IdP-initiated, bindings, metadata, NameID, SLO, SAML-vs-OIDC |
-| 8 | `identity` | `identity-auth0` | Tenants, apps vs. APIs, connections, Actions pipeline, Universal Login, namespaced claims, Organizations, RBAC |
-| 9 | `aws` | `aws-security` | KMS keys/grants/envelope encryption, Secrets Manager vs. Parameter Store, rotation |
-| 10 | `aws` | `aws-observability` | CloudWatch metrics/logs/alarms, Logs Insights, X-Ray, EMF, retention cost |
-| 11 | `aws` | `aws-step-functions` | State machine model, standard vs. express, retry/catch, saga |
-| 12 | `aws` | `aws-kinesis` | Streams vs. Firehose, shards, consumer models |
-| 13 | `aws` | `aws-edge` | CloudFront behaviors, OAC, Route 53 policies, ACM, WAF |
-| 14 | `math` | `math-linear-algebra` | Vectors, dot/cross, span/basis, matrices as maps, rank/null space, determinant, eigen, projections, SVD |
-| 15 | `math` | `math-calculus` | Limits, derivative rules, chain rule, second derivative and convexity, Taylor, integrals |
-| 16 | `math` | `math-multivariable` | Partials, gradient, directional derivatives, Jacobian/Hessian, multivariable chain rule, Lagrange |
-| 17 | `algorithms` | `algo-strings` | KMP, Rabin-Karp, tries, suffix structures |
-| 18 | `algorithms` | `algo-intractability` | P/NP, reductions, NP-completeness catalog, approximation |
-| 19 | `data-systems` | `data-processing` | Batch (MapReduce, joins), stream (event time vs. processing time, windows, exactly-once) |
+| 4 | `networking` | `http-protocol` | HTTP/1.1 connection reuse limits, HTTP/2 framing and multiplexing, HPACK, HTTP/3 and QUIC, head-of-line blocking across layers, ALPN, method and status-code semantics, idempotency and safety |
+| 5 | `api-design` | `api-rest` | REST constraints, resource modelling, safe vs. idempotent methods, pagination, versioning, error formats, conditional requests and concurrency, HATEOAS in practice |
+| 6 | `api-design` | `api-grpc` | Protobuf wire format and schema evolution, the four call types, streaming, deadlines and cancellation, metadata, status codes, gRPC-web, choosing among gRPC/REST/GraphQL |
+| 7 | `aws` | `aws-networking` | VPC, subnets, route tables, IGW/NAT, SGs vs. NACLs, VPC endpoints, PrivateLink, peering/TGW |
+| 8 | `identity` | `http-protocol` | RFCs 9110–9114 (HTTP semantics, /1.1, /2, /3) |
+| `api-rest` | Fielding's dissertation, ch. 5; RFC 9110 |
+| `api-grpc` | grpc.io documentation; Protocol Buffers language guide |
+| `identity-oauth` | Authorization code + PKCE, client credentials, device code, refresh rotation, scopes vs. audience, ID vs. access token, front/back channel |
+| 9 | `identity` | `identity-sessions` | Cookie attributes, CSRF, token storage, password hashing, TOTP/WebAuthn, JWT-vs-session |
+| 10 | `identity` | `identity-saml` | Assertions, SP- vs. IdP-initiated, bindings, metadata, NameID, SLO, SAML-vs-OIDC |
+| 11 | `identity` | `identity-auth0` | Tenants, apps vs. APIs, connections, Actions pipeline, Universal Login, namespaced claims, Organizations, RBAC |
+| 12 | `aws` | `aws-security` | KMS keys/grants/envelope encryption, Secrets Manager vs. Parameter Store, rotation |
+| 13 | `aws` | `aws-observability` | CloudWatch metrics/logs/alarms, Logs Insights, X-Ray, EMF, retention cost |
+| 14 | `aws` | `aws-step-functions` | State machine model, standard vs. express, retry/catch, saga |
+| 15 | `aws` | `aws-kinesis` | Streams vs. Firehose, shards, consumer models |
+| 16 | `aws` | `aws-edge` | CloudFront behaviors, OAC, Route 53 policies, ACM, WAF |
+| 17 | `math` | `math-linear-algebra` | Vectors, dot/cross, span/basis, matrices as maps, rank/null space, determinant, eigen, projections, SVD |
+| 18 | `math` | `math-calculus` | Limits, derivative rules, chain rule, second derivative and convexity, Taylor, integrals |
+| 19 | `math` | `math-multivariable` | Partials, gradient, directional derivatives, Jacobian/Hessian, multivariable chain rule, Lagrange |
+| 20 | `algorithms` | `algo-strings` | KMP, Rabin-Karp, tries, suffix structures |
+| 21 | `algorithms` | `algo-intractability` | P/NP, reductions, NP-completeness catalog, approximation |
+| 22 | `data-systems` | `data-processing` | Batch (MapReduce, joins), stream (event time vs. processing time, windows, exactly-once) |
 
-Physics comes after #19, scoped when reached rather than guessed at
+Physics comes after #22, scoped when reached rather than guessed at
 now. It is last deliberately: it is the only area on this list that
 feeds nothing else in the vault, so it earns its review cost purely on
 interest.
@@ -70,7 +76,11 @@ Dependency, with one exception. `security-crypto` precedes
 `security-tls`, which precedes both the `identity-*` run and
 `aws-security` (KMS is unreadable without envelope encryption).
 `aws-networking` precedes nothing here but is pulled early because
-existing notes already depend on it. Within `identity`, each category
+existing notes already depend on it. `http-protocol` follows
+`security-tls` because HTTP/2 negotiation is ALPN and HTTP/3 embeds TLS
+1.3 outright, and `api-grpc` follows `http-protocol` because gRPC is
+defined on HTTP/2 framing — its streaming modes and deadlines are
+unreadable without it. Within `identity`, each category
 leans on the one before, and the vendor-specific `identity-auth0` goes
 last so it rests on a foundation — it is also the category most likely
 to rot, being the only one describing a product rather than a protocol.
@@ -84,9 +94,22 @@ is the math least harmed by the rendering constraint in §3.
 ### Naming
 
 New categories take a `topic`-matching prefix (`identity-*`,
-`security-*`, `math-*`), consistent with `aws-*`, `algo-*` and `os-*`.
+`security-*`, `math-*`, `api-*`), consistent with `aws-*`, `algo-*` and
+`os-*`. `http-protocol` is the exception: it joins the existing
+`networking` topic, whose sole category is the bare `networking`, so a
+`networking-*` prefix would sit oddly next to it.
 The convention is not universal in the vault already — `amp` and
 `data-systems` are bare — but it is the majority pattern.
+
+`http-protocol` does not absorb the existing
+`vault/networking/http.md`, which stays as it is in `category:
+networking` as part of the ten-note Kurose set. That note already covers
+persistent vs. non-persistent connections, cookies, conditional requests
+and 304, so `http-protocol` must not re-cover them: duplicate cards on
+one fact waste reviews and read as a vault bug when both surface in the
+same session. `http-protocol` starts where that note stops — at why
+HTTP/1.1 connection reuse was not enough, which is also the motivation
+for HTTP/2.
 
 `data-processing` is a new category rather than an extension of
 `data-systems`, which sits at 9 notes; appending DDIA ch. 10–11 would
@@ -190,6 +213,9 @@ loud:**
 | `math-calculus`, `math-multivariable` | Hubbard & Hubbard |
 | `security-crypto` | Aumasson, *Serious Cryptography* |
 | `security-tls` | RFC 8446; Ristić, *Bulletproof TLS* |
+| `http-protocol` | RFCs 9110–9114 (HTTP semantics, /1.1, /2, /3) |
+| `api-rest` | Fielding's dissertation, ch. 5; RFC 9110 |
+| `api-grpc` | grpc.io documentation; Protocol Buffers language guide |
 | `identity-oauth` | RFCs 6749, 6750, 7636; OAuth 2.1 draft |
 | `identity-saml` | OASIS SAML 2.0 specification |
 | `identity-sessions` | OWASP Session Management Cheat Sheet |
