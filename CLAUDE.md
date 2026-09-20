@@ -38,6 +38,14 @@ workflows that run Node — `ci.yml`, `build-deck.yml`, `deploy.yml` — read it
 via `setup-node`'s `node-version-file`, so CI and local development cannot
 drift apart. Bumping Node means editing this one file.
 
+Two things move *with* it and are not independent. `engines` in
+`package.json` states the same major. `@types/node` must track that major
+too — types from a newer release describe APIs the running Node does not
+have, which typechecks clean and then fails at runtime. Dependabot is
+configured to skip `@types/node` majors for exactly this reason, so a Node
+bump is the moment to raise it by hand, where both versions are visibly
+chosen together.
+
 **Do not shorten it back to `20`.** nvm resolves a bare major to the newest
 matching install, but asdf does not: with `legacy_version_file = yes` asdf
 reads `.nvmrc` as a version source and looks for a runtime named exactly

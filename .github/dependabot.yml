@@ -1,0 +1,58 @@
+# .github/dependabot.yml
+version: 2
+
+# Opens PRs for dependency updates. This exists because nothing else in the
+# repo notices drift: the vite 5 -> 8 / vitest 2 -> 5 upgrade was found by
+# running `npm audit` by hand, and by then the tree carried five advisories
+# including one critical, and the jump had grown to three majors on each
+# package. Nothing had gone wrong; nobody had looked. A weekly PR is the
+# cheapest way to make "nobody looked" impossible.
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+
+    # Dependabot's default commit subject is "Bump x from 1 to 2", which is
+    # not a Conventional Commits type and would be the only such subject on
+    # main. `chore` matches what CLAUDE.md asks for, and applies to both
+    # dependency sets -- `prefix` alone leaves development updates on the
+    # default.
+    commit-message:
+      prefix: chore
+      prefix-development: chore
+
+    groups:
+      # Minor and patch updates arrive as a single PR. Separately they would
+      # be five near-identical PRs a week against one lockfile, each one
+      # conflicting with the last, which is how dependency automation
+      # normally gets muted.
+      #
+      # Majors are deliberately left OUT of the group, so each arrives on its
+      # own and gets read. That is the class of update that broke something
+      # here (vite 8's `configLoader: 'native'` warning on `__dirname`), and
+      # burying it in a ten-package diff defeats the point of the PR.
+      minor-and-patch:
+        patterns: ['*']
+        update-types: [minor, patch]
+
+    ignore:
+      # @types/node must track the RUNTIME major in .nvmrc, not the newest
+      # release. Dependabot has no way to know that, and would offer
+      # @types/node 24 while the project runs node 22 -- types describing
+      # APIs the runtime does not have, which typechecks clean and fails at
+      # runtime. Bump this by hand as part of a node bump, where the two
+      # versions are visibly chosen together.
+      - dependency-name: '@types/node'
+        update-types: [version-update:semver-major]
+
+  # The workflows pin actions at @v7. Those go stale silently too, and a
+  # stale action is the one dependency that can't be seen in package.json.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: chore
