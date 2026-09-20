@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-20T11:30:45.994Z",
+  "generatedAt": "2026-09-20T14:14:07.241Z",
   "cards": [
     {
       "id": "card-6fmp",
@@ -4688,7 +4688,7 @@
       ]
     },
     {
-      "id": "card-v7xs",
+      "id": "card-2qcl",
       "format": "mcq",
       "topic": "aws",
       "category": "aws-iam",
@@ -4698,10 +4698,10 @@
         "context-keys",
         "least-privilege"
       ],
-      "prompt": "A statement's Condition block has two separate operators: one requiring `aws:PrincipalOrgID` to equal `o-example`, and another requiring `aws:MultiFactorAuthPresent` to equal `true`. A request satisfies the org-ID check but was made without MFA. Does the condition match? A different statement uses `StringEquals` on `aws:RequestedRegion` with three values: `us-east-1`, `us-west-2`, `eu-west-1`. A request comes from `us-west-2`. Does that single operator match?",
+      "prompt": "A statement's Condition block has two separate operators: one requiring `aws:PrincipalOrgID` to equal `o-example`, and another requiring `aws:MultiFactorAuthPresent` to equal `true`. A request satisfies the org-ID check but was made without MFA. Does the condition match?",
       "source": {
         "path": "vault/aws/iam/conditions-and-context-keys.md",
-        "block": "card-v7xs"
+        "block": "card-2qcl"
       },
       "citations": [
         "AWS Identity and Access Management User Guide — 'IAM JSON policy elements: Condition'"
@@ -4722,7 +4722,29 @@
         {
           "text": "The block errors out because it isn't allowed to contain two operators",
           "correct": false
-        },
+        }
+      ]
+    },
+    {
+      "id": "card-v7xs",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "conditions",
+        "context-keys",
+        "least-privilege"
+      ],
+      "prompt": "A different statement uses `StringEquals` on `aws:RequestedRegion` with three values: `us-east-1`, `us-west-2`, `eu-west-1`. A request comes from `us-west-2`. Does that single operator match?",
+      "source": {
+        "path": "vault/aws/iam/conditions-and-context-keys.md",
+        "block": "card-v7xs"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM JSON policy elements: Condition'"
+      ],
+      "choices": [
         {
           "text": "Yes — multiple values listed for the same key under one operator are combined with OR, so matching any one value is enough",
           "correct": true

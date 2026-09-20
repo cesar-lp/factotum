@@ -105,3 +105,71 @@ describe('lintNote — missing-category', () => {
     expect(lintNote(text)).toEqual([]);
   });
 });
+
+describe('lintNote — mcq-multiple-correct', () => {
+  const fused = [
+    '> [!card] mcq',
+    '> First question?',
+    '> - [x] first right',
+    '> - [ ] first wrong',
+    '>',
+    '> Second question?',
+    '> - [x] second right',
+    '> - [ ] second wrong'
+  ];
+
+  it('flags two questions fused into one callout by a blank `>` line', () => {
+    const problems = lintNote(note(fused));
+    expect(problems).toHaveLength(1);
+    expect(problems[0]?.rule).toBe('mcq-multiple-correct');
+    // Points at the callout header, not the offending choice — the fix is
+    // to split the block, which is an edit at the top of it.
+    expect(problems[0]?.line).toBe(5);
+    expect(problems[0]?.message).toContain('2 choices marked');
+  });
+
+  // The rule exists because of what the parser REALLY does with this, not
+  // because the markup looks untidy: one card, both prompts concatenated,
+  // all four choices pooled, two of them correct. Only one choice can ever
+  // be tapped, so the card cannot be answered as written.
+  it('really produces one fused, unanswerable card (verified against the real parser)', () => {
+    const cards = parseCards(fused.join('\n'), 0);
+    expect(cards).toHaveLength(1);
+    expect(cards[0]?.format).toBe('mcq');
+    expect(cards[0]?.choices).toHaveLength(4);
+    expect(cards[0]?.choices?.filter((c) => c.correct)).toHaveLength(2);
+    expect(cards[0]?.prompt).toContain('First question?');
+    expect(cards[0]?.prompt).toContain('Second question?');
+  });
+
+  it('does not flag the same content split into two callouts', () => {
+    const split = [
+      '> [!card] mcq',
+      '> First question?',
+      '> - [x] first right',
+      '> - [ ] first wrong',
+      '',
+      '> [!card] mcq',
+      '> Second question?',
+      '> - [x] second right',
+      '> - [ ] second wrong'
+    ];
+    expect(lintNote(note(split))).toEqual([]);
+    expect(parseCards(split.join('\n'), 0)).toHaveLength(2);
+  });
+
+  it('does not flag a well-formed single-answer mcq', () => {
+    expect(lintNote(note(['> [!card] mcq', '> Q?', '> - [x] a', '> - [ ] b']))).toEqual([]);
+  });
+
+  // cards.ts already warns and drops a callout with no correct choice, so
+  // that case is loud enough without a lint rule; this rule owns only the
+  // too-many direction.
+  it('does not flag a callout with no correct choice', () => {
+    expect(lintNote(note(['> [!card] mcq', '> Q?', '> - [ ] a', '> - [ ] b']))).toEqual([]);
+  });
+
+  it('does not flag a recall callout, which has no choices at all', () => {
+    expect(lintNote(note(['> [!card] recall', '> Explain a thing.', '> ---', '> Because of reasons.']))).toEqual([]);
+  });
+});

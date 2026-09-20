@@ -79,8 +79,9 @@ values for the *same* key, those values are combined with a logical
 > - [x] No — multiple condition operators in the same block are combined with AND, so every one of them must match, and this request fails the MFA check
 > - [ ] Yes, because matching either operator is enough to satisfy the block
 > - [ ] Yes, but only the org-ID check is actually enforced
-> - [ ] The block errors out because it isn't allowed to contain two operators
->
+> - [ ] The block errors out because it isn't allowed to contain two operators ^card-2qcl
+
+> [!card] mcq
 > A different statement uses `StringEquals` on `aws:RequestedRegion` with
 > three values: `us-east-1`, `us-west-2`, `eu-west-1`. A request comes
 > from `us-west-2`. Does that single operator match?

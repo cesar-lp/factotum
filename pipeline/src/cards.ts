@@ -8,9 +8,9 @@ const BARE_ANCHOR = /^\s*\^(card-[a-z0-9]{4})\s*$/;
 export const HIGHLIGHT = /==(\S[^=]*?\S|\S)==/g;
 export const QA = /^(.+?)\s+::\s+(.+)$/;
 export const FENCE = /^\s*(```|~~~)/;
-const CALLOUT_OPEN = /^>\s*\[!card\]\s*(mcq|recall)\s*$/i;
-const CALLOUT_LINE = /^>\s?(.*)$/;
-const CHOICE = /^-\s*\[( |x)\]\s*(.+)$/i;
+export const CALLOUT_OPEN = /^>\s*\[!card\]\s*(mcq|recall)\s*$/i;
+export const CALLOUT_LINE = /^>\s?(.*)$/;
+export const CHOICE = /^-\s*\[( |x)\]\s*(.+)$/i;
 const RECALL_SEPARATOR = /^-{3}$/;
 const HEADING = /^#{1,6}\s/;
 const LIST_ITEM = /^\s*([-*+]|\d+\.)\s/;
@@ -21,7 +21,7 @@ interface StrippedLine {
   id: string | null;
 }
 
-function stripAnchor(line: string): StrippedLine {
+export function stripAnchor(line: string): StrippedLine {
   const match = line.match(ANCHOR);
   if (!match || !match[1]) return { text: line.trimEnd(), id: null };
   return { text: line.replace(ANCHOR, '').trimEnd(), id: match[1] };
