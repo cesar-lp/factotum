@@ -1282,7 +1282,7 @@ Turns a block stream plus a masked set into HTML. Pure, string-in/string-out, no
 
 **Files:**
 - Create: `app/src/ui/note-render.ts`
-- Modify: `app/src/styles.css`
+- Create: `app/src/styles/note.css`; add one `@import './styles/note.css';` line to the `app/src/styles.css` manifest
 - Test: `app/tests/note-render.test.ts` (create)
 
 **Interfaces:**
@@ -1332,8 +1332,12 @@ describe('renderNoteBlocks', () => {
         { start: 10, end: 13, cardId: 'c2', answer: 'two' }
       ] }
     ], ['c2']);
-    expect(html).toContain('data-card="c2"');
-    expect(html).not.toContain('data-card="c1"');
+    // Every cloze gets a data-card span whether or not it is masked; the
+    // mask signal is the class. Task 8 scrolls to the arrived-from card via
+    // [data-card], and that card is always UNMASKED by design, so it must
+    // still be locatable.
+    expect(html).toContain('is-masked');
+    expect(html.match(/data-card/g)).toHaveLength(2);
     expect(html).toMatch(/A one and .*two.* here\./s);
   });
 
@@ -1445,6 +1449,10 @@ function renderProse(block: Extract<NoteBlock, { kind: 'prose' }>, masked: Reado
   for (const cloze of ordered) {
     html += text(block.text.slice(cursor, cloze.start));
     const inner = block.text.slice(cloze.start, cloze.end);
+    // Unconditional: Task 8 locates the arrived-from card via [data-card] to
+    // scroll and highlight it, and that card is always unmasked, so the span
+    // cannot be conditional on masking. "Show all" also reveals by removing
+    // `is-masked` in place, which needs the span to persist.
     html += `<span ${maskAttr(cloze.cardId, masked.has(cloze.cardId))}>${text(inner)}</span>`;
     cursor = cloze.end;
   }
@@ -1504,7 +1512,7 @@ export function renderNoteBlocks(blocks: NoteBlock[], masked: ReadonlySet<string
 
 - [ ] **Step 4: Add the masking styles**
 
-Append to `app/src/styles.css`, using the existing token scale (`--s*`, `--r-*`, `--text-*`) rather than raw numbers:
+Put this in `app/src/styles/note.css` (NOT `styles.css`, which is an @import manifest), using the existing token scale (`--s*`, `--r-*`, `--text-*`) rather than raw numbers:
 
 ```css
 /* A masked span keeps its width so revealing it reflows nothing --
@@ -1534,7 +1542,7 @@ Expected: PASS. If the mcq test fails because `is-correct` appears while masked,
 - [ ] **Step 6: Commit**
 
 ```bash
-git add app/src/ui/note-render.ts app/tests/note-render.test.ts app/src/styles.css
+git add app/src/ui/note-render.ts app/tests/note-render.test.ts app/src/styles/note.css app/src/styles.css
 git commit -m "feat: render note blocks with masked constructs
 
 Correctness on a masked mcq is not rendered at all, rather than rendered and
@@ -1723,7 +1731,7 @@ the hash was bookmarked."
 **Files:**
 - Create: `app/src/ui/note.ts`
 - Modify: `app/src/main.ts`
-- Modify: `app/src/styles.css`
+- Modify: `app/src/styles/note.css` (created in Task 6 — append; the `@import` line already exists)
 - Test: `app/tests/note-view.test.ts` (create)
 
 **Interfaces:**
@@ -1904,7 +1912,7 @@ Then call `prefetchNotes()` once, immediately after the dashboard render at the 
 
 - [ ] **Step 5: Add the screen styles**
 
-Append to `app/src/styles.css`, using the existing token scale:
+Put this in `app/src/styles/note.css` (NOT `styles.css`, which is an @import manifest), using the existing token scale:
 
 ```css
 .note-screen { padding: var(--s4); max-width: 42rem; margin: 0 auto; }
@@ -1953,7 +1961,7 @@ Then, using the preview tools, check at 375×812 in both themes:
 
 ```bash
 npm test && npm run typecheck
-git add app/src/ui/note.ts app/src/main.ts app/src/styles.css app/tests/note-view.test.ts
+git add app/src/ui/note.ts app/src/main.ts app/src/styles/note.css app/tests/note-view.test.ts
 git commit -m "feat: add the in-app note viewer screen
 
 A dumb renderer, mirroring renderTopics: masking and availability arrive as
