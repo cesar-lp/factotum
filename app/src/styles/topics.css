@@ -1,0 +1,11 @@
+/* The topics screen. */
+
+.topic { margin-top: var(--s4); }
+
+.topic-head { display: flex; align-items: center; justify-content: space-between; color: var(--dim); font-size: var(--text-micro); text-transform: lowercase; }
+
+.topic-row { display: flex; align-items: center; gap: var(--s2); padding: var(--s2) 0; }
+
+.topic-row-name { flex: 1; }
+
+.topic-row[data-off="true"] { opacity: 0.45; }

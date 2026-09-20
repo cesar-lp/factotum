@@ -1,0 +1,3 @@
+/* The dashboard screen. */
+
+.due-count { font-size: var(--text-display); font-weight: 600; line-height: 1; }

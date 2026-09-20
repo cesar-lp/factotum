@@ -1,0 +1,71 @@
+/* Page frame, shared controls and the chip. Everything here is used by
+   more than one screen; per-screen rules live in the sibling files. */
+
+* { box-sizing: border-box; }
+
+/* Kill the rubber-band bounce on a screen that does not overflow. A screen
+   whose content is genuinely taller (a long prompt) still scrolls normally;
+   this only removes the drag-past-the-end that otherwise makes a
+   fits-on-screen page feel broken. */
+html, body { overscroll-behavior-y: none; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: 1.5;
+  padding: env(safe-area-inset-top) var(--s4) env(safe-area-inset-bottom);
+  -webkit-text-size-adjust: 100%;
+}
+
+/* The safe-area insets live on body's padding, so a plain 100dvh here
+   makes the page exactly that much TALLER than the viewport — enough to
+   scroll, with nothing above or below to scroll to. Subtract them. */
+#app {
+  max-width: 480px; margin: 0 auto; display: flex; flex-direction: column;
+  min-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+}
+
+.screen { flex: 1; display: flex; flex-direction: column; padding: var(--s4) 0 var(--s6); }
+
+.top { display: flex; justify-content: space-between; align-items: center; color: var(--dim); font-size: var(--text-micro); }
+
+.spacer { flex: 1; }
+
+.btn, .btn-secondary, .btn-quiet {
+  border: 0;
+  cursor: pointer;
+}
+
+.btn, .btn-secondary {
+  display: block; width: 100%; padding: var(--s4); border-radius: var(--r-md);
+  font-size: var(--text-body); font-weight: 600;
+}
+
+.btn {
+  background: var(--accent); color: var(--on-accent);
+}
+
+.btn:disabled { opacity: 0.5; }
+
+.btn-secondary {
+  background: var(--surface); color: var(--text); border: 1px solid var(--line);
+}
+
+.btn-quiet {
+  background: transparent; color: var(--text); font-weight: 400; font-size: var(--text-body);
+  padding: var(--s3) var(--s1); border-radius: var(--r-sm); min-height: 44px;
+}
+
+.btn:active { background: var(--accent); filter: brightness(0.92); }
+
+.btn-secondary:active { background: var(--line); }
+
+.btn-quiet:active { background: var(--surface); }
+
+.chip {
+  display: inline-block; font-size: var(--text-micro); letter-spacing: 0.08em; text-transform: uppercase;
+  padding: var(--s1) var(--s2); border-radius: var(--r-pill); background: var(--accent-soft); color: var(--accent-text);
+}
