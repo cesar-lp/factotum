@@ -1,15 +1,24 @@
 import { fsrs, generatorParameters, createEmptyCard, Rating, State, type Card as FsrsCard, type Grade } from 'ts-fsrs';
-import type { CardFormat } from '../../../pipeline/src/types.js';
 import type { ReviewState } from '../db/schema.js';
 
 export type Outcome = 'correct' | 'wrong' | 'again' | 'hard' | 'good' | 'easy';
 
 export const LEECH_THRESHOLD = 8;
 
-export function ratingFor(format: CardFormat, outcome: Outcome): Rating {
-  if (format === 'mcq' || format === 'cloze') {
-    return outcome === 'correct' ? Rating.Good : Rating.Again;
-  }
+/**
+ * Maps an Outcome to an FSRS Rating. Format-independent, deliberately:
+ * 'correct'/'wrong' are only ever produced by an auto-graded tap (mcq's
+ * choice buttons, cloze's checkCloze) and 'again'/'hard'/'good'/'easy'
+ * only by a human tapping the rating row -- and mcq/typed-cloze never
+ * render a rating row, while qa/recall/self-graded-cloze never produce
+ * 'correct'/'wrong'. So the outcome alone already says everything;
+ * `format` told this function nothing extra, and a prior version's
+ * `format === 'mcq' || format === 'cloze'` special case actively lied:
+ * it collapsed a self-graded cloze's Hard/Good/Easy tap down to Again,
+ * because that check ran before the switch below ever saw the real
+ * outcome. See fsrs.test.ts's exhaustive format x outcome matrix.
+ */
+export function ratingFor(outcome: Outcome): Rating {
   switch (outcome) {
     case 'again':
       return Rating.Again;

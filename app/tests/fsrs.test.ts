@@ -11,7 +11,8 @@ import {
   LEECH_THRESHOLD,
   previewIntervals,
   formatInterval,
-  type Outcome
+  type Outcome,
+  type IntervalPreview
 } from '../src/scheduler/fsrs.js';
 import type { CardFormat } from '../../pipeline/src/types.js';
 
@@ -54,20 +55,29 @@ const now = new Date('2026-09-18T09:00:00Z');
 
 describe('ratingFor', () => {
   it('maps machine-graded outcomes', () => {
-    expect(ratingFor('mcq', 'correct')).toBe(Rating.Good);
-    expect(ratingFor('mcq', 'wrong')).toBe(Rating.Again);
-    expect(ratingFor('cloze', 'correct')).toBe(Rating.Good);
-    expect(ratingFor('cloze', 'wrong')).toBe(Rating.Again);
+    expect(ratingFor('correct')).toBe(Rating.Good);
+    expect(ratingFor('wrong')).toBe(Rating.Again);
   });
 
   it('passes self-graded outcomes through', () => {
-    expect(ratingFor('qa', 'hard')).toBe(Rating.Hard);
-    expect(ratingFor('recall', 'easy')).toBe(Rating.Easy);
+    expect(ratingFor('hard')).toBe(Rating.Hard);
+    expect(ratingFor('easy')).toBe(Rating.Easy);
   });
 
-  it('maps every (format, outcome) pair to the exact expected rating', () => {
-    const outcomes: Outcome[] = ['correct', 'wrong', 'again', 'hard', 'good', 'easy'];
-    const selfGradedExpected: Record<Outcome, Rating> = {
+  /**
+   * Regression test for a bug the review-screen redesign made visible: a
+   * prior version special-cased `format === 'mcq' || format === 'cloze'`
+   * BEFORE looking at the outcome at all, which collapsed a self-graded
+   * cloze's Hard/Good/Easy tap (the "Show answer" rating row) down to
+   * Again -- every outcome except the literal string 'correct' failed the
+   * card, including 'easy'. ratingFor is now format-independent (see its
+   * doc comment for why that's safe): this pins the full outcome ->
+   * rating mapping once, and then re-asserts it holds for every
+   * CardFormat, since the whole point of the fix is that format must be
+   * irrelevant to the result.
+   */
+  it('maps every outcome to the exact expected rating, independent of format', () => {
+    const expected: Record<Outcome, Rating> = {
       correct: Rating.Good,
       wrong: Rating.Again,
       again: Rating.Again,
@@ -75,28 +85,28 @@ describe('ratingFor', () => {
       good: Rating.Good,
       easy: Rating.Easy
     };
+    const outcomes = Object.keys(expected) as Outcome[];
+    const formats: CardFormat[] = ['mcq', 'cloze', 'qa', 'recall'];
 
-    const machineGraded: CardFormat[] = ['mcq', 'cloze'];
-    const selfGraded: CardFormat[] = ['qa', 'recall'];
+    for (const outcome of outcomes) {
+      expect(ratingFor(outcome)).toBe(expected[outcome]);
+    }
 
-    for (const format of machineGraded) {
+    // Pinned anyway per the redesign's instructions, even though mcq never
+    // renders a rating row today (it only ever produces 'correct'/'wrong')
+    // and so this row of the matrix is currently unreachable in the UI.
+    for (const format of formats) {
+      void format; // ratingFor no longer takes a format argument at all.
       for (const outcome of outcomes) {
-        // Machine-graded formats only ever recognize 'correct' as a pass;
-        // every other outcome value must fail the card.
-        expect(ratingFor(format, outcome)).toBe(outcome === 'correct' ? Rating.Good : Rating.Again);
+        expect(ratingFor(outcome)).toBe(expected[outcome]);
       }
     }
 
-    for (const format of selfGraded) {
-      for (const outcome of outcomes) {
-        expect(ratingFor(format, outcome)).toBe(selfGradedExpected[outcome]);
-      }
-    }
-
-    // The critical regression cases: a wrong answer on a self-graded card must
-    // never be recorded as a passing grade.
-    expect(ratingFor('qa', 'wrong')).toBe(Rating.Again);
-    expect(ratingFor('recall', 'wrong')).toBe(Rating.Again);
+    // The critical regression case this bug was about: a self-graded cloze
+    // (or qa/recall) rated Easy/Good/Hard must never be recorded as Again.
+    expect(ratingFor('easy')).not.toBe(Rating.Again);
+    expect(ratingFor('good')).not.toBe(Rating.Again);
+    expect(ratingFor('hard')).not.toBe(Rating.Again);
   });
 });
 
@@ -497,5 +507,41 @@ describe('previewIntervals', () => {
     const preview = previewIntervals(base, later, 0.9);
     const actual = applyRating(base, Rating.Good, later, 0.9);
     expect(formatInterval(actual.due - later.getTime())).toBe(preview.good);
+  });
+
+  /**
+   * The property that was actually broken by the ratingFor bug (see
+   * fsrs.test.ts's ratingFor describe block): a rating button's displayed
+   * interval must match the interval the card ACTUALLY gets once that
+   * exact button is tapped, going through the SAME path review.ts does --
+   * ratingFor(outcome) then applyRating -- rather than asserting the two
+   * halves (previewIntervals' labels, and applyRating's own behaviour)
+   * separately and trusting they compose correctly. Covers every Outcome
+   * review.ts can ever send to submit(), for every card format: the
+   * mapping is format-independent, but this still iterates formats to
+   * pin that a card's format genuinely has no bearing on the result.
+   */
+  it('a rating button never lies: the outcome each button sends produces exactly the interval it displayed', () => {
+    const outcomeToPreviewKey: Record<Outcome, keyof ReturnType<typeof previewIntervals>> = {
+      again: 'again',
+      hard: 'hard',
+      good: 'good',
+      easy: 'easy',
+      correct: 'good',
+      wrong: 'again'
+    };
+    const formats: CardFormat[] = ['qa', 'recall', 'cloze', 'mcq'];
+
+    for (const format of formats) {
+      for (const [outcome, previewKey] of Object.entries(outcomeToPreviewKey) as [Outcome, keyof IntervalPreview][]) {
+        const state = initialState(`card-${format}-${outcome}`, now);
+        const preview = previewIntervals(state, now, 0.9);
+        const actual = applyRating(state, ratingFor(outcome), now, 0.9);
+        expect(
+          formatInterval(actual.due - now.getTime()),
+          `format=${format} outcome=${outcome}: button showed "${preview[previewKey]}" but tapping it actually scheduled "${formatInterval(actual.due - now.getTime())}"`
+        ).toBe(preview[previewKey]);
+      }
+    }
   });
 });
