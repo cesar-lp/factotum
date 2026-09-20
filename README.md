@@ -70,6 +70,22 @@ from a previous connection being accepted by a new one.
 > video, and what QUIC changes.
 ```
 
+A `> ---` line inside a recall callout is optional and splits the callout
+into a prompt (above) and a model answer (below), to grade yourself against
+when you only half-remember something:
+
+```markdown
+> [!card] recall
+> Explain why wait-free implies lock-free, but not the reverse.
+> ---
+> Wait-free bounds every thread's own operation; lock-free only guarantees
+> that some thread makes progress, so a specific thread can still starve.
+```
+
+Obsidian renders `---` as a divider, so the callout still reads correctly
+in the editor. Without a separator, the card stays purely self-graded, just
+as before — there is no answer key to check yourself against.
+
 ### Parser behavior worth knowing
 
 - **A run of plain prose lines wraps and joins.** A sentence you hard-wrap
