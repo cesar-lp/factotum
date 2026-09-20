@@ -20,6 +20,19 @@ export function maskedSummary(count: number): string | null {
 }
 
 /**
+ * What's still masked once the reader's own reveals (this session, never
+ * persisted) are subtracted out. Pure so it's node-testable independent of
+ * the DOM re-render it drives.
+ */
+export function effectiveMasked(masked: ReadonlySet<string>, revealed: ReadonlySet<string>): Set<string> {
+  const result = new Set<string>();
+  for (const id of masked) {
+    if (!revealed.has(id)) result.add(id);
+  }
+  return result;
+}
+
+/**
  * The note viewer. A dumb renderer, mirroring renderTopics: every decision
  * (which cards are masked, whether notes loaded at all) arrives as a prop,
  * so the logic stays in main.ts where a node test can reach it.
@@ -35,7 +48,8 @@ export function renderNote(root: HTMLElement, props: NoteProps): void {
     return;
   }
 
-  if (!props.note) {
+  const maybeNote = props.note;
+  if (!maybeNote) {
     root.innerHTML = `
       <section class="note-screen">
         <header class="note-head"><button class="btn-secondary" data-role="back">Back</button></header>
@@ -45,7 +59,8 @@ export function renderNote(root: HTMLElement, props: NoteProps): void {
     return;
   }
 
-  const summary = maskedSummary(props.masked.size);
+  const note: NoteDoc = maybeNote;
+
   const obsidian = props.obsidianHref
     ? `<a class="btn-secondary" href="${escapeHtml(props.obsidianHref)}" data-role="obsidian">Open in Obsidian</a>`
     : '';
@@ -54,40 +69,93 @@ export function renderNote(root: HTMLElement, props: NoteProps): void {
     <section class="note-screen">
       <header class="note-head">
         <button class="btn-secondary" data-role="back">Back</button>
-        <h1 class="note-title">${escapeHtml(props.note.title)}</h1>
+        <h1 class="note-title">${escapeHtml(note.title)}</h1>
         ${obsidian}
       </header>
-      ${summary ? `<div class="note-masked-bar"><span>${summary}</span><button class="btn-secondary" data-role="reveal-all">Show all</button></div>` : ''}
-      <article class="note-body">${renderNoteBlocks(props.note.blocks, props.masked)}</article>
-      ${props.note.citations.length > 0
-        ? `<footer class="note-citations">${props.note.citations.map((c) => `<p>${escapeHtml(c)}</p>`).join('')}</footer>`
+      ${maskedSummary(props.masked.size)
+        ? `<div class="note-masked-bar"><span></span><button class="btn-secondary" data-role="reveal-all">Show all</button></div>`
+        : ''}
+      <article class="note-body"></article>
+      ${note.citations.length > 0
+        ? `<footer class="note-citations">${note.citations.map((c) => `<p>${escapeHtml(c)}</p>`).join('')}</footer>`
         : ''}
     </section>`;
 
   root.querySelector('[data-role="back"]')?.addEventListener('click', props.onBack);
 
-  // Reveal is per-element and ephemeral -- it derives from the schedule, so
-  // leaving and re-entering re-masks. Nothing here is persisted.
-  root.querySelectorAll<HTMLElement>('.is-masked').forEach((element) => {
-    element.addEventListener('click', () => {
-      element.classList.remove('is-masked');
-      element.classList.add('is-revealed');
-    });
-  });
+  // Revealing an mcq must show its is-correct marking, and note-render.ts
+  // deliberately never puts is-correct in the DOM at all while masked (a
+  // class hidden with CSS is defeated by view-source or a copied
+  // selection). That rules out an in-place class swap on reveal -- there is
+  // nothing to un-hide for an mcq, since the markup was never there. So
+  // reveal instead re-renders the article from renderNoteBlocks against a
+  // shrinking masked set: `revealed` is the only state, `effectiveMasked`
+  // derives what's still hidden, and the renderer stays the one place that
+  // decides what markup exists. Session-only, like the class-swap it
+  // replaces -- nothing here is persisted, so leaving and re-entering
+  // re-masks everything.
+  const revealed = new Set<string>();
+  let arrivedScrolled = false;
 
-  root.querySelector('[data-role="reveal-all"]')?.addEventListener('click', () => {
-    root.querySelectorAll<HTMLElement>('.is-masked').forEach((element) => {
-      element.classList.remove('is-masked');
-      element.classList.add('is-revealed');
-    });
-    root.querySelector('.note-masked-bar')?.remove();
-  });
+  function renderArticle(): void {
+    const article = root.querySelector<HTMLElement>('.note-body');
+    if (!article) return;
+    const masked = effectiveMasked(props.masked, revealed);
+    article.innerHTML = renderNoteBlocks(note.blocks, masked);
 
-  if (props.arrivedFrom) {
-    const target = root.querySelector<HTMLElement>(`[data-card="${CSS.escape(props.arrivedFrom)}"]`);
-    if (target) {
-      target.classList.add('is-arrived');
-      target.scrollIntoView({ block: 'center' });
+    article.querySelectorAll<HTMLElement>('.is-masked').forEach((element) => {
+      element.addEventListener('click', () => {
+        // is-masked and data-card are deliberately on different elements
+        // for qa/recall (answer <p> vs. the outer div), so the card id has
+        // to be resolved via the nearest ancestor that carries it, not read
+        // off the clicked element itself.
+        const owner = element.closest<HTMLElement>('[data-card]');
+        const cardId = owner?.dataset['card'];
+        if (!cardId) return;
+        revealed.add(cardId);
+        rerender();
+      });
+    });
+
+    if (props.arrivedFrom) {
+      const target = article.querySelector<HTMLElement>(`[data-card="${CSS.escape(props.arrivedFrom)}"]`);
+      if (target) {
+        target.classList.add('is-arrived');
+        // Only the very first render scrolls -- a later reveal must not
+        // yank the reader back to the arrived-from card.
+        if (!arrivedScrolled) {
+          target.scrollIntoView({ block: 'center' });
+          arrivedScrolled = true;
+        }
+      }
     }
   }
+
+  function updateBar(): void {
+    const bar = root.querySelector<HTMLElement>('.note-masked-bar');
+    const summary = maskedSummary(effectiveMasked(props.masked, revealed).size);
+    if (!summary) {
+      bar?.remove();
+      return;
+    }
+    const span = bar?.querySelector('span');
+    if (span) span.textContent = summary;
+  }
+
+  function rerender(): void {
+    // A re-render must not move the reader's scroll position -- only the
+    // arrived-from card's initial scrollIntoView is allowed to do that.
+    const scrollY = window.scrollY;
+    renderArticle();
+    updateBar();
+    window.scrollTo(window.scrollX, scrollY);
+  }
+
+  renderArticle();
+  updateBar();
+
+  root.querySelector('[data-role="reveal-all"]')?.addEventListener('click', () => {
+    for (const id of props.masked) revealed.add(id);
+    rerender();
+  });
 }

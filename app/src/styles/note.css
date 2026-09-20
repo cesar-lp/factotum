@@ -9,7 +9,6 @@
   transition: filter 120ms ease-out;
 }
 .is-masked:hover { filter: blur(4px); }
-.is-revealed { filter: none; }
 
 @media (prefers-reduced-motion: reduce) {
   .is-masked { transition: none; }
