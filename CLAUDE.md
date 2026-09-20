@@ -46,6 +46,36 @@ That last command must print nothing. `build:deck` both regenerates
 `deck/deck.json` and mints `^card-xxxx` anchors into vault notes, so either
 can go stale on its own and fail the PR.
 
+## Worktrees
+
+Work often happens in a git worktree under `.claude/worktrees/`. Each one is
+a full checkout with its own `node_modules`, so they run to tens of
+megabytes apiece and accumulate quietly — a finished worktree costs as much
+as an active one.
+
+**Delete a worktree once its branch is merged.** Check first, then remove:
+
+```bash
+git branch --merged main | grep <branch>
+git -C <worktree-path> status --porcelain
+git worktree remove <worktree-path>
+git worktree prune
+```
+
+The first two commands are the safety check: confirm the branch really
+landed, and that nothing uncommitted is sitting in the worktree. `git
+worktree remove` refuses a dirty worktree by default — do not reach for
+`--force` to get past that, since the uncommitted work it is protecting is
+unrecoverable once the directory is gone. Commit or discard it
+deliberately, then remove.
+
+`git worktree prune` clears entries whose directories are already gone (for
+example a worktree created under `/tmp` and cleared by a reboot), which
+otherwise linger in `git worktree list` as `prunable`.
+
+Run `git worktree list` periodically — a merged branch's worktree is pure
+overhead, and the tooling that creates them does not clean up after itself.
+
 ## Vault content
 
 Authoring conventions — the `topic`/`category` split, card syntax, and the
