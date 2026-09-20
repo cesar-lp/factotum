@@ -246,6 +246,26 @@ happens, and the live site silently stops updating with no obvious signal
 why. `ci.yml` is read-only (`permissions: contents: read`) — it never
 pushes or commits, unlike `build-deck.yml`.
 
+Two smaller PR-only workflows sit alongside it. **`branch-name.yml`**
+rejects a PR whose branch doesn't follow the `<type>/<kebab-description>`
+convention in `CLAUDE.md` — the agent tooling that creates worktrees
+proposes names like `claude/…-fed542`, and a rename that relies on someone
+remembering it eventually doesn't happen. It skips fork PRs, whose branch
+names live in someone else's repo and never land here.
+
+**`deck-diff.yml`** and **`deck-diff-comment.yml`** post a comment on every
+PR saying how many cards it adds or removes and to which notes, and warn
+about any touched note left under the 6-card minimum. `deck/deck.json` is
+one 1.2MB generated file that every content PR rewrites, so GitHub's diff
+view tells a reviewer nothing; this makes the number visible instead. They
+are split in two on purpose: posting a comment needs `pull-requests:
+write`, which must never be held by a workflow that touches PR-authored
+content on a public repo. `deck-diff.yml` reads the PR with no permissions
+and uploads an artifact; `deck-diff-comment.yml` holds the write token,
+runs on `workflow_run`, and never checks out PR code. Merging them — or
+switching to `pull_request_target` — would hand repository write access to
+anyone who opens a PR.
+
 ## One-time setup
 
 1. **Enable GitHub Pages**: repo Settings → Pages → Source: **GitHub
@@ -266,7 +286,16 @@ pushes or commits, unlike `build-deck.yml`.
    - Under **Rules**, enable **Require status checks to pass**, then **Add
      checks** and select **`PR checks (test, typecheck, deck drift)`** —
      that's the job name `ci.yml` reports (not the workflow name `PR
-     checks`, which won't appear as a selectable check itself).
+     checks`, which won't appear as a selectable check itself). Add
+     **`Branch name follows convention`** the same way.
+   - Do **not** enable **Require approvals**. Every PR here is authored by
+     the maintainer, and GitHub does not let you approve your own PR — so
+     the rule can only ever deadlock, and the usual escape (a workflow that
+     auto-approves) would approve fork PRs from strangers too. Required
+     status checks are what actually gate a merge; approvals add nothing on
+     a solo repo. Enable **Settings → General → Allow auto-merge** instead:
+     it is a per-PR button only someone with write access can press, so it
+     never lets an outside PR land on its own.
    - Under **Bypass list**, click **Add bypass** and add the **GitHub
      Actions** app (not a specific user or team). This is the step that
      keeps `build-deck.yml`'s direct push to `main` working; without it,
