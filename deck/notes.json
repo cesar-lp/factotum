@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-20T22:24:47.972Z",
+  "generatedAt": "2026-09-20T22:45:02.355Z",
   "notes": [
     {
       "path": "vault/api/grpc/choosing-between-grpc-rest-and-graphql.md",
@@ -22315,6 +22315,1551 @@
           "kind": "prose",
           "text": "Two ways of getting this wrong look, from the outside, exactly like a working system, which is what makes them the most dangerous: accepting any token that merely verifies without checking who it's for or whether it's expired, and checking everything except scope. Both let every request through looking completely normal, right up until the first request that should have been refused isn't.",
           "clozes": []
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/sessions/cookie-attributes-and-scope.md",
+      "title": "Cookie attributes and scope",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Cookie attributes and scope"
+        },
+        {
+          "kind": "prose",
+          "text": "`http-fundamentals.md` covers the basic mechanism: a server hands out a value in `Set-Cookie`, and the browser resends it in the `Cookie` header on later requests to that site. What that note doesn't cover is everything that decides *how* that value behaves once it exists — and each attribute below is best understood by the specific exposure it closes.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "A cookie marked Secure will only ever be sent over an encrypted connection; over plain HTTP, the browser withholds it entirely, so a value that never travels in the clear can't be picked off by anyone sitting on the network path between client and server.",
+          "clozes": [
+            {
+              "start": 16,
+              "end": 22,
+              "answer": "Secure",
+              "cardId": "card-0xvj"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "A cookie marked HttpOnly is invisible to `document.cookie` and to any other page script — it can still be sent as a normal request header, but nothing running in the page can read or copy its value.",
+          "clozes": [
+            {
+              "start": 16,
+              "end": 24,
+              "answer": "HttpOnly",
+              "cardId": "card-8kvs"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-y1oe",
+          "format": "mcq",
+          "prompt": "A site has a stored cross-site scripting flaw: an attacker's injected script now runs in the victim's browser, in the page's own origin, and tries `document.cookie` to steal the session value for exfiltration. Which single attribute defeats exactly this attempt?",
+          "choices": [
+            {
+              "text": "HttpOnly, since it hides the value from any script running in the page, regardless of how that script got there",
+              "correct": true
+            },
+            {
+              "text": "Secure, since it only governs whether the cookie travels over plaintext connections",
+              "correct": false
+            },
+            {
+              "text": "SameSite, since it only governs whether the cookie attaches to cross-site requests",
+              "correct": false
+            },
+            {
+              "text": "Path, since it only narrows which URLs on the site receive the cookie",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-yot3",
+          "prompt": "Dropping Secure creates a different exposure than dropping HttpOnly: describe what an attacker gains from a missing Secure attribute that a correctly-set HttpOnly attribute does nothing to stop.",
+          "answer": "An attacker positioned on the network path — an open Wi-Fi network, a compromised router — can read the cookie directly off an unencrypted request, because Secure is what keeps it from ever being sent in the clear in the first place; HttpOnly only stops page scripts from reading it and has no effect on what travels over the wire."
+        },
+        {
+          "kind": "prose",
+          "text": "`SameSite` decides whether the cookie rides along on a request that originates from another site, and its three values are not shades of the same protection — they draw the line in different places. `Strict` withholds the cookie on any cross-site request, full stop, including a user simply clicking a link from another site into yours. `Lax` still attaches it on that top-level navigation case, but withholds it on cross-site subrequests like an embedded image or a background fetch. This is one layer among several against cross-site request forgery, a topic covered elsewhere in full.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-btou",
+          "format": "mcq",
+          "prompt": "A partner site links directly to an authenticated page on yours, and the click is expected to land the user already signed in — the cookie must attach on that very first cross-site navigation. Which SameSite setting would break this by withholding the cookie even on that top-level click?",
+          "choices": [
+            {
+              "text": "Strict — it withholds the cookie on any cross-site request, including top-level navigation",
+              "correct": true
+            },
+            {
+              "text": "Lax — it still attaches the cookie on top-level cross-site navigation",
+              "correct": false
+            },
+            {
+              "text": "None — it attaches the cookie on every cross-site request",
+              "correct": false
+            },
+            {
+              "text": "None of them affect top-level navigation, only subrequests",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "The most permissive setting, `SameSite=`None, attaches the cookie to every cross-site request, subrequest and top-level navigation alike; because that removes the cross-site restriction entirely, the specification requires pairing it with Secure, and a browser receiving it without that pairing discards the cookie outright rather than honoring a maximally exposed setting over plaintext.",
+          "clozes": [
+            {
+              "start": 40,
+              "end": 44,
+              "answer": "None",
+              "cardId": "card-g18l"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Scope is where the mistakes run the opposite direction from the attributes above — people narrow those, but widen scope by accident. Setting `Domain=example.com` on a cookie meant only for `www.example.com` doesn't just cover that one host: it widens the cookie's reach to *every* subdomain of `example.com`, including ones run by other teams, third-party vendors, or infrastructure the cookie's owner doesn't control — any of which can now read and send it.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "`Path` looks like a similar scoping control but isn't a security boundary at all: narrowing it to `/account` only changes which request URLs the browser automatically attaches the cookie to. Any script running on the same origin can read and write cookies across every path on that origin through `document.cookie`, regardless of which path loaded the script, so Path restricts automatic attachment on the wire without restricting script access at all.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The __Host- prefix collapses the scope decisions above into browser-enforced constraints instead of conventions a developer can get wrong.",
+          "clozes": [
+            {
+              "start": 4,
+              "end": 11,
+              "answer": "__Host-",
+              "cardId": "card-ttjn"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "A cookie carrying that prefix is rejected outright unless it also sets Secure, omits `Domain` entirely — pinning it to exactly the host that set it, never a wider set of subdomains — and sets `Path=/`.",
+          "clozes": []
+        },
+        {
+          "kind": "code",
+          "lang": null,
+          "text": "Set-Cookie: __Host-session=abc123; Secure; Path=/; SameSite=Lax"
+        },
+        {
+          "kind": "card",
+          "cardId": "card-v2zc",
+          "format": "recall",
+          "prompt": "A cookie is set with `Domain=corp.example.com` from an app running at `app.corp.example.com`. An unrelated legacy app at `old.corp.example.com` turns out to receive this cookie on every request too. Explain why this happened, and name the prefix that would have made this exact mistake impossible for the browser to accept."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/sessions/credential-storage-and-breach-response.md",
+      "title": "Credential Storage and Breach Response",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "citations": [
+        "OWASP Authentication Cheat Sheet",
+        "OWASP Forgot Password Cheat Sheet"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Credential Storage and Breach Response"
+        },
+        {
+          "kind": "prose",
+          "text": "A separate cryptography category covers why passwords are hashed with a deliberately slow, memory-hard function, and how a work factor gets chosen. This note takes all of that as given and asks a different set of questions: what discipline has to surround a stored hash for the hashing itself to matter, and what happens once it fails anyway.",
+          "clozes": []
+        },
+        {
+          "kind": "heading",
+          "level": 2,
+          "text": "Never recoverable, anywhere"
+        },
+        {
+          "kind": "prose",
+          "text": "The rule sounds obvious stated once: a password must never be written down anywhere in a form that could be read back out. Stated that way, it sounds like a rule about the database, and the database is usually the one place a team actually gets right — it's designed, reviewed, and audited precisely because everyone knows it holds credentials.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-ofkx",
+          "prompt": "Where does most accidental password disclosure actually happen, and why does hardening the database not prevent it?",
+          "answer": "In application logs, request traces, error reports, and analytics — not the password database. A submitted password passes through a request handler, a validation layer, sometimes a third-party monitoring tool, before it ever reaches the hashing step, and any one of those systems can end up writing the raw value to disk (a debug log line, a stack trace that dumps request parameters, an analytics event that captures form fields) without anyone treating that as a credential-storage decision at all."
+        },
+        {
+          "kind": "prose",
+          "text": "The fix isn't a single control but a posture: treat the raw password as radioactive from the moment it's received until the moment it's hashed and the plaintext variable goes out of scope. That means scrubbing it from logging middleware, excluding it from error-reporting payloads by name rather than by accident, and never passing it to an analytics or tracing call that wasn't built with that exclusion in mind.",
+          "clozes": []
+        },
+        {
+          "kind": "heading",
+          "level": 2,
+          "text": "Migration: raising the cost later"
+        },
+        {
+          "kind": "prose",
+          "text": "A stored hash isn't just an opaque blob — it records the parameters it was produced with, because verifying a future login requires reproducing the exact computation. That fact has a consequence that surprises people the first time they hit it: there is no batch job that can take an existing table of hashes and raise their work factor.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-ynia",
+          "prompt": "Why can't an existing stored hash simply be recomputed at a higher work factor?",
+          "answer": "Hashing is one-directional: the stored value is the output of the old, cheaper computation, and there's no way to run it \"in reverse\" and then forward again at a new setting without the original input. The system would need the plaintext password back, and by design it never kept a copy of that."
+        },
+        {
+          "kind": "prose",
+          "text": "The only moment that plaintext is available again is the next successful login, when the user has just typed their password in and the system is holding it in memory anyway, on its way to being verified against the old hash. A system that wants to migrate work factors verifies against the stored parameters as normal, and if that check succeeds, immediately re-hashes the same plaintext at the new setting and overwrites the stored value before discarding it. Accounts that don't log in for a long stretch simply carry an old-parameter hash until they do — there's no way to force the upgrade any sooner.",
+          "clozes": [
+            {
+              "start": 57,
+              "end": 78,
+              "answer": "next successful login",
+              "cardId": "card-gb0g"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-gezh",
+          "prompt": "A team wants to migrate every user's password hash from bcrypt at an old work factor to Argon2 at a new one, but refuses to require a mass password reset. Describe the mechanism that lets them do this gradually, and explain why an account that never logs in again will never be migrated.",
+          "answer": "They upgrade opportunistically at login: verify the submitted password against the existing bcrypt hash using its stored parameters, and only if that succeeds, hash the same plaintext with Argon2 at the new settings and store the result in place of the old hash. Migration piggybacks on the one moment the plaintext is briefly available. An account that never authenticates again never provides that plaintext, so its hash is stuck at the old algorithm and work factor indefinitely — there's no other path to strengthen it."
+        },
+        {
+          "kind": "heading",
+          "level": 2,
+          "text": "Credential stuffing"
+        },
+        {
+          "kind": "prose",
+          "text": "Slowing down guesses helps against an attacker probing one account directly, but it does nothing against a much more common attack that needs no interaction with the hashing at all. Because people reuse passwords across unrelated services, a breach at one company hands an attacker working credentials for accounts on completely different systems that were never themselves compromised.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "That attack — trying breached username/password pairs from elsewhere against a system that has no flaw of its own — is called credential stuffing, and it needs defenses that look nothing like the ones built for guessing.",
+          "clozes": [
+            {
+              "start": 126,
+              "end": 145,
+              "answer": "credential stuffing",
+              "cardId": "card-awql"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-1qea",
+          "prompt": "Why does per-account rate limiting do little to stop credential stuffing, even though it works fine against someone brute-forcing a single account?",
+          "answer": "Credential stuffing doesn't repeat attempts against one account — it makes one or two attempts each against a huge number of different accounts, using credentials already known to be valid somewhere. A limit on failed attempts per account never triggers, because no single account ever sees more than a couple of tries. The signal that actually distinguishes this traffic is volume and reputation aggregated across the whole login surface — many accounts being tried from the same IP ranges, credential lists, or automation fingerprints — not the failure count on any one of them."
+        },
+        {
+          "kind": "heading",
+          "level": 2,
+          "text": "Breach response"
+        },
+        {
+          "kind": "prose",
+          "text": "Discovering that a credential store was exposed doesn't end with confirming the hashes held up. Passwords being hashed well limits what an attacker can do with the stolen table directly, but it says nothing about credentials already reused elsewhere, sessions already issued before the breach was found, or whether affected people even know to act.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-qdhd",
+          "prompt": "Why is \"the passwords were hashed\" not, by itself, a reassuring response to a breach?",
+          "answer": "Because hashing only slows down offline guessing against the stolen table — it doesn't prevent credential stuffing against other services using the same reused passwords, it doesn't retroactively secure sessions that were already active when the breach happened, and it does nothing for users who never find out their credentials were exposed. A response has to invalidate existing sessions tied to affected accounts, force re-authentication, and disclose the breach so people can change reused passwords elsewhere — hashing quality is one input to how bad the breach is, not a substitute for responding to it."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/sessions/csrf-and-request-forgery.md",
+      "title": "CSRF and request forgery",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "citations": [
+        "OWASP Cross-Site Request Forgery Prevention Cheat Sheet"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "CSRF and request forgery"
+        },
+        {
+          "kind": "prose",
+          "text": "The mechanism behind cross-site request forgery starts with one fact about cookies: a browser attaches a site's cookies to a request for that site automatically, regardless of what caused the browser to send that request in the first place.",
+          "clozes": [
+            {
+              "start": 147,
+              "end": 160,
+              "answer": "automatically",
+              "cardId": "card-7mi1"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "That means a page loaded from any other origin can cause the victim's browser to issue a request to the target site — a form that auto-submits, an image tag whose `src` points at a state-changing endpoint — and the browser attaches the victim's cookies to it exactly as if the request had come from the target site's own page:",
+          "clozes": []
+        },
+        {
+          "kind": "code",
+          "lang": null,
+          "text": "<img src=\"https://bank.example.com/transfer?to=attacker&amount=1000\">"
+        },
+        {
+          "kind": "prose",
+          "text": "The server receives a request carrying a completely valid, correctly authenticated session cookie. It has no built-in way to tell that request apart from one the user actually intended to make from the site's own interface.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-e97u",
+          "prompt": "Why doesn't requiring authentication defend against this on its own?",
+          "answer": "Because the forged request is authenticated — it carries the victim's real, valid session cookie, attached automatically by the browser. What's missing isn't proof of who the user is; it's proof that the site's own page, rather than some other page the victim happened to have open, produced the request. Authentication and that second guarantee are different things, and the defenses below exist to supply the one authentication doesn't."
+        },
+        {
+          "kind": "prose",
+          "text": "The standard defense, the synchronizer token pattern, supplies exactly that missing guarantee. The server embeds a secret value in the page it renders — tied to the session, sometimes rotated per request — and requires that same value to come back in the body of any state-changing request. A cross-origin attacker's page can still trigger the request, but it cannot read the token out of the victim's page to include it, since that would mean reading a cross-origin response, which the browser's same-origin rules block. The value only has to be unguessable, the same requirement any secret handed out this way carries; how it's generated isn't this note's concern.",
+          "clozes": [
+            {
+              "start": 26,
+              "end": 44,
+              "answer": "synchronizer token",
+              "cardId": "card-9h0f"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "A lighter variant, double-submit, skips server-side token storage entirely: the server sets the token as a cookie, client-side script copies that same value into the request body, and the server just checks that the two match. It avoids keeping per-session state, but it depends on an assumption the synchronizer pattern doesn't need — that only the legitimate site can ever set that cookie in the victim's browser. Anywhere an attacker can plant a cookie for the target's domain, such as a loosely-controlled sibling subdomain, they can satisfy both halves of the check themselves without reading anything from the victim's page at all.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-qqve",
+          "format": "mcq",
+          "prompt": "An attacker cannot read any response from the target site's origin, but can set cookies scoped to that site's domain from a script running on a loosely-controlled sibling subdomain. The target site's only request forgery defense is double-submit: a cookie value copied into the request body. Which statement is correct?",
+          "choices": [
+            {
+              "text": "The attacker can plant the same value as both the cookie and the submitted body value, satisfying the check without ever reading the victim's page",
+              "correct": true
+            },
+            {
+              "text": "The defense still holds, because the attacker still cannot read the victim's page",
+              "correct": false
+            },
+            {
+              "text": "A synchronizer token would be equally defeated by this same attacker capability",
+              "correct": false
+            },
+            {
+              "text": "Double-submit is strictly stronger than a synchronizer token in this scenario",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "SameSite cookie restrictions add a strong partial mitigation, blocking the browser from attaching a cookie at all on many cross-site requests — but partial is the operative word, not a reason to rely on it alone. Its more permissive setting still lets a cross-site top-level navigation, such as a plain link, carry the cookie along. That gap is exactly why a state-changing GET endpoint is a design error independent of which forgery defenses are in place: anything reachable by a plain navigation, a redirect, or an image tag's `src` is reachable by an attacker's page, with no form submission or script execution required at all. A GET request must never change state, full stop — every other defense here assumes that already holds.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-z8qm",
+          "format": "mcq",
+          "prompt": "A site applies its most permissive SameSite setting to its session cookie and adds no other request forgery defense. An attacker's page contains a plain link that, when clicked, performs a top-level navigation to a GET endpoint on the target site that deletes the logged-in user's account. What happens?",
+          "choices": [
+            {
+              "text": "The cookie is still attached, because a top-level cross-site navigation is exactly the case a lenient SameSite setting still allows — the real defect is a GET that changes state at all",
+              "correct": true
+            },
+            {
+              "text": "The cookie is withheld, because SameSite blocks all cross-site requests regardless of how they are triggered",
+              "correct": false
+            },
+            {
+              "text": "The request fails, because GET requests never carry cookies cross-site",
+              "correct": false
+            },
+            {
+              "text": "SameSite alone fully prevents this regardless of how the endpoint is designed",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "A last layer checks the Origin or Referer header the browser sends along with the request against the host the server expects, rejecting a mismatch outright.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-ezqv",
+          "prompt": "What does checking the Origin or Referer header on an incoming request defend against, and why is it treated as a supplementary check rather than a sole defense?",
+          "answer": "It gives the server another way to tell whether a request actually came from its own page, by comparing the header the browser attached against the host it expects — a cross-site forged request typically carries the attacker's origin or none at all. It's supplementary because these headers can be missing or stripped by some legitimate client and proxy configurations too, so an absence isn't automatic proof of forgery; it works best layered alongside a token-based defense rather than in place of one."
+        },
+        {
+          "kind": "prose",
+          "text": "OAuth's authorization flow has its own instance of this same forgery pattern, defended by a mechanism specific to that flow — not this note's concern.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-55ic",
+          "format": "recall",
+          "prompt": "Name the distinct categories of defense against cross-site request forgery covered here, and for each one say what specific guarantee it supplies that a forged, cookie-authenticated request otherwise lacks.",
+          "answer": "The synchronizer token pattern (and its weaker double-submit variant) supplies proof that the site's own page produced the request, since a cross-origin attacker cannot read, or in the stronger version cannot plant, the value needed to pass the check. SameSite cookie restrictions remove the browser's automatic attachment of the cookie for most cross-site requests in the first place, though not for a top-level navigation. Origin and Referer checking gives the server an independent, if imperfect, signal about where the request actually came from. None of them substitute for the underlying rule that a GET must never change state."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/sessions/jwt-structure-and-pitfalls.md",
+      "title": "JWT Structure and Pitfalls",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "citations": [
+        "RFC 7519 (JSON Web Token)",
+        "RFC 8725 (JWT Best Current Practices)"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "JWT Structure and Pitfalls"
+        },
+        {
+          "kind": "prose",
+          "text": "A JSON Web Token is a compact string built from exactly three parts joined by dots:",
+          "clozes": []
+        },
+        {
+          "kind": "code",
+          "lang": null,
+          "text": "header.payload.signature\n\nheader    - names the algorithm and token type\npayload   - the claims: who, what, when\nsignature - computed over the header and payload together"
+        },
+        {
+          "kind": "prose",
+          "text": "Cloze on the shape:",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "A JWT is always three base64url segments separated by dots — never more, never fewer, regardless of how many claims the payload carries.",
+          "clozes": [
+            {
+              "start": 16,
+              "end": 21,
+              "answer": "three",
+              "cardId": "card-ukrx"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Each segment is base64url text, and that choice of encoding is easy to mistake for something stronger than it is.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Base64url is encoding, not encryption.",
+          "clozes": [
+            {
+              "start": 13,
+              "end": 21,
+              "answer": "encoding",
+              "cardId": "card-tt6e"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "That one fact has an unforgiving consequence. Anyone holding a token can decode the header and payload with nothing more than a text editor — there is no key involved, because none is needed. Every claim placed in the payload is exposed to anyone who ever sees the token in transit, in a log line, in a browser's storage, or on the wire to a proxy that was never supposed to read it.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-tfhs",
+          "prompt": "Why is putting a customer's account balance or medical status directly into a JWT's payload a disclosure risk, even if the token's signature is never broken?",
+          "answer": "The payload is base64url-encoded, not encrypted, so decoding it requires no key at all — anyone who obtains the token, whether through a log, a proxy, a browser extension, or a network capture, can read every claim in plain sight. The signature only proves the claims weren't altered; it does nothing to hide them. Putting confidential data there is a disclosure with extra steps."
+        },
+        {
+          "kind": "prose",
+          "text": "The header is where the second class of pitfall lives, because the header is attacker-supplied: whoever holds the token controls what its `alg` field says, and a verifier that blindly trusts that field is handing the attacker a say in how their own forgery gets checked.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-ovx8",
+          "format": "mcq",
+          "prompt": "A resource server verifies incoming JWTs by reading the `alg` field out of each token's own header and using whatever algorithm it names. An attacker takes a token that was legitimately issued with an RSA signature, strips the signature, sets `alg` to an HMAC scheme, and signs the result using the issuer's RSA *public* key as if it were a shared HMAC secret — since that public key is, well, public. What lets this forged token pass verification?",
+          "choices": [
+            {
+              "text": "The verifier let the token's own header dictate which algorithm to check the signature under, instead of fixing that choice itself",
+              "correct": true
+            },
+            {
+              "text": "HMAC and RSA produce identical signature bytes for the same input, so the forgery is coincidentally valid",
+              "correct": false
+            },
+            {
+              "text": "The attacker guessed the issuer's actual RSA private key",
+              "correct": false
+            },
+            {
+              "text": "This only works if the payload's claims are also left unencrypted",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "That specific attack has a sibling that skips signing entirely. The JWT spec allows an `alg` value of none, meaning the token asserts outright that no signature was ever applied.",
+          "clozes": [
+            {
+              "start": 102,
+              "end": 106,
+              "answer": "none",
+              "cardId": "card-fs0e"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "A verifier that honors an `alg` of `none` accepts the token's claims at face value, because it was told, by the token itself, not to check anything.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-rfv3",
+          "prompt": "What is the defense against both algorithm confusion and the `none` algorithm, stated as a single principle?",
+          "answer": "The verifier — never the token — decides which algorithm (or short list of algorithms) is acceptable, and rejects anything else outright, including `none`. The token's own `alg` field is treated as untrusted input to be checked against that fixed list, not as an instruction to follow."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-2olv",
+          "format": "recall",
+          "prompt": "Someone justifies a design decision by saying \"we use JWTs, so our tokens are secure.\" Explain why that sentence answers no security question by itself, using the two pitfalls above.",
+          "answer": "\"JWT\" names a token *format* — three base64url segments with a header, payload, and signature — not a security guarantee. A system using JWTs can still leak every claim in plain sight, since the encoding isn't encryption, and can still be forged outright if its verifier trusts the token's own header to pick the algorithm, including accepting `none`. Whether JWTs are secure here depends entirely on what's encoded in the payload and how the verifier is configured — questions the phrase \"we use JWTs\" never touches."
+        },
+        {
+          "kind": "prose",
+          "text": "Put together, the two failure modes share a root cause: both come from treating something the token carries — a claim's confidentiality, or the header's algorithm choice — as already trustworthy, when the token is exactly the thing under examination.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-f72z",
+          "prompt": "Why does it make sense that algorithm confusion and payload disclosure are both described as coming from the \"same root cause,\" even though one is about the header and the other is about the payload?",
+          "answer": "Both mistakes trust content that arrived inside the token itself instead of verifying it against something fixed outside the token: algorithm confusion trusts the attacker-controlled `alg` header to say how to check the signature, and payload disclosure implicitly trusts that whoever can see the token isn't supposed to read the claims. In both cases the token is the artifact being examined, so nothing it asserts about itself can be taken as already established."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/sessions/login-flows-and-account-recovery.md",
+      "title": "Login Flows and Account Recovery",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "citations": [
+        "OWASP Authentication Cheat Sheet",
+        "OWASP Forgot Password Cheat Sheet"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Login Flows and Account Recovery"
+        },
+        {
+          "kind": "prose",
+          "text": "Every property built into a login flow — strong hashing, throttling, whatever else guards the front door — can be walked around if the \"forgot your password\" path next to it is easier to attack. An account is only ever as strong as the weaker of the two entrances, which makes recovery worth examining as carefully as login itself, not as an afterthought bolted on beside it.",
+          "clozes": []
+        },
+        {
+          "kind": "heading",
+          "level": 2,
+          "text": "User enumeration"
+        },
+        {
+          "kind": "prose",
+          "text": "A login or password-reset form that answers \"wrong password\" for a registered address but \"no such account\" for an unregistered one is handing out membership information for free: an attacker can feed it a list of addresses and learn which ones have accounts on the service, independent of ever guessing a password. The standard fix is a single generic response for both cases — something like \"if that address is registered, we've sent instructions.\"",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-8cy4",
+          "prompt": "Why does a login or reset form that distinguishes \"wrong password\" from \"no such account\" count as a security leak on its own, even before any password is guessed?",
+          "answer": "Because it confirms or denies whether a given address has an account at all, regardless of whether the attacker knows the password. That's membership information — useful for targeting a phishing campaign, confirming a person uses a particular service, or narrowing a credential-stuffing list to addresses known to be live — and it costs the attacker nothing to collect at scale by feeding the form a list of addresses."
+        },
+        {
+          "kind": "prose",
+          "text": "Making the message identical isn't enough by itself, though. A real lookup — hashing a submitted password and comparing it, or checking a database for a matching account before generating a reset token — takes measurably longer than a code path that returns immediately because the address was never found. An attacker who can't read the response text can still read the clock.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "A generic response text has to be paired with a response that's uniform in timing as well: the registered and unregistered paths need to take roughly the same amount of time, or the wording accomplishes nothing.",
+          "clozes": [
+            {
+              "start": 75,
+              "end": 81,
+              "answer": "timing",
+              "cardId": "card-w5wj"
+            }
+          ]
+        },
+        {
+          "kind": "heading",
+          "level": 2,
+          "text": "Rate limiting versus lockout"
+        },
+        {
+          "kind": "prose",
+          "text": "The obvious defense against repeated guessing is to make guessing expensive: throttle how fast attempts can be retried, whether per account, per source, or both. Account lockout looks like a stricter version of the same idea — freeze the account entirely after some number of failures — but it introduces a failure mode throttling doesn't have.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-r1ne",
+          "format": "mcq",
+          "prompt": "A site locks any account after five failed login attempts, and the lockout message tells the visitor whose account got locked. What can an attacker who merely knows a target's email address, without knowing or guessing anything about their password, now do?",
+          "choices": [
+            {
+              "text": "Nothing — five failed attempts reveals no information without a correct guess",
+              "correct": false
+            },
+            {
+              "text": "Deliberately submit five wrong passwords to lock the victim out of their own account on demand",
+              "correct": true
+            },
+            {
+              "text": "Use the lockout to recover the victim's actual password",
+              "correct": false
+            },
+            {
+              "text": "Bypass the login form entirely once the account is locked",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "A failure-triggered lockout, in other words, can be weaponized by anyone who merely knows or guesses a valid identifier — they don't need to come close to the actual password, just submit enough wrong ones to freeze the real owner out, turning an anti-guessing control into a denial-of-service tool against any account they can name. Throttling the rate of attempts avoids that failure mode: it still raises the cost of guessing, but it never fully shuts a legitimate owner out of their own account the way an outright lockout does.",
+          "clozes": []
+        },
+        {
+          "kind": "heading",
+          "level": 2,
+          "text": "Reset token properties"
+        },
+        {
+          "kind": "prose",
+          "text": "A password-reset link is only as trustworthy as the token embedded in it. That token has to be single-use, short-lived, bound to the specific account it was issued for, and hard enough to guess that brute-forcing it isn't practical — and it has to be invalidated the moment it's redeemed or the moment the password changes by any other route.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-rqw0",
+          "format": "recall",
+          "prompt": "List the properties a password-reset token needs to have to be safe, and for each one, name the specific attack it closes off."
+        },
+        {
+          "kind": "prose",
+          "text": "Short-lived and single-use sound like they cover the same ground, but they close off different attacks. A token that's short-lived but not single-use is still fine to intercept and replay repeatedly within its window — say, from a shared inbox, a browser's autofill history, or a proxy log that captured the reset link before the legitimate user clicked it.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-0wfg",
+          "prompt": "Why does a reset token need to be explicitly invalidated the instant it's redeemed, rather than relying on its short lifetime to eventually retire it?",
+          "answer": "A short lifetime only bounds how long a token stays valid — it does nothing to stop the same still-valid token from being used more than once within that window. If a token leaked to a second party (an email left open, a proxy that logged the link, a browser history entry), that party could redeem it at any point before expiry unless redemption itself immediately kills the token, closing the window the instant it's used rather than waiting for it to expire on its own."
+        },
+        {
+          "kind": "prose",
+          "text": "Binding matters for a related but separate reason: unguessability stops an attacker from forging a valid-looking token from scratch, but it says nothing about what happens if validation only checks \"is this token currently valid\" without also checking \"was this token issued for the account being reset.\"",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-1nfb",
+          "prompt": "Why isn't an unguessable reset token enough on its own, without also strictly binding it to one account?",
+          "answer": "Unguessability only defends against an attacker who has no token at all and has to construct or brute-force one. It doesn't defend against a system that, given a token that legitimately exists, forgets to check which account issued it — a bug like that would let a token generated for one account's reset flow be replayed to reset a completely different account, since nothing about the token's randomness prevents misuse once it's already been accepted as valid."
+        },
+        {
+          "kind": "prose",
+          "text": "Whatever route the password changed through, the reset flow has to invalidate the sessions that existed before it, on the same principle that any other credential change does — how that invalidation is carried out is a property of session handling itself, not of the reset flow. A reset must also never quietly stand in for a second factor: if the account has one configured, completing a password reset should not, by itself, satisfy it.",
+          "clozes": []
+        },
+        {
+          "kind": "heading",
+          "level": 2,
+          "text": "Step-up authentication"
+        },
+        {
+          "kind": "prose",
+          "text": "A session that was opened hours ago and has been valid ever since isn't necessarily still backed by the same level of confidence that a sensitive action deserves right now — the person who authenticated that morning might not be the person sitting at the keyboard this afternoon.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Step-up authentication asks for another proof of identity at the moment an action like changing a password, adding a payment method, or viewing sensitive data is attempted, instead of extending trust from whatever the session proved at login.",
+          "clozes": [
+            {
+              "start": 0,
+              "end": 22,
+              "answer": "Step-up authentication",
+              "cardId": "card-7lo8"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-e104",
+          "prompt": "Why should a sensitive action re-verify identity at the moment it's attempted, instead of trusting that the session is still controlled by whoever logged in originally?",
+          "answer": "A long-lived session's initial proof of identity ages — the device could have been left unlocked, handed off, or compromised sometime after login without the session itself changing state at all. Re-checking at the moment of a high-consequence action confirms the person acting right now still controls the credential, rather than extending indefinite trust from a single check performed possibly hours earlier."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/sessions/logout-and-session-termination.md",
+      "title": "Logout and session termination",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Logout and session termination"
+        },
+        {
+          "kind": "prose",
+          "text": "The most common way to get logout wrong looks like it works: the client deletes its stored value and the browser stops sending it, the user sees a login screen again, and everyone moves on. Nothing about that touches the server's copy of the session, which stays exactly as valid as it was a moment earlier.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-nhap",
+          "prompt": "Why does clearing a cookie client-side, on its own, fail to actually end a session?",
+          "answer": "It only removes the client's copy of the identifier; the server-held session it pointed to is untouched and remains valid, so anyone else who had already captured that identifier — through a network capture, a shared device, or a logged proxy — can still present it and be treated as the authenticated user."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-nm7r",
+          "format": "mcq",
+          "prompt": "An attacker captured a user's session value an hour before the user clicks \"log out,\" which only clears the browser's stored copy. What can the attacker do immediately afterward?",
+          "choices": [
+            {
+              "text": "Continue using the captured value normally — the server never invalidated the session it refers to",
+              "correct": true
+            },
+            {
+              "text": "Nothing — the value stopped working the instant the browser cleared its copy",
+              "correct": false
+            },
+            {
+              "text": "Continue using it only until the idle timeout elapses on the attacker's own inactivity, not the user's",
+              "correct": false
+            },
+            {
+              "text": "Nothing — clearing a cookie client-side also broadcasts an invalidation to the server",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Real logout has to reach the server: it must invalidate the session record itself, so that the identifier that used to point at valid state now points at nothing, regardless of whether any particular client happens to still be holding it.",
+          "clozes": [
+            {
+              "start": 45,
+              "end": 55,
+              "answer": "invalidate",
+              "cardId": "card-9ad0"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Ending one session is not the same problem as ending all of a user's sessions at once. **Global sign-out** — closing every session belonging to a user, on every device, not just the one that clicked logout — is a separate feature with its own requirement: sessions have to be enumerable per user, meaning the server can look up every live session tied to a given account rather than only the one identifier a particular request happened to present.",
+          "clozes": [
+            {
+              "start": 276,
+              "end": 286,
+              "answer": "enumerable",
+              "cardId": "card-68bm"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-ap5n",
+          "prompt": "Why can't an ordinary per-request logout implementation automatically provide global sign-out as a side effect?",
+          "answer": "An ordinary logout only knows the one identifier presented on the current request and invalidates that single record; global sign-out requires a separate index from user to all of their live sessions, which an implementation that only ever looks up sessions by their own identifier has no way to walk."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-d9pq",
+          "format": "recall",
+          "prompt": "Besides an explicit user-initiated logout, name two events after which a session should be terminated server-side even though the user never clicked anything, and explain in one sentence each why waiting for natural expiry would leave a window of risk open.",
+          "answer": "A password change: if the account was compromised and the attacker is using it through an existing session, changing the password alone leaves that session running, so the attacker keeps access until it happens to expire on its own. A detected credential compromise more generally: whatever let the attacker in the first time may not recur, but the session they already established has no reason to end just because the credential that created it is now known to be bad."
+        },
+        {
+          "kind": "prose",
+          "text": "Every case so far assumes there is a server-held record to delete. That assumption breaks down for a self-contained credential — one that carries its own claims and its own expiry baked into the value itself, verified by checking a signature rather than by looking anything up. Nothing server-side ever pointed at that credential, so there is nothing server-side to remove.",
+          "clozes": [
+            {
+              "start": 101,
+              "end": 115,
+              "answer": "self-contained",
+              "cardId": "card-p7bk"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Terminating a self-contained credential early therefore takes one of only two forms: give it a lifetime short enough that waiting it out is an acceptable cost, or maintain a revocation list the server checks on every use — which means checking a list on every request, the exact per-request lookup a self-contained credential was meant to avoid.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-cz9f",
+          "prompt": "What does it mean to say that a revocation list is the point where \"stateless stops being free\"?",
+          "answer": "A revocation list reintroduces the server-side lookup on every request that a self-contained credential existed specifically to avoid — the credential is still self-contained in format, but early termination now costs the same per-request state check that a server-held session required all along."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/sessions/multi-factor-authentication-and-totp.md",
+      "title": "Multi-Factor Authentication and TOTP",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "citations": [
+        "RFC 6238 (TOTP)",
+        "W3C Web Authentication (WebAuthn)"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Multi-Factor Authentication and TOTP"
+        },
+        {
+          "kind": "prose",
+          "text": "Authentication factors come in three kinds: something you know (a password, a PIN), something you have (a phone, a hardware token), and something you are (a fingerprint, a face). \"Multi-factor\" means combining factors from *different* kinds, and that word \"different\" is load-bearing rather than decorative.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-31oh",
+          "format": "mcq",
+          "prompt": "A site requires both a password and a secret PIN memorized separately to log in. Is this multi-factor authentication?",
+          "choices": [
+            {
+              "text": "No — both are something you know, so one compromise route (the user disclosing or writing down secrets, or a keylogger capturing keystrokes) can take both at once",
+              "correct": true
+            },
+            {
+              "text": "Yes, because two separate secrets are required instead of one",
+              "correct": false
+            },
+            {
+              "text": "Yes, as long as the PIN and password are different lengths",
+              "correct": false
+            },
+            {
+              "text": "No, but only because PINs are shorter than passwords",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Two factors of the same kind fail to add real protection because they share a single point of failure: whatever breaks one — a keylogger, a stolen wallet, a copied fingerprint database — tends to break the other too. Real multi-factor authentication forces an attacker to pull off two structurally different attacks, not the same attack twice.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "TOTP (Time-based One-Time Password) is the most common something-you- have factor built from a shared secret rather than a physical object. Enrolment happens once: the server generates a random secret and hands it to the user's device, typically through a QR code, and from then on both sides hold an identical copy.",
+          "clozes": []
+        },
+        {
+          "kind": "code",
+          "lang": null,
+          "text": "Enrolment:\n1. Server generates a random secret\n2. Secret is shared with the user's device (e.g. via QR code)\n3. Both server and device now hold the same secret"
+        },
+        {
+          "kind": "prose",
+          "text": "From that point on, neither side ever transmits the secret again. Instead, both independently derive a short numeric code by running a keyed MAC over the shared secret and the current time step — the running time divided into fixed-length windows, typically 30 seconds — and truncating the result to a handful of digits.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The current time step, not any past use of the code, is what the derivation runs on.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "That's why a TOTP code changes on a fixed time step rather than on every use: generate it twice within the same window and it comes back identical, generate it a window later and it's completely different, whether or not anyone ever verified the first one.",
+          "clozes": [
+            {
+              "start": 42,
+              "end": 46,
+              "answer": "time",
+              "cardId": "card-m5te"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-f0fu",
+          "prompt": "Why does verifying a submitted TOTP code require checking a small window of adjacent time steps instead of one exact time step?",
+          "answer": "The server's clock and the device's clock are never perfectly in sync, and neither is instantaneous — a code computed a second before the step boundary and checked a second after it would otherwise be wrongly rejected. Accepting the current step plus one step on either side absorbs that drift without letting the tolerance grow so wide that old codes stay valid long after they should have expired."
+        },
+        {
+          "kind": "prose",
+          "text": "TOTP is genuinely effective against one specific threat: a password that's been reused elsewhere or leaked in a breach. An attacker holding nothing but that password still can't produce the code, because they never received the shared secret at enrolment.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "It is not effective against a look-alike site that simply asks for the code. If a user is tricked into typing their current TOTP code into a phishing page, the attacker receives a value that is, for the next several seconds, exactly as good as the real thing — they relay it to the genuine site within the same time step and log in as the victim. The factor never left the user's hand, but the user handed over something the attacker could use immediately, and TOTP has no mechanism to notice the difference between \"typed into the real site\" and \"typed into a copy of it.\"",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "A submitted TOTP code, standing alone, tells the verifying server nothing about which site the user typed it into.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-jxr1",
+          "format": "mcq",
+          "prompt": "A user receives a fake login page that looks identical to their bank's site. They enter their password and current TOTP code. The page immediately forwards both to the real bank. What happens?",
+          "choices": [
+            {
+              "text": "The attacker logs in successfully, because the relayed TOTP code is still valid for the remainder of its time step",
+              "correct": true
+            },
+            {
+              "text": "The login fails, because TOTP codes are only valid on the device that generated them",
+              "correct": false
+            },
+            {
+              "text": "The login fails, because the bank's server can tell the request didn't originate from the user's own browser",
+              "correct": false
+            },
+            {
+              "text": "The attacker gets access to the account's future logins but not this one",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "A weaker variant delivers the one-time code over SMS instead of generating it locally. This quietly changes what the factor actually is: it's no longer possession of a specific device, but possession of a phone *number* — and a phone number is something a phone company can be tricked into repointing.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "A SIM swap — convincing a carrier to move a victim's phone number onto a SIM the attacker controls — hands over every future SMS code without the attacker ever touching or infecting the victim's actual phone.",
+          "clozes": [
+            {
+              "start": 2,
+              "end": 10,
+              "answer": "SIM swap",
+              "cardId": "card-c2b8"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-hjj2",
+          "prompt": "What does an SMS-delivered one-time code actually authenticate as possession of, and why does that make carrier-side attacks relevant to an otherwise sound MFA design?",
+          "answer": "Possession of a phone number, not possession of a specific device. Since the number's routing is controlled by the carrier rather than the user, an attacker who compromises that routing (for example through a SIM swap or an inside job at the carrier) receives the codes without ever needing the victim's physical phone."
+        },
+        {
+          "kind": "prose",
+          "text": "Two more MFA weaknesses are worth naming on their own. Recovery codes — a batch of one-time backup codes issued when the second factor is set up, for use if the device is lost — are unavoidable, because without them a lost phone locks the user out permanently. But every recovery code is a standing secret that, once written down, functions exactly like a password: whoever has it can authenticate with no second factor at all, indefinitely, until it's used or revoked.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-9fr5",
+          "format": "recall",
+          "prompt": "Explain why recovery codes are simultaneously a necessary part of an MFA scheme and a security weakness in it. What single property do they have that undermines the \"second factor\" guarantee?"
+        },
+        {
+          "kind": "prose",
+          "text": "Push-based approval — where logging in sends a notification to the user's device and they tap \"approve\" — is convenient enough to invite its own attack: push fatigue. The attacker, already holding a valid password, simply triggers login attempt after login attempt, sending approval prompt after approval prompt, until the user taps \"approve\" just to make the notifications stop, without ever checking what they're approving.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-1kvt",
+          "prompt": "What makes push fatigue an effective attack even when the underlying push-approval mechanism is implemented correctly?",
+          "answer": "It doesn't attack the mechanism at all — it attacks the user's attention by repeating a correct request until they approve one out of annoyance or confusion, so no flaw in the push protocol needs to exist for the attack to succeed."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/sessions/sessions-and-the-session-identifier.md",
+      "title": "Sessions and the session identifier",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "RFC 6265bis (HTTP State Management)"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Sessions and the session identifier"
+        },
+        {
+          "kind": "prose",
+          "text": "A session is state the server holds about a user it has already authenticated — who they are, when they signed in, whatever else the application needs to remember between requests. The client's only copy of that relationship is a token it presents on each request, and that token is a bearer credential: possession alone is proof. The server has no way to check that the party presenting it is the same party it was issued to, so whoever holds it is treated as that user, full stop.",
+          "clozes": [
+            {
+              "start": 285,
+              "end": 302,
+              "answer": "bearer credential",
+              "cardId": "card-0mx2"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "That single fact is why the identifier has to be unguessable and high-entropy, and why it deserves the same handling as a password for as long as it remains valid — logged, cached, or leaked into a URL, and it is exactly as dangerous as a stolen password.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "A session comes into being at authentication, and ends one of two ways: the user logs out and it is destroyed, or it simply expires on its own without anyone acting.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Expiry is not one mechanism but two, tracking different clocks, and a session can be ended by either one independently of the other.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "An idle timeout counts from the moment of last activity: every request resets the clock, and the session only lapses once a gap that long passes with nothing happening.",
+          "clozes": [
+            {
+              "start": 3,
+              "end": 7,
+              "answer": "idle",
+              "cardId": "card-ehv4"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "A separate, absolute timeout counts from the moment the session was created and never resets, no matter how continuously the user keeps working — enough elapsed wall-clock time ends it regardless of activity.",
+          "clozes": [
+            {
+              "start": 12,
+              "end": 20,
+              "answer": "absolute",
+              "cardId": "card-bf4f"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-j9rt",
+          "format": "mcq",
+          "prompt": "A session has an idle timeout of 30 minutes and an absolute timeout of 8 hours. A user has been actively working, one request every few minutes, for 9 hours straight. What happens?",
+          "choices": [
+            {
+              "text": "The session ends when the 8-hour absolute timeout is reached, even though the user was never idle",
+              "correct": true
+            },
+            {
+              "text": "The session stays valid indefinitely as long as requests keep arriving within 30 minutes of each other",
+              "correct": false
+            },
+            {
+              "text": "The idle timer being repeatedly reset also resets the absolute timer",
+              "correct": false
+            },
+            {
+              "text": "Only the idle timeout applies once the user has proven they are actively working",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-4pfo",
+          "prompt": "Why does an absolute timeout exist at all, given that an idle timeout already ends abandoned sessions?",
+          "answer": "It bounds how long a single stolen or lingering session identifier stays usable regardless of activity, capping the damage from a credential that keeps getting silently reused rather than trusting that continued activity means it's still the legitimate user."
+        },
+        {
+          "kind": "prose",
+          "text": "A distinct attack targets the moment of authentication rather than an existing session. If an attacker can get a victim to authenticate while using an identifier the attacker already knows — planted via a crafted link, a shared device, or an identifier that isn't replaced at login — the attacker can then use that same known value and finds it valid. This is session fixation. Once that authentication completes, the attacker needs to do nothing more clever than present that same known value themselves — the server now considers it authenticated as the victim.",
+          "clozes": [
+            {
+              "start": 360,
+              "end": 376,
+              "answer": "session fixation",
+              "cardId": "card-m6iz"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-v4bp",
+          "format": "recall",
+          "prompt": "Explain the defense against session fixation, and why it must apply at every privilege change and not only at login.",
+          "answer": "The server must issue a brand-new identifier whenever the user's privilege level changes, discarding whatever value was in use beforehand. Login is the most important case, since it is the moment an anonymous session becomes an authenticated one, but any later elevation (for example, stepping up to an administrative capability) creates the same opportunity: if the pre-elevation value survives unchanged, an attacker who fixed that value before the elevation inherits the higher privilege the same way they would have inherited a login."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/sessions/stateless-tokens-versus-server-sessions.md",
+      "title": "Stateless Tokens Versus Server Sessions",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "citations": [
+        "RFC 7519 (JSON Web Token)",
+        "RFC 8725 (JWT Best Current Practices)",
+        "OWASP Session Management Cheat Sheet"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Stateless Tokens Versus Server Sessions"
+        },
+        {
+          "kind": "prose",
+          "text": "When an application decides how to recognize a returning, logged-in user on every request, it is really choosing where the truth about that login lives — and the choice isn't a matter of one option simply beating the other.",
+          "clozes": []
+        },
+        {
+          "kind": "code",
+          "lang": null,
+          "text": "server-side session          self-contained credential\n------------------------     ------------------------\nid is meaningless alone      id (the token) carries the claims\nevery request costs a        no lookup needed to read it\n  lookup against a store\ntruth lives on the server    truth lives in the credential itself\nrevoke = delete a row,       revoke = nothing, until it expires,\n  effective next request       unless a list is kept server-side"
+        },
+        {
+          "kind": "prose",
+          "text": "A server-side session hands the client an identifier that means nothing by itself — it's a lookup key, not a statement of fact. Every request that carries it costs a round trip to wherever that lookup happens. What that round trip buys back is that the server always holds the current truth: to end a session, delete its row, and the very next request carrying that identifier finds nothing there.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "A self-contained credential inverts both halves of that trade. There's nothing to look up, since the credential already carries what a lookup would have returned, and any server that can verify it can accept it without touching shared storage — which is what lets a fleet scale horizontally without needing session storage every instance can reach.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-q2sd",
+          "format": "mcq",
+          "prompt": "A team is building the login system for an internal admin console. Compromised sessions must stop working within seconds of an operator clicking \"revoke,\" and the handful of servers involved already share a fast, low-latency data store. Which architecture fits this requirement more directly?",
+          "choices": [
+            {
+              "text": "A server-side session — revocation is deleting a row, and the shared store the fleet already has removes the usual objection to paying a lookup on every request",
+              "correct": true
+            },
+            {
+              "text": "A self-contained credential — it avoids the lookup entirely, which is the more important property here",
+              "correct": false
+            },
+            {
+              "text": "Either one, since a shared data store makes the two architectures equivalent",
+              "correct": false
+            },
+            {
+              "text": "Neither; instant revocation is only possible without any credential at all",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "A self-contained credential's truth is fixed the moment it's issued, and nothing server-side can revise it afterward — there is no message that can be sent to take back a claim that's already been bundled and signed into something the client is holding.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The credential remains valid until its own stated expiry, no matter what happens on the server in the meantime.",
+          "clozes": [
+            {
+              "start": 50,
+              "end": 56,
+              "answer": "expiry",
+              "cardId": "card-u6wg"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-445s",
+          "format": "mcq",
+          "prompt": "A public API serves millions of read-mostly requests per second across a fleet that autoscales aggressively and has no shared session store by design. Session revocation, when it happens at all, is tolerable within a few minutes rather than instantly. Which architecture fits?",
+          "choices": [
+            {
+              "text": "A self-contained credential — no per-request lookup matches the scale, and the tolerance for a delayed revocation absorbs the one thing this approach can't do instantly",
+              "correct": true
+            },
+            {
+              "text": "A server-side session — the scale argues against it, but the lack of a shared store argues against it even more directly",
+              "correct": false
+            },
+            {
+              "text": "A server-side session, because revocation tolerance is irrelevant to the choice",
+              "correct": false
+            },
+            {
+              "text": "Neither approach can serve a fleet this large",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-n06m",
+          "prompt": "What actually drives the choice between the two, stated as the two questions that matter",
+          "answer": "How fast a revoked login must stop working — instantly, or is a bounded delay acceptable — and whether the fleet already has, or is willing to run, storage every instance can reach for a lookup. Everything else in the comparison (lookup cost, scaling ease) follows from the answers to those two questions rather than standing on its own."
+        },
+        {
+          "kind": "prose",
+          "text": "Once revocation absolutely cannot wait for expiry, teams building on a self-contained credential reach for a fix, and the fix is where the architecture quietly stops being what it claimed to be.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The usual response to \"we need to revoke a self-contained credential early\" is to keep a revocation list of tokens that must be rejected even though they haven't expired yet.",
+          "clozes": [
+            {
+              "start": 89,
+              "end": 104,
+              "answer": "revocation list",
+              "cardId": "card-v5js"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-1u5f",
+          "prompt": "Why does adding a revocation list to a self-contained-credential system undo the appeal of choosing that architecture in the first place?",
+          "answer": "The entire point of a self-contained credential was skipping the per-request lookup. A revocation list has to be checked on every request to catch an early-revoked credential before it's honored, which brings the lookup straight back — for the one case, early revocation, that motivated wanting it \"stateless\" at all. The system ends up paying the server-side session's cost while keeping the self-contained credential's downsides, like still needing to check that list against wherever it's kept."
+        },
+        {
+          "kind": "prose",
+          "text": "A second cost of the self-contained approach has nothing to do with revocation at all: the credential's size.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "A server-side session identifier is a small, fixed-size lookup key no matter how much data the session holds, because that data stays on the server. A self-contained credential has no such floor — every claim folded into it travels along, in full, on every single request it's attached to, because the credential itself is the payload, not a pointer to one.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-s51f",
+          "prompt": "Why does it matter more that a self-contained credential grows with every claim added than it would for an ordinary piece of request data of the same size?",
+          "answer": "Because the credential rides along on every request the client makes for as long as the login lasts, not just once — so a credential that accumulates claims over time doesn't cost extra bytes on one transfer, it costs those extra bytes on every request, indefinitely, for every client carrying one."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-6qx0",
+          "format": "recall",
+          "prompt": "Describe the common hybrid pattern teams reach for once they've felt both the revocation-list irony and the token-size cost of a purely self-contained credential, and explain what role a short lifetime plays in it.",
+          "answer": "Issue a self-contained credential with a short lifetime, and pair it with a separate, stateful mechanism — typically called a refresh step — that the client uses to obtain a new one once the short-lived credential expires. The short lifetime bounds how long a revoked login can keep working without any revocation list at all: the credential simply stops being honored once it expires, and revocation only has to reach the stateful refresh step, not every resource server checking the short-lived credential itself. This trades a little steady-state lookup cost, at refresh time, for keeping the per-request path lookup-free."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/sessions/token-storage-in-the-browser.md",
+      "title": "Token storage in the browser",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "citations": [
+        "OWASP Session Management Cheat Sheet",
+        "OWASP Cross-Site Request Forgery Prevention Cheat Sheet"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Token storage in the browser"
+        },
+        {
+          "kind": "prose",
+          "text": "Deciding where a browser-based application keeps its session credential is often framed as picking the best storage location. It's more accurate to see it as choosing which of two different attacks the credential is exposed to, because no location in the browser is immune to both.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Keep the credential in localStorage or sessionStorage and any script running on the page — including one that has no business touching authentication — can read it, because both are ordinary JavaScript-accessible storage with no restriction based on which script is asking.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-1tmj",
+          "prompt": "What can read a credential stored in localStorage or sessionStorage, and what does a single script injection cost the application that stores it there?",
+          "answer": "Any script running on the page, regardless of what it's actually there to do — neither storage mechanism restricts access based on which code is asking. A single script injection is enough to read the value out and exfiltrate it once, and the credential stays compromised until it's revoked or expires, not just for the moment that script happens to run."
+        },
+        {
+          "kind": "prose",
+          "text": "Put the credential in a cookie marked so page script cannot read it at all, and that exfiltration path disappears — but the browser now attaches the cookie to requests on its own, which is precisely the property that enables request forgery, so the application takes on a forgery defense as the price of closing the script-injection path.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-r60u",
+          "format": "mcq",
+          "prompt": "A team moves its session credential from localStorage to an HttpOnly cookie. What has this move traded away, and what has it gained?",
+          "choices": [
+            {
+              "text": "It removes the script-injection exfiltration path, but the browser now attaches the credential automatically, which is exactly the property that enables cross-site request forgery",
+              "correct": true
+            },
+            {
+              "text": "It removes both the script-injection exposure and the forgery exposure, since the credential is no longer readable by any script at all",
+              "correct": false
+            },
+            {
+              "text": "It gains nothing, since a page script can still read any cookie regardless of how it is marked",
+              "correct": false
+            },
+            {
+              "text": "It only matters for first-party scripts; a cross-site forged request would not be affected either way",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Keeping the credential in memory only — a variable that lives inside the running page and nowhere else — avoids both exposure surfaces at once: there's no persistent location for an injected script to read from, and nothing for the browser to attach on its own to an unrelated request. The cost is that it doesn't outlive a page reload or survive being opened in a new tab, so the application has to re-establish it every time the page context resets.",
+          "clozes": [
+            {
+              "start": 23,
+              "end": 32,
+              "answer": "in memory",
+              "cardId": "card-uim8"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-d6vx",
+          "prompt": "Why is keeping a session credential only in memory described as leaking the least of the in-browser options, despite being impractical for most applications on its own?",
+          "answer": "Because it removes both exposure surfaces at once — there is no persistent, script-readable location and no ambient value the browser attaches to requests by itself — so neither a script injection nor a forged cross-site request has anything to reach for. The cost is that the value is gone the moment the page reloads or a new tab is opened, so it has to be re-obtained on every reset of the page context, which is why it rarely stands alone for anything beyond a short-lived, single-tab flow."
+        },
+        {
+          "kind": "prose",
+          "text": "The backend-for-frontend pattern sidesteps the choice rather than resolving it: a server-side component holds the real credential, and the browser holds only a conventional session cookie scoped to that component, never the value a downstream API actually checks.",
+          "clozes": [
+            {
+              "start": 4,
+              "end": 24,
+              "answer": "backend-for-frontend",
+              "cardId": "card-pinq"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-q7p0",
+          "prompt": "Why does backend-for-frontend count as avoiding the storage decision rather than picking a side of it?",
+          "answer": "Because the credential a downstream API actually checks never reaches browser-accessible storage or page script context at all — it stays on the server-side component. The browser only ever holds a cookie tied to that intermediary, so neither the script-injection exposure of script-readable storage nor the forgery exposure of an automatically-attached credential ever applies to the real credential; the trade is pushed onto infrastructure instead of being made in the browser."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-wnkr",
+          "format": "recall",
+          "prompt": "A browser-based application needs to keep a session credential somewhere. Lay out the exposure each in-browser option carries — script-readable storage, a cookie page script cannot read, and an in-memory variable — and explain what lets backend-for-frontend avoid having to pick among them.",
+          "answer": "Script-readable storage such as localStorage or sessionStorage is exposed to any script running on the page, so one injection leaks the credential permanently. A cookie page script cannot read removes that exposure but is attached to requests automatically by the browser, which is the exact property that enables cross-site request forgery, so it needs a forgery defense alongside it. An in-memory variable leaks the least of the three but survives neither a reload nor a new tab. Backend-for-frontend avoids the choice by keeping the real credential server-side entirely, so the browser never holds anything a script or a forged request could get real use out of."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/sessions/webauthn-and-passkeys.md",
+      "title": "WebAuthn and Passkeys",
+      "topic": "identity",
+      "category": "identity-sessions",
+      "citations": [
+        "RFC 6238 (TOTP)",
+        "W3C Web Authentication (WebAuthn)"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "WebAuthn and Passkeys"
+        },
+        {
+          "kind": "prose",
+          "text": "Every factor covered elsewhere in this category — a password, a TOTP code, a code texted to a phone — is a value the user can be talked into typing into the wrong place. WebAuthn changes the shape of the credential itself so that this stops being possible even in principle.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Instead of a secret both sides hold, an authenticator (a security key, or a platform's built-in authenticator such as a fingerprint sensor) generates a public/private key pair at registration and never releases the private key to anything — not the browser, not the site, not even the user. The site receives and stores only the public key.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-n0hw",
+          "prompt": "What does a WebAuthn relying party store for each registered credential, and why does that make a stolen authentication database far less damaging than a stolen password database?",
+          "answer": "Only the public key. A public key on its own doesn't let whoever steals the database authenticate as the user, and because there's no shared secret sitting in that database at all, there's nothing to phish out of the user later either — unlike a password or a TOTP seed, which are secrets by themselves."
+        },
+        {
+          "kind": "prose",
+          "text": "The property that actually distinguishes this from every code-based factor isn't the key pair by itself — it's that the resulting credential is bound to the exact site that created it.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "A WebAuthn credential is bound to the origin it was created for, and the browser enforces that binding itself, refusing to produce a usable response for any lookalike no matter what the page asks for.",
+          "clozes": [
+            {
+              "start": 38,
+              "end": 44,
+              "answer": "origin",
+              "cardId": "card-t0dl"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "That enforcement doesn't depend on the user noticing anything wrong. A look-alike phishing page, however convincing, is served from a different origin than the real site — and the browser simply will not invoke the matching credential for it, so there is no valid response for the user to hand over even if they're completely fooled by the page.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-c2nu",
+          "format": "mcq",
+          "prompt": "A user is fooled by a pixel-perfect phishing copy of their bank's site, served from a different domain, and attempts to log in with WebAuthn. What happens?",
+          "choices": [
+            {
+              "text": "The browser won't produce a usable assertion at all, because the phishing page's origin doesn't match the origin the credential was registered to",
+              "correct": true
+            },
+            {
+              "text": "The authenticator signs the request anyway, and the attacker relays it to the real site within a short window",
+              "correct": false
+            },
+            {
+              "text": "The login succeeds only if the user doesn't notice the URL is wrong",
+              "correct": false
+            },
+            {
+              "text": "The credential works on any origin, so the phishing page can capture and reuse it",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "At a high level, every WebAuthn sign-in follows the same challenge-response shape:",
+          "clozes": []
+        },
+        {
+          "kind": "code",
+          "lang": null,
+          "text": "1. Site sends a freshly generated challenge to the browser\n2. Browser routes it to the authenticator, tagged with the site's origin\n3. Authenticator prompts for a user gesture (touch, PIN, biometric)\n4. On that gesture, authenticator signs the challenge with the private key\n5. Signed response goes back to the site for authentication"
+        },
+        {
+          "kind": "prose",
+          "text": "The signing step never happens silently in the background — step 3's user gesture is what stands in for \"something you are\" or \"something you have,\" confirming a live, present user rather than a background process replaying a stored value.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-v26u",
+          "prompt": "Why does the authenticator require a user gesture immediately before signing the challenge, instead of signing automatically as soon as a challenge arrives?",
+          "answer": "Without it, any process capable of reaching the authenticator — malware running on the device, for instance — could request signatures on its own, with no way to distinguish that from a real login. Requiring a touch, PIN, or biometric at the moment of signing ties each signature to a live, present person choosing to authenticate right then."
+        },
+        {
+          "kind": "prose",
+          "text": "Authenticators split into two kinds. A **platform authenticator** is built into the device itself — a laptop's fingerprint reader, a phone's face unlock — and can't be moved to another device. A **roaming authenticator** is a separate piece of hardware, such as a USB or NFC security key, that a user can carry and plug into whichever device they're signing in from.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-lktp",
+          "format": "mcq",
+          "prompt": "What is the defining difference between a platform authenticator and a roaming authenticator?",
+          "choices": [
+            {
+              "text": "A platform authenticator is built into one specific device and can't move; a roaming authenticator is separate hardware a user carries between devices",
+              "correct": true
+            },
+            {
+              "text": "A platform authenticator works over the network; a roaming authenticator only works offline",
+              "correct": false
+            },
+            {
+              "text": "A roaming authenticator stores the site's public key; a platform authenticator doesn't",
+              "correct": false
+            },
+            {
+              "text": "They differ only in which biometric method they support",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "A related design choice is whether the credential is *discoverable* — stored on the authenticator in a way that lets it be looked up without the site first telling it which credential to use.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Discoverable credentials are what make username-less sign-in possible: the authenticator can enumerate its own stored credentials for the current origin and let the user pick one, instead of the site needing to already know who's logging in before it can ask.",
+          "clozes": [
+            {
+              "start": 0,
+              "end": 12,
+              "answer": "Discoverable",
+              "cardId": "card-ijhd"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Passkeys take a discoverable WebAuthn credential and add one more piece: instead of living on a single authenticator forever, the key pair is synced across a user's devices by a platform provider, so signing in from a new phone or laptop doesn't require re-registering from scratch.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-yclt",
+          "format": "recall",
+          "prompt": "Explain the tradeoff passkey syncing makes relative to a credential that lives on a single hardware authenticator and never leaves it. What does syncing gain, and what guarantee does it give up to gain it?",
+          "answer": "A single-device credential offers a strong guarantee that the private key exists in exactly one place and can never be extracted or copied elsewhere — losing that device means losing the credential entirely, with no path back except a separate recovery mechanism. Syncing a passkey across a user's devices through a provider trades that single-location guarantee for recoverability: losing one device no longer strands the user, but the private key now exists wherever the provider has synced it, so the guarantee shifts from \"physically confined to one authenticator\" to \"as strong as the provider's own sync and account security.\""
         }
       ]
     },
