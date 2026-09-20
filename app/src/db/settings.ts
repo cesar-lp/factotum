@@ -4,11 +4,15 @@ export const DEFAULT_SETTINGS: Settings = {
   desiredRetention: 0.9,
   newCardsPerDay: 10,
   theme: 'auto',
-  disabledCategories: []
+  disabledCategories: [],
+  obsidianVault: 'vault'
 };
 
 /** Bounds a corrupt or malicious write; far above any plausible real vault. */
 const MAX_DISABLED_CATEGORIES = 200;
+
+/** Bounds a corrupt or malicious write; far above any plausible vault name. */
+const MAX_OBSIDIAN_VAULT_LENGTH = 200;
 
 function isTheme(value: unknown): value is Settings['theme'] {
   return value === 'auto' || value === 'day' || value === 'night';
@@ -17,6 +21,13 @@ function isTheme(value: unknown): value is Settings['theme'] {
 function clampFinite(value: unknown, min: number, max: number, fallback: number): number {
   if (typeof value !== 'number' || !Number.isFinite(value)) return fallback;
   return Math.min(max, Math.max(min, value));
+}
+
+function toObsidianVault(value: unknown): string {
+  if (typeof value !== 'string') return DEFAULT_SETTINGS.obsidianVault;
+  const trimmed = value.trim();
+  if (trimmed === '') return DEFAULT_SETTINGS.obsidianVault;
+  return trimmed.slice(0, MAX_OBSIDIAN_VAULT_LENGTH);
 }
 
 function toCategoryList(value: unknown): string[] {
@@ -52,7 +63,8 @@ export function sanitizeSettings(input: unknown): Settings {
     desiredRetention,
     newCardsPerDay,
     theme,
-    disabledCategories: toCategoryList(record['disabledCategories'])
+    disabledCategories: toCategoryList(record['disabledCategories']),
+    obsidianVault: toObsidianVault(record['obsidianVault'])
   };
 }
 

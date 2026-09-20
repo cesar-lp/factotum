@@ -6,6 +6,7 @@ import { recordReview, flagCard } from '../db/reviews.js';
 import { getSettings } from '../db/settings.js';
 import { checkCloze, renderActions, renderPrompt, shuffle } from './renderers.js';
 import { issueUrl } from './flag.js';
+import { obsidianUrl } from './obsidian.js';
 
 // How many OTHER cards must be shown before a learning-step card (Again/
 // Hard/Good on a card that hasn't graduated to FSRS state Review) reappears
@@ -203,6 +204,15 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
     // actual recording happens when a rating button is tapped afterward,
     // via the SAME generic `[data-outcome]` handler below that qa/recall's
     // rating row already uses — no separate grading path to duplicate.
+    // Opening a note is a READ, not a judgement on the card. Unlike every
+    // other handler here, it must NOT set `submitting`, lock controls,
+    // record anything, or advance — the reader opens the note, comes back,
+    // and still grades the card themselves. Do not copy the flag handler's
+    // shape onto this one.
+    root.querySelector('[data-role="source"]')?.addEventListener('click', () => {
+      window.open(obsidianUrl(card, settings.obsidianVault), '_blank');
+    });
+
     root.querySelector('[data-role="reveal"]')?.addEventListener('click', () => {
       draw(true, card.format === 'cloze' ? 'self-graded' : undefined);
     });
