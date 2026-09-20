@@ -8,9 +8,8 @@ citations: ["AWS Lambda Developer Guide — 'Lambda deployment packages', 'Lambd
 # Packaging, Layers, and Runtimes
 
 A Lambda function is, underneath the console, just code plus a runtime
-packaged up so the execution environment (see
-`execution-model-and-lifecycle.md`) has everything it needs to run your
-handler. AWS gives you two different ways to package that, plus a
+packaged up so the execution environment has everything it needs to run
+your handler. AWS gives you two different ways to package that, plus a
 mechanism for sharing code across functions, plus a documented interface
 for supplying a runtime AWS doesn't ship one for.
 
@@ -59,4 +58,4 @@ still get to run on Lambda.
 > specific. What is that something, and what does the custom runtime's
 > code have to do in a loop to keep the function serving invocations? ^card-jt7n
 
-Why does packaging as a container image not change anything about the execution model or lifecycle described in execution-model-and-lifecycle.md? :: Container image is only a packaging format for getting code and its dependencies into the execution environment; the environment still goes through the same init and invoke phases, still gets reused across invocations the same way, and still cold-starts the same way — packaging choice affects what's inside the environment, not how the environment itself behaves. ^card-t7u1
+Why does packaging as a container image not change anything about the execution environment's init-and-invoke lifecycle? :: Container image is only a packaging format for getting code and its dependencies into the execution environment; the environment still goes through the same init and invoke phases, still gets reused across invocations the same way, and still cold-starts the same way — packaging choice affects what's inside the environment, not how the environment itself behaves. ^card-t7u1

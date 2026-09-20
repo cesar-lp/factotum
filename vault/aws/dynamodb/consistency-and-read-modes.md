@@ -7,11 +7,11 @@ citations: ["AWS Developer Guide — Amazon DynamoDB, 'Read consistency'"]
 
 # Consistency and Read Modes
 
-`data-systems/replication.md` describes replication lag as the gap
-between a write landing on a leader and that write becoming visible to a
-reader served by a follower. DynamoDB replicates every item across
-multiple storage nodes for durability, and exposes that same gap
-directly to callers as a choice they make on every read request.
+Replication lag is the gap between a write landing on a leader and that
+write becoming visible to a reader served by a follower. DynamoDB
+replicates every item across multiple storage nodes for durability, and
+exposes that same gap directly to callers as a choice they make on
+every read request.
 
 An ==eventually consistent read== may be served by any replica of the ^card-pjg3
 data, including one that has not yet applied the most recent write; it
@@ -32,8 +32,8 @@ secondary index.
 > - [ ] Strongly consistent reads are only possible on tables without any indexes
 > - [ ] AWS disables strong consistency to save storage costs ^card-7mfx
 
-This mirrors `data-systems/replication.md`'s framing of read-your-writes
-consistency: routing a read to the ==leader== (or, in DynamoDB's case, ^card-m16h
+This mirrors the standard framing of read-your-writes consistency:
+routing a read to the ==leader== (or, in DynamoDB's case, ^card-m16h
 to whichever replica is authoritative for that item) is what guarantees
 seeing your own prior write, at the cost of that read no longer being
 spreadable across every replica the way a stale-tolerant read is.
@@ -51,7 +51,6 @@ dashboard.
 
 > [!card] recall
 > Explain the connection between DynamoDB's eventually-consistent-by-
-> default read mode and the read-your-writes guarantee described in
-> `data-systems/replication.md`. Why does asking for a strongly
-> consistent read solve the same problem that routing reads to the leader
-> solves in a single-leader replicated system? ^card-0ndg
+> default read mode and the read-your-writes guarantee. Why does asking
+> for a strongly consistent read solve the same problem that routing
+> reads to the leader solves in a single-leader replicated system? ^card-0ndg

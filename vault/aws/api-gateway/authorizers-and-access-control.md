@@ -44,8 +44,7 @@ The authorizer's returned policy is ==cacheable== by API Gateway for a ^card-e5t
 configurable TTL, keyed on the caller's identity source (the token or
 header value used). This matters because a Lambda authorizer function is
 itself just another Lambda invocation, subject to the same cold-start and
-execution-latency realities as any other function (see
-`../lambda/execution-model-and-lifecycle.md`); caching the resulting
+execution-latency realities as any other function; caching the resulting
 policy means most requests from the same caller within the TTL skip
 invoking the authorizer function at all, rather than paying that latency
 and cost on every single request.
@@ -58,7 +57,7 @@ or IP ranges may invoke it at all, evaluated independently of whichever
 authorizer (IAM, Cognito, Lambda, or none) is configured on the methods
 themselves.
 
-Why can a resource policy deny a request even when the caller passes a Cognito authorizer's token check cleanly? :: A resource policy is a separate, resource-side gate evaluated on top of whatever the method's own authorizer decides — analogous to an S3 bucket policy sitting alongside IAM identity policies (see `../s3/access-control-and-presigned-urls.md`) — so a caller can satisfy the authorizer entirely and still be denied by the resource policy if it excludes their source VPC, IP range, or principal. ^card-j8bz
+Why can a resource policy deny a request even when the caller passes a Cognito authorizer's token check cleanly? :: A resource policy is a separate, resource-side gate evaluated on top of whatever the method's own authorizer decides — analogous to an S3 bucket policy sitting alongside IAM identity policies — so a caller can satisfy the authorizer entirely and still be denied by the resource policy if it excludes their source VPC, IP range, or principal. ^card-j8bz
 
 > [!card] recall
 > A caller successfully obtains a valid Cognito token and the user pool

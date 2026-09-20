@@ -1,4 +1,4 @@
-import { HIGHLIGHT, QA, FENCE, CALLOUT_OPEN, CALLOUT_LINE, CHOICE, stripAnchor } from './cards.js';
+import { HIGHLIGHT, QA, FENCE, CALLOUT_OPEN, CALLOUT_LINE, CHOICE, parseCards, stripAnchor } from './cards.js';
 import { parseFrontmatter } from './frontmatter.js';
 
 export interface LintProblem {
@@ -87,6 +87,7 @@ export function lintNote(text: string): LintProblem[] {
   }
 
   problems.push(...lintMcqCallouts(lines, bodyStartLine));
+  problems.push(...lintNoteReferences(body, bodyStartLine));
 
   if (inFence) {
     problems.push({
@@ -159,6 +160,50 @@ function lintMcqCallouts(lines: string[], bodyStartLine: number): LintProblem[] 
           '`> [!card] mcq` blocks with a truly blank line between them.'
       });
     }
+  }
+
+  return problems;
+}
+
+/**
+ * Flags a sibling-note filename that ends up inside a CARD.
+ *
+ * These read fine in Obsidian, where the file is a click away, and in note
+ * prose that is exactly what they are for. They do not survive the trip
+ * into a card: during review you see the prompt and nothing else, so
+ * "see `caching-and-observability.md`" is a dead pointer -- not clickable,
+ * not the knowledge being tested, just a break in the sentence. 28 cards
+ * had picked these up before anyone noticed.
+ *
+ * Write the name of the CONCEPT instead of the name of the file, or drop
+ * the reference when it is only signposting.
+ *
+ * Asks the real parser which text actually becomes a card rather than
+ * scanning lines, because the distinction is the whole point of the rule
+ * and it is not visible line by line: an intro paragraph carrying a
+ * cross-reference produces no card at all (no highlight, no `::`, no
+ * callout) and must not be flagged, while the paragraph right below it may
+ * well produce one. A first cut of this rule flagged every line and
+ * reported 24 false positives against the real vault -- all of them
+ * legitimate in-Obsidian navigation.
+ */
+const NOTE_REFERENCE = /(?:[\w.-]*\/)*[\w-]+\.md\b/;
+
+function lintNoteReferences(body: string, bodyStartLine: number): LintProblem[] {
+  const problems: LintProblem[] = [];
+
+  for (const card of parseCards(body, bodyStartLine)) {
+    const text = [card.prompt, card.answer ?? '', ...(card.choices ?? []).map((c) => c.text)].join(' ');
+    const match = NOTE_REFERENCE.exec(text);
+    if (!match) continue;
+    problems.push({
+      line: card.anchorLine + 1,
+      rule: 'note-filename-reference',
+      message:
+        `This card's text references the note filename \`${match[0]}\`. A card is read on its ` +
+        'own, so the filename is a dead pointer there — not clickable, and not the thing being ' +
+        'tested. Name the concept instead, or drop the reference if it is only signposting.'
+    });
   }
 
   return problems;

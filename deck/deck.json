@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-20T14:14:07.241Z",
+  "generatedAt": "2026-09-20T14:59:05.773Z",
   "cards": [
     {
       "id": "card-6fmp",
@@ -2091,7 +2091,7 @@
         "lambda-authorizer",
         "resource-policy"
       ],
-      "prompt": "The authorizer's returned policy is ___ by API Gateway for a configurable TTL, keyed on the caller's identity source (the token or header value used). This matters because a Lambda authorizer function is itself just another Lambda invocation, subject to the same cold-start and execution-latency realities as any other function (see `../lambda/execution-model-and-lifecycle.md`); caching the resulting policy means most requests from the same caller within the TTL skip invoking the authorizer function at all, rather than paying that latency and cost on every single request.",
+      "prompt": "The authorizer's returned policy is ___ by API Gateway for a configurable TTL, keyed on the caller's identity source (the token or header value used). This matters because a Lambda authorizer function is itself just another Lambda invocation, subject to the same cold-start and execution-latency realities as any other function; caching the resulting policy means most requests from the same caller within the TTL skip invoking the authorizer function at all, rather than paying that latency and cost on every single request.",
       "source": {
         "path": "vault/aws/api-gateway/authorizers-and-access-control.md",
         "block": "card-e5tm"
@@ -2145,7 +2145,7 @@
       "citations": [
         "AWS Developer Guide — Amazon API Gateway, 'Control access to a REST API using Amazon Cognito user pools', 'Use API Gateway Lambda authorizers', 'Control access to an API with API Gateway resource policies'"
       ],
-      "answer": "A resource policy is a separate, resource-side gate evaluated on top of whatever the method's own authorizer decides — analogous to an S3 bucket policy sitting alongside IAM identity policies (see `../s3/access-control-and-presigned-urls.md`) — so a caller can satisfy the authorizer entirely and still be denied by the resource policy if it excludes their source VPC, IP range, or principal."
+      "answer": "A resource policy is a separate, resource-side gate evaluated on top of whatever the method's own authorizer decides — analogous to an S3 bucket policy sitting alongside IAM identity policies — so a caller can satisfy the authorizer entirely and still be denied by the resource policy if it excludes their source VPC, IP range, or principal."
     },
     {
       "id": "card-a4wm",
@@ -2268,7 +2268,7 @@
         "metrics",
         "x-ray"
       ],
-      "prompt": "Observability is where you find out what caching (or anything else) is actually doing. **Access logs** record who called what — caller identity, method, path, response status, and whatever fields you configure — at the edge of the gateway, independent of what happened inside the integration. **Execution logs** go further: a full trace of the request's path through API Gateway itself, including ___, which is what you'd actually read to debug a mapping-template failure or an authorizer returning an unexpected result (see `request-validation-and-mapping-templates.md` and `authorizers-and-access-control.md`).",
+      "prompt": "Observability is where you find out what caching (or anything else) is actually doing. **Access logs** record who called what — caller identity, method, path, response status, and whatever fields you configure — at the edge of the gateway, independent of what happened inside the integration. **Execution logs** go further: a full trace of the request's path through API Gateway itself, including ___, which is what you'd actually read to debug a mapping-template failure or an authorizer returning an unexpected result.",
       "source": {
         "path": "vault/aws/api-gateway/caching-and-observability.md",
         "block": "card-l6xr"
@@ -2414,7 +2414,7 @@
         "proxy-integration",
         "event-shape"
       ],
-      "prompt": "This is what distinguishes proxy from **non-proxy (custom) integration**: with proxy integration, there is no mapping template on the way in or the way out — the ___ becomes the event, and the function's literal return value becomes the response (per the contract above). A non-proxy integration instead runs the request through a mapping template before it reaches the function, and runs the function's raw output through a separate mapping template before it reaches the client — see `request-validation-and-mapping-templates.md` for what that buys you and what it costs.",
+      "prompt": "This is what distinguishes proxy from **non-proxy (custom) integration**: with proxy integration, there is no mapping template on the way in or the way out — the ___ becomes the event, and the function's literal return value becomes the response (per the contract above). A non-proxy integration instead runs the request through a mapping template before it reaches the function, and runs the function's raw output through a separate mapping template before it reaches the client.",
       "source": {
         "path": "vault/aws/api-gateway/lambda-proxy-integration.md",
         "block": "card-b3ku"
@@ -2560,7 +2560,7 @@
         "vtl",
         "non-proxy"
       ],
-      "prompt": "The tradeoff of doing transformation in the gateway rather than the backend is real in both directions. Putting reshaping logic in a ___ keeps the backend decoupled from the exact shape of the HTTP request — the same Lambda function or service call can serve multiple differently-shaped frontends without knowing about any of them — and it can reject or reshape malformed input before backend code ever runs. The cost is that VTL is a separate, gateway-specific templating language: it's harder to unit test, harder to version alongside application code, and debugging a transformation failure often means reading API Gateway execution logs (see `caching-and-observability.md`) rather than stepping through code in an IDE.",
+      "prompt": "The tradeoff of doing transformation in the gateway rather than the backend is real in both directions. Putting reshaping logic in a ___ keeps the backend decoupled from the exact shape of the HTTP request — the same Lambda function or service call can serve multiple differently-shaped frontends without knowing about any of them — and it can reject or reshape malformed input before backend code ever runs. The cost is that VTL is a separate, gateway-specific templating language: it's harder to unit test, harder to version alongside application code, and debugging a transformation failure often means reading API Gateway execution logs rather than stepping through code in an IDE.",
       "source": {
         "path": "vault/aws/api-gateway/request-validation-and-mapping-templates.md",
         "block": "card-m1qf"
@@ -2686,7 +2686,7 @@
         "integrations",
         "routing"
       ],
-      "prompt": "Because API Gateway is ___ from the caller's perspective for a REST/HTTP API request — the client is blocked waiting on a response either way — a Lambda integration behind it is always invoked synchronously (see `../lambda/event-sources-and-invocation-modes.md`); there is no async or poll-based mode available to an API Gateway-fronted function, regardless of integration type.",
+      "prompt": "Because API Gateway is ___ from the caller's perspective for a REST/HTTP API request — the client is blocked waiting on a response either way — a Lambda integration behind it is always invoked synchronously; there is no async or poll-based mode available to an API Gateway-fronted function, regardless of integration type.",
       "source": {
         "path": "vault/aws/api-gateway/resources-methods-and-integrations.md",
         "block": "card-t8yn"
@@ -2982,7 +2982,7 @@
         "api-keys",
         "usage-plans"
       ],
-      "prompt": "Token-bucket throttling exists at more than one scope simultaneously. Account-level and API/stage-level throttling settings exist to ___ from being overwhelmed by aggregate traffic, regardless of who's sending it — this is the same protective purpose throttling serves in DynamoDB (see `../dynamodb/capacity-and-throttling.md`), even though the mechanism there is per-partition capacity rather than a token bucket.",
+      "prompt": "Token-bucket throttling exists at more than one scope simultaneously. Account-level and API/stage-level throttling settings exist to ___ from being overwhelmed by aggregate traffic, regardless of who's sending it — this is the same protective purpose throttling serves in DynamoDB, even though the mechanism there is per-partition capacity rather than a token bucket.",
       "source": {
         "path": "vault/aws/api-gateway/throttling-and-usage-plans.md",
         "block": "card-b9zh"
@@ -3296,7 +3296,7 @@
         "eventual-consistency",
         "replication"
       ],
-      "prompt": "This mirrors `data-systems/replication.md`'s framing of read-your-writes consistency: routing a read to the ___ (or, in DynamoDB's case, to whichever replica is authoritative for that item) is what guarantees seeing your own prior write, at the cost of that read no longer being spreadable across every replica the way a stale-tolerant read is.",
+      "prompt": "This mirrors the standard framing of read-your-writes consistency: routing a read to the ___ (or, in DynamoDB's case, to whichever replica is authoritative for that item) is what guarantees seeing your own prior write, at the cost of that read no longer being spreadable across every replica the way a stale-tolerant read is.",
       "source": {
         "path": "vault/aws/dynamodb/consistency-and-read-modes.md",
         "block": "card-m16h"
@@ -3359,7 +3359,7 @@
         "eventual-consistency",
         "replication"
       ],
-      "prompt": "Explain the connection between DynamoDB's eventually-consistent-by- default read mode and the read-your-writes guarantee described in `data-systems/replication.md`. Why does asking for a strongly consistent read solve the same problem that routing reads to the leader solves in a single-leader replicated system?",
+      "prompt": "Explain the connection between DynamoDB's eventually-consistent-by- default read mode and the read-your-writes guarantee. Why does asking for a strongly consistent read solve the same problem that routing reads to the leader solves in a single-leader replicated system?",
       "source": {
         "path": "vault/aws/dynamodb/consistency-and-read-modes.md",
         "block": "card-0ndg"
@@ -3643,7 +3643,7 @@
         "hot-partition",
         "key-design"
       ],
-      "prompt": "This is the same failure mode `data-systems/partitioning.md` names for key-range partitioning under a monotonically increasing key — sequential IDs or timestamps concentrating writes on one range — except DynamoDB's hash partitioning trades that particular failure away only to reintroduce a version of it whenever the key values themselves have ___ or skewed access frequency.",
+      "prompt": "This is the same failure mode key-range partitioning suffers under a monotonically increasing key — sequential IDs or timestamps concentrating writes on one range — except DynamoDB's hash partitioning trades that particular failure away only to reintroduce a version of it whenever the key values themselves have ___ or skewed access frequency.",
       "source": {
         "path": "vault/aws/dynamodb/partitioning-and-hot-keys.md",
         "block": "card-n1k5"
@@ -3706,7 +3706,7 @@
         "hot-partition",
         "key-design"
       ],
-      "prompt": "`data-systems/partitioning.md` notes that key-range partitioning risks hot spots from sequential keys while hash partitioning avoids that specific problem. Explain why DynamoDB's hash-based partitioning is not immune to hot partitions in general, and connect the failure mode back to the \"access pattern concentrates\" framing that note uses for key-range partitioning.",
+      "prompt": "Key-range partitioning risks hot spots from sequential keys, while hash partitioning avoids that specific problem. Explain why DynamoDB's hash-based partitioning is not immune to hot partitions in general, and connect the failure mode back to the \"access pattern concentrates\" framing used for key-range partitioning.",
       "source": {
         "path": "vault/aws/dynamodb/partitioning-and-hot-keys.md",
         "block": "card-z8t6"
@@ -4515,7 +4515,7 @@
         "conditional-writes",
         "optimistic-concurrency"
       ],
-      "prompt": "What DynamoDB transactions do NOT provide, unlike the serializable isolation `data-systems/transactions.md` describes as the strongest relational isolation level, is a guarantee that extends to every kind of read against the table. A single `GetItem` (or `PutItem`, `UpdateItem`, `DeleteItem`) issued concurrently by an unrelated caller does get serializable isolation against a ___ — it sees the affected items either wholly before or wholly after the transaction, never a partial result. What breaks that guarantee is a multi-item read like `Query`, `Scan`, or `BatchGetItem`: each individual item it touches is still serializable against the transaction, but the operation as a whole is only read-committed, so it can return some items from before the transaction and some from after, because it isn't executed as one atomic point-in-time snapshot.",
+      "prompt": "What DynamoDB transactions do NOT provide, unlike the serializable isolation that is the strongest relational isolation level, is a guarantee that extends to every kind of read against the table. A single `GetItem` (or `PutItem`, `UpdateItem`, `DeleteItem`) issued concurrently by an unrelated caller does get serializable isolation against a ___ — it sees the affected items either wholly before or wholly after the transaction, never a partial result. What breaks that guarantee is a multi-item read like `Query`, `Scan`, or `BatchGetItem`: each individual item it touches is still serializable against the transaction, but the operation as a whole is only read-committed, so it can return some items from before the transaction and some from after, because it isn't executed as one atomic point-in-time snapshot.",
       "source": {
         "path": "vault/aws/dynamodb/transactions-and-conditional-writes.md",
         "block": "card-lmwe"
@@ -4816,7 +4816,7 @@
         "resource-policy",
         "assume-role"
       ],
-      "prompt": "**Mechanism one: role assumption.** The resource account creates a role whose trust policy names the other account (or a specific principal in it) as allowed to call `sts:AssumeRole`. Once assumed, the caller is acting entirely inside the resource account, as a session of that role — there's no \"their identity policy\" to separately satisfy anymore, because for the duration of the session, the ___ is the only identity policy in play. `roles-and-assume-role.md` covers the trust-policy/permissions-policy split this mechanism relies on.",
+      "prompt": "**Mechanism one: role assumption.** The resource account creates a role whose trust policy names the other account (or a specific principal in it) as allowed to call `sts:AssumeRole`. Once assumed, the caller is acting entirely inside the resource account, as a session of that role — there's no \"their identity policy\" to separately satisfy anymore, because for the duration of the session, the ___ is the only identity policy in play. The trust-policy/ permissions-policy split this mechanism relies on is covered separately.",
       "source": {
         "path": "vault/aws/iam/cross-account-access.md",
         "block": "card-pc7e"
@@ -5230,7 +5230,7 @@
         "organizations",
         "ceilings"
       ],
-      "prompt": "Permission boundaries and SCPs intersect with identity policies the same way, but at different scopes: a boundary caps one identity; an SCP caps every identity in an entire account or OU. Both compose the same way with everything else in evaluation — they never supply the Allow that `policy-evaluation-logic.md` looks for, they only shrink the ___ of actions an identity policy's Allow is even permitted to reach.",
+      "prompt": "Permission boundaries and SCPs intersect with identity policies the same way, but at different scopes: a boundary caps one identity; an SCP caps every identity in an entire account or OU. Both compose the same way with everything else in evaluation — they never supply the Allow that policy evaluation looks for, they only shrink the ___ of actions an identity policy's Allow is even permitted to reach.",
       "source": {
         "path": "vault/aws/iam/permission-boundaries-and-scps.md",
         "block": "card-mji5"
@@ -5619,7 +5619,7 @@
         "explicit-deny",
         "cross-account"
       ],
-      "prompt": "For a **cross-account** request — the caller's account differs from the account that owns the resource — that \"either side\" shortcut disappears. The resource's account must grant access via its resource-based policy (naming the external account or principal), **and** the caller's own account must independently grant that action via the caller's identity policy. ___ have to allow the request; a resource-based grant alone is necessary but never sufficient once the request crosses an account boundary. `s3/access-control-and-presigned-urls.md` and `cross-account-access.md` both rely on this exact rule.",
+      "prompt": "For a **cross-account** request — the caller's account differs from the account that owns the resource — that \"either side\" shortcut disappears. The resource's account must grant access via its resource-based policy (naming the external account or principal), **and** the caller's own account must independently grant that action via the caller's identity policy. ___ have to allow the request; a resource-based grant alone is necessary but never sufficient once the request crosses an account boundary. Other cross-account access patterns, such as presigned URLs and role assumption, rely on this exact rule too.",
       "source": {
         "path": "vault/aws/iam/policy-evaluation-logic.md",
         "block": "card-huul"
@@ -7417,7 +7417,7 @@
         "logging",
         "cost-model"
       ],
-      "prompt": "Explain why provisioned concurrency (see `concurrency-and-scaling.md`) changes Lambda's usual \"pay only for what you use\" story — what are you now paying for that you wouldn't be paying for with on-demand scaling alone, and why does that tradeoff exist?",
+      "prompt": "Explain why provisioned concurrency changes Lambda's usual \"pay only for what you use\" story — what are you now paying for that you wouldn't be paying for with on-demand scaling alone, and why does that tradeoff exist?",
       "source": {
         "path": "vault/aws/lambda/observability-and-cost-model.md",
         "block": "card-kz47"
@@ -7630,7 +7630,7 @@
         "container-images",
         "runtime-api"
       ],
-      "prompt": "Why does packaging as a container image not change anything about the execution model or lifecycle described in execution-model-and-lifecycle.md?",
+      "prompt": "Why does packaging as a container image not change anything about the execution environment's init-and-invoke lifecycle?",
       "source": {
         "path": "vault/aws/lambda/packaging-layers-and-runtimes.md",
         "block": "card-t7u1"
@@ -7652,7 +7652,7 @@
         "architecture",
         "synthesis"
       ],
-      "prompt": "Reach for **SNS** when one event needs to reach several independent subscribers that each do something different with it, and you control (or at least enumerate) that ___ — the fan-out model in `sns-and-fan-out.md`. `message-filtering.md` narrows what each subscriber receives, but the routing primitive underneath is still \"this topic's current subscriptions,\" decided by who subscribed, not by the event's content.",
+      "prompt": "Reach for **SNS** when one event needs to reach several independent subscribers that each do something different with it, and you control (or at least enumerate) that ___ — the fan-out model. Message filtering narrows what each subscriber receives, but the routing primitive underneath is still \"this topic's current subscriptions,\" decided by who subscribed, not by the event's content.",
       "source": {
         "path": "vault/aws/messaging/choosing-between-sqs-sns-and-eventbridge.md",
         "block": "card-0d91"
@@ -7721,7 +7721,7 @@
       "citations": [
         "AWS Developer Guide — Amazon EventBridge, 'Choosing between Amazon EventBridge, Amazon SNS, and Amazon SQS'"
       ],
-      "answer": "Because a queue in front of a consumer absorbs load spikes and survives that consumer being temporarily down — the message waits in the queue rather than depending on SNS's own retry policy for a directly-subscribed endpoint, matching the durability point made in sns-and-fan-out.md."
+      "answer": "Because a queue in front of a consumer absorbs load spikes and survives that consumer being temporarily down — the message waits in the queue rather than depending on SNS's own retry policy for a directly-subscribed endpoint, matching the durability point already made about SNS-to-SQS fan-out."
     },
     {
       "id": "card-7cav",
@@ -7757,7 +7757,7 @@
         "architecture",
         "synthesis"
       ],
-      "prompt": "A colleague proposes using EventBridge for everything, arguing it can subsume both SQS and SNS since it can target a queue or invoke many rules. Explain what capability they would be giving up by replacing a plain SQS-backed worker pool with an EventBridge rule targeting that same queue, referring to what visibility-timeout.md and dead-letter-queues-and-redrive.md actually depend on.",
+      "prompt": "A colleague proposes using EventBridge for everything, arguing it can subsume both SQS and SNS since it can target a queue or invoke many rules. Explain what capability they would be giving up by replacing a plain SQS-backed worker pool with an EventBridge rule targeting that same queue, referring to what visibility timeouts and dead-letter-queue redrive actually depend on.",
       "source": {
         "path": "vault/aws/messaging/choosing-between-sqs-sns-and-eventbridge.md",
         "block": "card-upbh"
@@ -9616,7 +9616,7 @@
         "quorum",
         "split-brain"
       ],
-      "prompt": "An OpenSearch domain has three master-eligible nodes and a network partition splits it into a group of two and a group of one. Using the majority-quorum reasoning from `database-internals/consensus.md`, explain which group (if either) can elect a cluster manager, and why an even split (e.g. 2 and 2 out of four master-eligible nodes) is a genuinely worse configuration.",
+      "prompt": "An OpenSearch domain has three master-eligible nodes and a network partition splits it into a group of two and a group of one. Using the majority-quorum reasoning from consensus algorithms like Raft or Paxos, explain which group (if either) can elect a cluster manager, and why an even split (e.g. 2 and 2 out of four master-eligible nodes) is a genuinely worse configuration.",
       "source": {
         "path": "vault/aws/opensearch/cluster-sizing-and-node-roles.md",
         "block": "card-21z2"
@@ -10000,7 +10000,7 @@
         "segments",
         "merging"
       ],
-      "prompt": "Explain the parallel between Lucene's segment merging in OpenSearch and compaction in an LSM-tree (`database-internals/lsm-trees.md`): what problem does each one solve, and why do both rely on segments being immutable in the first place?",
+      "prompt": "Explain the parallel between Lucene's segment merging in OpenSearch and compaction in an LSM-tree: what problem does each one solve, and why do both rely on segments being immutable in the first place?",
       "source": {
         "path": "vault/aws/opensearch/indexing-pipeline-and-refresh.md",
         "block": "card-9e4k"
@@ -10353,7 +10353,7 @@
         "dual-write",
         "change-data-capture"
       ],
-      "prompt": "A team's application performs a dual write: it writes to its primary database, then immediately writes the same change to OpenSearch. Using the async-replication-lag reasoning from `data-systems/replication.md`, explain why even a CDC-based pipeline still leaves the index eventually consistent rather than instantly consistent with the database, and why that's an acceptable tradeoff for a search index in a way it wouldn't be for a payments ledger.",
+      "prompt": "A team's application performs a dual write: it writes to its primary database, then immediately writes the same change to OpenSearch. Using the async-replication-lag reasoning from asynchronous replication, explain why even a CDC-based pipeline still leaves the index eventually consistent rather than instantly consistent with the database, and why that's an acceptable tradeoff for a search index in a way it wouldn't be for a payments ledger.",
       "source": {
         "path": "vault/aws/opensearch/opensearch-versus-a-database.md",
         "block": "card-r1nq"
@@ -12680,7 +12680,7 @@
         "cross-region",
         "failure-domains"
       ],
-      "prompt": "This is exactly the tradeoff `vault/data-systems/replication.md` describes for asynchronous single-leader replication: the source acknowledges the client without waiting for the follower (here, the destination bucket) to confirm, which keeps writes fast but means a reader of the destination can observe ___ data relative to the source during the propagation window.",
+      "prompt": "This is exactly the tradeoff asynchronous single-leader replication makes: the source acknowledges the client without waiting for the follower (here, the destination bucket) to confirm, which keeps writes fast but means a reader of the destination can observe ___ data relative to the source during the propagation window.",
       "source": {
         "path": "vault/aws/s3/durability-and-replication.md",
         "block": "card-7z5g"
@@ -13918,7 +13918,7 @@
         "disk-access",
         "node-splitting"
       ],
-      "prompt": "A B-tree of ___ t requires every node other than the root to hold at least t − 1 keys (and, if internal, at least t children), and allows any node to hold at most 2t − 1 keys (at most 2t children); the root may hold as few as one key. Every leaf sits at the same depth, exactly like the height-balance already described at a more general level in `btree-basics.md`.",
+      "prompt": "A B-tree of ___ t requires every node other than the root to hold at least t − 1 keys (and, if internal, at least t children), and allows any node to hold at most 2t − 1 keys (at most 2t children); the root may hold as few as one key. Every leaf sits at the same depth, exactly like the height-balance property B-trees maintain in general.",
       "source": {
         "path": "vault/clrs/data-structures/b-trees.md",
         "block": "card-4y7n"
@@ -13960,7 +13960,7 @@
         "disk-access",
         "node-splitting"
       ],
-      "prompt": "The reason to make t large rather than small is the ___: CLRS treats one node access as one disk read, which — on real hardware where a disk seek costs orders of magnitude more than an in-memory comparison — is exactly the assumption `btree-basics.md` makes when it says a high fanout keeps disk seeks low. A larger t means fewer, fatter nodes, so a tree over n keys has height h ≤ log_t((n + 1)/2): more comparisons happen inside each node, but those are cheap relative to the disk read that fetched the node in the first place.",
+      "prompt": "The reason to make t large rather than small is the ___: CLRS treats one node access as one disk read, which — on real hardware where a disk seek costs orders of magnitude more than an in-memory comparison — is exactly the assumption behind why B-trees favor a high fanout to keep disk seeks low. A larger t means fewer, fatter nodes, so a tree over n keys has height h ≤ log_t((n + 1)/2): more comparisons happen inside each node, but those are cheap relative to the disk read that fetched the node in the first place.",
       "source": {
         "path": "vault/clrs/data-structures/b-trees.md",
         "block": "card-r85l"
@@ -14019,7 +14019,7 @@
         "disk-access",
         "node-splitting"
       ],
-      "prompt": "On insertion, CLRS's B-TREE-INSERT-NONFULL descends from the root looking for the leaf to insert into, but splits any full node it finds along the way ___, before recursing into it rather than after — so the whole operation is a single downward pass with no backtracking. Splitting a full node (2t − 1 keys) produces two nodes of t − 1 keys each and promotes the median key up to the parent; this is the same split operation `btree-basics.md` describes at the conceptual level, just performed pre-emptively here rather than reactively.",
+      "prompt": "On insertion, CLRS's B-TREE-INSERT-NONFULL descends from the root looking for the leaf to insert into, but splits any full node it finds along the way ___, before recursing into it rather than after — so the whole operation is a single downward pass with no backtracking. Splitting a full node (2t − 1 keys) produces two nodes of t − 1 keys each and promotes the median key up to the parent; this is the same split operation B-trees use at the conceptual level, just performed pre-emptively here rather than reactively.",
       "source": {
         "path": "vault/clrs/data-structures/b-trees.md",
         "block": "card-ugi1"
@@ -14048,7 +14048,7 @@
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 18 (B-Trees)"
       ],
-      "answer": "The root itself splits into two nodes, and a brand-new root is created above them holding the single promoted median key — the only way a B-tree's height increases, exactly as `btree-basics.md` already states for B-trees in general."
+      "answer": "The root itself splits into two nodes, and a brand-new root is created above them holding the single promoted median key — the only way a B-tree's height increases."
     },
     {
       "id": "card-nzi9",

@@ -67,8 +67,8 @@ The resource's account must grant access via its resource-based policy
 account must independently grant that action via the caller's identity
 policy. ==Both sides== have to allow the request; a resource-based grant ^card-huul
 alone is necessary but never sufficient once the request crosses an
-account boundary. `s3/access-control-and-presigned-urls.md` and
-`cross-account-access.md` both rely on this exact rule.
+account boundary. Other cross-account access patterns, such as
+presigned URLs and role assumption, rely on this exact rule too.
 
 Why does a bucket policy that names an external account as principal, on its own, never let that account's users actually read the object? :: A resource-based grant to an external account satisfies only the resource-account side of a cross-account request; the request still needs the external account's own identity policy to independently allow the same action, because "either side suffices" only holds within a single account — across accounts both sides must allow, or the implicit deny still applies. ^card-mub1
 
@@ -79,8 +79,8 @@ Why does a bucket policy that names an external account as principal, on its own
 > allow" step can be satisfied. Why does adding an account boundary turn
 > an "either side" rule into a "both sides" rule? ^card-zozi
 
-`permission-boundaries-and-scps.md` adds one more layer on top of this:
-a permission boundary or SCP never supplies the Allow this note
+Permission boundaries and SCPs add one more layer on top of this: a
+permission boundary or SCP never supplies the Allow this note
 describes — it can only narrow what an identity policy's Allow is
 permitted to reach, which is a different role in the evaluation than
 anything covered here.

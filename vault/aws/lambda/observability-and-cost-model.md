@@ -43,10 +43,10 @@ rate for a server sitting idle.
 What does it mean, conceptually, that Lambda charges per invocation and per duration-times-memory rather than a flat rate for having the function deployed? :: A function that is deployed but never invoked costs nothing to run (aside from any provisioned concurrency kept warm), and a function that runs efficiently — finishing quickly, using less allocated memory — costs less per call than one that runs the same workload slowly or over-provisioned; cost tracks actual usage rather than the mere existence of the function. ^card-3f4c
 
 > [!card] recall
-> Explain why provisioned concurrency (see `concurrency-and-scaling.md`)
-> changes Lambda's usual "pay only for what you use" story — what are you
-> now paying for that you wouldn't be paying for with on-demand scaling
-> alone, and why does that tradeoff exist? ^card-kz47
+> Explain why provisioned concurrency changes Lambda's usual "pay only
+> for what you use" story — what are you now paying for that you
+> wouldn't be paying for with on-demand scaling alone, and why does that
+> tradeoff exist? ^card-kz47
 
 Memory allocation in Lambda's cost model is not purely a cost lever: it
 also determines the proportional share of ==CPU== a function's execution ^card-84sw

@@ -29,14 +29,13 @@ or non-proxy, because it happens earlier, at the method level.
 > - [ ] Request validation only warns in logs; the request proceeds regardless ^card-o061
 
 **Mapping templates**, by contrast, only apply to **non-proxy**
-integrations (see `resources-methods-and-integrations.md`): they use
-Velocity Template Language (VTL) to transform the incoming request into
-whatever shape the integration expects on the way in (the integration
-request template), and to transform the raw integration response into
-whatever shape you want the client to see on the way out (the integration
-response template). A proxy integration has no room for this step — the
-raw request and raw response pass straight through by contract (see
-`lambda-proxy-integration.md`).
+integrations: they use Velocity Template Language (VTL) to transform the
+incoming request into whatever shape the integration expects on the way
+in (the integration request template), and to transform the raw
+integration response into whatever shape you want the client to see on
+the way out (the integration response template). A proxy integration has
+no room for this step — the raw request and raw response pass straight
+through by contract.
 
 Why does it make no sense to configure a request mapping template on a Lambda proxy integration? :: Proxy integration's whole contract is that the raw request becomes the event untouched, so there is no transformation stage in that path for a template to run in; mapping templates only exist as a step in the non-proxy request/response pipeline, which proxy integration bypasses entirely. ^card-x8pv
 
@@ -49,8 +48,8 @@ and it can reject or reshape malformed input before backend code ever
 runs. The cost is that VTL is a separate, gateway-specific templating
 language: it's harder to unit test, harder to version alongside
 application code, and debugging a transformation failure often means
-reading API Gateway execution logs (see `caching-and-observability.md`)
-rather than stepping through code in an IDE.
+reading API Gateway execution logs rather than stepping through code in
+an IDE.
 
 > [!card] recall
 > A team is deciding whether to reshape an inconsistent legacy backend
