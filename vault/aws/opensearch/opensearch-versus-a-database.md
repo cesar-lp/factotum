@@ -37,17 +37,16 @@ with nothing that automatically detects or repairs the drift.
 
 **Change data capture (CDC)** instead reads the primary database's own
 write-ahead log or change stream (the same kind of stream a replication
-follower would consume, per `data-systems/replication.md`) and derives
-index updates from that single stream, so the index is only ever written
-to as a consequence of a write that already reliably happened in the
-database.
+follower would consume) and derives index updates from that single
+stream, so the index is only ever written to as a consequence of a
+write that already reliably happened in the database.
 
 Why does deriving OpenSearch updates from a change stream avoid the failure mode that plain dual writes have? :: There is only one place a write can succeed or fail — the primary database — and the index-update pipeline consumes an already-committed change stream after the fact, so an application never needs both writes to succeed together; a lagging or temporarily failed pipeline just means the index catches up later, not that it silently diverges forever. ^card-0mzf
 
 > [!card] recall
 > A team's application performs a dual write: it writes to its primary
 > database, then immediately writes the same change to OpenSearch. Using
-> the async-replication-lag reasoning from `data-systems/replication.md`,
+> the async-replication-lag reasoning from asynchronous replication,
 > explain why even a CDC-based pipeline still leaves the index eventually
 > consistent rather than instantly consistent with the database, and why
 > that's an acceptable tradeoff for a search index in a way it wouldn't be

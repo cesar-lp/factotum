@@ -38,10 +38,10 @@ or serve queries itself.
 
 Master-eligible nodes elect one of themselves as the acting cluster
 manager using a quorum-based protocol, the same mechanism underlying
-Raft leader election in `database-internals/consensus.md`: a candidate
-needs votes from more than half of the master-eligible nodes to be
-elected, and that majority requirement is what a "split-brain" scenario
-threatens to break.
+leader election in consensus algorithms like Raft: a candidate needs
+votes from more than half of the master-eligible nodes to be elected,
+and that majority requirement is what a "split-brain" scenario threatens
+to break.
 
 **Split-brain** is the failure mode where a network partition lets two
 disjoint groups of nodes each believe they are the legitimate cluster and
@@ -53,10 +53,10 @@ Why does requiring a strict majority of master-eligible votes (not just "the mos
 > [!card] recall
 > An OpenSearch domain has three master-eligible nodes and a network
 > partition splits it into a group of two and a group of one. Using the
-> majority-quorum reasoning from `database-internals/consensus.md`,
-> explain which group (if either) can elect a cluster manager, and why an
-> even split (e.g. 2 and 2 out of four master-eligible nodes) is a
-> genuinely worse configuration. ^card-21z2
+> majority-quorum reasoning from consensus algorithms like Raft or
+> Paxos, explain which group (if either) can elect a cluster manager,
+> and why an even split (e.g. 2 and 2 out of four master-eligible nodes)
+> is a genuinely worse configuration. ^card-21z2
 
 Using an ==even== number of master-eligible nodes is a common sizing ^card-xm2j
 mistake, because it creates configurations where no group can gather a

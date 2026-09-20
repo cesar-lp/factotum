@@ -39,12 +39,11 @@ succeeds and is acknowledged to the client, the copy to the destination
 bucket happens afterward, so there is a window — normally short, but not
 bounded to zero — during which the destination has not yet caught up.
 
-This is exactly the tradeoff `vault/data-systems/replication.md`
-describes for asynchronous single-leader replication: the source
-acknowledges the client without waiting for the follower (here, the
-destination bucket) to confirm, which keeps writes fast but means a
-reader of the destination can observe ==stale== data relative to the ^card-7z5g
-source during the propagation window.
+This is exactly the tradeoff asynchronous single-leader replication
+makes: the source acknowledges the client without waiting for the
+follower (here, the destination bucket) to confirm, which keeps writes
+fast but means a reader of the destination can observe ==stale== data ^card-7z5g
+relative to the source during the propagation window.
 
 > [!card] recall
 > A team assumes that because CRR is enabled, they can safely delete

@@ -7,13 +7,13 @@ citations: ["AWS Developer Guide — Amazon DynamoDB, 'Managing complex workflow
 
 # Transactions and Conditional Writes
 
-`data-systems/transactions.md` frames isolation levels as a spectrum of
-which anomalies a database rules out. DynamoDB doesn't offer that
-spectrum — it offers a much narrower, explicit set of guarantees built
-from conditional writes upward, and knowing exactly what is and isn't
-covered matters more here than anywhere else in this category, since
-getting it wrong silently reintroduces the write-skew-shaped bugs that
-note warns about.
+Isolation levels are typically framed as a spectrum of which anomalies
+a database rules out. DynamoDB doesn't offer that spectrum — it offers
+a much narrower, explicit set of guarantees built from conditional
+writes upward, and knowing exactly what is and isn't covered matters
+more here than anywhere else in this category, since getting it wrong
+silently reintroduces the same write-skew-shaped bugs that isolation
+levels exist to prevent.
 
 A ==condition expression== attached to a write (`PutItem`, `UpdateItem`, ^card-05a4
 `DeleteItem`) makes the write fail instead of applying if that check
@@ -42,13 +42,11 @@ What must the client do after a conditional write fails because its version cond
 `TransactWriteItems` extends this to up to several items across one or
 more tables: every condition check and write in the transaction either
 all succeed together or all fail together, giving DynamoDB's
-transactions the same atomicity guarantee `data-systems/transactions.md`
-attributes to the "A" in ACID.
+transactions the same atomicity guarantee that the "A" in ACID refers to.
 
 What DynamoDB transactions do NOT provide, unlike the serializable
-isolation `data-systems/transactions.md` describes as the strongest
-relational isolation level, is a guarantee that extends to every kind of
-read against the table. A single `GetItem` (or `PutItem`, `UpdateItem`,
+isolation that is the strongest relational isolation level, is a
+guarantee that extends to every kind of read against the table. A single `GetItem` (or `PutItem`, `UpdateItem`,
 `DeleteItem`) issued concurrently by an unrelated caller does get
 serializable isolation against a ==transactional ^card-lmwe
 call== — it sees the affected items either wholly before or wholly after

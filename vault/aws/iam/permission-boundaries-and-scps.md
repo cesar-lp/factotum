@@ -46,17 +46,16 @@ allowed to grant, no matter what those identity policies themselves say.
 
 That example matters because SCPs commonly use `Deny` rather than
 relying purely on the ceiling behavior of an empty Allow list — and an
-explicit Deny in an SCP is still an explicit deny, subject to
-`policy-evaluation-logic.md`'s rule that no Allow, from any policy in
-any account, can ever override it. An SCP with an explicit Deny doesn't
-even need an identity policy to be involved for the action to be
-blocked.
+explicit Deny in an SCP is still an explicit deny, subject to the rule
+that no Allow, from any policy in any account, can ever override it.
+An SCP with an explicit Deny doesn't even need an identity policy to be
+involved for the action to be blocked.
 
 Permission boundaries and SCPs intersect with identity policies the same
 way, but at different scopes: a boundary caps one identity; an SCP caps
 every identity in an entire account or OU. Both compose the same way
 with everything else in evaluation — they never supply the Allow that
-`policy-evaluation-logic.md` looks for, they only shrink the ==space== of ^card-mji5
+policy evaluation looks for, they only shrink the ==space== of ^card-mji5
 actions an identity policy's Allow is even permitted to reach.
 
 One scope exception matters: an SCP attached at the organization root or

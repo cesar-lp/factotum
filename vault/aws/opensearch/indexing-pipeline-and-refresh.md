@@ -8,11 +8,11 @@ citations: ["OpenSearch Documentation — 'Near real-time search'", "OpenSearch 
 # Indexing Pipeline, Refresh, and Segment Merging
 
 OpenSearch's storage engine (Lucene, underneath) is built on the same idea
-as `database-internals/lsm-trees.md`: writes accumulate in memory, get
-flushed as immutable, sorted segments, and those segments are merged
-together over time. Search is "near-real-time" precisely because a write
-is durable before it is searchable, and the gap between those two moments
-is a deliberate, tunable tradeoff rather than a bug.
+as an LSM-tree: writes accumulate in memory, get flushed as immutable,
+sorted segments, and those segments are merged together over time.
+Search is "near-real-time" precisely because a write is durable before
+it is searchable, and the gap between those two moments is a
+deliberate, tunable tradeoff rather than a bug.
 
 A newly indexed document is first written into an in-memory buffer and a
 ==translog== (transaction log) for durability, but it is not yet visible ^card-n29q
@@ -54,9 +54,8 @@ check from growing without bound.
 
 > [!card] recall
 > Explain the parallel between Lucene's segment merging in OpenSearch and
-> compaction in an LSM-tree (`database-internals/lsm-trees.md`): what
-> problem does each one solve, and why do both rely on segments being
-> immutable in the first place? ^card-9e4k
+> compaction in an LSM-tree: what problem does each one solve, and why
+> do both rely on segments being immutable in the first place? ^card-9e4k
 
 Because Lucene segments are immutable, an OpenSearch "update" or "delete"
 never edits a document in place; it marks the old version as ==obsolete== ^card-jwe0

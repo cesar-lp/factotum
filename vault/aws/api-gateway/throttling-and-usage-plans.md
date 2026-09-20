@@ -39,9 +39,8 @@ Token-bucket throttling exists at more than one scope simultaneously.
 Account-level and API/stage-level throttling settings exist to
 ==protect the backend itself== from being overwhelmed by aggregate ^card-b9zh
 traffic, regardless of who's sending it — this is the same protective
-purpose throttling serves in DynamoDB (see
-`../dynamodb/capacity-and-throttling.md`), even though the mechanism there
-is per-partition capacity rather than a token bucket.
+purpose throttling serves in DynamoDB, even though the mechanism there is
+per-partition capacity rather than a token bucket.
 
 An **API key** is not a credential — it doesn't authenticate anyone; it's
 an identifier the caller includes with a request so API Gateway knows
