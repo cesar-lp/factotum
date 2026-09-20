@@ -9,7 +9,7 @@ function main(): void {
     process.exit(2);
   }
 
-  const notes = processVault(vaultDir);
+  const { notes } = processVault(vaultDir);
   const built = buildDeck(notes, new Date());
   const deck = withStableGeneratedAt(built, readExistingDeck(outFile));
   mkdirSync(dirname(outFile), { recursive: true });

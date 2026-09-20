@@ -56,7 +56,7 @@ describe('cloze cards do not print their own answer', () => {
     const vaultCopy = join(tmpRoot, 'vault');
     cpSync(REAL_VAULT_DIR, vaultCopy, { recursive: true });
 
-    const notes = processVault(vaultCopy);
+    const { notes } = processVault(vaultCopy);
     deck = buildDeck(notes, new Date());
   });
 
