@@ -48,6 +48,15 @@ export interface Settings {
    * missing deck must not silently un-mute a shelf.
    */
   disabledCategories: string[];
+  /**
+   * Name of the Obsidian vault the note-source deep link should open —
+   * i.e. what Obsidian itself calls the vault, which may differ from
+   * `vault/`, the folder name this repo happens to use. Defaults to
+   * `'vault'` since the README tells the owner to open that folder
+   * directly as their vault; sanitized to always be a non-empty string so
+   * the link never needs conditional hiding.
+   */
+  obsidianVault: string;
 }
 
 export interface FactotumSchema extends DBSchema {
