@@ -137,3 +137,105 @@ export function isDue(state: ReviewState, now: Date): boolean {
 export function isStillLearning(state: ReviewState): boolean {
   return state.state === State.Learning || state.state === State.Relearning;
 }
+
+export interface IntervalPreview {
+  again: string;
+  hard: string;
+  good: string;
+  easy: string;
+}
+
+const MINUTE_MS = 60 * 1000;
+const HOUR_MS = 60 * MINUTE_MS;
+const DAY_MS = 24 * HOUR_MS;
+const MONTH_MS = 30 * DAY_MS;
+const YEAR_MS = 12 * MONTH_MS;
+
+/**
+ * Tiers, from smallest to largest, each with the unit ms and the count of
+ * that unit at which a value must be promoted to the next tier instead of
+ * printed as-is (e.g. 60 whole minutes is "1h", never "60m"). The last
+ * tier (years) has no ceiling -- there is nothing bigger to promote into.
+ */
+const INTERVAL_TIERS: { unit: string; unitMs: number; rollover: number }[] = [
+  { unit: 'm', unitMs: MINUTE_MS, rollover: 60 },
+  { unit: 'h', unitMs: HOUR_MS, rollover: 24 },
+  { unit: 'd', unitMs: DAY_MS, rollover: 30 },
+  { unit: 'mo', unitMs: MONTH_MS, rollover: 12 },
+  { unit: 'y', unitMs: YEAR_MS, rollover: Infinity }
+];
+
+/**
+ * Formats a `due - now` gap compactly enough for a button label: "10m",
+ * "4h", "3d", "2mo", "3y". Thresholds:
+ *   - under 1 hour -> whole minutes ("10m")
+ *   - under 1 day -> whole hours ("4h")
+ *   - under 1 month (30 days) -> whole days ("3d")
+ *   - under 1 year (12 30-day months, 360 days) -> whole months ("2mo")
+ *   - 1 year or more -> whole years ("3y")
+ *
+ * Each bucket rounds to the nearest unit rather than flooring, so a gap a
+ * hair under a boundary (e.g. 59.6 minutes) reads as the next unit ("1h")
+ * instead of a confusing "59m" -- but the unit is picked from the RAW ms
+ * first and then re-checked after rounding: rounding within a tier can
+ * itself reach that tier's rollover (e.g. 59.6 minutes selects the minute
+ * tier, rounds to 60, and must then promote to "1h" rather than printing
+ * "60m"). The loop below keeps promoting until the rounded value is
+ * strictly below the tier's rollover, so the emitted number is never equal
+ * to or greater than the count of that unit in the next unit up.
+ *
+ * A non-positive gap (a card whose due date has already passed, e.g. one
+ * being re-rated after being missed) floors to "0m" -- "due now" is the
+ * honest label for a button whose preview can't distinguish "just due"
+ * from "overdue by some amount", and "0m" reads unambiguously as that
+ * rather than as a broken negative number.
+ */
+function tierAt(index: number): { unit: string; unitMs: number; rollover: number } {
+  const tier = INTERVAL_TIERS[index];
+  if (tier === undefined) throw new Error(`No interval tier at index ${index}`);
+  return tier;
+}
+
+export function formatInterval(ms: number): string {
+  if (ms <= 0) return '0m';
+
+  let index = 0;
+  if (ms >= YEAR_MS) index = 4;
+  else if (ms >= MONTH_MS) index = 3;
+  else if (ms >= DAY_MS) index = 2;
+  else if (ms >= HOUR_MS) index = 1;
+
+  let value = Math.round(ms / tierAt(index).unitMs);
+  while (value >= tierAt(index).rollover && index < INTERVAL_TIERS.length - 1) {
+    index += 1;
+    value = Math.round(ms / tierAt(index).unitMs);
+  }
+  return `${value}${tierAt(index).unit}`;
+}
+
+/**
+ * Previews the next-due interval for each of the four ratings, without
+ * scheduling anything. Uses `fsrs().repeat()`, which computes all four
+ * grades' resulting cards in a single call -- the same scheduler
+ * construction as `applyRating` (`fsrs(generatorParameters({
+ * request_retention: desiredRetention }))`), so the preview can never
+ * disagree with what a subsequent real `applyRating` call actually does.
+ * `state` is read-only here: `repeat()` is not `next()` and writes nothing
+ * back, and `applyRating` remains the only function that produces a
+ * schedule to persist.
+ */
+export function previewIntervals(
+  state: ReviewState,
+  now: Date,
+  desiredRetention: number
+): IntervalPreview {
+  const scheduler = fsrs(generatorParameters({ request_retention: desiredRetention }));
+  const recordLog = scheduler.repeat(toFsrsCard(state), now);
+  const nowMs = now.getTime();
+  return {
+    again: formatInterval(recordLog[Rating.Again].card.due.getTime() - nowMs),
+    hard: formatInterval(recordLog[Rating.Hard].card.due.getTime() - nowMs),
+    good: formatInterval(recordLog[Rating.Good].card.due.getTime() - nowMs),
+    easy: formatInterval(recordLog[Rating.Easy].card.due.getTime() - nowMs)
+  };
+}

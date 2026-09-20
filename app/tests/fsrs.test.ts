@@ -9,9 +9,46 @@ import {
   failureCount,
   isLeech,
   LEECH_THRESHOLD,
+  previewIntervals,
+  formatInterval,
   type Outcome
 } from '../src/scheduler/fsrs.js';
 import type { CardFormat } from '../../pipeline/src/types.js';
+
+const MINUTE_MS = 60 * 1000;
+const HOUR_MS = 60 * MINUTE_MS;
+const DAY_MS = 24 * HOUR_MS;
+const MONTH_MS = 30 * DAY_MS;
+const YEAR_MS = 12 * MONTH_MS;
+
+// Parses a formatInterval label back to milliseconds, so ordering
+// assertions can compare magnitudes across unit boundaries (e.g. "50m" vs
+// "2h") rather than doing a meaningless lexicographic string comparison.
+function labelToMs(label: string): number {
+  const match = /^(\d+)(mo|m|h|d|y)$/.exec(label);
+  if (!match) throw new Error(`Unparseable interval label: ${label}`);
+  const [, digits, unit] = match;
+  const n = Number(digits);
+  switch (unit) {
+    case 'm':
+      return n * MINUTE_MS;
+    case 'h':
+      return n * HOUR_MS;
+    case 'd':
+      return n * DAY_MS;
+    case 'mo':
+      return n * MONTH_MS;
+    case 'y':
+      return n * YEAR_MS;
+    default:
+      throw new Error(`Unhandled unit: ${unit}`);
+  }
+}
+
+// The unit-rollover thresholds that formatInterval must never reach: a
+// label's numeric part must always be strictly below the count of that
+// unit that makes up one of the next unit up (60m -> 1h, not "60m").
+const ROLLOVERS: Record<string, number> = { m: 60, h: 24, d: 30, mo: 12 };
 
 const now = new Date('2026-09-18T09:00:00Z');
 
@@ -296,5 +333,169 @@ describe('failureCount / isLeech', () => {
     expect(isLeech(state)).toBe(true);
     expect(state.suspended).toBe(true);
     expect(state.flagged).toBe(true);
+  });
+});
+
+describe('formatInterval', () => {
+  it('formats sub-hour gaps in minutes', () => {
+    expect(formatInterval(0)).toBe('0m');
+    expect(formatInterval(10 * MINUTE_MS)).toBe('10m');
+    expect(formatInterval(59 * MINUTE_MS)).toBe('59m');
+  });
+
+  it('formats the minute/hour boundary', () => {
+    // Just under an hour still rounds to 60 whole minutes, which must
+    // promote to "1h" rather than print the out-of-range "60m".
+    expect(formatInterval(60 * MINUTE_MS - 1)).toBe('1h');
+    expect(formatInterval(HOUR_MS)).toBe('1h');
+  });
+
+  it('formats sub-day gaps in hours', () => {
+    expect(formatInterval(4 * HOUR_MS)).toBe('4h');
+    expect(formatInterval(23 * HOUR_MS)).toBe('23h');
+  });
+
+  it('formats the hour/day boundary', () => {
+    // Just under a day rounds to 24 whole hours, which must promote to
+    // "1d" rather than print the out-of-range "24h".
+    expect(formatInterval(24 * HOUR_MS - 1)).toBe('1d');
+    expect(formatInterval(DAY_MS)).toBe('1d');
+  });
+
+  it('formats sub-month gaps in days', () => {
+    expect(formatInterval(3 * DAY_MS)).toBe('3d');
+    expect(formatInterval(29 * DAY_MS)).toBe('29d');
+  });
+
+  it('formats the day/month boundary', () => {
+    // Just under a month rounds to 30 whole days, which must promote to
+    // "1mo" rather than print the out-of-range "30d".
+    expect(formatInterval(30 * DAY_MS - 1)).toBe('1mo');
+    expect(formatInterval(MONTH_MS)).toBe('1mo');
+  });
+
+  it('formats multi-month gaps in months', () => {
+    expect(formatInterval(2 * MONTH_MS)).toBe('2mo');
+    expect(formatInterval(9 * MONTH_MS)).toBe('9mo');
+  });
+
+  it('formats the month/year boundary', () => {
+    // Just under a year rounds to 12 whole months, which must promote to
+    // "1y" rather than print the out-of-range "12mo".
+    expect(formatInterval(YEAR_MS - 1)).toBe('1y');
+    expect(formatInterval(YEAR_MS)).toBe('1y');
+  });
+
+  it('formats multi-year gaps in years, with no ceiling to promote past', () => {
+    expect(formatInterval(2 * YEAR_MS)).toBe('2y');
+    expect(formatInterval(50 * YEAR_MS)).toBe('50y');
+  });
+
+  it('rounds to the nearest unit rather than flooring', () => {
+    // 59.6 minutes is closer to 60m than 59m -- and 60m immediately
+    // promotes to the next unit, per the boundary tests above.
+    expect(formatInterval(59.6 * MINUTE_MS)).toBe('1h');
+  });
+
+  it('floors a non-positive gap to 0m instead of going negative', () => {
+    // Reachable: a card whose due date has already passed (e.g. a review
+    // session re-rating a card that was missed) yields due - now <= 0.
+    expect(formatInterval(-1000)).toBe('0m');
+    expect(formatInterval(0)).toBe('0m');
+  });
+
+  it('never emits a number at or above its unit\'s rollover, across a spread spanning all five tiers', () => {
+    // Property-style sweep: for many durations from a minute out to a
+    // century, in both round-number and deliberately-awkward fractional
+    // forms, the parsed-back number must always be strictly below the
+    // threshold at which that unit promotes to the next one up. This is
+    // the general form of the exact bug the hand-picked boundary tests
+    // above pin: rounding inside a tier chosen from raw ms can reach that
+    // tier's rollover, and the formatter must re-promote when it does.
+    const samples: number[] = [];
+    for (let n = 1; n <= 400; n++) {
+      samples.push(n * MINUTE_MS);
+      samples.push(n * MINUTE_MS - 0.4 * MINUTE_MS);
+      samples.push(n * HOUR_MS);
+      samples.push(n * HOUR_MS - 0.4 * HOUR_MS);
+      samples.push(n * DAY_MS);
+      samples.push(n * DAY_MS - 0.4 * DAY_MS);
+      samples.push(n * MONTH_MS - 0.4 * MONTH_MS);
+      samples.push(n * YEAR_MS - 0.4 * YEAR_MS);
+    }
+
+    for (const ms of samples) {
+      if (ms <= 0) continue;
+      const label = formatInterval(ms);
+      const match = /^(\d+)(mo|m|h|d|y)$/.exec(label);
+      expect(match, `unparseable label "${label}" for ${ms}ms`).not.toBeNull();
+      const [, digits, unit] = match!;
+      if (digits === undefined || unit === undefined) throw new Error(`Bad match for "${label}"`);
+      const rollover = ROLLOVERS[unit];
+      if (rollover !== undefined) {
+        expect(
+          Number(digits),
+          `"${label}" for ${ms}ms reached or exceeded the ${unit} rollover of ${rollover}`
+        ).toBeLessThan(rollover);
+      }
+    }
+  });
+});
+
+describe('previewIntervals', () => {
+  it('returns the four labels ordered again <= hard <= good <= easy', () => {
+    const state = initialState('card-aaaa', now);
+    const preview = previewIntervals(state, now, 0.9);
+    const again = labelToMs(preview.again);
+    const hard = labelToMs(preview.hard);
+    const good = labelToMs(preview.good);
+    const easy = labelToMs(preview.easy);
+    expect(again).toBeLessThanOrEqual(hard);
+    expect(hard).toBeLessThanOrEqual(good);
+    expect(good).toBeLessThanOrEqual(easy);
+  });
+
+  it('holds the ordering for a graduated Review-state card too', () => {
+    const state = applyRating(initialState('card-aaaa', now), Rating.Easy, now, 0.9);
+    const later = new Date(state.due);
+    const preview = previewIntervals(state, later, 0.9);
+    const again = labelToMs(preview.again);
+    const hard = labelToMs(preview.hard);
+    const good = labelToMs(preview.good);
+    const easy = labelToMs(preview.easy);
+    expect(again).toBeLessThanOrEqual(hard);
+    expect(hard).toBeLessThanOrEqual(good);
+    expect(good).toBeLessThanOrEqual(easy);
+  });
+
+  it('does not mutate the state it is given', () => {
+    const state = initialState('card-aaaa', now);
+    const snapshot = JSON.parse(JSON.stringify(state));
+    previewIntervals(state, now, 0.9);
+    expect(state).toEqual(snapshot);
+  });
+
+  it('agrees with what applyRating actually does for each rating', () => {
+    const ratings: { grade: Rating; key: keyof ReturnType<typeof previewIntervals> }[] = [
+      { grade: Rating.Again, key: 'again' },
+      { grade: Rating.Hard, key: 'hard' },
+      { grade: Rating.Good, key: 'good' },
+      { grade: Rating.Easy, key: 'easy' }
+    ];
+
+    for (const { grade, key } of ratings) {
+      const state = initialState('card-aaaa', now);
+      const preview = previewIntervals(state, now, 0.9);
+      const actual = applyRating(state, grade, now, 0.9);
+      expect(formatInterval(actual.due - now.getTime())).toBe(preview[key]);
+    }
+  });
+
+  it('agrees with applyRating on a previously-reviewed, graduated card as well', () => {
+    const base = applyRating(initialState('card-aaaa', now), Rating.Good, now, 0.9);
+    const later = new Date(base.due);
+    const preview = previewIntervals(base, later, 0.9);
+    const actual = applyRating(base, Rating.Good, later, 0.9);
+    expect(formatInterval(actual.due - later.getTime())).toBe(preview.good);
   });
 });
