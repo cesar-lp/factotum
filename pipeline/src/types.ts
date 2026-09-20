@@ -51,3 +51,51 @@ export interface Deck {
   generatedAt: string;
   cards: DeckCard[];
 }
+
+/** A cloze highlight's span within its block's joined text. */
+export interface RawCloze {
+  start: number;
+  end: number;
+  /** Ordinal into the `ParsedCard[]` that `parseCards` yields for the same body. */
+  cardIndex: number;
+  answer: string;
+}
+
+export interface ResolvedCloze {
+  start: number;
+  end: number;
+  cardId: string;
+  answer: string;
+}
+
+/** A block as `parseBlocks` emits it: card references are ordinals. */
+export type RawBlock =
+  | { kind: 'heading'; level: number; text: string }
+  | { kind: 'code'; lang: string | null; text: string }
+  | { kind: 'list'; items: string[] }
+  | { kind: 'prose'; text: string; clozes: RawCloze[] }
+  | { kind: 'qa'; cardIndex: number; prompt: string; answer: string }
+  | { kind: 'card'; cardIndex: number; format: 'mcq' | 'recall'; prompt: string; choices?: Choice[]; answer?: string };
+
+/** A block after `build.ts` resolves ordinals to ids. Only this form is serialized. */
+export type NoteBlock =
+  | { kind: 'heading'; level: number; text: string }
+  | { kind: 'code'; lang: string | null; text: string }
+  | { kind: 'list'; items: string[] }
+  | { kind: 'prose'; text: string; clozes: ResolvedCloze[] }
+  | { kind: 'qa'; cardId: string; prompt: string; answer: string }
+  | { kind: 'card'; cardId: string; format: 'mcq' | 'recall'; prompt: string; choices?: Choice[]; answer?: string };
+
+export interface NoteDoc {
+  path: string;
+  title: string;
+  topic: string;
+  category: string;
+  citations: string[];
+  blocks: NoteBlock[];
+}
+
+export interface Notes {
+  generatedAt: string;
+  notes: NoteDoc[];
+}
