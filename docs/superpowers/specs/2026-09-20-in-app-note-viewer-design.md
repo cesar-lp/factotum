@@ -271,6 +271,44 @@ a note is a read, not a judgement — it does not set `submitting`, lock
 controls, record anything, advance, or affect scheduling. The viewer scrolls
 to the arrived-from card and highlights it, unmasked.
 
+**The session survives the detour.** Unlike the `obsidian://` `window.open`
+it replaces — which merely suspended the PWA — a hash assignment fires
+`hashchange`, which `main.ts` routes on. Re-entering `#review` the ordinary
+way would call `startReview` again with a freshly built session, discarding
+everything `startReview` holds in its closure: the index, the reviewed and
+rating counts, the session timer's start, the per-card requeue counts, and
+the session array that in-session re-queues have spliced into. The failure
+is not theoretical: after a card is rated Again its FSRS due time is 1-10
+minutes out, so no rebuild sees it as due, and a session that is finished
+but for that re-queue rebuilds *empty* — dropping the reader on the
+dashboard mid-session, with no summary and the learning-step repetition
+never served.
+
+So the session is not rebuilt. `main.ts` renders the review screen into its
+own node (`.screen-host`, `display: contents`, so `.screen` stays the direct
+flex item of `#app` it is everywhere else), **detaches that node whole**
+when routing away, and re-attaches it on return. A detached node keeps its
+event listeners, and those listeners keep the closure alive, so nothing has
+to be extracted, snapshotted or replayed — there is no list of fields to
+forget, and no way for a later addition to `startReview` to be silently
+left behind.
+
+Routing follows suit rather than being bypassed: `decideRoute` takes the
+suspended session's hash as a third argument (passed in, never read from a
+global — that module stays pure and DOM-free) and returns a distinct
+`resume` decision when it matches. That is not a loosening of the
+`session.length > 0` guard. The guard decides whether a session may be
+*built*, and it already ran, and passed, when this one was; re-running it
+against a freshly loaded `DashboardState` fails precisely *because* the
+session is mid-flight. With nothing suspended, every existing decision is
+unchanged.
+
+A note is the **only** detour a session survives. The summary's Done, the
+header ×, and every other destination drop the retained node, so a stale
+session can never be resurrected by a later back/forward. A full reload
+destroys it too — the app persists no session state today, and this does
+not add any.
+
 **Entry point B — topics.** `renderTopics` already walks topic → category;
 notes are the natural third level. A category expands to its note list,
 which opens the viewer. Because `notes.json` is lazy, this list must degrade

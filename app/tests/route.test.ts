@@ -114,6 +114,56 @@ describe('decideRoute', () => {
   });
 });
 
+describe('decideRoute with a suspended session', () => {
+  it('resumes #review even though a freshly built session would be empty', () => {
+    // THE case this exists for: the reader graded everything, one card was
+    // re-queued in-session (so it is scheduled minutes out and no rebuild
+    // sees it as due), then detoured to a note. Rebuilding would hand back
+    // an empty session and eject them to the dashboard mid-session.
+    expect(decideRoute('#review', state([], []), '#review')).toEqual({ kind: 'resume' });
+  });
+
+  it('resumes #review-extend', () => {
+    expect(decideRoute('#review-extend', state([], []), '#review-extend'))
+      .toEqual({ kind: 'resume' });
+  });
+
+  it('resumes a focus session, without needing the category to still be servable', () => {
+    expect(decideRoute('#focus/amp', state([], [], topics()), '#focus/amp'))
+      .toEqual({ kind: 'resume' });
+  });
+
+  it('only resumes the exact route the session was started from', () => {
+    // A suspended #review must not turn #review-extend into a resume, nor
+    // survive a trip to any other screen.
+    const s = state([], [card('new-1')]);
+    expect(decideRoute('#review-extend', s, '#review')).toEqual({ kind: 'review-extend' });
+    expect(decideRoute('#topics', s, '#review')).toEqual({ kind: 'topics' });
+    expect(decideRoute('', s, '#review')).toEqual({ kind: 'dashboard' });
+  });
+
+  it('still routes the note detour to the note, not to a resume', () => {
+    // The whole point: the note has to render while the session waits.
+    expect(decideRoute(noteHash('vault/a.md', 'card-ab12'), state([], []), '#review'))
+      .toEqual({ kind: 'note', path: 'vault/a.md', cardId: 'card-ab12' });
+  });
+
+  it('never invents a resume for a non-session route', () => {
+    // Belt and braces: a retention record can only ever name a session
+    // route, but a bad one must degrade to normal guarded routing.
+    expect(decideRoute('#settings', state([], []), '#settings')).toEqual({ kind: 'settings' });
+    expect(decideRoute('#topics', state([], []), '#topics')).toEqual({ kind: 'topics' });
+  });
+
+  it('leaves every guard exactly as it was when nothing is suspended', () => {
+    // The invariant above, restated against the new parameter: passing null
+    // (or omitting it) must not change a single decision.
+    const s = state([card('due-1')], [card('new-1')]);
+    expect(decideRoute('#review-extend', s, null)).toEqual({ kind: 'dashboard' });
+    expect(decideRoute('#review', state([], []), null)).toEqual({ kind: 'dashboard' });
+  });
+});
+
 describe('focusHash', () => {
   it('round-trips a category containing characters that need encoding', () => {
     const s = state([], [], topics('data systems'));

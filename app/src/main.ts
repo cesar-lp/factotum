@@ -29,6 +29,31 @@ const REPO = 'cesar-lp/factotum';
 let topicsRenderId = 0;
 
 /**
+ * The live review screen, retained across a note detour.
+ *
+ * `startReview` keeps its entire session in a closure — index, reviewed
+ * count, rating tallies, the session timer's start, per-card requeue counts,
+ * the FSRS states it has been keeping in sync, the mcq choice cache, and the
+ * `session` array that in-session re-queues splice into. None of that is
+ * reachable from outside, and tapping "open note" is a hashchange, so
+ * without this the detour would rebuild the session from scratch and lose
+ * all of it (a finished-but-for-a-requeue session rebuilds EMPTY, which
+ * drops the reader on the dashboard mid-session).
+ *
+ * So rather than snapshotting that state and replaying it — which only works
+ * for as long as nobody adds a field and forgets to snapshot it — the
+ * screen's DOM node is detached and held whole. A detached node keeps its
+ * event listeners, and those listeners keep the closure alive, so the
+ * session survives untouched by construction; there is no list of fields to
+ * get wrong. `hash` is the route it belongs to, which is what makes the
+ * return trip identifiable and what `decideRoute` matches against.
+ *
+ * Not persisted: a full reload legitimately ends the session, exactly as it
+ * does today.
+ */
+let suspendedReview: { hash: string; node: HTMLElement } | null = null;
+
+/**
  * Fetches and merges the deck. Never throws: a failed fetch/parse is a
  * normal offline condition, and the previously merged deck in IndexedDB
  * (if any) stays authoritative. Returns whether the sync succeeded so the
@@ -80,37 +105,64 @@ export async function loadDashboardState(db: FactotumDb, now: Date): Promise<Das
 }
 
 async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: boolean): Promise<void> {
+  const hash = window.location.hash;
+
+  // Detach the review screen BEFORE anything else here can overwrite
+  // appRoot: every render path below replaces its content wholesale, so a
+  // review screen still parented to it would be destroyed — closure and
+  // all — the instant one of them ran. This is synchronous and ahead of the
+  // await below on purpose; the awaits are where another render could
+  // otherwise slip in. Detaching is free when the session turns out to be
+  // resumable, since re-attaching is all that takes.
+  suspendedReview?.node.remove();
+
   const now = new Date();
   const state = await loadDashboardState(db, now);
-  const hash = window.location.hash;
-  const decision = decideRoute(hash, state);
+  const decision = decideRoute(hash, state, suspendedReview?.hash ?? null);
+
+  if (decision.kind === 'resume' && suspendedReview) {
+    appRoot.replaceChildren(suspendedReview.node);
+    return;
+  }
+
+  // Everything past here ends the retained session. A note is the ONLY
+  // detour it survives: any other destination — the summary's Done, the
+  // header ×, the dashboard, topics, settings, a focus hash — means the
+  // reader has left for good, and a session kept past that point could be
+  // resurrected later by a stale back/forward entry.
+  if (decision.kind !== 'note') suspendedReview = null;
+
+  // Renders a review session into its own node so the whole screen can be
+  // detached and re-attached across a note detour (see suspendedReview).
+  const begin = async (session: StoredCard[], onDone: () => void): Promise<void> => {
+    const node = document.createElement('div');
+    // display:contents — the host is a handle to grab the screen by, never
+    // a box. `.screen` stays the direct flex item of #app it has always
+    // been, so no layout rule in base.css or review.css has to know it.
+    node.className = 'screen-host';
+    suspendedReview = { hash, node };
+    appRoot.replaceChildren(node);
+    await startReview(node, { db, session, repo: REPO, onDone });
+  };
 
   if (decision.kind === 'review') {
-    await startReview(appRoot, {
-      db, session: state.session, repo: REPO,
-      onDone: () => { window.location.hash = ''; }
-    });
+    await begin(state.session, () => { window.location.hash = ''; });
     return;
   }
 
   if (decision.kind === 'review-extend') {
-    await startReview(appRoot, {
-      db, session: state.extension, repo: REPO,
-      onDone: () => { window.location.hash = ''; }
-    });
+    await begin(state.extension, () => { window.location.hash = ''; });
     return;
   }
 
   if (decision.kind === 'focus') {
     const [cards, reviews] = await Promise.all([db.getAll('cards'), loadReviews(db)]);
-    await startReview(appRoot, {
-      db,
-      session: buildFocusSession({ cards, reviews, now, category: decision.category }),
-      repo: REPO,
+    await begin(
+      buildFocusSession({ cards, reviews, now, category: decision.category }),
       // Back to the picker, not the dashboard — a focused session lands you
       // where you launched it.
-      onDone: () => { window.location.hash = '#topics'; }
-    });
+      () => { window.location.hash = '#topics'; }
+    );
     return;
   }
 

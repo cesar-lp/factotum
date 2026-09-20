@@ -389,6 +389,12 @@ Tapping a hidden answer reveals just that one; a header control reveals the
 whole note at once. Full design and rationale in
 `docs/superpowers/specs/2026-09-20-in-app-note-viewer-design.md`.
 
+**Opening a note mid-review doesn't end the session.** Going back lands you
+on the same card, in the same state, with the progress counter, the rating
+tallies, the session timer and any card you rated Again all intact — the
+review screen is set aside while you read, not torn down and rebuilt. A
+full page reload still ends the session, as it always has.
+
 **Open in Obsidian** moved into the viewer's header. It still opens via an
 `obsidian://open` deep link and is still the better tool for *editing* a
 note on a Mac — which the in-app viewer will never do — but is no longer

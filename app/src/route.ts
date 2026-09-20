@@ -26,6 +26,13 @@ export interface DashboardState {
 }
 
 export type RouteDecision =
+  /**
+   * Return to a review session that is still alive in memory, suspended
+   * while the reader detoured to a note. Distinct from `review` because
+   * nothing is built: the caller re-attaches the retained screen and the
+   * session's own closure carries on where it left off.
+   */
+  | { kind: 'resume' }
   | { kind: 'review' }
   | { kind: 'review-extend' }
   | { kind: 'focus'; category: string }
@@ -101,6 +108,16 @@ function noteTarget(hash: string): { path: string; cardId: string | null } | nul
 }
 
 /**
+ * The three hashes that run a review session, and therefore the only ones a
+ * suspended session can belong to. Checked even though `suspendedHash` is
+ * only ever set from one of them: a bad retention record must degrade to the
+ * normal guarded routing, never invent a `resume` for `#settings`.
+ */
+function isSessionRoute(hash: string): boolean {
+  return hash === '#review' || hash === '#review-extend' || hash.startsWith(FOCUS_PREFIX);
+}
+
+/**
  * The routing DECISION, pulled apart from main.ts's route()'s side effects
  * (DOM render, hash mutation, db fetch) so the one invariant that matters
  * here — due cards always come first, so `#review-extend` may only win when
@@ -111,8 +128,30 @@ function noteTarget(hash: string): { path: string; cardId: string | null } | nul
  * no CSS imports anywhere in its module graph, so it (unlike main.ts, which
  * touches `document` and `window` at import time) is safe to import directly
  * in a plain node test environment.
+ *
+ * `suspendedHash` is the hash of a review session the caller is still
+ * holding in memory (see main.ts), or null when there is none. It is passed
+ * in rather than read from a module global precisely so this stays pure.
  */
-export function decideRoute(hash: string, state: DashboardState): RouteDecision {
+export function decideRoute(
+  hash: string,
+  state: DashboardState,
+  suspendedHash: string | null = null
+): RouteDecision {
+  // A retained session outranks every guard below, but only for the exact
+  // route it was started from. That is not a loosening of those guards: they
+  // decide whether a session may be BUILT, and they already ran — and
+  // passed — when this one was. Re-running them against a freshly loaded
+  // DashboardState would fail for a session that is mid-flight precisely
+  // because its cards are no longer due (they have just been graded, and an
+  // Again re-queue sits 1-10 minutes out), which would eject the reader from
+  // a session still in progress. The caller drops `suspendedHash` the moment
+  // the session is finished or the reader goes anywhere that is not a note,
+  // so nothing stale can be resurrected through here.
+  if (suspendedHash !== null && hash === suspendedHash && isSessionRoute(hash)) {
+    return { kind: 'resume' };
+  }
+
   if (hash === '#review' && state.session.length > 0) return { kind: 'review' };
 
   // Due cards always come first — this re-checks the same condition the

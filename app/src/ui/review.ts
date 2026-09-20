@@ -346,6 +346,14 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
     //
     // The card id rides along so the viewer can leave THIS card unmasked:
     // it is due by definition, but you have just answered it.
+    //
+    // This assignment fires `hashchange`, which main.ts routes on — unlike
+    // the obsidian:// window.open it replaced, which merely suspended the
+    // PWA. The session is NOT rebuilt on the way back: main.ts detaches this
+    // screen's DOM node and re-attaches it, so every closure variable above
+    // (index, reviewed, ratingCounts, sessionStartedAt, requeueCounts, the
+    // spliced deps.session) survives the detour untouched. Read that
+    // retention machinery before changing anything about how this navigates.
     root.querySelector('[data-role="source"]')?.addEventListener('click', () => {
       window.location.hash = noteHash(card.source.path, card.id);
     });
