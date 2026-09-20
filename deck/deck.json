@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-20T17:03:28.131Z",
+  "generatedAt": "2026-09-20T17:26:13.019Z",
   "cards": [
     {
       "id": "card-6fmp",
@@ -27810,10 +27810,1019 @@
       ]
     },
     {
+      "id": "card-fsjp",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "caching",
+        "cache-control",
+        "etag",
+        "validation",
+        "http"
+      ],
+      "prompt": "What are the two phases HTTP caching splits into, and what question does each answer?",
+      "source": {
+        "path": "vault/networking/http/caching-and-conditional-requests.md",
+        "block": "card-fsjp"
+      },
+      "citations": [
+        "RFC 9111 (HTTP Caching)",
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "The freshness phase asks whether a stored response is still within its lifetime and can be served with zero network trips. Once that lifetime expires the response is stale, and the validation phase takes over, asking the origin server whether the stale copy still matches reality before reusing or replacing it."
+    },
+    {
+      "id": "card-27mu",
+      "format": "mcq",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "caching",
+        "cache-control",
+        "etag",
+        "validation",
+        "http"
+      ],
+      "prompt": "A response is served with `Cache-Control: no-cache`. What must a cache do before it can reuse a stored copy of that response for a later request?",
+      "source": {
+        "path": "vault/networking/http/caching-and-conditional-requests.md",
+        "block": "card-27mu"
+      },
+      "citations": [
+        "RFC 9111 (HTTP Caching)",
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "choices": [
+        {
+          "text": "Revalidate with the origin server first — no-cache does not forbid storing the response, only reusing it without asking",
+          "correct": true
+        },
+        {
+          "text": "Nothing — the response must never be reused at all",
+          "correct": false
+        },
+        {
+          "text": "Discard it immediately, since no-cache forbids storage",
+          "correct": false
+        },
+        {
+          "text": "Reuse it freely without contacting the origin, since only a separate directive requires validation",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-ki1c",
+      "format": "cloze",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "caching",
+        "cache-control",
+        "etag",
+        "validation",
+        "http"
+      ],
+      "prompt": "Storage and reuse are two different permissions, and the directive that actually withholds the first one is spelled differently. The ___ directive is the one that forbids a cache from keeping any copy of the response at all, in any form, for any later use.",
+      "source": {
+        "path": "vault/networking/http/caching-and-conditional-requests.md",
+        "block": "card-ki1c"
+      },
+      "citations": [
+        "RFC 9111 (HTTP Caching)",
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "no-store"
+    },
+    {
+      "id": "card-tfya",
+      "format": "cloze",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "caching",
+        "cache-control",
+        "etag",
+        "validation",
+        "http"
+      ],
+      "prompt": "`Cache-Control` also separates *who* a response is fresh for. A response marked ___ is meant for a single end user's own cache (a browser), not for a cache shared across many users; a `public` response may be stored by anyone, including a shared cache sitting between the origin and every client it serves. A CDN that ignored the distinction and stored the wrong one would end up serving one user's personalized page to every other visitor.",
+      "source": {
+        "path": "vault/networking/http/caching-and-conditional-requests.md",
+        "block": "card-tfya"
+      },
+      "citations": [
+        "RFC 9111 (HTTP Caching)",
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "private"
+    },
+    {
+      "id": "card-j7zb",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "caching",
+        "cache-control",
+        "etag",
+        "validation",
+        "http"
+      ],
+      "prompt": "If a response carries both `max-age=60` and `s-maxage=600`, what freshness lifetime applies in a private browser cache versus a shared cache like a CDN?",
+      "source": {
+        "path": "vault/networking/http/caching-and-conditional-requests.md",
+        "block": "card-j7zb"
+      },
+      "citations": [
+        "RFC 9111 (HTTP Caching)",
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "A private cache without special support for s-maxage just uses max-age, so it treats the response as fresh for 60 seconds. A shared cache uses s-maxage instead, which exists specifically to override max-age for shared caches, so it treats the same response as fresh for 600 seconds."
+    },
+    {
+      "id": "card-xds3",
+      "format": "cloze",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "caching",
+        "cache-control",
+        "etag",
+        "validation",
+        "http"
+      ],
+      "prompt": "A response marked ___ tells a cache the underlying resource will never change for the rest of its freshness lifetime, so even an explicit user reload should skip revalidation entirely rather than checking just in case.",
+      "source": {
+        "path": "vault/networking/http/caching-and-conditional-requests.md",
+        "block": "card-xds3"
+      },
+      "citations": [
+        "RFC 9111 (HTTP Caching)",
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "immutable"
+    },
+    {
+      "id": "card-y8ux",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "caching",
+        "cache-control",
+        "etag",
+        "validation",
+        "http"
+      ],
+      "prompt": "What does Cache-Control: must-revalidate change about how a cache is allowed to handle a stale response, compared to ordinary staleness handling?",
+      "source": {
+        "path": "vault/networking/http/caching-and-conditional-requests.md",
+        "block": "card-y8ux"
+      },
+      "citations": [
+        "RFC 9111 (HTTP Caching)",
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "Ordinarily a cache is permitted to serve a known-stale response anyway if it can't reach the origin, for example during a network outage. must-revalidate removes that fallback: the cache must fail the request rather than serve stale content without successfully validating it first."
+    },
+    {
+      "id": "card-yc1q",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "caching",
+        "cache-control",
+        "etag",
+        "validation",
+        "http"
+      ],
+      "prompt": "Once a response goes stale, validation needs something to compare against — a **validator**. HTTP defines two independent kinds. What are the two kinds of validators HTTP caching uses to check whether a stale response has actually changed, and what does each compare?",
+      "source": {
+        "path": "vault/networking/http/caching-and-conditional-requests.md",
+        "block": "card-yc1q"
+      },
+      "citations": [
+        "RFC 9111 (HTTP Caching)",
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "An ETag is an opaque token — often a content hash — representing the exact representation, compared for equality between what the cache has and what the origin currently serves. Last-Modified is a timestamp of when the resource last changed, compared by date. A cache sends whichever validator it has back to the origin (as If-None-Match or a conditional date header) and gets a 304 back if nothing has changed."
+    },
+    {
+      "id": "card-suhk",
+      "format": "cloze",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "caching",
+        "cache-control",
+        "etag",
+        "validation",
+        "http"
+      ],
+      "prompt": "ETags come in two comparison strengths. A weak validator is prefixed with ___ and only claims the representation is semantically equivalent, not byte-for-byte identical — so it's good enough to skip re-sending a page whose content is unchanged in meaning, but it cannot be trusted for something like a range request that needs exact identity between the ranges being stitched together.",
+      "source": {
+        "path": "vault/networking/http/caching-and-conditional-requests.md",
+        "block": "card-suhk"
+      },
+      "citations": [
+        "RFC 9111 (HTTP Caching)",
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "W/"
+    },
+    {
+      "id": "card-w7wb",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "caching",
+        "cache-control",
+        "etag",
+        "validation",
+        "http"
+      ],
+      "prompt": "Why does an incorrect Vary header on a response stored in a shared cache risk poisoning that cache for other users?",
+      "source": {
+        "path": "vault/networking/http/caching-and-conditional-requests.md",
+        "block": "card-w7wb"
+      },
+      "citations": [
+        "RFC 9111 (HTTP Caching)",
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "Vary lists which request headers split a single URL into separate cached variants — Accept-Language and Accept-Encoding are common examples. If a response's Vary header omits a request header that actually changes the response body, the shared cache stores just one variant under that URL and may later serve it to a different user whose request differed exactly on the omitted header — handing them the wrong language or an encoding their client can't decode."
+    },
+    {
+      "id": "card-p4xv",
+      "format": "cloze",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "caching",
+        "cache-control",
+        "etag",
+        "validation",
+        "http"
+      ],
+      "prompt": "Waiting out the validation round-trip is itself a latency cost, which is what the newest directive addresses. The ___ directive lets a cache serve its stale copy to the user immediately while it revalidates with the origin in the background, trading a small window of possible staleness for making that request's latency disappear entirely — the served copy just might be a few seconds out of date until the background check completes.",
+      "source": {
+        "path": "vault/networking/http/caching-and-conditional-requests.md",
+        "block": "card-p4xv"
+      },
+      "citations": [
+        "RFC 9111 (HTTP Caching)",
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "stale-while-revalidate"
+    },
+    {
+      "id": "card-zvlf",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http1-1",
+        "head-of-line-blocking",
+        "pipelining",
+        "connection-management"
+      ],
+      "prompt": "Why can a slow response on a persistent HTTP/1.1 connection delay a request that was sent after it, even though the connection has spare capacity?",
+      "source": {
+        "path": "vault/networking/http/connection-management-in-http-1-1.md",
+        "block": "card-zvlf"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "Grigorik, High Performance Browser Networking"
+      ],
+      "answer": "HTTP/1.1 allows only one request in flight per connection at a time, so a later request cannot even be sent — let alone answered — until the response to the request ahead of it completes. The delay comes from the protocol's request/response ordering rule, not from any shortage of network bandwidth."
+    },
+    {
+      "id": "card-uynm",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http1-1",
+        "head-of-line-blocking",
+        "pipelining",
+        "connection-management"
+      ],
+      "prompt": "What does HTTP pipelining allow a client to do that plain persistent HTTP/1.1 does not?",
+      "source": {
+        "path": "vault/networking/http/connection-management-in-http-1-1.md",
+        "block": "card-uynm"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "Grigorik, High Performance Browser Networking"
+      ],
+      "answer": "Send several requests over one connection before any of their responses have arrived, instead of sending each request only after the previous response has fully returned."
+    },
+    {
+      "id": "card-1xrn",
+      "format": "recall",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http1-1",
+        "head-of-line-blocking",
+        "pipelining",
+        "connection-management"
+      ],
+      "prompt": "HTTP pipelining lets a client send several requests without waiting for each response in between. Explain why this still does not prevent one slow request from delaying requests that were queued behind it.",
+      "source": {
+        "path": "vault/networking/http/connection-management-in-http-1-1.md",
+        "block": "card-1xrn"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "Grigorik, High Performance Browser Networking"
+      ]
+    },
+    {
+      "id": "card-l50q",
+      "format": "mcq",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http1-1",
+        "head-of-line-blocking",
+        "pipelining",
+        "connection-management"
+      ],
+      "prompt": "Beyond the in-order response requirement, why did major browsers never enable HTTP pipelining by default?",
+      "source": {
+        "path": "vault/networking/http/connection-management-in-http-1-1.md",
+        "block": "card-l50q"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "Grigorik, High Performance Browser Networking"
+      ],
+      "choices": [
+        {
+          "text": "Deployed intermediaries such as proxies handled pipelined requests unreliably, causing silent corruption",
+          "correct": true
+        },
+        {
+          "text": "Pipelining was never actually included in the HTTP/1.1 specification",
+          "correct": false
+        },
+        {
+          "text": "Pipelining required a new TCP option unsupported by most operating systems",
+          "correct": false
+        },
+        {
+          "text": "Pipelining only worked over encrypted connections, which were rare at the time",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-wbf9",
+      "format": "cloze",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http1-1",
+        "head-of-line-blocking",
+        "pipelining",
+        "connection-management"
+      ],
+      "prompt": "With pipelining a practical dead end, browsers worked around application-layer head-of-line blocking a different way: instead of one connection to a server, open several. The de facto convention that emerged was roughly ___ parallel connections per origin (host plus scheme plus port).",
+      "source": {
+        "path": "vault/networking/http/connection-management-in-http-1-1.md",
+        "block": "card-wbf9"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "Grigorik, High Performance Browser Networking"
+      ],
+      "answer": "six"
+    },
+    {
+      "id": "card-wlkq",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http1-1",
+        "head-of-line-blocking",
+        "pipelining",
+        "connection-management"
+      ],
+      "prompt": "What are the two per-connection costs a browser accepts by opening roughly six parallel connections to one origin instead of reusing a single connection?",
+      "source": {
+        "path": "vault/networking/http/connection-management-in-http-1-1.md",
+        "block": "card-wlkq"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "Grigorik, High Performance Browser Networking"
+      ],
+      "answer": "Each additional connection needs its own setup handshake before it can carry data, and each maintains its own separate congestion window that starts small and ramps up independently, rather than sharing one already-warmed connection's capacity."
+    },
+    {
+      "id": "card-9dxk",
+      "format": "recall",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http1-1",
+        "head-of-line-blocking",
+        "pipelining",
+        "connection-management"
+      ],
+      "prompt": "Domain sharding serves a site's resources from several different subdomains instead of one hostname. Explain, in terms of how browsers apply the parallel-connection limit, why this gets a page more simultaneous connections than staying on a single hostname would.",
+      "source": {
+        "path": "vault/networking/http/connection-management-in-http-1-1.md",
+        "block": "card-9dxk"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "Grigorik, High Performance Browser Networking"
+      ]
+    },
+    {
+      "id": "card-j57z",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http1-1",
+        "head-of-line-blocking",
+        "pipelining",
+        "connection-management"
+      ],
+      "prompt": "Why could aggressive domain sharding end up slowing a page down rather than speeding it up, given what each extra shard costs?",
+      "source": {
+        "path": "vault/networking/http/connection-management-in-http-1-1.md",
+        "block": "card-j57z"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "Grigorik, High Performance Browser Networking"
+      ],
+      "answer": "Each additional shard is a new hostname needing its own DNS resolution and its own set of TCP connections, each with a handshake and a cold congestion window; past a certain shard count that per-connection overhead outweighs the benefit of the added parallelism."
+    },
+    {
+      "id": "card-tl36",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "content-negotiation",
+        "encoding",
+        "compression",
+        "chunked-transfer",
+        "http"
+      ],
+      "prompt": "What is \"proactive negotiation,\" and which three request headers commonly drive it?",
+      "source": {
+        "path": "vault/networking/http/content-negotiation-and-encoding.md",
+        "block": "card-tl36"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "Proactive negotiation is the client telling the server upfront, before any response is sent, which representations it's willing to accept — via the Accept header for media types, Accept-Encoding for compression schemes, and Accept-Language for languages. The server picks the best match from those preferences and returns that one representation directly, rather than making the client choose among several offered alternatives afterward."
+    },
+    {
+      "id": "card-ov4t",
+      "format": "mcq",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "content-negotiation",
+        "encoding",
+        "compression",
+        "chunked-transfer",
+        "http"
+      ],
+      "prompt": "A response arrives with `Content-Encoding: gzip`. What must the recipient do to read the actual resource?",
+      "source": {
+        "path": "vault/networking/http/content-negotiation-and-encoding.md",
+        "block": "card-ov4t"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "choices": [
+        {
+          "text": "Decompress it — Content-Encoding is an end-to-end property of the representation itself, and reversing it is required to recover the resource",
+          "correct": true
+        },
+        {
+          "text": "Nothing — Content-Encoding is metadata for intermediate caches only, not the final recipient",
+          "correct": false
+        },
+        {
+          "text": "Strip it at the first hop, since it behaves like Transfer-Encoding",
+          "correct": false
+        },
+        {
+          "text": "Nothing — encodings named in this header are undone automatically below the application layer",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-ga8h",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "content-negotiation",
+        "encoding",
+        "compression",
+        "chunked-transfer",
+        "http"
+      ],
+      "prompt": "Why is Transfer-Encoding a hop-by-hop concern while Content-Encoding is end-to-end?",
+      "source": {
+        "path": "vault/networking/http/content-negotiation-and-encoding.md",
+        "block": "card-ga8h"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "Transfer-Encoding describes how a message is packaged for one specific connection between adjacent nodes — for example, breaking the body into chunks for this hop — and any intermediary is free to add, remove, or change it. Content-Encoding describes a property of the representation itself, applied by the origin and left untouched by every intermediary, so it arrives at the final recipient exactly as sent and that recipient is the one who must decode it."
+    },
+    {
+      "id": "card-oq3z",
+      "format": "cloze",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "content-negotiation",
+        "encoding",
+        "compression",
+        "chunked-transfer",
+        "http"
+      ],
+      "prompt": "The hop-by-hop case that matters most in practice is one specific framing scheme. ___ transfer encoding lets a server start sending a response body before it knows the total length in advance, splitting the body into a series of length-prefixed pieces and signaling the end with a final zero-length one — useful for streamed or dynamically generated content where buffering the whole thing first isn't practical.",
+      "source": {
+        "path": "vault/networking/http/content-negotiation-and-encoding.md",
+        "block": "card-oq3z"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "Chunked"
+    },
+    {
+      "id": "card-ef0y",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "content-negotiation",
+        "encoding",
+        "compression",
+        "chunked-transfer",
+        "http"
+      ],
+      "prompt": "Why can a response not declare both a Content-Length and chunked Transfer-Encoding?",
+      "source": {
+        "path": "vault/networking/http/content-negotiation-and-encoding.md",
+        "block": "card-ef0y"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "Content-Length commits to the exact total body size upfront, which requires already knowing the full length before sending the first byte. Chunked encoding exists precisely to handle the opposite case, where that length isn't known in advance, so a recipient is told where the body ends by the framing itself instead. The two are alternative ways of answering the same question — where does the body stop — and only one can apply at a time."
+    },
+    {
+      "id": "card-688l",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "content-negotiation",
+        "encoding",
+        "compression",
+        "chunked-transfer",
+        "http"
+      ],
+      "prompt": "Content-Encoding is where actual body compression lives, and the choice of scheme is a real tradeoff rather than a solved question. What's the practical tradeoff between choosing gzip versus brotli to compress a response body?",
+      "source": {
+        "path": "vault/networking/http/content-negotiation-and-encoding.md",
+        "block": "card-688l"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "Brotli generally compresses text more tightly than gzip, partly thanks to a static dictionary tuned for web content, but costs more CPU time to compress at high quality settings. gzip compresses faster and is supported by a wider range of older clients, making it the safer universal default even where brotli would save more bytes."
+    },
+    {
+      "id": "card-s5aa",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http2",
+        "hpack",
+        "qpack",
+        "header-compression",
+        "http3"
+      ],
+      "prompt": "Why did headers become a disproportionately large share of HTTP/2 traffic once bodies were already compressed and connections were reused for many requests?",
+      "source": {
+        "path": "vault/networking/http/header-compression-hpack-and-qpack.md",
+        "block": "card-s5aa"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "RFC 9204 (QPACK)"
+      ],
+      "answer": "Because headers are large and highly repetitive across the requests sharing a connection, yet — before HPACK — every request sent them again in full; with body compression already shrinking the response side, the uncompressed, repeated header block became the dominant remaining overhead."
+    },
+    {
+      "id": "card-omrz",
+      "format": "cloze",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http2",
+        "hpack",
+        "qpack",
+        "header-compression",
+        "http3"
+      ],
+      "prompt": "A ___ ships with the specification itself: a fixed list of common header fields and common values (`:method: GET`, common `content-type` values, and so on) that every HPACK implementation already knows, so referencing one costs only a small index rather than any text at all.",
+      "source": {
+        "path": "vault/networking/http/header-compression-hpack-and-qpack.md",
+        "block": "card-omrz"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "RFC 9204 (QPACK)"
+      ],
+      "answer": "static table"
+    },
+    {
+      "id": "card-a764",
+      "format": "cloze",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http2",
+        "hpack",
+        "qpack",
+        "header-compression",
+        "http3"
+      ],
+      "prompt": "A ___ is built up *during* the connection: the first time a header not already in the static table appears, the endpoint adds it to a table private to that connection. Later requests on the same connection can then reference that entry by index instead of resending its text.",
+      "source": {
+        "path": "vault/networking/http/header-compression-hpack-and-qpack.md",
+        "block": "card-a764"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "RFC 9204 (QPACK)"
+      ],
+      "answer": "dynamic table"
+    },
+    {
+      "id": "card-z1e7",
+      "format": "cloze",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http2",
+        "hpack",
+        "qpack",
+        "header-compression",
+        "http3"
+      ],
+      "prompt": "For a header that has no table entry at all — a fresh cookie value, a freshly generated request ID — HPACK falls back to sending it as a literal, but even that literal is not sent as raw bytes. It is passed through a ___ tuned to the byte-frequency statistics of real HTTP header text, so the literal itself comes out smaller than its plain-text form.",
+      "source": {
+        "path": "vault/networking/http/header-compression-hpack-and-qpack.md",
+        "block": "card-z1e7"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "RFC 9204 (QPACK)"
+      ],
+      "answer": "Huffman code"
+    },
+    {
+      "id": "card-neo8",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http2",
+        "hpack",
+        "qpack",
+        "header-compression",
+        "http3"
+      ],
+      "prompt": "What are HPACK's three space-saving mechanisms, and which of them applies to a header value seen for the first time on a connection?",
+      "source": {
+        "path": "vault/networking/http/header-compression-hpack-and-qpack.md",
+        "block": "card-neo8"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "RFC 9204 (QPACK)"
+      ],
+      "answer": "A static table of common fields shared by all implementations, a per-connection dynamic table built up as new headers appear, and Huffman coding of literal values; a first-time value has no table entry yet, so it is sent as a Huffman-coded literal."
+    },
+    {
+      "id": "card-crr9",
+      "format": "recall",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http2",
+        "hpack",
+        "qpack",
+        "header-compression",
+        "http3"
+      ],
+      "prompt": "Explain why a header repeated on request 50 of a long-lived HTTP/2 connection is cheap under HPACK even though it was expensive on request 1.",
+      "source": {
+        "path": "vault/networking/http/header-compression-hpack-and-qpack.md",
+        "block": "card-crr9"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "RFC 9204 (QPACK)"
+      ],
+      "answer": "Request 1 has no table entry for that header, so it goes out as a Huffman-coded literal. Once sent, the encoder adds it to the connection's dynamic table. Every later request that repeats it can reference that dynamic-table entry by a small index instead of resending any text, so the cost drops from the literal's size to a few bits regardless of how long the header actually is."
+    },
+    {
+      "id": "card-5a20",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http2",
+        "hpack",
+        "qpack",
+        "header-compression",
+        "http3"
+      ],
+      "prompt": "Why is HPACK a purpose-built indexing scheme rather than a thin wrapper around a generic compressor like gzip?",
+      "source": {
+        "path": "vault/networking/http/header-compression-hpack-and-qpack.md",
+        "block": "card-5a20"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "RFC 9204 (QPACK)"
+      ],
+      "answer": "Because a generic compressor builds a shared dictionary from everything it compresses, and compressing attacker-influenced data together with a secret lets the compressed size leak information about the secret; HPACK's explicit static/dynamic table and literal-encoding rules avoid that shared, uncontrolled compression context."
+    },
+    {
+      "id": "card-e5nt",
+      "format": "cloze",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http2",
+        "hpack",
+        "qpack",
+        "header-compression",
+        "http3"
+      ],
+      "prompt": "___ is the response to exactly that mismatch. It keeps HPACK's core idea — static table, dynamic table, Huffman-coded literals — but decouples dynamic-table updates from the request streams that use them, carrying them on their own dedicated stream and having each reference name the specific table state it depended on. That lets a decoder process a request referencing the table without having to wait for every earlier update to arrive in a fixed sequence first.",
+      "source": {
+        "path": "vault/networking/http/header-compression-hpack-and-qpack.md",
+        "block": "card-e5nt"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "RFC 9204 (QPACK)"
+      ],
+      "answer": "QPACK"
+    },
+    {
+      "id": "card-v6cx",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http2",
+        "hpack",
+        "qpack",
+        "header-compression",
+        "http3"
+      ],
+      "prompt": "Why couldn't HTTP/2's HPACK be reused unchanged for HTTP/3, given that QPACK keeps the same static table, dynamic table, and Huffman-coding ideas?",
+      "source": {
+        "path": "vault/networking/http/header-compression-hpack-and-qpack.md",
+        "block": "card-v6cx"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "RFC 9204 (QPACK)"
+      ],
+      "answer": "HPACK's dynamic table only stays synchronized if table-update instructions are delivered in the exact order they were sent, which HTTP/2 could guarantee because it multiplexed everything onto one ordered stream. HTTP/3's streams are delivered independently of one another, so that strict-order guarantee no longer holds, and QPACK exists to decouple table updates from request streams so the encoding survives that."
+    },
+    {
+      "id": "card-qb4r",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http2",
+        "multiplexing",
+        "binary-framing",
+        "flow-control"
+      ],
+      "prompt": "What is the smallest unit of communication in HTTP/2's binary framing layer, and what does each one carry to identify where it belongs?",
+      "source": {
+        "path": "vault/networking/http/http-2-binary-framing-and-multiplexing.md",
+        "block": "card-qb4r"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "Grigorik, High Performance Browser Networking"
+      ],
+      "answer": "A frame — a binary structure carrying a type, a length, and a stream identifier that says which logical stream the frame's contents belong to."
+    },
+    {
+      "id": "card-hqf5",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http2",
+        "multiplexing",
+        "binary-framing",
+        "flow-control"
+      ],
+      "prompt": "What makes an HTTP/2 stream \"independent,\" as distinct from just being a labeled group of frames?",
+      "source": {
+        "path": "vault/networking/http/http-2-binary-framing-and-multiplexing.md",
+        "block": "card-hqf5"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "Grigorik, High Performance Browser Networking"
+      ],
+      "answer": "Each stream carries its own request and response and progresses without waiting on any other stream on the same connection, so work on one stream is not gated by the state of another — the streams share a connection but not each other's pace."
+    },
+    {
+      "id": "card-vyro",
+      "format": "cloze",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http2",
+        "multiplexing",
+        "binary-framing",
+        "flow-control"
+      ],
+      "prompt": "A single TCP connection carries many streams at once — this is ___. Unlike HTTP/1.1's six separate connections standing in for parallelism, HTTP/2 gets genuine concurrency from one connection, because the streams sharing it are a construct of the protocol itself rather than of the transport.",
+      "source": {
+        "path": "vault/networking/http/http-2-binary-framing-and-multiplexing.md",
+        "block": "card-vyro"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "Grigorik, High Performance Browser Networking"
+      ],
+      "answer": "multiplexing"
+    },
+    {
+      "id": "card-9lvg",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http2",
+        "multiplexing",
+        "binary-framing",
+        "flow-control"
+      ],
+      "prompt": "How does frame interleaving on a single HTTP/2 connection prevent one slow response from delaying an unrelated request, given that HTTP/1.1 could not avoid exactly that?",
+      "source": {
+        "path": "vault/networking/http/http-2-binary-framing-and-multiplexing.md",
+        "block": "card-9lvg"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "Grigorik, High Performance Browser Networking"
+      ],
+      "answer": "Frames from many streams share the same connection but are tagged with a stream identifier and can be sent interleaved; a stream still generating its response simply contributes no frames for a moment while other streams' frames continue to flow, so a slow response no longer occupies the whole connection the way a slow HTTP/1.1 response did."
+    },
+    {
+      "id": "card-5532",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http2",
+        "multiplexing",
+        "binary-framing",
+        "flow-control"
+      ],
+      "prompt": "Why does HTTP/2 assign odd stream identifiers to client-initiated streams and even ones to server-initiated streams, instead of both sides drawing from one shared counter?",
+      "source": {
+        "path": "vault/networking/http/http-2-binary-framing-and-multiplexing.md",
+        "block": "card-5532"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "Grigorik, High Performance Browser Networking"
+      ],
+      "answer": "Splitting the numbering space this way lets client and server each open new streams independently, without asking the other side which numbers are already taken — a shared counter would need coordination between the two ends to avoid collisions."
+    },
+    {
+      "id": "card-mqg3",
+      "format": "mcq",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http2",
+        "multiplexing",
+        "binary-framing",
+        "flow-control"
+      ],
+      "prompt": "HTTP/2 flow control operates at which level(s)?",
+      "source": {
+        "path": "vault/networking/http/http-2-binary-framing-and-multiplexing.md",
+        "block": "card-mqg3"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "Grigorik, High Performance Browser Networking"
+      ],
+      "choices": [
+        {
+          "text": "Per individual stream and per connection as a whole",
+          "correct": true
+        },
+        {
+          "text": "Per connection only, with no per-stream limit",
+          "correct": false
+        },
+        {
+          "text": "Per individual stream only, with no connection-wide limit",
+          "correct": false
+        },
+        {
+          "text": "Per TCP segment",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-1uaq",
+      "format": "recall",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http2",
+        "multiplexing",
+        "binary-framing",
+        "flow-control"
+      ],
+      "prompt": "HTTP/2 added a stream prioritization scheme so clients could hint which responses mattered most. Why did this feature largely underdeliver in practice, despite being part of the standard?",
+      "source": {
+        "path": "vault/networking/http/http-2-binary-framing-and-multiplexing.md",
+        "block": "card-1uaq"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "Grigorik, High Performance Browser Networking"
+      ]
+    },
+    {
+      "id": "card-7nbs",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http2",
+        "multiplexing",
+        "binary-framing",
+        "flow-control"
+      ],
+      "prompt": "Why do the six-connections-per-origin convention and domain sharding both stop making sense once a browser is talking HTTP/2 to a server?",
+      "source": {
+        "path": "vault/networking/http/http-2-binary-framing-and-multiplexing.md",
+        "block": "card-7nbs"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "Grigorik, High Performance Browser Networking"
+      ],
+      "answer": "Both existed to work around HTTP/1.1 allowing only one request in flight per connection, by giving the browser more connections to spread requests across. HTTP/2 removes that limit directly — one connection carries many interleaved streams — so opening extra connections or extra subdomains no longer buys any additional parallelism, only added setup overhead."
+    },
+    {
       "id": "card-3sgk",
       "format": "cloze",
       "topic": "networking",
-      "category": "networking",
+      "category": "http-protocol",
       "tags": [
         "http",
         "application-layer",
@@ -27821,7 +28830,7 @@
       ],
       "prompt": "HTTP is a request-response protocol where a client sends a request and a server returns a response, with the server retaining no memory of past requests by default — HTTP is a ___ protocol.",
       "source": {
-        "path": "vault/networking/http.md",
+        "path": "vault/networking/http/http-fundamentals.md",
         "block": "card-3sgk"
       },
       "citations": [
@@ -27834,7 +28843,7 @@
       "id": "card-8cyf",
       "format": "qa",
       "topic": "networking",
-      "category": "networking",
+      "category": "http-protocol",
       "tags": [
         "http",
         "application-layer",
@@ -27842,7 +28851,7 @@
       ],
       "prompt": "Under non-persistent HTTP, how many objects share each TCP connection, and what does that cost per object?",
       "source": {
-        "path": "vault/networking/http.md",
+        "path": "vault/networking/http/http-fundamentals.md",
         "block": "card-8cyf"
       },
       "citations": [
@@ -27855,7 +28864,7 @@
       "id": "card-1jwg",
       "format": "qa",
       "topic": "networking",
-      "category": "networking",
+      "category": "http-protocol",
       "tags": [
         "http",
         "application-layer",
@@ -27863,7 +28872,7 @@
       ],
       "prompt": "Under persistent HTTP, how many objects can share one TCP connection, and what overhead does that avoid?",
       "source": {
-        "path": "vault/networking/http.md",
+        "path": "vault/networking/http/http-fundamentals.md",
         "block": "card-1jwg"
       },
       "citations": [
@@ -27876,7 +28885,7 @@
       "id": "card-47oq",
       "format": "cloze",
       "topic": "networking",
-      "category": "networking",
+      "category": "http-protocol",
       "tags": [
         "http",
         "application-layer",
@@ -27884,7 +28893,7 @@
       ],
       "prompt": "The `GET` method requests a resource, `POST` submits data to be processed (often creating or modifying state), and `PUT` replaces a resource at a given URL. A status code in the ___ range indicates success, while a 4xx code means the problem was with the client's request rather than the server.",
       "source": {
-        "path": "vault/networking/http.md",
+        "path": "vault/networking/http/http-fundamentals.md",
         "block": "card-47oq"
       },
       "citations": [
@@ -27897,7 +28906,7 @@
       "id": "card-nm6o",
       "format": "cloze",
       "topic": "networking",
-      "category": "networking",
+      "category": "http-protocol",
       "tags": [
         "http",
         "application-layer",
@@ -27905,7 +28914,7 @@
       ],
       "prompt": "The `GET` method requests a resource, `POST` submits data to be processed (often creating or modifying state), and `PUT` replaces a resource at a given URL. A status code in the 2xx range indicates success, while a ___ code means the problem was with the client's request rather than the server.",
       "source": {
-        "path": "vault/networking/http.md",
+        "path": "vault/networking/http/http-fundamentals.md",
         "block": "card-nm6o"
       },
       "citations": [
@@ -27918,7 +28927,7 @@
       "id": "card-im70",
       "format": "qa",
       "topic": "networking",
-      "category": "networking",
+      "category": "http-protocol",
       "tags": [
         "http",
         "application-layer",
@@ -27926,7 +28935,7 @@
       ],
       "prompt": "How does a server use a cookie to recognize a returning client?",
       "source": {
-        "path": "vault/networking/http.md",
+        "path": "vault/networking/http/http-fundamentals.md",
         "block": "card-im70"
       },
       "citations": [
@@ -27939,7 +28948,7 @@
       "id": "card-pgfv",
       "format": "cloze",
       "topic": "networking",
-      "category": "networking",
+      "category": "http-protocol",
       "tags": [
         "http",
         "application-layer",
@@ -27947,7 +28956,7 @@
       ],
       "prompt": "The `Cache-Control` and `If-Modified-Since` headers let a client avoid re-downloading unchanged content: a conditional GET asks the server to send the object only if it has changed since a given time, and the server replies ___ if it has not.",
       "source": {
-        "path": "vault/networking/http.md",
+        "path": "vault/networking/http/http-fundamentals.md",
         "block": "card-pgfv"
       },
       "citations": [
@@ -27960,7 +28969,7 @@
       "id": "card-2b24",
       "format": "mcq",
       "topic": "networking",
-      "category": "networking",
+      "category": "http-protocol",
       "tags": [
         "http",
         "application-layer",
@@ -27968,7 +28977,7 @@
       ],
       "prompt": "Which HTTP status code tells a browser that a cached copy of a resource is still valid?",
       "source": {
-        "path": "vault/networking/http.md",
+        "path": "vault/networking/http/http-fundamentals.md",
         "block": "card-2b24"
       },
       "citations": [
@@ -27998,7 +29007,7 @@
       "id": "card-i5lj",
       "format": "recall",
       "topic": "networking",
-      "category": "networking",
+      "category": "http-protocol",
       "tags": [
         "http",
         "application-layer",
@@ -28006,13 +29015,1041 @@
       ],
       "prompt": "Explain why persistent HTTP connections reduce page load latency compared to non-persistent connections, especially for pages with many small objects.",
       "source": {
-        "path": "vault/networking/http.md",
+        "path": "vault/networking/http/http-fundamentals.md",
         "block": "card-i5lj"
       },
       "citations": [
         "Kurose & Ross, Computer Networking 8e, Ch. 2.2",
         "RFC 9110"
       ]
+    },
+    {
+      "id": "card-0asl",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http",
+        "message-format",
+        "semantics",
+        "methods",
+        "idempotency"
+      ],
+      "prompt": "Which three parts make up an HTTP message, and which one is optional?",
+      "source": {
+        "path": "vault/networking/http/http-message-format-and-semantics.md",
+        "block": "card-0asl"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "A start line, header fields, and an optional body — the body is the only one that may be absent (for example, on many GET requests or a 204 response)."
+    },
+    {
+      "id": "card-qqig",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http",
+        "message-format",
+        "semantics",
+        "methods",
+        "idempotency"
+      ],
+      "prompt": "Why does upgrading a connection from HTTP/1.1 to HTTP/2 change nothing about what a client's GET request means or how a server is expected to handle it?",
+      "source": {
+        "path": "vault/networking/http/http-message-format-and-semantics.md",
+        "block": "card-qqig"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "Because GET's meaning is defined at the semantics layer, which RFC 9110 specifies independently of any version's wire format; HTTP/2 changes only how the request is framed and transmitted, not what the method, headers, or status codes signify."
+    },
+    {
+      "id": "card-iuei",
+      "format": "recall",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http",
+        "message-format",
+        "semantics",
+        "methods",
+        "idempotency"
+      ],
+      "prompt": "RFC 9110 separates HTTP semantics from HTTP syntax. Explain what each term covers, and why that separation lets the same request meaning survive a move from HTTP/1.1 to HTTP/2 even though the two versions encode messages completely differently on the wire.",
+      "source": {
+        "path": "vault/networking/http/http-message-format-and-semantics.md",
+        "block": "card-iuei"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "Semantics is the meaning layer: what a method, header, or status code signifies — \"create this resource,\" \"the request was unauthorized,\" and so on. Syntax is the encoding layer: how a message expressing that meaning is actually serialized onto the connection, whether as newline-delimited text (HTTP/1.1) or as binary frames (HTTP/2, /3). Because a client and server only need to agree on semantics to understand each other, a version change can swap out the entire wire format without altering what any request or response means."
+    },
+    {
+      "id": "card-pu3m",
+      "format": "cloze",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http",
+        "message-format",
+        "semantics",
+        "methods",
+        "idempotency"
+      ],
+      "prompt": "A method is called ___ when it is not expected to produce any state-changing effect on the server.",
+      "source": {
+        "path": "vault/networking/http/http-message-format-and-semantics.md",
+        "block": "card-pu3m"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "safe"
+    },
+    {
+      "id": "card-q2v8",
+      "format": "mcq",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http",
+        "message-format",
+        "semantics",
+        "methods",
+        "idempotency"
+      ],
+      "prompt": "Which of these methods is defined as \"safe\" — meaning a compliant server is not expected to produce any state-changing effect from it?",
+      "source": {
+        "path": "vault/networking/http/http-message-format-and-semantics.md",
+        "block": "card-q2v8"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "choices": [
+        {
+          "text": "GET",
+          "correct": true
+        },
+        {
+          "text": "POST",
+          "correct": false
+        },
+        {
+          "text": "PUT",
+          "correct": false
+        },
+        {
+          "text": "DELETE",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-ggcu",
+      "format": "cloze",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http",
+        "message-format",
+        "semantics",
+        "methods",
+        "idempotency"
+      ],
+      "prompt": "A method is called ___ when sending the identical request multiple times produces the same effect on server state as sending it once.",
+      "source": {
+        "path": "vault/networking/http/http-message-format-and-semantics.md",
+        "block": "card-ggcu"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "idempotent"
+    },
+    {
+      "id": "card-82xn",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http",
+        "message-format",
+        "semantics",
+        "methods",
+        "idempotency"
+      ],
+      "prompt": "What is the actual definition of an idempotent method, as opposed to the common misreading of the term?",
+      "source": {
+        "path": "vault/networking/http/http-message-format-and-semantics.md",
+        "block": "card-82xn"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "An idempotent method is one where issuing the identical request N times leaves the server in the same state as issuing it once — it is a guarantee about the resulting state, not about the response body or status code being identical on each call."
+    },
+    {
+      "id": "card-lkhd",
+      "format": "mcq",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http",
+        "message-format",
+        "semantics",
+        "methods",
+        "idempotency"
+      ],
+      "prompt": "Which single statement correctly places POST, PUT, and DELETE on the safe/idempotent axes?",
+      "source": {
+        "path": "vault/networking/http/http-message-format-and-semantics.md",
+        "block": "card-lkhd"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "choices": [
+        {
+          "text": "POST is neither safe nor idempotent; PUT and DELETE are idempotent but not safe",
+          "correct": true
+        },
+        {
+          "text": "POST and PUT are both idempotent and safe; DELETE is neither",
+          "correct": false
+        },
+        {
+          "text": "All three are idempotent since they are standard HTTP methods",
+          "correct": false
+        },
+        {
+          "text": "PUT is safe because it uses a fixed target URL",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-onj5",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http",
+        "message-format",
+        "semantics",
+        "methods",
+        "idempotency"
+      ],
+      "prompt": "Why is it safe for an HTTP client to automatically retry a request that timed out if the method was PUT or DELETE, but not if the method was a plain POST?",
+      "source": {
+        "path": "vault/networking/http/http-message-format-and-semantics.md",
+        "block": "card-onj5"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "PUT and DELETE are idempotent, so repeating the exact same request changes server state no further than the first attempt did, even if the client can't confirm the first attempt succeeded. POST carries no such guarantee — the resource's handling might create a new effect (like a duplicate order) on every call, so an automatic retry risks applying the request's effect twice."
+    },
+    {
+      "id": "card-fhid",
+      "format": "recall",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http",
+        "message-format",
+        "semantics",
+        "methods",
+        "idempotency"
+      ],
+      "prompt": "Name a method that is both safe and idempotent, one that is idempotent but not safe, and one that is neither safe nor idempotent. For the idempotent-but-not-safe one, explain what \"idempotent\" guarantees about repeating it, given that it does modify server state.",
+      "source": {
+        "path": "vault/networking/http/http-message-format-and-semantics.md",
+        "block": "card-fhid"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ]
+    },
+    {
+      "id": "card-gk4j",
+      "format": "cloze",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "quic",
+        "http-3",
+        "udp",
+        "connection-migration",
+        "transport"
+      ],
+      "prompt": "QUIC runs on top of ___ rather than replacing TCP in place.",
+      "source": {
+        "path": "vault/networking/http/quic-and-http-3.md",
+        "block": "card-gk4j"
+      },
+      "citations": [
+        "RFC 9000 (QUIC)",
+        "RFC 9114 (HTTP/3)"
+      ],
+      "answer": "UDP"
+    },
+    {
+      "id": "card-1zlb",
+      "format": "cloze",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "quic",
+        "http-3",
+        "udp",
+        "connection-migration",
+        "transport"
+      ],
+      "prompt": "TCP's behavior is implemented inside operating system kernels, and the middleboxes sitting on paths across the internet — firewalls, NATs, load balancers — have been built and tuned against decades of that exact behavior. A protocol that tried to ship as \"an improved TCP\" would get rewritten, dropped, or mishandled by equipment that assumes TCP looks a certain way. That fossilization of assumed behavior is called protocol ___, and it is what made incrementally evolving TCP itself impractical at internet scale.",
+      "source": {
+        "path": "vault/networking/http/quic-and-http-3.md",
+        "block": "card-1zlb"
+      },
+      "citations": [
+        "RFC 9000 (QUIC)",
+        "RFC 9114 (HTTP/3)"
+      ],
+      "answer": "ossification"
+    },
+    {
+      "id": "card-g0w4",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "quic",
+        "http-3",
+        "udp",
+        "connection-migration",
+        "transport"
+      ],
+      "prompt": "What made UDP a workable foundation for a new transport, when a modified TCP was not?",
+      "source": {
+        "path": "vault/networking/http/quic-and-http-3.md",
+        "block": "card-g0w4"
+      },
+      "citations": [
+        "RFC 9000 (QUIC)",
+        "RFC 9114 (HTTP/3)"
+      ],
+      "answer": "UDP carries almost no behavior for middleboxes to have ossified around, and because TCP lives in the OS kernel while UDP just carries arbitrary payloads, QUIC's own logic can run entirely in userspace — shipping and evolving with an application's own release cycle instead of waiting on kernel and network-equipment upgrades everywhere."
+    },
+    {
+      "id": "card-k4su",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "quic",
+        "http-3",
+        "udp",
+        "connection-migration",
+        "transport"
+      ],
+      "prompt": "How does QUIC avoid the transport-layer head-of-line blocking that persists under HTTP/2 running over TCP?",
+      "source": {
+        "path": "vault/networking/http/quic-and-http-3.md",
+        "block": "card-k4su"
+      },
+      "citations": [
+        "RFC 9000 (QUIC)",
+        "RFC 9114 (HTTP/3)"
+      ],
+      "answer": "QUIC makes streams a transport-level primitive with independent delivery, so a packet loss only stalls the one stream whose data it carried; data for every other stream can still be delivered to and read by the application immediately, unlike a single TCP byte stream where any loss blocks everything queued behind it."
+    },
+    {
+      "id": "card-z82s",
+      "format": "cloze",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "quic",
+        "http-3",
+        "udp",
+        "connection-migration",
+        "transport"
+      ],
+      "prompt": "Because identity no longer depends on the network path, a client can change networks entirely — moving from Wi-Fi to a cellular radio, for instance — in the middle of a connection, and the same session keeps running without being torn down and rebuilt. This capability is called ___.",
+      "source": {
+        "path": "vault/networking/http/quic-and-http-3.md",
+        "block": "card-z82s"
+      },
+      "citations": [
+        "RFC 9000 (QUIC)",
+        "RFC 9114 (HTTP/3)"
+      ],
+      "answer": "connection migration"
+    },
+    {
+      "id": "card-cty2",
+      "format": "mcq",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "quic",
+        "http-3",
+        "udp",
+        "connection-migration",
+        "transport"
+      ],
+      "prompt": "A phone switches from Wi-Fi to cellular mid-download, changing its IP address and port entirely. What happens to its QUIC connection?",
+      "source": {
+        "path": "vault/networking/http/quic-and-http-3.md",
+        "block": "card-cty2"
+      },
+      "citations": [
+        "RFC 9000 (QUIC)",
+        "RFC 9114 (HTTP/3)"
+      ],
+      "choices": [
+        {
+          "text": "It survives, because QUIC identifies the connection by a connection ID rather than by IP and port",
+          "correct": true
+        },
+        {
+          "text": "It is dropped, since QUIC connections are still tied to the four-tuple exactly like TCP",
+          "correct": false
+        },
+        {
+          "text": "It survives, but only after the application performs a fresh TLS handshake",
+          "correct": false
+        },
+        {
+          "text": "It survives only if the client stays on the same subnet",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-xc0k",
+      "format": "recall",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "quic",
+        "http-3",
+        "udp",
+        "connection-migration",
+        "transport"
+      ],
+      "prompt": "Explain why integrating the TLS 1.3 handshake into QUIC's own connection handshake, instead of running a transport handshake and then a cryptographic handshake on top of it in sequence, lets a QUIC connection typically become usable in fewer round trips than TCP plus TLS 1.3.",
+      "source": {
+        "path": "vault/networking/http/quic-and-http-3.md",
+        "block": "card-xc0k"
+      },
+      "citations": [
+        "RFC 9000 (QUIC)",
+        "RFC 9114 (HTTP/3)"
+      ]
+    },
+    {
+      "id": "card-wj8d",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "quic",
+        "http-3",
+        "udp",
+        "connection-migration",
+        "transport"
+      ],
+      "prompt": "What does HTTP/3 change relative to earlier HTTP versions, and what does it deliberately leave untouched?",
+      "source": {
+        "path": "vault/networking/http/quic-and-http-3.md",
+        "block": "card-wj8d"
+      },
+      "citations": [
+        "RFC 9000 (QUIC)",
+        "RFC 9114 (HTTP/3)"
+      ],
+      "answer": "HTTP/3 leaves HTTP's request-response semantics, methods, and status codes unchanged; what it changes is the transport underneath, mapping those semantics onto QUIC streams instead of a TCP connection, which is where HTTP/3 inherits QUIC's independent per-stream delivery and connection migration."
+    },
+    {
+      "id": "card-my34",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http2",
+        "server-push",
+        "early-hints",
+        "head-of-line-blocking"
+      ],
+      "prompt": "Why does HTTP/2 server push frequently waste bandwidth rather than simply providing no benefit?",
+      "source": {
+        "path": "vault/networking/http/server-push-early-hints-and-h2-limits.md",
+        "block": "card-my34"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "RFC 8297 (Early Hints)"
+      ],
+      "answer": "The server cannot see what the client already has cached, so it may push a resource the client already holds a valid copy of; that push still consumes bandwidth and server-push connection capacity, actively costing more than doing nothing."
+    },
+    {
+      "id": "card-yx9n",
+      "format": "cloze",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http2",
+        "server-push",
+        "early-hints",
+        "head-of-line-blocking"
+      ],
+      "prompt": "___ is the mechanism that replaced push's proactive delivery with a much smaller commitment: an interim response, sent before the final response is ready, that lists resources the client will probably need — via ordinary `Link` headers — so the client can start fetching them itself while the server is still preparing the main response. The server still guesses what will be needed, but the guess only costs a small header list; the client decides whether to act on it, checking its own cache before fetching anything, which is exactly the check server push could never make.",
+      "source": {
+        "path": "vault/networking/http/server-push-early-hints-and-h2-limits.md",
+        "block": "card-yx9n"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "RFC 8297 (Early Hints)"
+      ],
+      "answer": "103 Early Hints"
+    },
+    {
+      "id": "card-2ad8",
+      "format": "mcq",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http2",
+        "server-push",
+        "early-hints",
+        "head-of-line-blocking"
+      ],
+      "prompt": "How does 103 Early Hints avoid the core problem that undermined HTTP/2 server push?",
+      "source": {
+        "path": "vault/networking/http/server-push-early-hints-and-h2-limits.md",
+        "block": "card-2ad8"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "RFC 8297 (Early Hints)"
+      ],
+      "choices": [
+        {
+          "text": "It tells the client what it might need and lets the client decide whether to fetch it, so the client's own cache check still applies",
+          "correct": true
+        },
+        {
+          "text": "It pushes the resources directly but only over a separate low-priority stream",
+          "correct": false
+        },
+        {
+          "text": "It requires the client to advertise its full cache contents to the server first",
+          "correct": false
+        },
+        {
+          "text": "It compresses the pushed resources so wasted pushes cost less bandwidth",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-m2ne",
+      "format": "cloze",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http2",
+        "server-push",
+        "early-hints",
+        "head-of-line-blocking"
+      ],
+      "prompt": "A related, unglamorous optimization is ___: when a client already holds an open, suitable connection to a server (matching scheme and a certificate valid for the new host), it can reuse that connection for requests to a different hostname instead of opening a new one, provided the existing connection's negotiated identity actually covers that hostname. This cuts the handshake cost of serving resources split across host names on the same underlying server or CDN edge, independent of anything push or hints do.",
+      "source": {
+        "path": "vault/networking/http/server-push-early-hints-and-h2-limits.md",
+        "block": "card-m2ne"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "RFC 8297 (Early Hints)"
+      ],
+      "answer": "connection coalescing"
+    },
+    {
+      "id": "card-mbz8",
+      "format": "cloze",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http2",
+        "server-push",
+        "early-hints",
+        "head-of-line-blocking"
+      ],
+      "prompt": "Server push and Early Hints are both about *what* gets sent and when requests are avoided. Neither touches a much more basic limitation: HTTP/2 multiplexes many logical streams onto one TCP connection, but ___. TCP guarantees only one thing about delivery — bytes arrive at the application in the exact order they were sent — and it enforces that guarantee by holding back everything after a gap until a retransmission fills it, whatever that later data belongs to.",
+      "source": {
+        "path": "vault/networking/http/server-push-early-hints-and-h2-limits.md",
+        "block": "card-mbz8"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "RFC 8297 (Early Hints)"
+      ],
+      "answer": "TCP itself has no concept of streams"
+    },
+    {
+      "id": "card-0y2m",
+      "format": "mcq",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http2",
+        "server-push",
+        "early-hints",
+        "head-of-line-blocking"
+      ],
+      "prompt": "On a connection with significant packet loss, how can HTTP/2's single multiplexed connection compare to HTTP/1.1's convention of six independent connections per host?",
+      "source": {
+        "path": "vault/networking/http/server-push-early-hints-and-h2-limits.md",
+        "block": "card-0y2m"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "RFC 8297 (Early Hints)"
+      ],
+      "choices": [
+        {
+          "text": "HTTP/2 can perform worse, because a lost segment on the one connection stalls all multiplexed streams, whereas a loss on one of six independent HTTP/1.1 connections only stalls the requests on that one connection",
+          "correct": true
+        },
+        {
+          "text": "HTTP/2 always performs better, because multiplexing means loss on one stream is fully isolated from the others",
+          "correct": false
+        },
+        {
+          "text": "They perform identically, since both are built on TCP and inherit the same retransmission behavior per connection",
+          "correct": false
+        },
+        {
+          "text": "HTTP/2 performs worse only because it disables retransmission to preserve stream ordering",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-li8b",
+      "format": "recall",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http2",
+        "server-push",
+        "early-hints",
+        "head-of-line-blocking"
+      ],
+      "prompt": "Explain, from TCP's in-order delivery guarantee alone, why HTTP/2 multiplexing many streams onto one connection does not remove head-of-line blocking the way it appears to at the HTTP layer.",
+      "source": {
+        "path": "vault/networking/http/server-push-early-hints-and-h2-limits.md",
+        "block": "card-li8b"
+      },
+      "citations": [
+        "RFC 9113 (HTTP/2)",
+        "RFC 8297 (Early Hints)"
+      ],
+      "answer": "TCP's guarantee is about bytes, not about the HTTP-layer streams multiplexed inside them: it will not deliver any byte to the application until every byte before it in the sequence has arrived. A lost segment creates a gap, and everything sent after that gap — regardless of which HTTP/2 stream it belongs to — sits in the TCP receive buffer undelivered until retransmission closes the gap. The multiplexing exists only above TCP; TCP's delivery order still applies to the whole connection as one sequence."
+    },
+    {
+      "id": "card-nz72",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http",
+        "status-codes",
+        "redirects",
+        "error-handling"
+      ],
+      "prompt": "Which two of the four redirect codes guarantee that the client will reuse the original request method and body, rather than potentially switching to GET?",
+      "source": {
+        "path": "vault/networking/http/status-codes-in-practice.md",
+        "block": "card-nz72"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "307 Temporary Redirect and 308 Permanent Redirect. 301 and 302 predate that guarantee and historically left method-switching behavior up to the client."
+    },
+    {
+      "id": "card-0kaz",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http",
+        "status-codes",
+        "redirects",
+        "error-handling"
+      ],
+      "prompt": "If a resource has permanently moved and the client must keep using its original method on the follow-up request, which single status code fits both conditions?",
+      "source": {
+        "path": "vault/networking/http/status-codes-in-practice.md",
+        "block": "card-0kaz"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "308 Permanent Redirect — permanent like 301, but with 307/308's guarantee that the method and body are preserved rather than possibly downgraded to GET."
+    },
+    {
+      "id": "card-9fzq",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http",
+        "status-codes",
+        "redirects",
+        "error-handling"
+      ],
+      "prompt": "A server returns 403 for a request that already carried a valid, correctly-formatted API key. Does supplying a different, also-valid key for the same account have any chance of succeeding?",
+      "source": {
+        "path": "vault/networking/http/status-codes-in-practice.md",
+        "block": "card-9fzq"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "No — 403 means the server already identified the requester and is denying access to that identity's account regardless of which valid credential represented it; only a genuinely different identity, or a permission change on the server side, could change the outcome."
+    },
+    {
+      "id": "card-6jih",
+      "format": "cloze",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http",
+        "status-codes",
+        "redirects",
+        "error-handling"
+      ],
+      "prompt": "`404 Not Found` says nothing more than \"no resource is currently found at this URL\" — the server is not committing to any claim about whether it ever existed or might reappear. ___ Gone is a deliberate, stronger statement: the resource used to exist at this URL and has been intentionally and permanently removed, with no forwarding address.",
+      "source": {
+        "path": "vault/networking/http/status-codes-in-practice.md",
+        "block": "card-6jih"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "410"
+    },
+    {
+      "id": "card-9rwk",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http",
+        "status-codes",
+        "redirects",
+        "error-handling"
+      ],
+      "prompt": "Why might a server deliberately choose to return 410 Gone instead of 404 Not Found for a resource it just deleted?",
+      "source": {
+        "path": "vault/networking/http/status-codes-in-practice.md",
+        "block": "card-9rwk"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "410 communicates that the removal is intentional and permanent, discouraging clients and crawlers from retrying or re-indexing the URL, whereas 404 leaves that question open and could be read as \"not found right now, maybe try later.\""
+    },
+    {
+      "id": "card-ku14",
+      "format": "mcq",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http",
+        "status-codes",
+        "redirects",
+        "error-handling"
+      ],
+      "prompt": "A client submits a well-formed JSON body to create a user, but the \"email\" field fails a validation rule the server enforces. Which status code fits best?",
+      "source": {
+        "path": "vault/networking/http/status-codes-in-practice.md",
+        "block": "card-ku14"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "choices": [
+        {
+          "text": "422 Unprocessable Content",
+          "correct": true
+        },
+        {
+          "text": "409 Conflict",
+          "correct": false
+        },
+        {
+          "text": "400 Bad Request due to malformed syntax",
+          "correct": false
+        },
+        {
+          "text": "401 Unauthorized",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-y75j",
+      "format": "cloze",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http",
+        "status-codes",
+        "redirects",
+        "error-handling"
+      ],
+      "prompt": "`429 Too Many Requests` tells a client it has been rate-limited. It is commonly paired with a `___` header giving either a number of seconds or an HTTP date after which the client may try again. A well-behaved client reads that header and waits the indicated time rather than retrying immediately or backing off with an arbitrary guess.",
+      "source": {
+        "path": "vault/networking/http/status-codes-in-practice.md",
+        "block": "card-y75j"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "Retry-After"
+    },
+    {
+      "id": "card-nf9k",
+      "format": "recall",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "http",
+        "status-codes",
+        "redirects",
+        "error-handling"
+      ],
+      "prompt": "A reverse proxy in front of an application server can return 502, 503, or 504 for requests it can't fulfill. Describe the distinct failure story each code tells, focusing on what the proxy did or didn't receive from upstream in each case.",
+      "source": {
+        "path": "vault/networking/http/status-codes-in-practice.md",
+        "block": "card-nf9k"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "502 Bad Gateway: the proxy got a response from upstream, but it was malformed or invalid, so the proxy can't relay it. 503 Service Unavailable: the proxy or server is currently unable to handle requests at all, typically overload or maintenance, independent of any specific upstream call. 504 Gateway Timeout: the proxy sent the request upstream and simply never got a response back before its timeout elapsed."
+    },
+    {
+      "id": "card-ief3",
+      "format": "cloze",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "websockets",
+        "upgrade-handshake",
+        "real-time",
+        "server-sent-events"
+      ],
+      "prompt": "The way there is the ___ handshake: a client sends an ordinary HTTP request asking the server to switch the protocol running on this same TCP connection, and if the server agrees, both sides stop speaking HTTP on it and start speaking a different, bidirectional protocol instead.",
+      "source": {
+        "path": "vault/networking/http/websockets-and-the-upgrade-mechanism.md",
+        "block": "card-ief3"
+      },
+      "citations": [
+        "RFC 6455 (WebSocket)"
+      ],
+      "answer": "Upgrade"
+    },
+    {
+      "id": "card-7yz9",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "websockets",
+        "upgrade-handshake",
+        "real-time",
+        "server-sent-events"
+      ],
+      "prompt": "How does the server prove it understood the request, given the client's Sec-WebSocket-Key?",
+      "source": {
+        "path": "vault/networking/http/websockets-and-the-upgrade-mechanism.md",
+        "block": "card-7yz9"
+      },
+      "citations": [
+        "RFC 6455 (WebSocket)"
+      ],
+      "answer": "It concatenates the client's key with a fixed, spec-defined GUID, takes the SHA-1 hash of that concatenation, base64-encodes the result, and returns it in a Sec-WebSocket-Accept header — a value only a server implementing the WebSocket handshake would compute correctly."
+    },
+    {
+      "id": "card-qldj",
+      "format": "mcq",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "websockets",
+        "upgrade-handshake",
+        "real-time",
+        "server-sent-events"
+      ],
+      "prompt": "A client sends `Upgrade: websocket` and `Connection: Upgrade` headers along with a Sec-WebSocket-Key. Which response tells it the switch succeeded?",
+      "source": {
+        "path": "vault/networking/http/websockets-and-the-upgrade-mechanism.md",
+        "block": "card-qldj"
+      },
+      "citations": [
+        "RFC 6455 (WebSocket)"
+      ],
+      "choices": [
+        {
+          "text": "101 Switching Protocols, with a matching Sec-WebSocket-Accept header",
+          "correct": true
+        },
+        {
+          "text": "200 OK, with a Upgrade-Confirmed header",
+          "correct": false
+        },
+        {
+          "text": "204 No Content",
+          "correct": false
+        },
+        {
+          "text": "302 Found, redirecting to a `ws://` URL",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-9ces",
+      "format": "cloze",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "websockets",
+        "upgrade-handshake",
+        "real-time",
+        "server-sent-events"
+      ],
+      "prompt": "The server signals success with a ___ status, the one status code whose entire job is to say the protocol on this connection is about to change.",
+      "source": {
+        "path": "vault/networking/http/websockets-and-the-upgrade-mechanism.md",
+        "block": "card-9ces"
+      },
+      "citations": [
+        "RFC 6455 (WebSocket)"
+      ],
+      "answer": "101"
+    },
+    {
+      "id": "card-cero",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "websockets",
+        "upgrade-handshake",
+        "real-time",
+        "server-sent-events"
+      ],
+      "prompt": "After the 101 response, is the traffic on that connection still HTTP?",
+      "source": {
+        "path": "vault/networking/http/websockets-and-the-upgrade-mechanism.md",
+        "block": "card-cero"
+      },
+      "citations": [
+        "RFC 6455 (WebSocket)"
+      ],
+      "answer": "No — the connection has switched entirely to WebSocket framing; there are no more HTTP requests or responses on it, only WebSocket frames sent by either side until the connection closes."
+    },
+    {
+      "id": "card-owsu",
+      "format": "cloze",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "websockets",
+        "upgrade-handshake",
+        "real-time",
+        "server-sent-events"
+      ],
+      "prompt": "Not every \"server needs to push updates\" problem calls for a full duplex protocol, though. ___ give a server a plain-HTTP, one-way channel to the client, with reconnection handled automatically by the browser's own EventSource API — no separate handshake, no client-to-server frames, and no custom reconnect logic to write.",
+      "source": {
+        "path": "vault/networking/http/websockets-and-the-upgrade-mechanism.md",
+        "block": "card-owsu"
+      },
+      "citations": [
+        "RFC 6455 (WebSocket)"
+      ],
+      "answer": "Server-Sent Events"
+    },
+    {
+      "id": "card-ky12",
+      "format": "mcq",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "websockets",
+        "upgrade-handshake",
+        "real-time",
+        "server-sent-events"
+      ],
+      "prompt": "An app needs a one-way stream of live updates from server to client, delivered over plain HTTP, with reconnection handled automatically by the browser. What fits without the overhead of a full-duplex protocol?",
+      "source": {
+        "path": "vault/networking/http/websockets-and-the-upgrade-mechanism.md",
+        "block": "card-ky12"
+      },
+      "citations": [
+        "RFC 6455 (WebSocket)"
+      ],
+      "choices": [
+        {
+          "text": "Server-Sent Events",
+          "correct": true
+        },
+        {
+          "text": "WebSockets",
+          "correct": false
+        },
+        {
+          "text": "Long polling, reissued manually on every disconnect",
+          "correct": false
+        },
+        {
+          "text": "Short polling on a fixed interval",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-80ez",
+      "format": "qa",
+      "topic": "networking",
+      "category": "http-protocol",
+      "tags": [
+        "websockets",
+        "upgrade-handshake",
+        "real-time",
+        "server-sent-events"
+      ],
+      "prompt": "What connects HTTP/2 to the Upgrade mechanism this note describes?",
+      "source": {
+        "path": "vault/networking/http/websockets-and-the-upgrade-mechanism.md",
+        "block": "card-80ez"
+      },
+      "citations": [
+        "RFC 6455 (WebSocket)"
+      ],
+      "answer": "Nothing directly — HTTP/2 does not use the HTTP/1.1 Upgrade header to negotiate anything about itself, so a WebSocket connection cannot reuse this same 101 handshake on top of an HTTP/2 connection; running WebSockets over HTTP/2 instead needed a separate mechanism, an extended form of the CONNECT method defined for that purpose."
     },
     {
       "id": "card-ftnu",
