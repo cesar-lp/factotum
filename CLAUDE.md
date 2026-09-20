@@ -98,6 +98,32 @@ otherwise linger in `git worktree list` as `prunable`.
 Run `git worktree list` periodically — a merged branch's worktree is pure
 overhead, and the tooling that creates them does not clean up after itself.
 
+## Branch freshness
+
+**Branch from an up-to-date `main`, and re-sync before opening a PR.**
+Fetch first — the local `main` is itself a cached copy and goes stale
+the moment someone merges:
+
+```bash
+git fetch origin && git rebase origin/main
+```
+
+This matters more here than in most repos, for two reasons. Worktrees
+are long-lived: one created days ago starts from whatever `main` was
+then, and nothing about working inside it ever advances that base. And
+`deck/deck.json` is a single generated file that every content PR
+rewrites, so two branches cut from different bases conflict there
+almost by construction — rebasing late means resolving a machine-
+generated diff instead of never creating one.
+
+Rebase rather than merge, so the branch stays a readable stack of
+commits over current `main`. Regenerate the deck after any rebase that
+pulled in vault changes, since `deck.json` is downstream of both sides:
+
+```bash
+npm run build:deck && git status --porcelain
+```
+
 ## Vault content
 
 Authoring conventions — the `topic`/`category` split, card syntax, and the
