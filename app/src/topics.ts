@@ -1,5 +1,6 @@
 import type { ReviewState, StoredCard } from './db/schema.js';
 import { isDue } from './scheduler/fsrs.js';
+import type { Notes } from '../../pipeline/src/types.js';
 
 export interface CategorySummary {
   category: string;
@@ -74,6 +75,24 @@ export function summarizeTopics(
  * stale history entry, a reload or a bookmark rather than from a tap on a
  * button that only renders when the category is real.
  */
+/**
+ * Groups notes under their category, for the topics screen's third level.
+ *
+ * Sorted by title rather than path so the list reads the way the note is
+ * named, and so ordering never depends on directory layout -- matching how
+ * summarizeTopics sorts by name at both its levels.
+ */
+export function notesByCategory(notes: Notes): Map<string, { path: string; title: string }[]> {
+  const byCategory = new Map<string, { path: string; title: string }[]>();
+  for (const note of notes.notes) {
+    const list = byCategory.get(note.category) ?? [];
+    list.push({ path: note.path, title: note.title });
+    byCategory.set(note.category, list);
+  }
+  for (const list of byCategory.values()) list.sort((a, b) => a.title.localeCompare(b.title));
+  return byCategory;
+}
+
 export function hasFocusableCards(topics: TopicSummary[], category: string): boolean {
   return topics.some((topic) =>
     topic.categories.some((c) => c.category === category && c.dueCount + c.newCount > 0)

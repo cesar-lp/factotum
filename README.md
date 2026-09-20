@@ -144,6 +144,9 @@ single textbook chapter. Group related chapters into one note when they read
 better together — address translation, paging, and TLBs make one note, not
 three thin ones.
 
+**A note's first `# H1` becomes its title in the note viewer** (below); a
+note with no H1 falls back to its filename stem.
+
 ## Stable ids
 
 Every card gets a `^card-xxxx` block-reference anchor. The build Action
@@ -178,6 +181,9 @@ became overdue in the meantime, all at once. That is deliberate — FSRS
 models forgetting over real elapsed time, and freezing the clock on a
 muted category would overstate how much of it you still remember.
 
+Each category also expands to list its notes by title, for browsing into
+the note viewer (below) without going through review at all.
+
 **Learn** starts a focused session on one category, reachable at
 `#focus/<category>` in addition to (not instead of) the daily `#review`.
 It serves that category's due cards first, then every one of its unseen
@@ -201,13 +207,19 @@ Run with `npm run <script>` from the repo root.
   `tsc` invocations, since the service worker needs the `WebWorker` lib and
   the rest of the app needs `DOM`).
 - `build:deck` — runs the pipeline over `vault/`, writing `deck/deck.json`
-  and rewriting vault notes in place with any newly assigned `^card-xxxx`
-  anchors.
-- `predev` — copies `deck/deck.json` into `app/public/deck.json`; runs
-  automatically before `dev`, not meant to be invoked directly.
+  and `deck/notes.json`, and rewriting vault notes in place with any newly
+  assigned `^card-xxxx` anchors. `notes.json` (~302 KB gzipped) carries every
+  note's body as pre-parsed renderable blocks, for the note viewer below —
+  kept out of `deck.json` (241 KB gzipped) because that file is fetched
+  network-first with a 2.5s service-worker timeout at the start of every
+  review, including sessions that never open a note.
+- `predev` — copies `deck/deck.json` and `deck/notes.json` into
+  `app/public/`; runs automatically before `dev`, not meant to be invoked
+  directly.
 - `dev` — starts the Vite dev server for the app.
-- `prebuild:app` — copies `deck/deck.json` into `app/public/deck.json`; runs
-  automatically before `build:app`, not meant to be invoked directly.
+- `prebuild:app` — copies `deck/deck.json` and `deck/notes.json` into
+  `app/public/`; runs automatically before `build:app`, not meant to be
+  invoked directly.
 - `build:app` — builds the production app bundle into `dist/`.
 
 ## How the CI loop works
@@ -359,23 +371,42 @@ the button yourself, which is only tedious.
      script-writable storage eviction. Without it, review history can be
      silently wiped by Safari itself.
 
-## Opening a note from a card
+## The note viewer
 
-Every card, once revealed, shows an **open note** link back to the
-Obsidian note it came from — for when you half-remember something and want
-the full explanation instead of guessing whether your recall was good
-enough. It opens via an `obsidian://open` deep link, so Obsidian (installed
-on the device) must handle it; there's no in-app viewer. It's shown only
-after reveal, deliberately — the note contains the answer, so surfacing it
-beforehand would spoil the card.
+Every card, once revealed, shows an **open note** link back to the note it
+came from — for when you half-remember something and want the full
+explanation instead of guessing whether your recall was good enough. It's
+shown only after reveal, deliberately — the note contains the answer, so
+surfacing it beforehand would spoil the card. The topics screen (above)
+also lists every category's notes directly, for browsing outside of review.
 
-The link's `vault` parameter comes from **Settings → Obsidian vault
-name**, which defaults to `vault` — matching the [Vault and
-authoring](#vault-and-authoring) instructions above to open this repo's
-`vault/` folder directly as your Obsidian vault. If you opened it under a
-different vault name (or your vault has a different structure entirely),
-the default link won't resolve; update the setting to match what Obsidian
-calls that vault.
+Both open `#note/<path>`, an in-app viewer rather than a deep link out to
+Obsidian: **an answer is masked when its card is currently due, and shown
+for new cards and for cards still inside their retention window**, so
+reading a note never hands you the answer to a card you're about to be
+tested on — except the card you arrived from, which is never masked.
+Tapping a hidden answer reveals just that one; a header control reveals the
+whole note at once. Full design and rationale in
+`docs/superpowers/specs/2026-09-20-in-app-note-viewer-design.md`.
+
+**Opening a note mid-review doesn't end the session.** Going back lands you
+on the same card, revealed as you left it, with the progress counter, the
+rating tallies, the session timer and any card you rated Again all intact —
+the review screen is set aside while you read, not torn down and rebuilt.
+(A long prompt comes back scrolled to the top.) A full page reload still
+ends the session, as it always has.
+
+**Open in Obsidian** moved into the viewer's header. It still opens via an
+`obsidian://open` deep link and is still the better tool for *editing* a
+note on a Mac — which the in-app viewer will never do — but is no longer
+the only way to read one, so it no longer needs to be the primary action on
+a phone that generally doesn't have Obsidian installed. The link's `vault`
+parameter comes from **Settings → Obsidian vault name**, which defaults to
+`vault` — matching the [Vault and authoring](#vault-and-authoring)
+instructions above to open this repo's `vault/` folder directly as your
+Obsidian vault. If you opened it under a different vault name (or your
+vault has a different structure entirely), the default link won't resolve;
+update the setting to match what Obsidian calls that vault.
 
 ## Backup
 

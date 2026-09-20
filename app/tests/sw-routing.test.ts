@@ -22,6 +22,11 @@ describe('strategyFor', () => {
     expect(strategyFor(`${BASE}/deck.json`)).toBe('network-first');
   });
 
+  it('keeps notes.json network-first, for the same reason as deck.json', () => {
+    // Stable URL, changing content: a rebuilt vault must reach the client.
+    expect(strategyFor(`${BASE}/notes.json`)).toBe('network-first');
+  });
+
   it('serves the manifest network-first', () => {
     expect(strategyFor(`${BASE}/manifest.webmanifest`)).toBe('network-first');
   });

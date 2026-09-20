@@ -7,8 +7,8 @@ import { loadReviews, recordReview, flagCard } from '../db/reviews.js';
 import { getSettings } from '../db/settings.js';
 import { checkCloze, renderActions, renderPrompt, shuffle } from './renderers.js';
 import { issueUrl } from './flag.js';
-import { obsidianUrl } from './obsidian.js';
 import { renderSummary, type RatingCounts } from './summary.js';
+import { noteHash } from '../route.js';
 
 // How many OTHER cards must be shown before a learning-step card (Again/
 // Hard/Good on a card that hasn't graduated to FSRS state Review) reappears
@@ -336,8 +336,26 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
     // and still grades the card themselves. Do not copy the flag handler's
     // shape onto this one, and note it must stay outside the `submitting`
     // guard that now also fronts the header's × (finishSession).
+    //
+    // This now opens the in-app viewer rather than an obsidian:// deep
+    // link. The deep link only worked with Obsidian installed and the vault
+    // synced to the device, which on the iPhone -- the app's actual target,
+    // with the vault living in the repo -- it generally is not. Obsidian
+    // moved into the viewer's own header, where it is still the better tool
+    // for editing on a Mac.
+    //
+    // The card id rides along so the viewer can leave THIS card unmasked:
+    // it is due by definition, but you have just answered it.
+    //
+    // This assignment fires `hashchange`, which main.ts routes on — unlike
+    // the obsidian:// window.open it replaced, which merely suspended the
+    // PWA. The session is NOT rebuilt on the way back: main.ts detaches this
+    // screen's DOM node and re-attaches it, so every closure variable above
+    // (index, reviewed, ratingCounts, sessionStartedAt, requeueCounts, the
+    // spliced deps.session) survives the detour untouched. Read that
+    // retention machinery before changing anything about how this navigates.
     root.querySelector('[data-role="source"]')?.addEventListener('click', () => {
-      window.open(obsidianUrl(card, settings.obsidianVault), '_blank');
+      window.location.hash = noteHash(card.source.path, card.id);
     });
 
     root.querySelector('[data-role="reveal"]')?.addEventListener('click', () => {

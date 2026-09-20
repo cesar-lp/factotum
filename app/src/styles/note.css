@@ -1,0 +1,69 @@
+/* The note viewer. */
+
+/* A masked span keeps its width so revealing it reflows nothing --
+   reading flow has to survive the tap. */
+.is-masked {
+  filter: blur(6px);
+  cursor: pointer;
+  border-radius: var(--r-sm);
+  transition: filter 120ms ease-out;
+}
+.is-masked:hover { filter: blur(4px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .is-masked { transition: none; }
+}
+
+/*
+ * .screen (base.css) already supplies this section's flex sizing and
+ * vertical padding, matching every other screen -- the side gutter comes
+ * from body's own padding, and #app is the one place max-width is set
+ * (480px). This class used to duplicate and contradict all three (its own
+ * padding stacked a second gutter atop body's, its 42rem max-width
+ * overrode #app's 480px, and its margin:auto was a no-op inside a flex
+ * column), which is what pushed the page past the viewport on a phone. Now
+ * it adds only what .screen doesn't already cover.
+ *
+ * min-width: 0 undoes the flex item's default automatic-minimum-size,
+ * which otherwise refuses to let this section shrink below the min-content
+ * width of whatever's inside it. There's no wide content in THIS note, but
+ * .note-code's overflow-x:auto (below) depends on some ancestor being
+ * willing to shrink to the viewport instead of growing to fit a long code
+ * line -- without this, the first note with a wide fence reopens the same
+ * horizontal-scroll bug from a different block kind.
+ */
+.note-screen { min-width: 0; }
+.note-head { display: flex; align-items: center; gap: var(--s3); margin-bottom: var(--s4); }
+.note-title { font-size: var(--text-prompt); margin: 0; flex: 1; }
+.note-masked-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--s3); padding: var(--s3); margin-bottom: var(--s4);
+  border-radius: var(--r-md); font-size: var(--text-label);
+}
+/* Same automatic-minimum-size issue as .note-screen above, one level
+   closer to .note-code: .note-body is itself a flex item (of .screen's
+   column layout) and sits directly between the screen and the code block
+   whose overflow-x needs somewhere to actually take effect. */
+.note-body { font-size: var(--text-body); line-height: 1.6; min-width: 0; }
+/* Subordinate to the screen's own <h1> (.note-title, --text-prompt) --
+   a body heading is a section break within the note, not a second title,
+   so it sits at or below --text-body rather than the UA-default 2em. */
+.note-heading { font-size: var(--text-body); font-weight: 600; margin: var(--s5) 0 var(--s3); }
+.note-heading:first-child { margin-top: 0; }
+.note-list { margin: 0 0 var(--s4); padding-left: var(--s5); }
+.note-list li { margin: 0 0 var(--s2); }
+.note-prose { margin: 0 0 var(--s4); }
+.note-code { overflow-x: auto; padding: var(--s3); border-radius: var(--r-md); }
+.note-card { padding: var(--s4); border-radius: var(--r-md); margin: 0 0 var(--s4); }
+.note-card-prompt { margin: 0 0 var(--s3); font-weight: 600; }
+.note-choices { list-style: none; padding: 0; margin: 0; }
+.note-choice { padding: var(--s2) var(--s3); border-radius: var(--r-sm); }
+.note-citations { margin-top: var(--s6); font-size: var(--text-micro); }
+.note-empty { padding: var(--s6) var(--s4); text-align: center; color: var(--dim); }
+
+.note-masked-bar { background: var(--accent-soft); color: var(--accent-text); }
+.note-code { background: var(--surface); border: 1px solid var(--line); }
+.note-card { background: var(--surface); border: 1px solid var(--line); }
+.note-choice.is-correct { background: var(--ok-soft); color: var(--ok); }
+.note-citations { color: var(--dim); }
+.is-arrived { outline: 2px solid var(--accent); border-radius: var(--r-sm); }

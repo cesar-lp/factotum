@@ -9,10 +9,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.sw.json",
-    "build:deck": "tsx pipeline/src/cli.ts vault deck/deck.json",
-    "predev": "cp deck/deck.json app/public/deck.json",
+    "build:deck": "tsx pipeline/src/cli.ts vault deck/deck.json deck/notes.json",
+    "predev": "cp deck/deck.json app/public/deck.json && cp deck/notes.json app/public/notes.json",
     "dev": "vite --config vite.config.ts",
-    "prebuild:app": "cp deck/deck.json app/public/deck.json",
+    "prebuild:app": "cp deck/deck.json app/public/deck.json && cp deck/notes.json app/public/notes.json",
     "build:app": "vite build --config vite.config.ts"
   },
   "devDependencies": {

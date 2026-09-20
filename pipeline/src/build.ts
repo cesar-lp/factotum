@@ -1,9 +1,9 @@
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { parseFrontmatter } from './frontmatter.js';
-import { parseCards } from './cards.js';
+import { parseCards, parseBlocks } from './cards.js';
 import { assignIds, writeBackIds } from './ids.js';
-import type { Deck, DeckCard, ParsedNote } from './types.js';
+import type { Deck, DeckCard, Notes, NoteBlock, NoteDoc, ParsedCard, ParsedNote, RawBlock } from './types.js';
 
 /**
  * JSON.stringify with object keys sorted so two objects with identical
@@ -94,15 +94,17 @@ export function withStableGeneratedAt(deck: Deck, existing: Deck | null): Deck {
 export interface ParseNoteResult {
   note: ParsedNote | null;
   updatedSource: string;
+  /** The frontmatter-stripped body, kept so `buildNotes` need not re-read the file. */
+  body: string;
 }
 
 export function parseNote(path: string, raw: string, taken: Set<string>): ParseNoteResult {
   const { meta, body, bodyStartLine } = parseFrontmatter(raw);
-  if (!meta) return { note: null, updatedSource: raw };
+  if (!meta) return { note: null, updatedSource: raw, body };
 
   const cards = assignIds(parseCards(body, bodyStartLine), taken);
   const note: ParsedNote = { path, ...meta, cards };
-  return { note, updatedSource: writeBackIds(raw, cards) };
+  return { note, updatedSource: writeBackIds(raw, cards), body };
 }
 
 export function buildDeck(notes: ParsedNote[], now: Date): Deck {
@@ -175,18 +177,22 @@ export function markdownFiles(dir: string): string[] {
  * tombstone every card from the broken note during the app's merge step,
  * which is worse than a failed build.
  */
-export function processVault(vaultDir: string): ParsedNote[] {
+export function processVault(vaultDir: string): { notes: ParsedNote[]; bodies: Map<string, string> } {
   const pathBase = resolve(vaultDir, '..');
   const taken = new Set<string>();
   const notes: ParsedNote[] = [];
+  const bodies = new Map<string, string>();
 
   for (const file of markdownFiles(vaultDir).sort()) {
     try {
       const raw = readFileSync(file, 'utf8');
       const rel = relative(pathBase, file);
-      const { note, updatedSource } = parseNote(rel, raw, taken);
+      const { note, updatedSource, body } = parseNote(rel, raw, taken);
       if (updatedSource !== raw) writeFileSync(file, updatedSource, 'utf8');
-      if (note) notes.push(note);
+      if (note) {
+        notes.push(note);
+        bodies.set(note.path, body);
+      }
     } catch (error) {
       throw new Error(`Failed to process ${file}: ${error instanceof Error ? error.message : String(error)}`, {
         cause: error
@@ -194,5 +200,119 @@ export function processVault(vaultDir: string): ParsedNote[] {
     }
   }
 
-  return notes;
+  return { notes, bodies };
+}
+
+/**
+ * Replaces each block's `cardIndex` ordinal with the id `assignIds` gave
+ * the card at that position.
+ *
+ * The zip must be TOTAL: every ordinal resolves and every card is consumed.
+ * `parseBlocks` and `parseCards` walk the same structure in the same order,
+ * and this is where that claim is checked -- on every build of every note,
+ * not only in the corpus test. A silent mismatch would mask the wrong card,
+ * or reveal a due one, so it throws instead.
+ */
+export function resolveBlocks(blocks: RawBlock[], cards: ParsedCard[], path: string): NoteBlock[] {
+  const consumed = new Set<number>();
+
+  const idFor = (index: number): string => {
+    const card = cards[index];
+    if (!card?.id) {
+      throw new Error(
+        `${path}: block references card ordinal ${index}, but parseCards produced ${cards.length} card(s). ` +
+        'parseBlocks and parseCards have drifted -- likely a cloze or `::` inside a heading, list item, or ' +
+        'non-card blockquote, which parseCards treats as a card but parseBlocks does not.'
+      );
+    }
+    consumed.add(index);
+    return card.id;
+  };
+
+  const resolved: NoteBlock[] = blocks.map((block) => {
+    if (block.kind === 'prose') {
+      return {
+        kind: 'prose',
+        text: block.text,
+        clozes: block.clozes.map(({ start, end, answer, cardIndex }) => ({
+          start, end, answer, cardId: idFor(cardIndex)
+        }))
+      };
+    }
+    if (block.kind === 'qa') {
+      return { kind: 'qa', cardId: idFor(block.cardIndex), prompt: block.prompt, answer: block.answer };
+    }
+    if (block.kind === 'card') {
+      const base = { kind: 'card' as const, cardId: idFor(block.cardIndex), format: block.format, prompt: block.prompt };
+      if (block.choices !== undefined) return { ...base, choices: block.choices };
+      if (block.answer !== undefined) return { ...base, answer: block.answer };
+      return base;
+    }
+    return block;
+  });
+
+  if (consumed.size !== cards.length) {
+    const missing = cards.map((_, i) => i).filter((i) => !consumed.has(i));
+    throw new Error(
+      `${path}: ${missing.length} card(s) produced by parseCards are referenced by no block ` +
+      `(ordinals ${missing.join(', ')}). parseBlocks and parseCards have drifted.`
+    );
+  }
+
+  return resolved;
+}
+
+/** First h1 if the note has one, else the filename stem. */
+export function noteTitle(path: string, blocks: NoteBlock[]): string {
+  const h1 = blocks.find((block) => block.kind === 'heading' && block.level === 1);
+  if (h1 && h1.kind === 'heading' && h1.text !== '') return h1.text;
+  return (path.split('/').pop() ?? path).replace(/\.md$/, '');
+}
+
+export function buildNotes(notes: ParsedNote[], bodies: Map<string, string>, now: Date): Notes {
+  const docs: NoteDoc[] = notes.map((note) => {
+    const body = bodies.get(note.path);
+    if (body === undefined) throw new Error(`No body captured for ${note.path}`);
+    const blocks = resolveBlocks(parseBlocks(body), note.cards, note.path);
+    return {
+      path: note.path,
+      title: noteTitle(note.path, blocks),
+      topic: note.topic,
+      category: note.category,
+      citations: note.citations,
+      blocks
+    };
+  });
+
+  // Sorted by path so output order never depends on directory traversal.
+  docs.sort((a, b) => a.path.localeCompare(b.path));
+  return { generatedAt: now.toISOString(), notes: docs };
+}
+
+/** Same contract as `readExistingDeck`: anything unreadable or malformed rebuilds fresh. */
+export function readExistingNotes(path: string): Notes | null {
+  let raw: string;
+  try { raw = readFileSync(path, 'utf8'); } catch { return null; }
+  let parsed: unknown;
+  try { parsed = JSON.parse(raw); } catch {
+    console.warn(`${path} exists but is not valid JSON; rebuilding fresh`);
+    return null;
+  }
+  if (!parsed || typeof parsed !== 'object') return null;
+  const candidate = parsed as { generatedAt?: unknown; notes?: unknown };
+  if (typeof candidate.generatedAt !== 'string') return null;
+  if (!Array.isArray(candidate.notes)) return null;
+  return parsed as Notes;
+}
+
+/**
+ * The notes.json counterpart of `withStableGeneratedAt`. Same reason: CI
+ * gates PRs on `git status --porcelain` printing nothing after a rebuild,
+ * so a timestamp that churns on every run fails unrelated PRs.
+ */
+export function withStableNotesGeneratedAt(next: Notes, existing: Notes | null): Notes {
+  if (existing && stableStringify(existing.notes) === stableStringify(next.notes)) {
+    return { ...next, generatedAt: existing.generatedAt };
+  }
+  return next;
 }

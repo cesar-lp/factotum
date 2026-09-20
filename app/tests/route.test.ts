@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { decideRoute, focusHash, type DashboardState } from '../src/route.js';
+import {
+  decideRoute, focusHash, noteHash, resumesSuspendedSession, retainsSuspendedSession,
+  type DashboardState, type RouteDecision
+} from '../src/route.js';
 import type { TopicSummary } from '../src/topics.js';
 import type { StoredCard } from '../src/db/schema.js';
 
@@ -114,10 +117,169 @@ describe('decideRoute', () => {
   });
 });
 
+describe('decideRoute with a suspended session', () => {
+  it('resumes #review even though a freshly built session would be empty', () => {
+    // THE case this exists for: the reader graded everything, one card was
+    // re-queued in-session (so it is scheduled minutes out and no rebuild
+    // sees it as due), then detoured to a note. Rebuilding would hand back
+    // an empty session and eject them to the dashboard mid-session.
+    expect(decideRoute('#review', state([], []), '#review')).toEqual({ kind: 'resume' });
+  });
+
+  it('resumes #review-extend', () => {
+    expect(decideRoute('#review-extend', state([], []), '#review-extend'))
+      .toEqual({ kind: 'resume' });
+  });
+
+  it('resumes a focus session, without needing the category to still be servable', () => {
+    expect(decideRoute('#focus/amp', state([], [], topics()), '#focus/amp'))
+      .toEqual({ kind: 'resume' });
+  });
+
+  it('only resumes the exact route the session was started from', () => {
+    // A suspended #review must not turn #review-extend into a resume, nor
+    // survive a trip to any other screen.
+    const s = state([], [card('new-1')]);
+    expect(decideRoute('#review-extend', s, '#review')).toEqual({ kind: 'review-extend' });
+    expect(decideRoute('#topics', s, '#review')).toEqual({ kind: 'topics' });
+    expect(decideRoute('', s, '#review')).toEqual({ kind: 'dashboard' });
+  });
+
+  it('still routes the note detour to the note, not to a resume', () => {
+    // The whole point: the note has to render while the session waits.
+    expect(decideRoute(noteHash('vault/a.md', 'card-ab12'), state([], []), '#review'))
+      .toEqual({ kind: 'note', path: 'vault/a.md', cardId: 'card-ab12' });
+  });
+
+  it('never invents a resume for a non-session route', () => {
+    // Belt and braces: a retention record can only ever name a session
+    // route, but a bad one must degrade to normal guarded routing.
+    expect(decideRoute('#settings', state([], []), '#settings')).toEqual({ kind: 'settings' });
+    expect(decideRoute('#topics', state([], []), '#topics')).toEqual({ kind: 'topics' });
+  });
+
+  it('leaves every guard exactly as it was when nothing is suspended', () => {
+    // The invariant above, restated against the new parameter: passing null
+    // (or omitting it) must not change a single decision.
+    const s = state([card('due-1')], [card('new-1')]);
+    expect(decideRoute('#review-extend', s, null)).toEqual({ kind: 'dashboard' });
+    expect(decideRoute('#review', state([], []), null)).toEqual({ kind: 'dashboard' });
+  });
+});
+
+describe('retainsSuspendedSession', () => {
+  // THE anti-resurrection rule, and the one thing main.ts's session
+  // retention rests on that decideRoute cannot see (it is handed
+  // suspendedHash already computed). Typed as a total Record over the
+  // union, so adding a RouteDecision kind without deciding whether it keeps
+  // a running session alive fails to compile here rather than shipping as
+  // either a dropped session or a resurrected one.
+  const expected: Record<RouteDecision['kind'], boolean> = {
+    // The detour the note viewer exists to make survivable, and the return
+    // trip from it.
+    note: true,
+    resume: true,
+    // Every other destination means the reader has left for good.
+    review: false,
+    'review-extend': false,
+    focus: false,
+    topics: false,
+    settings: false,
+    dashboard: false
+  };
+
+  for (const [kind, retains] of Object.entries(expected)) {
+    it(`${retains ? 'keeps' : 'ends'} a suspended session on '${kind}'`, () => {
+      expect(retainsSuspendedSession(kind as RouteDecision['kind'])).toBe(retains);
+    });
+  }
+
+  it('agrees with decideRoute about every kind it can return', () => {
+    // The two halves of the rule must not drift: whatever decideRoute calls
+    // a resume, this must classify as retaining, or main.ts's fast path and
+    // its cleanup would disagree about the same navigation.
+    expect(retainsSuspendedSession(decideRoute('#review', state([], []), '#review').kind)).toBe(true);
+    expect(retainsSuspendedSession(decideRoute(noteHash('vault/a.md'), state([], [])).kind)).toBe(true);
+    expect(retainsSuspendedSession(decideRoute('', state([], [])).kind)).toBe(false);
+  });
+});
+
+describe('resumesSuspendedSession', () => {
+  it('is exactly the condition decideRoute returns `resume` for', () => {
+    // main.ts calls this directly to short-circuit the return trip ahead of
+    // a DashboardState load it would not use, so the two must not drift.
+    const cases: [string, string | null][] = [
+      ['#review', '#review'],
+      ['#review-extend', '#review-extend'],
+      ['#focus/amp', '#focus/amp'],
+      ['#review', '#review-extend'],
+      ['#topics', '#review'],
+      ['#settings', '#settings'],
+      ['#topics', '#topics'],
+      [noteHash('vault/a.md'), '#review'],
+      ['#review', null],
+      ['', null]
+    ];
+    for (const [hash, suspended] of cases) {
+      expect([hash, resumesSuspendedSession(hash, suspended)]).toEqual([
+        hash,
+        decideRoute(hash, state([], [], topics('amp')), suspended).kind === 'resume'
+      ]);
+    }
+  });
+});
+
 describe('focusHash', () => {
   it('round-trips a category containing characters that need encoding', () => {
     const s = state([], [], topics('data systems'));
     expect(decideRoute(focusHash('data systems'), s))
       .toEqual({ kind: 'focus', category: 'data systems' });
+  });
+});
+
+describe('#note routing', () => {
+  const s = () => state([], []);
+
+  it('routes a note hash to the note screen', () => {
+    expect(decideRoute(noteHash('vault/db/consensus.md'), s()))
+      .toEqual({ kind: 'note', path: 'vault/db/consensus.md', cardId: null });
+  });
+
+  it('carries an arrived-from card id', () => {
+    expect(decideRoute(noteHash('vault/db/consensus.md', 'card-ubdh'), s()))
+      .toEqual({ kind: 'note', path: 'vault/db/consensus.md', cardId: 'card-ubdh' });
+  });
+
+  it('splits on the LAST segment, since vault paths contain slashes', () => {
+    // THE parsing hazard: 'vault/aws/iam/conditions.md' has three slashes
+    // of its own, so the card id must be taken from the end, not the start.
+    expect(decideRoute('#note/vault%2Faws%2Fiam%2Fconditions.md/card-ab12', s()))
+      .toEqual({ kind: 'note', path: 'vault/aws/iam/conditions.md', cardId: 'card-ab12' });
+  });
+
+  it('treats a trailing segment that is not a card id as part of nothing', () => {
+    // Only ^card-[a-z0-9]{4} is a card id. Anything else is not one, and the
+    // whole remainder is the path.
+    expect(decideRoute('#note/vault%2Fa.md', s()))
+      .toEqual({ kind: 'note', path: 'vault/a.md', cardId: null });
+  });
+
+  it('falls back to the dashboard on a bare #note/', () => {
+    expect(decideRoute('#note/', s())).toEqual({ kind: 'dashboard' });
+  });
+
+  it('falls back to the dashboard on a malformed percent-escape', () => {
+    // decodeURIComponent throws a URIError on input like %E0%A4%A, and a
+    // hash is plain client state that can arrive hand-edited.
+    expect(decideRoute('#note/%E0%A4%A', s())).toEqual({ kind: 'dashboard' });
+  });
+});
+
+describe('noteHash', () => {
+  it('round-trips a path containing slashes', () => {
+    const hash = noteHash('vault/aws/iam/conditions.md');
+    expect(decideRoute(hash, state([], []))).toEqual({
+      kind: 'note', path: 'vault/aws/iam/conditions.md', cardId: null
+    });
   });
 });

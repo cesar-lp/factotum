@@ -110,7 +110,7 @@ describe('processVault', () => {
     );
 
     try {
-      const notes = processVault(vaultDir);
+      const { notes } = processVault(vaultDir);
       expect(notes).toHaveLength(1);
       expect(notes[0]?.path).toBe('vault/networking/tcp.md');
     } finally {

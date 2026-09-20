@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { summarizeTopics, hasFocusableCards } from '../src/topics.js';
+import { summarizeTopics, hasFocusableCards, notesByCategory } from '../src/topics.js';
 import { shelfCounts } from '../src/ui/topics.js';
 import { initialState } from '../src/scheduler/fsrs.js';
 import type { StoredCard, ReviewState } from '../src/db/schema.js';
+import type { Notes } from '../../pipeline/src/types.js';
 
 const now = new Date('2026-09-19T09:00:00Z');
 
@@ -112,6 +113,29 @@ describe('hasFocusableCards', () => {
       now
     );
     expect(hasFocusableCards(settled, 'amp')).toBe(false);
+  });
+});
+
+describe('notesByCategory', () => {
+  const notes: Notes = {
+    generatedAt: '2026-01-01T00:00:00.000Z',
+    notes: [
+      { path: 'vault/db/raft.md', title: 'Raft', topic: 'db', category: 'db', citations: [], blocks: [] },
+      { path: 'vault/db/consensus.md', title: 'Consensus', topic: 'db', category: 'db', citations: [], blocks: [] },
+      { path: 'vault/net/tcp.md', title: 'TCP', topic: 'net', category: 'net', citations: [], blocks: [] }
+    ]
+  };
+
+  it('groups notes under their category', () => {
+    expect(notesByCategory(notes).get('net')).toEqual([{ path: 'vault/net/tcp.md', title: 'TCP' }]);
+  });
+
+  it('sorts by title so the list order is stable across renders', () => {
+    expect(notesByCategory(notes).get('db')?.map((n) => n.title)).toEqual(['Consensus', 'Raft']);
+  });
+
+  it('returns an empty map for an empty notes file', () => {
+    expect(notesByCategory({ generatedAt: 'x', notes: [] }).size).toBe(0);
   });
 });
 

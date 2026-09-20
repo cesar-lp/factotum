@@ -12,6 +12,13 @@ export interface TopicsProps {
   onToggleTopic: (topic: string, nextDisabled: boolean) => void;
   onLearn: (category: string) => void;
   onBack: () => void;
+  /**
+   * Notes per category, for browsing. Empty when notes.json has not loaded
+   * yet -- it is fetched lazily, so this list is absent rather than broken,
+   * and the rest of the screen must render exactly as before.
+   */
+  notes: ReadonlyMap<string, { path: string; title: string }[]>;
+  onOpenNote: (path: string) => void;
 }
 
 function escapeHtml(value: string): string {
@@ -43,9 +50,9 @@ export function shelfCounts(categories: CategorySummary[]): { due: number; new: 
  * main.ts where it is reachable from a node test environment. This mirrors
  * how renderDashboard is structured.
  *
- * Category names come from free-form vault frontmatter, so they are
- * HTML-escaped on the way into innerHTML and carried on data attributes
- * rather than being interpolated into element ids.
+ * Category names and note titles both come from free-form vault content, so
+ * they are HTML-escaped on the way into innerHTML and carried on data
+ * attributes rather than being interpolated into element ids.
  */
 export function renderTopics(root: HTMLElement, props: TopicsProps): void {
   const sections = props.topics
@@ -60,6 +67,24 @@ export function renderTopics(root: HTMLElement, props: TopicsProps): void {
           const off = props.disabled.has(c.category);
           const label = categoryLabel(c.category, topic.topic);
           const chipDim = c.dueCount === 0 ? ' chip-dim' : '';
+          const notes = props.notes.get(c.category);
+          const notesHtml = notes && notes.length > 0
+            ? `
+              <ul class="topic-notes">
+                ${notes
+                  .map(
+                    (note) => `
+                      <li>
+                        <button class="btn-quiet topic-note" data-note-path="${escapeHtml(note.path)}">
+                          ${escapeHtml(note.title)}
+                        </button>
+                      </li>
+                    `
+                  )
+                  .join('')}
+              </ul>
+            `
+            : '';
           // The name always gets its own line (see .topic-row-name's
           // flex-basis in topics.css) so it can never compete for width
           // with the chip or controls — at 375px "data structures" plus a
@@ -86,6 +111,7 @@ export function renderTopics(root: HTMLElement, props: TopicsProps): void {
                   <span class="switch-track"><span class="switch-thumb"></span></span>
                 </label>
               </div>
+              ${notesHtml}
             </div>
           `;
         })
@@ -135,5 +161,10 @@ export function renderTopics(root: HTMLElement, props: TopicsProps): void {
     const topic = button.dataset['toggleTopic'];
     const next = button.dataset['next'] === 'off';
     if (topic !== undefined) button.addEventListener('click', () => props.onToggleTopic(topic, next));
+  }
+
+  for (const button of root.querySelectorAll<HTMLButtonElement>('[data-note-path]')) {
+    const path = button.dataset['notePath'];
+    if (path !== undefined) button.addEventListener('click', () => props.onOpenNote(path));
   }
 }

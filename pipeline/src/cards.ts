@@ -1,4 +1,4 @@
-import type { Choice, ParsedCard } from './types.js';
+import type { Choice, ParsedCard, RawBlock, RawCloze } from './types.js';
 
 const ANCHOR = /\s*\^(card-[a-z0-9]{4})\s*$/;
 const BARE_ANCHOR = /^\s*\^(card-[a-z0-9]{4})\s*$/;
@@ -325,4 +325,153 @@ export function parseCards(body: string, bodyStartLine: number): ParsedCard[] {
   }
 
   return cards;
+}
+
+/**
+ * Emits a note body as a stream of renderable blocks, the reading-side
+ * counterpart to `parseCards`. Both walk the SAME structure in the SAME
+ * order, which is what lets `build.ts` correlate the two by ordinal alone.
+ *
+ * Card references are ordinals (`cardIndex`) into the array `parseCards`
+ * yields for this same body, not ids: `parseCards` returns `id: string |
+ * null` and `assignIds` fills the nulls afterwards, so final ids do not
+ * exist yet at this point. `build.ts` resolves them once they do.
+ *
+ * Deliberately a sibling rather than a refactor of `parseCards`: that
+ * function's bugs orphan card ids, which is silent rather than loud, so it
+ * is not restructured to serve a reading feature. The shared regexes above
+ * are the coupling that keeps the two walks in agreement.
+ *
+ * One known divergence: `parseCards` treats headings, list items, and
+ * non-card blockquotes as ordinary single-line blocks and scans them for
+ * cloze/`::` syntax like any prose line, but `parseBlocks` does not — a
+ * heading, list item, or plain blockquote containing `==term==` or `A :: B`
+ * mints a card in `parseCards` with no matching `cardIndex` emitted here.
+ * The vault has no such lines today; if one is ever added, `build.ts`'s
+ * `resolveBlocks` total-zip assertion (matching every `cardIndex` this
+ * function emits against every card `parseCards` produces) turns it into a
+ * loud build failure rather than a silently wrong reading view.
+ */
+export function parseBlocks(body: string): RawBlock[] {
+  const blocks: RawBlock[] = [];
+  const lines = body.split('\n');
+  let cardIndex = 0;
+  let i = 0;
+
+  const flushProse = (memberLines: number[]): void => {
+    if (memberLines.length === 0) return;
+    // bodyStartLine is irrelevant here (nothing reports line numbers), so 0.
+    const { blockText } = buildBlock(lines, memberLines, 0);
+    if (blockText === '') return;
+
+    const matches = [...blockText.matchAll(HIGHLIGHT)];
+    if (matches.length > 0) {
+      // Rebuild the text with the `==` markers removed, tracking how each
+      // match's span shifts as earlier markers are dropped.
+      let text = '';
+      let cursor = 0;
+      const clozes: RawCloze[] = [];
+      for (const match of matches) {
+        const inner = match[1] ?? '';
+        text += blockText.slice(cursor, match.index);
+        const start = text.length;
+        text += inner;
+        clozes.push({ start, end: text.length, cardIndex: cardIndex++, answer: inner.trim() });
+        cursor = (match.index ?? 0) + match[0].length;
+      }
+      text += blockText.slice(cursor);
+      blocks.push({ kind: 'prose', text, clozes });
+      return;
+    }
+
+    const qa = blockText.match(QA);
+    if (qa && qa[1] && qa[2]) {
+      blocks.push({ kind: 'qa', cardIndex: cardIndex++, prompt: qa[1].trim(), answer: qa[2].trim() });
+      return;
+    }
+
+    blocks.push({ kind: 'prose', text: blockText, clozes: [] });
+  };
+
+  let prose: number[] = [];
+  let listItems: string[] = [];
+
+  const flushList = (): void => {
+    if (listItems.length === 0) return;
+    blocks.push({ kind: 'list', items: listItems });
+    listItems = [];
+  };
+
+  while (i < lines.length) {
+    const rawLine = lines[i] ?? '';
+
+    const fence = rawLine.match(FENCE);
+    if (fence) {
+      flushProse(prose); prose = []; flushList();
+      const marker = fence[1] as string;
+      const lang = rawLine.trim().slice(marker.length).trim() || null;
+      const content: string[] = [];
+      i++;
+      while (i < lines.length && !FENCE.test(lines[i] ?? '')) {
+        content.push(lines[i] ?? '');
+        i++;
+      }
+      i++; // consume the closing fence (or run off the end on an unclosed one)
+      blocks.push({ kind: 'code', lang, text: content.join('\n') });
+      continue;
+    }
+
+    const open = rawLine.match(CALLOUT_OPEN);
+    if (open && open[1]) {
+      flushProse(prose); prose = []; flushList();
+      const format = open[1].toLowerCase() as 'mcq' | 'recall';
+      const { card, nextIndex } = parseCallout(lines, i, 0, format);
+      if (card) {
+        const block: RawBlock = card.choices !== undefined
+          ? { kind: 'card', cardIndex: cardIndex++, format, prompt: card.prompt, choices: card.choices }
+          : card.answer !== undefined
+            ? { kind: 'card', cardIndex: cardIndex++, format, prompt: card.prompt, answer: card.answer }
+            : { kind: 'card', cardIndex: cardIndex++, format, prompt: card.prompt };
+        blocks.push(block);
+      }
+      i = nextIndex;
+      continue;
+    }
+
+    if (BARE_ANCHOR.test(rawLine)) { i++; continue; }
+
+    if (HEADING.test(rawLine)) {
+      flushProse(prose); prose = []; flushList();
+      const { text } = stripAnchor(rawLine);
+      const hashes = text.match(/^#{1,6}/)?.[0].length ?? 1;
+      blocks.push({ kind: 'heading', level: hashes, text: text.slice(hashes).trim() });
+      i++;
+      continue;
+    }
+
+    if (LIST_ITEM.test(rawLine)) {
+      flushProse(prose); prose = [];
+      const { text } = stripAnchor(rawLine);
+      listItems.push(text.replace(LIST_ITEM, '').trim());
+      i++;
+      continue;
+    }
+
+    if (rawLine.trim() === '' || BLOCKQUOTE.test(rawLine)) {
+      flushProse(prose); prose = []; flushList();
+      // A blank line closes a block; a non-card blockquote is not reading
+      // material this viewer renders, and carries no cards, so it is dropped
+      // rather than given a block kind nothing consumes.
+      i++;
+      continue;
+    }
+
+    flushList();
+    prose.push(i);
+    i++;
+  }
+
+  flushProse(prose);
+  flushList();
+  return blocks;
 }

@@ -51,6 +51,7 @@ app/src/                   the PWA
   route.ts                   pure routing decision (see 3.7)
   sw.ts                      service worker
 deck/deck.json             build output, committed
+deck/notes.json            build output, committed — note bodies for the viewer (§4)
 docs/superpowers/          spec and plan of record
 ```
 
@@ -142,7 +143,40 @@ pure and node-testable; `route()` performs the DOM render and hash mutation. Thi
 the due-first invariant has a permanent regression guard without adopting jsdom
 project-wide, which spec §10's "the UI is verified by hand" would not justify.
 
-## 4. Vault conventions
+## 4. The in-app note viewer
+
+Shipped after Phase 1 proper, but on the same footing: a read-only surface
+for rereading the vault note a card came from, from inside the PWA, instead
+of the `obsidian://open` deep link Phase 1 shipped (which only resolves on
+a device with Obsidian installed and the vault synced — not the iPhone PWA
+this app is actually used on).
+
+The pipeline gained a second build output, `deck/notes.json` — every note's
+body as pre-parsed renderable blocks, ~302 KB gzipped against `deck.json`'s
+241 KB. It is deliberately not a field on `deck.json`: that file is fetched
+network-first with a 2.5s service-worker timeout at the start of every
+review, so folding note bodies into it would slow review start in every
+session, including the many that never open a note. `notes.json` gets its
+own `network-first` service-worker route and is fetched lazily, only once
+the dashboard is up.
+
+The app gained a `#note/<path>[/<card-id>]` route and viewer screen, reached
+from the reveal-state "open note" link on a card (now in-app rather than an
+Obsidian deep link) and from a per-category note list on the topics screen.
+The load-bearing design decision is the masking rule: an answer is hidden
+when its card is currently due, visible for new cards and for cards still
+inside their retention window, and never hidden for the card the reader
+arrived from. A note is also an answer key for every other card drawn from
+it, so a generic markdown render would spoil recall on sight — masking is
+what makes rereading a note safe to do mid-deck rather than only after
+finishing every card it touches. "Open in Obsidian" survives, moved into
+the viewer's header, because it remains the right tool for *editing* a note
+on a Mac, which the in-app viewer never attempts.
+
+Full design and the decisions behind it:
+`docs/superpowers/specs/2026-09-20-in-app-note-viewer-design.md`.
+
+## 5. Vault conventions
 
 Documented in full in `README.md`. The essentials, because getting them wrong degrades the
 app rather than merely looking untidy:
@@ -170,7 +204,7 @@ treatment must sharpen the first, not restate it.
 - Ids are assigned by the build and written back; never hand-edit a `^card-xxxx` anchor.
   Review history is keyed on them.
 
-## 5. Known gaps and accepted risks
+## 6. Known gaps and accepted risks
 
 | Gap | Status |
 |---|---|
@@ -179,9 +213,9 @@ treatment must sharpen the first, not restate it.
 | Enter-to-submit and routing side effects are verified by hand, not unit-tested | Accepted; jsdom is not a project dependency and §10 sanctions hand-verification |
 | ~19 qa cards in `networking` were term-only prompts | Fixed; no automated guard against recurrence |
 | 14 categories after CLRS would mean 14 mastery bars on a phone | Open design problem for Phase 2 |
-| Review history exists in one place | Mitigated by Settings → Export; §4.5 |
+| **FSRS review state (stability, due dates, lapses) lives only in IndexedDB on one device**, with the manual Settings → Export button as the entire mitigation. Deleting the home-screen icon destroys it outright — no iCloud backup, no server copy. Surfaced while designing §4's note viewer; unrelated to it, but real: the deck rebuilds from this repo, months of stability scores do not. | Unmitigated beyond manual export; more urgent than anything in Phase 2, needs its own spec |
 
-## 6. Remaining phases
+## 7. Remaining phases
 
 ### Phase 2 — the habit layer (not started, deliberately)
 
@@ -212,7 +246,7 @@ been lived with.
   committing to the rest.
 - **A qa-prompt-quality pass** if term-only prompts recur in new material.
 
-## 7. What implementation taught us
+## 8. What implementation taught us
 
 Recorded because it should shape how later phases are built.
 

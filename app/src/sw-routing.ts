@@ -35,6 +35,9 @@ export function strategyFor(url: string, mode?: string): Strategy {
   }
 
   if (pathname.endsWith('/deck.json')) return 'network-first';
+  // Same contract as deck.json: one stable URL whose content changes
+  // whenever the vault is rebuilt.
+  if (pathname.endsWith('/notes.json')) return 'network-first';
   if (pathname.endsWith('/') || pathname.endsWith('/index.html')) return 'network-first';
   if (pathname.endsWith('/manifest.webmanifest')) return 'network-first';
 

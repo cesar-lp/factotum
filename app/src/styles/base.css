@@ -30,6 +30,14 @@ body {
 
 .screen { flex: 1; display: flex; flex-direction: column; padding: var(--s4) 0 var(--s6); }
 
+/* A handle, not a box. main.ts wraps the review screen in one of these so
+   it can detach and re-attach the whole screen (listeners and session
+   closure intact) across a note detour. `display: contents` removes the
+   wrapper itself from layout, so `.screen` above stays the direct flex item
+   of #app it is on every other screen — the flex:1 sizing that
+   review.css:20 relies on keeps working with no special case. */
+.screen-host { display: contents; }
+
 .top { display: flex; justify-content: space-between; align-items: center; color: var(--dim); font-size: var(--text-micro); }
 
 .spacer { flex: 1; }
