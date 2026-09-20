@@ -296,11 +296,37 @@ anyone who opens a PR.
      a solo repo. Enable **Settings → General → Allow auto-merge** instead:
      it is a per-PR button only someone with write access can press, so it
      never lets an outside PR land on its own.
-   - Under **Bypass list**, click **Add bypass** and add the **GitHub
-     Actions** app (not a specific user or team). This is the step that
-     keeps `build-deck.yml`'s direct push to `main` working; without it,
-     that push starts failing the moment the ruleset is enforced, exactly
-     as `build-deck.yml`'s own comment warns.
+   - Under **Bypass list**, click **Add bypass** and add **Repository
+     admin** and **Write**. This is the step that keeps
+     `build-deck.yml`'s direct push to `main` working; without it, that
+     push starts failing the moment the ruleset is enforced, exactly as
+     `build-deck.yml`'s own comment warns.
+
+     Note for anyone following older instructions (including an earlier
+     version of this list): there is **no "GitHub Actions" bypass actor on
+     a user-owned repo**. That actor only exists in organization rulesets.
+     The full actor list here is `Deploy keys`, `Repository admin`,
+     `Maintain`, `Write`, and installed Marketplace apps — searching it for
+     "GitHub" returns nothing. `Write` is the closest equivalent: the deck
+     push comes from `github-actions[bot]` using `GITHUB_TOKEN` with
+     `contents: write`, and on a solo repo the only holders of write are
+     the maintainer and that bot.
+
+     **Verify this rather than assuming it.** Whether ruleset evaluation
+     treats `github-actions[bot]` as holding the `Write` role is not
+     something the GitHub docs state plainly. After enabling the ruleset,
+     merge a PR that touches `vault/` and confirm `Build deck` goes green
+     and its rebuild commit lands on `main`. The failure is silent — no
+     deck commit, no `deploy` run, site quietly stale — so it is worth one
+     deliberate check.
+
+     If the push is still rejected, the fallback is a fine-grained PAT
+     stored as a secret and used for the push: it acts as the maintainer,
+     which `Repository admin` covers. The cost is real, and
+     `build-deck.yml`'s own comments spell it out — a PAT push **does**
+     re-trigger workflows, so `[skip ci]` becomes the only thing preventing
+     a self-triggering rebuild loop, and the token needs renewing on
+     expiry. Prefer the role bypass if it works.
    - Set **Enforcement status** to **Active** and save.
 3. **Install to the iPhone Home Screen**: open the deployed Pages URL in
    Safari, tap Share → **Add to Home Screen**. This is not optional
