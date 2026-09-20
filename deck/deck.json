@@ -1,6 +1,2121 @@
 {
-  "generatedAt": "2026-09-20T17:46:45.272Z",
+  "generatedAt": "2026-09-20T18:05:53.262Z",
   "cards": [
+    {
+      "id": "card-hdu0",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "rest",
+        "graphql",
+        "api-design",
+        "tradeoffs"
+      ],
+      "prompt": "A mobile team ships a public app that talks to a backend the same company controls, but app releases can lag weeks behind backend deploys because of app-store review. Which property of gRPC makes it the weaker fit here compared to a service-to-service call inside the same backend?",
+      "source": {
+        "path": "vault/api/grpc/choosing-between-grpc-rest-and-graphql.md",
+        "block": "card-hdu0"
+      },
+      "citations": [
+        "gRPC documentation (grpc.io)"
+      ],
+      "choices": [
+        {
+          "text": "The generated-stub contract assumes both sides can be rebuilt and redeployed together, which a store-gated client release cycle breaks",
+          "correct": true
+        },
+        {
+          "text": "gRPC cannot run over a mobile network's radio link at all",
+          "correct": false
+        },
+        {
+          "text": "Protobuf messages are too large to transmit over cellular connections",
+          "correct": false
+        },
+        {
+          "text": "gRPC requires the client to be written in the same language as the server",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-d1t5",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "rest",
+        "graphql",
+        "api-design",
+        "tradeoffs"
+      ],
+      "prompt": "Given a situation where a company's own backend team owns both the publisher and every subscriber of an internal call, and both are redeployed on the same release train — why does that situation favor spending the cost of a generated-stub contract, when the same cost would be a poor trade for a public-facing endpoint?",
+      "source": {
+        "path": "vault/api/grpc/choosing-between-grpc-rest-and-graphql.md",
+        "block": "card-d1t5"
+      },
+      "citations": [
+        "gRPC documentation (grpc.io)"
+      ],
+      "answer": "When one team (or coordinated teams) can rebuild and redeploy both sides together, the generated-stub contract's cost — a build step, regenerated code, coordinated schema changes — is paid once by people who already coordinate deploys anyway, and it buys strong typing and compact encoding in return. A public endpoint has no such coordination: an unknown, independently-released population of clients cannot be forced through the same build step, so the same contract cost buys nothing but friction for the very clients you can't afford to friction out."
+    },
+    {
+      "id": "card-yjkw",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "rest",
+        "graphql",
+        "api-design",
+        "tradeoffs"
+      ],
+      "prompt": "Those are the two failure modes GraphQL is a response to. Fetching a full fixed representation when only a few of its fields are needed is ___. Needing several separate calls because no single fixed shape covers what one screen actually wants is under-fetching. GraphQL addresses both by putting one endpoint in front of a schema and letting each caller specify, per request, the exact shape of data it wants back — the client, not the server, decides which fields and which related entities come back together.",
+      "source": {
+        "path": "vault/api/grpc/choosing-between-grpc-rest-and-graphql.md",
+        "block": "card-yjkw"
+      },
+      "citations": [
+        "gRPC documentation (grpc.io)"
+      ],
+      "answer": "over-fetching"
+    },
+    {
+      "id": "card-sd3y",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "rest",
+        "graphql",
+        "api-design",
+        "tradeoffs"
+      ],
+      "prompt": "Those are the two failure modes GraphQL is a response to. Fetching a full fixed representation when only a few of its fields are needed is over-fetching. Needing several separate calls because no single fixed shape covers what one screen actually wants is ___. GraphQL addresses both by putting one endpoint in front of a schema and letting each caller specify, per request, the exact shape of data it wants back — the client, not the server, decides which fields and which related entities come back together.",
+      "source": {
+        "path": "vault/api/grpc/choosing-between-grpc-rest-and-graphql.md",
+        "block": "card-sd3y"
+      },
+      "citations": [
+        "gRPC documentation (grpc.io)"
+      ],
+      "answer": "under-fetching"
+    },
+    {
+      "id": "card-e3fh",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "rest",
+        "graphql",
+        "api-design",
+        "tradeoffs"
+      ],
+      "prompt": "A team building a dashboard that combines slices of five different resource types is deciding between REST, gRPC, and GraphQL. Which problem is actually driving that decision, and why does that point specifically at GraphQL rather than at gRPC's efficiency advantages?",
+      "source": {
+        "path": "vault/api/grpc/choosing-between-grpc-rest-and-graphql.md",
+        "block": "card-e3fh"
+      },
+      "citations": [
+        "gRPC documentation (grpc.io)"
+      ],
+      "answer": "The problem is under-fetching — no single fixed response shape from a REST resource or a gRPC method covers everything the dashboard needs, so assembling the view requires either many round trips or a bespoke aggregating endpoint maintained just for that one screen. gRPC's advantages are about how efficiently a single fixed-shape call is encoded and transported, which doesn't touch the actual problem of the shape itself being wrong for this client. GraphQL addresses the shape problem directly by letting the client specify which fields and related entities it wants in one query, which is a different axis of the decision than transport efficiency entirely."
+    },
+    {
+      "id": "card-y9k8",
+      "format": "recall",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "rest",
+        "graphql",
+        "api-design",
+        "tradeoffs"
+      ],
+      "prompt": "Contrast how a REST API and a gRPC API each let a server add new data to a response over time without breaking clients that haven't updated. What is the underlying difference in what each contract treats as its unit of change?",
+      "source": {
+        "path": "vault/api/grpc/choosing-between-grpc-rest-and-graphql.md",
+        "block": "card-y9k8"
+      },
+      "citations": [
+        "gRPC documentation (grpc.io)"
+      ],
+      "answer": "A REST API relies on additive, optional fields within a representation and on tolerant clients that ignore fields they don't recognize — the representation as a whole is the unit, and compatibility is a discipline the client and server both have to observe. A gRPC API gets compatibility more structurally: each Protobuf field carries its own permanent number, so an old client decoding a message simply skips numbered fields it wasn't compiled to know about, without that unrecognized data disturbing the fields it does understand. The unit of evolution is the individual numbered field rather than the representation as a whole, which is why Protobuf's compatibility rules can be more mechanical than REST's \"be a tolerant reader\" convention."
+    },
+    {
+      "id": "card-3ntg",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "rest",
+        "graphql",
+        "api-design",
+        "tradeoffs"
+      ],
+      "prompt": "Why does putting an API behind a single POST-shaped endpoint forfeit most of HTTP's caching machinery, even if every individual response would otherwise be perfectly cacheable?",
+      "source": {
+        "path": "vault/api/grpc/choosing-between-grpc-rest-and-graphql.md",
+        "block": "card-3ntg"
+      },
+      "citations": [
+        "gRPC documentation (grpc.io)"
+      ],
+      "answer": "HTTP caching keys on the combination of URL and method, not on payload content — that's what lets a shared cache or CDN store and revalidate a response without understanding anything about what's inside it. A single RPC-shaped POST endpoint gives every distinct logical request the same URL and method, so there's no longer a stable per-resource identifier for a generic cache to key on. The cache has no way to tell one request apart from another at the layer it actually operates on, regardless of how cacheable the underlying data would be under a resource-per-URL design."
+    },
+    {
+      "id": "card-ftp2",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "rest",
+        "graphql",
+        "api-design",
+        "tradeoffs"
+      ],
+      "prompt": "A team is deciding among REST, gRPC, and GraphQL for a new public API whose clients are third-party developers the team has never met and cannot coordinate a release with. Which factor should weigh most heavily against gRPC here?",
+      "source": {
+        "path": "vault/api/grpc/choosing-between-grpc-rest-and-graphql.md",
+        "block": "card-ftp2"
+      },
+      "citations": [
+        "gRPC documentation (grpc.io)"
+      ],
+      "choices": [
+        {
+          "text": "gRPC's generated-stub contract assumes clients can be rebuilt against a shared schema, which an unknown, uncoordinated client population cannot be required to do",
+          "correct": true
+        },
+        {
+          "text": "gRPC cannot express the data model third-party developers would need",
+          "correct": false
+        },
+        {
+          "text": "gRPC responses cannot be validated by external developers",
+          "correct": false
+        },
+        {
+          "text": "gRPC is slower than REST for every workload regardless of payload size or call volume",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-8rt1",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "deadlines",
+        "cancellation",
+        "distributed-systems",
+        "timeouts"
+      ],
+      "prompt": "A ___ is a fixed point in time — \"give up at 14:32:07.500\" — and it is attached to the request itself, so every hop that touches the request is reasoning about the exact same moment, not about its own freshly-started clock.",
+      "source": {
+        "path": "vault/api/grpc/deadlines-and-cancellation.md",
+        "block": "card-8rt1"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "answer": "deadline"
+    },
+    {
+      "id": "card-o5mv",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "deadlines",
+        "cancellation",
+        "distributed-systems",
+        "timeouts"
+      ],
+      "prompt": "Why does forwarding the *same* deadline from A to C, rather than letting each hop compute its own, let C avoid wasted work?",
+      "source": {
+        "path": "vault/api/grpc/deadlines-and-cancellation.md",
+        "block": "card-o5mv"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "answer": "Because C can compare the shared deadline against the current time and see that A's budget is already exhausted, before doing any work — a fresh, locally-invented budget at C would look fine on its own and give no such signal."
+    },
+    {
+      "id": "card-eleo",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "deadlines",
+        "cancellation",
+        "distributed-systems",
+        "timeouts"
+      ],
+      "prompt": "Service A sets a 2-second timeout and calls B. B, using its own independent 2-second timeout rather than A's deadline, calls C, which also applies its own 2-second timeout. In the worst case, roughly how long can the overall chain take before every hop gives up?",
+      "source": {
+        "path": "vault/api/grpc/deadlines-and-cancellation.md",
+        "block": "card-eleo"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "choices": [
+        {
+          "text": "2 seconds, since all three timeouts are identical",
+          "correct": false
+        },
+        {
+          "text": "Up to 6 seconds, since each hop's budget is measured from when that hop starts, independent of the others",
+          "correct": true
+        },
+        {
+          "text": "2 seconds, because gRPC caps total chain latency at the first hop's timeout automatically",
+          "correct": false
+        },
+        {
+          "text": "It is undefined and gRPC refuses the call",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-xu7j",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "deadlines",
+        "cancellation",
+        "distributed-systems",
+        "timeouts"
+      ],
+      "prompt": "A ___ value like this is only useful if it survives the whole chain unmodified in what it points to; a hop is free to give up *earlier* than the deadline if it wants to, but extending it back out undoes the whole guarantee, since a later hop would again be reasoning about a moment the original caller never agreed to.",
+      "source": {
+        "path": "vault/api/grpc/deadlines-and-cancellation.md",
+        "block": "card-xu7j"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "answer": "propagated"
+    },
+    {
+      "id": "card-cdki",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "deadlines",
+        "cancellation",
+        "distributed-systems",
+        "timeouts"
+      ],
+      "prompt": "Why should the deadline for a request always originate with the caller that made it, rather than with whichever service is doing the most expensive part of the work?",
+      "source": {
+        "path": "vault/api/grpc/deadlines-and-cancellation.md",
+        "block": "card-cdki"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "answer": "Only the original caller knows how long its own answer remains useful for — a downstream service can guess at a reasonable budget for its own work, but it has no visibility into what the caller is willing to wait for or why, so a deadline it invented would be disconnected from the actual reason the request exists."
+    },
+    {
+      "id": "card-5cdw",
+      "format": "recall",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "deadlines",
+        "cancellation",
+        "distributed-systems",
+        "timeouts"
+      ],
+      "prompt": "A deadline expires partway through a long-running unit of work on the server. What should the server do at that point, and why does doing nothing further with the request's resources matter, even though the work has already been started?",
+      "source": {
+        "path": "vault/api/grpc/deadlines-and-cancellation.md",
+        "block": "card-5cdw"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "answer": "Stop doing further work on that request as soon as the expiry is noticed, and release whatever resources (memory, held locks, worker threads, downstream calls in flight) were allocated to it. Continuing past that point burns compute on an answer nobody will read, and holding resources for it starves other requests that could still be served in time."
+    },
+    {
+      "id": "card-hwjh",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "deadlines",
+        "cancellation",
+        "distributed-systems",
+        "timeouts"
+      ],
+      "prompt": "What happens to a downstream call C when the upstream service B notices that A has cancelled?",
+      "source": {
+        "path": "vault/api/grpc/deadlines-and-cancellation.md",
+        "block": "card-hwjh"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "answer": "B should stop the work it was doing for A, and if it already has a call to C in flight for that same request, cancel that call too rather than letting C run to completion for nothing."
+    },
+    {
+      "id": "card-buvq",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "http2",
+        "grpc-web",
+        "wire-mapping",
+        "browsers"
+      ],
+      "prompt": "What HTTP/2 mechanism does a gRPC call's service-and-method name travel as, given that gRPC reuses ordinary HTTP/2 request routing rather than a mechanism of its own?",
+      "source": {
+        "path": "vault/api/grpc/grpc-over-http-2-and-grpc-web.md",
+        "block": "card-buvq"
+      },
+      "citations": [
+        "gRPC over HTTP/2 Protocol Specification",
+        "gRPC-Web documentation"
+      ],
+      "answer": "It travels as the request's path — an HTTP/2 :path pseudo-header, formatted as /package.Service/MethodName — the same field an HTTP request would normally use to route to an endpoint."
+    },
+    {
+      "id": "card-hic8",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "http2",
+        "grpc-web",
+        "wire-mapping",
+        "browsers"
+      ],
+      "prompt": "Inside the body of that one stream, messages don't just get concatenated — each one is ___, carrying its own byte length ahead of its contents, so the receiving end knows exactly where one message ends and the next begins within the same stream.",
+      "source": {
+        "path": "vault/api/grpc/grpc-over-http-2-and-grpc-web.md",
+        "block": "card-hic8"
+      },
+      "citations": [
+        "gRPC over HTTP/2 Protocol Specification",
+        "gRPC-Web documentation"
+      ],
+      "answer": "length-prefixed"
+    },
+    {
+      "id": "card-eogu",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "http2",
+        "grpc-web",
+        "wire-mapping",
+        "browsers"
+      ],
+      "prompt": "Why does gRPC length-prefix each message inside a stream's body, rather than relying on the stream simply ending after one message?",
+      "source": {
+        "path": "vault/api/grpc/grpc-over-http-2-and-grpc-web.md",
+        "block": "card-eogu"
+      },
+      "citations": [
+        "gRPC over HTTP/2 Protocol Specification",
+        "gRPC-Web documentation"
+      ],
+      "answer": "A single gRPC stream can carry more than one message — as in a streaming call — so the receiving end needs a way to tell where one message stops and the next starts within the same continuous body. A length prefix ahead of each message's bytes gives it exactly that boundary, independent of when the stream itself eventually ends."
+    },
+    {
+      "id": "card-ggh9",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "http2",
+        "grpc-web",
+        "wire-mapping",
+        "browsers"
+      ],
+      "prompt": "That's exactly why gRPC needs ___: a block of header-shaped fields sent after the message body, once the outcome is actually known. The gRPC status code and any status message are sent there, as trailing fields, rather than in the leading response headers.",
+      "source": {
+        "path": "vault/api/grpc/grpc-over-http-2-and-grpc-web.md",
+        "block": "card-ggh9"
+      },
+      "citations": [
+        "gRPC over HTTP/2 Protocol Specification",
+        "gRPC-Web documentation"
+      ],
+      "answer": "trailers"
+    },
+    {
+      "id": "card-dnxk",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "http2",
+        "grpc-web",
+        "wire-mapping",
+        "browsers"
+      ],
+      "prompt": "A gRPC response's leading HTTP/2 headers arrive with HTTP status 200. What can the client conclude about whether the RPC succeeded?",
+      "source": {
+        "path": "vault/api/grpc/grpc-over-http-2-and-grpc-web.md",
+        "block": "card-dnxk"
+      },
+      "citations": [
+        "gRPC over HTTP/2 Protocol Specification",
+        "gRPC-Web documentation"
+      ],
+      "choices": [
+        {
+          "text": "Nothing yet — the gRPC status travels in trailers, sent after the body, and 200 only means the HTTP-level exchange started normally",
+          "correct": true
+        },
+        {
+          "text": "The RPC succeeded, since 200 in the leading headers is gRPC's success signal",
+          "correct": false
+        },
+        {
+          "text": "The RPC failed, since a successful RPC would omit headers entirely",
+          "correct": false
+        },
+        {
+          "text": "It depends on the :path value in those same headers",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-m1u7",
+      "format": "recall",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "http2",
+        "grpc-web",
+        "wire-mapping",
+        "browsers"
+      ],
+      "prompt": "Explain why gRPC's use of trailers, rather than reporting outcome in the leading response headers, is a necessary consequence of how gRPC calls (including streaming ones) actually complete.",
+      "source": {
+        "path": "vault/api/grpc/grpc-over-http-2-and-grpc-web.md",
+        "block": "card-m1u7"
+      },
+      "citations": [
+        "gRPC over HTTP/2 Protocol Specification",
+        "gRPC-Web documentation"
+      ],
+      "answer": "Whether a call succeeded is often not known until the handler has finished — for a streaming call, that can be long after the first response bytes are already on the wire, since messages are being sent as they become available. Putting the outcome in leading headers would require knowing the result before any of the body could be sent, which streaming makes impossible. Trailers let the outcome be reported once it's actually known, after the body, without holding up delivery of everything that came before it."
+    },
+    {
+      "id": "card-6piy",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "http2",
+        "grpc-web",
+        "wire-mapping",
+        "browsers"
+      ],
+      "prompt": "Why is the obstacle to a browser speaking gRPC directly not fixable by using a newer browser or a newer HTTP/2 server, and where does the limitation actually sit?",
+      "source": {
+        "path": "vault/api/grpc/grpc-over-http-2-and-grpc-web.md",
+        "block": "card-6piy"
+      },
+      "citations": [
+        "gRPC over HTTP/2 Protocol Specification",
+        "gRPC-Web documentation"
+      ],
+      "answer": "The limitation sits in the browser's HTTP client APIs (fetch, XMLHttpRequest), which don't expose HTTP/2 trailers and don't let calling code control request framing — both of which gRPC's wire mapping depends on. Since neither gap is a matter of protocol version, upgrading the browser or the server's HTTP/2 support doesn't change what the browser's own APIs expose."
+    },
+    {
+      "id": "card-cbc8",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "http2",
+        "grpc-web",
+        "wire-mapping",
+        "browsers"
+      ],
+      "prompt": "What are the two costs of putting a translating proxy in front of a gRPC backend so browsers can reach it through gRPC-web?",
+      "source": {
+        "path": "vault/api/grpc/grpc-over-http-2-and-grpc-web.md",
+        "block": "card-cbc8"
+      },
+      "citations": [
+        "gRPC over HTTP/2 Protocol Specification",
+        "gRPC-Web documentation"
+      ],
+      "answer": "An extra network hop between the browser and the backend that a direct gRPC client wouldn't incur, and a loss of capability — client streaming and bidirectional streaming are not generally available through gRPC-web, unlike with a native gRPC client."
+    },
+    {
+      "id": "card-0zc0",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "protobuf",
+        "contract-first",
+        "code-generation",
+        "stubs",
+        "idl"
+      ],
+      "prompt": "That ordering is the whole point, and it has a name: ___ design, where the interface is fixed first and every implementation is built to satisfy it, rather than one team's implementation becoming the de facto interface that everyone else has to reverse-engineer.",
+      "source": {
+        "path": "vault/api/grpc/idl-and-generated-stubs.md",
+        "block": "card-0zc0"
+      },
+      "citations": [
+        "Protocol Buffers Language Guide (proto3)",
+        "Protocol Buffers Encoding"
+      ],
+      "answer": "contract-first"
+    },
+    {
+      "id": "card-wjep",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "protobuf",
+        "contract-first",
+        "code-generation",
+        "stubs",
+        "idl"
+      ],
+      "prompt": "A generated client ___ is what lets a caller invoke a remote method by writing what looks like an ordinary local function call, instead of hand-assembling a request and parsing a response.",
+      "source": {
+        "path": "vault/api/grpc/idl-and-generated-stubs.md",
+        "block": "card-wjep"
+      },
+      "citations": [
+        "Protocol Buffers Language Guide (proto3)",
+        "Protocol Buffers Encoding"
+      ],
+      "answer": "stub"
+    },
+    {
+      "id": "card-rc48",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "protobuf",
+        "contract-first",
+        "code-generation",
+        "stubs",
+        "idl"
+      ],
+      "prompt": "Generating both client stubs and server skeletons from a single `.proto` file, in multiple languages, is possible mainly because of which property of the generation step?",
+      "source": {
+        "path": "vault/api/grpc/idl-and-generated-stubs.md",
+        "block": "card-rc48"
+      },
+      "citations": [
+        "Protocol Buffers Language Guide (proto3)",
+        "Protocol Buffers Encoding"
+      ],
+      "choices": [
+        {
+          "text": "It's mechanical and deterministic — the same input always produces the same structural output, regardless of target language",
+          "correct": true
+        },
+        {
+          "text": "The `.proto` compiler executes the business logic itself, so no server code is needed",
+          "correct": false
+        },
+        {
+          "text": "Each generated language stub silently converts messages to JSON internally",
+          "correct": false
+        },
+        {
+          "text": "gRPC requires every client and server to be written in the same language",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-2czt",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "protobuf",
+        "contract-first",
+        "code-generation",
+        "stubs",
+        "idl"
+      ],
+      "prompt": "What does generating client code directly from the `.proto` contract prevent that hand-writing an HTTP client against a JSON API does not?",
+      "source": {
+        "path": "vault/api/grpc/idl-and-generated-stubs.md",
+        "block": "card-2czt"
+      },
+      "citations": [
+        "Protocol Buffers Language Guide (proto3)",
+        "Protocol Buffers Encoding"
+      ],
+      "answer": "It prevents the client from drifting out of sync with the contract — the client's code is derived from the same source the server implements, rather than written by hand against documentation or observed behavior that can quietly fall out of date."
+    },
+    {
+      "id": "card-qcit",
+      "format": "recall",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "protobuf",
+        "contract-first",
+        "code-generation",
+        "stubs",
+        "idl"
+      ],
+      "prompt": "Compare when a contract mismatch is caught for a generated gRPC stub versus a hand-written JSON client, and explain why the difference exists.",
+      "source": {
+        "path": "vault/api/grpc/idl-and-generated-stubs.md",
+        "block": "card-qcit"
+      },
+      "citations": [
+        "Protocol Buffers Language Guide (proto3)",
+        "Protocol Buffers Encoding"
+      ],
+      "answer": "A generated stub fails at compile time: the stub's fields and method signatures are regenerated straight from the `.proto` file, so a reference to a field that no longer exists simply won't build. A hand-written JSON client has no such check — it's just calling whatever field names its author typed into request and response handling code, so nothing catches a stale reference until that exact code path executes and fails at runtime, possibly long after the server actually changed. The difference exists because the generated stub's structure is mechanically tied to the contract, while the hand-written client's structure is tied only to what its author remembered or copied."
+    },
+    {
+      "id": "card-lk60",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "protobuf",
+        "contract-first",
+        "code-generation",
+        "stubs",
+        "idl"
+      ],
+      "prompt": "A team changes a `.proto` file and pushes the change, but a downstream client team doesn't regenerate its stubs afterward. What is the most direct consequence?",
+      "source": {
+        "path": "vault/api/grpc/idl-and-generated-stubs.md",
+        "block": "card-lk60"
+      },
+      "citations": [
+        "Protocol Buffers Language Guide (proto3)",
+        "Protocol Buffers Encoding"
+      ],
+      "choices": [
+        {
+          "text": "The client keeps building and running against an outdated generated interface that no longer matches the current contract",
+          "correct": true
+        },
+        {
+          "text": "The client automatically fetches the updated `.proto` file at runtime and adapts",
+          "correct": false
+        },
+        {
+          "text": "Nothing — generated stubs are wire-compatible across any version of the contract",
+          "correct": false
+        },
+        {
+          "text": "The server refuses connections from clients running older generated code",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-0s9z",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "protobuf",
+        "contract-first",
+        "code-generation",
+        "stubs",
+        "idl"
+      ],
+      "prompt": "Name two concrete costs of contract-first code generation that a plain JSON API avoids.",
+      "source": {
+        "path": "vault/api/grpc/idl-and-generated-stubs.md",
+        "block": "card-0s9z"
+      },
+      "citations": [
+        "Protocol Buffers Language Guide (proto3)",
+        "Protocol Buffers Encoding"
+      ],
+      "answer": "An extra build step plus generated code that has to live in the repository, and the need for every consuming team to regenerate their stubs whenever the contract changes; it also loses the ability to casually explore the API with a bare command-line tool the way a JSON-over-HTTP API allows."
+    },
+    {
+      "id": "card-tlx4",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "metadata",
+        "interceptors",
+        "cross-cutting-concerns",
+        "rpc"
+      ],
+      "prompt": "___ metadata is the other batch: it is sent only after all the messages on the call, once the handler has actually finished.",
+      "source": {
+        "path": "vault/api/grpc/metadata-and-interceptors.md",
+        "block": "card-tlx4"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "answer": "Trailing"
+    },
+    {
+      "id": "card-iptk",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "metadata",
+        "interceptors",
+        "cross-cutting-concerns",
+        "rpc"
+      ],
+      "prompt": "A handler wants to attach the number of database rows it scanned while satisfying a request. It only knows that count once it has finished processing. Where does that value belong?",
+      "source": {
+        "path": "vault/api/grpc/metadata-and-interceptors.md",
+        "block": "card-iptk"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "choices": [
+        {
+          "text": "In leading metadata, sent before the first message",
+          "correct": false
+        },
+        {
+          "text": "In trailing metadata, sent after the call's messages are done",
+          "correct": true
+        },
+        {
+          "text": "In the message body, since counts are business data",
+          "correct": false
+        },
+        {
+          "text": "It cannot be communicated outside the message body",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-h9rz",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "metadata",
+        "interceptors",
+        "cross-cutting-concerns",
+        "rpc"
+      ],
+      "prompt": "Metadata splits into two attachment points by timing — what are they, and what is each one for?",
+      "source": {
+        "path": "vault/api/grpc/metadata-and-interceptors.md",
+        "block": "card-h9rz"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "answer": "Leading metadata, sent before the call's first message (for things a receiver needs up front, like a request id), and trailing metadata, sent after all of the call's messages (for things that are only known once the handler has finished, like a count it only tallies while doing the work)."
+    },
+    {
+      "id": "card-h6zc",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "metadata",
+        "interceptors",
+        "cross-cutting-concerns",
+        "rpc"
+      ],
+      "prompt": "A field holding the currency a customer wants their order priced in is being added to a call that already carries a request id and a locale in metadata. Where should the new field go?",
+      "source": {
+        "path": "vault/api/grpc/metadata-and-interceptors.md",
+        "block": "card-h6zc"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "answer": "In the message body, not metadata — it is business data the schema should describe and version like any other field, and putting it in metadata instead would strip away the type-checking, documentation, and compatibility guarantees that come from being part of the schema."
+    },
+    {
+      "id": "card-teew",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "metadata",
+        "interceptors",
+        "cross-cutting-concerns",
+        "rpc"
+      ],
+      "prompt": "An ___ is a hook that a client or a server installs once, and that then runs around *every* call that passes through it, rather than being wired into each method's own implementation.",
+      "source": {
+        "path": "vault/api/grpc/metadata-and-interceptors.md",
+        "block": "card-teew"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "answer": "interceptor"
+    },
+    {
+      "id": "card-rzim",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "metadata",
+        "interceptors",
+        "cross-cutting-concerns",
+        "rpc"
+      ],
+      "prompt": "Why do concerns like logging, auth, and metrics get implemented as an interceptor rather than as code copied into each RPC method?",
+      "source": {
+        "path": "vault/api/grpc/metadata-and-interceptors.md",
+        "block": "card-rzim"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "answer": "Because those concerns apply uniformly to every call regardless of what that call actually does — putting the logic in one interceptor means it is written and fixed once, instead of being duplicated (and drifting) across every method that needs it."
+    },
+    {
+      "id": "card-8m5e",
+      "format": "recall",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "metadata",
+        "interceptors",
+        "cross-cutting-concerns",
+        "rpc"
+      ],
+      "prompt": "A team adds an authentication check by pasting a few lines of validation code at the top of every RPC method's handler, instead of writing one interceptor. Name two concrete problems this causes as the service grows past a handful of methods.",
+      "source": {
+        "path": "vault/api/grpc/metadata-and-interceptors.md",
+        "block": "card-8m5e"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "answer": "New methods are easy to add without the check, since there is no single place enforcing that it always runs — an omission fails silently. And updating the check (a new header name, a different validation rule) means finding and editing every copy correctly, where an interceptor would need the change made in exactly one place."
+    },
+    {
+      "id": "card-vloc",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "protobuf",
+        "wire-format",
+        "varint",
+        "schema-design",
+        "serialization"
+      ],
+      "prompt": "What actually identifies a field once a message is serialized onto the wire?",
+      "source": {
+        "path": "vault/api/grpc/protobuf-schema-and-wire-format.md",
+        "block": "card-vloc"
+      },
+      "citations": [
+        "Protocol Buffers Language Guide (proto3)",
+        "Protocol Buffers Encoding"
+      ],
+      "answer": "Its field number — the small integer assigned in the `.proto` definition — not its name. Field names live only in the `.proto` file and in generated code; they never appear in the bytes that get sent."
+    },
+    {
+      "id": "card-05m5",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "protobuf",
+        "wire-format",
+        "varint",
+        "schema-design",
+        "serialization"
+      ],
+      "prompt": "That wire-type tag is only ___ wide, which is exactly why it fits alongside a field number in the same single byte for numbers 1 through 15.",
+      "source": {
+        "path": "vault/api/grpc/protobuf-schema-and-wire-format.md",
+        "block": "card-05m5"
+      },
+      "citations": [
+        "Protocol Buffers Language Guide (proto3)",
+        "Protocol Buffers Encoding"
+      ],
+      "answer": "three bits"
+    },
+    {
+      "id": "card-wjdc",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "protobuf",
+        "wire-format",
+        "varint",
+        "schema-design",
+        "serialization"
+      ],
+      "prompt": "What two pieces of information does a field's key encode on the protobuf wire?",
+      "source": {
+        "path": "vault/api/grpc/protobuf-schema-and-wire-format.md",
+        "block": "card-wjdc"
+      },
+      "citations": [
+        "Protocol Buffers Language Guide (proto3)",
+        "Protocol Buffers Encoding"
+      ],
+      "choices": [
+        {
+          "text": "The field number and the wire type",
+          "correct": true
+        },
+        {
+          "text": "The field number and the field name",
+          "correct": false
+        },
+        {
+          "text": "The field's type name and its byte length",
+          "correct": false
+        },
+        {
+          "text": "The message name and the field number",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-2tay",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "protobuf",
+        "wire-format",
+        "varint",
+        "schema-design",
+        "serialization"
+      ],
+      "prompt": "A ___ is what lets a field holding the value `1` take a single byte on the wire, instead of the four or eight bytes a fixed-width integer would reserve regardless of how small the value is.",
+      "source": {
+        "path": "vault/api/grpc/protobuf-schema-and-wire-format.md",
+        "block": "card-2tay"
+      },
+      "citations": [
+        "Protocol Buffers Language Guide (proto3)",
+        "Protocol Buffers Encoding"
+      ],
+      "answer": "varint"
+    },
+    {
+      "id": "card-5n3e",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "protobuf",
+        "wire-format",
+        "varint",
+        "schema-design",
+        "serialization"
+      ],
+      "prompt": "Which wire type do a string field and a nested message field share, and what does that wire type prepend to the value's raw bytes?",
+      "source": {
+        "path": "vault/api/grpc/protobuf-schema-and-wire-format.md",
+        "block": "card-5n3e"
+      },
+      "citations": [
+        "Protocol Buffers Language Guide (proto3)",
+        "Protocol Buffers Encoding"
+      ],
+      "answer": "Length-delimited encoding; it prepends a varint giving the byte length of the value, so the decoder reads that many bytes and knows exactly where the field ends."
+    },
+    {
+      "id": "card-u2oy",
+      "format": "recall",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "protobuf",
+        "wire-format",
+        "varint",
+        "schema-design",
+        "serialization"
+      ],
+      "prompt": "Why do field numbers 1 through 15 cost one byte of tag on the wire, while field numbers 16 and above cost two bytes — and what design advice follows from that for a message with a mix of fields set on almost every request and fields set rarely?",
+      "source": {
+        "path": "vault/api/grpc/protobuf-schema-and-wire-format.md",
+        "block": "card-u2oy"
+      },
+      "citations": [
+        "Protocol Buffers Language Guide (proto3)",
+        "Protocol Buffers Encoding"
+      ],
+      "answer": "The key is (field number << 3) | wire type, varint-encoded. With three bits already spent on the wire type, a field number up to 15 still fits the remaining bits of a single byte; 16 or higher spills into a second byte. So a message should spend numbers 1-15 on its most frequently populated (\"hot\") fields, saving one byte per occurrence of those fields across every message sent, and push rarely-set fields to 16 and beyond where the extra tag byte barely matters."
+    },
+    {
+      "id": "card-koad",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "protobuf",
+        "wire-format",
+        "varint",
+        "schema-design",
+        "serialization"
+      ],
+      "prompt": "Why can a protobuf-encoded message be dramatically smaller than the equivalent JSON, even though both describe the same data?",
+      "source": {
+        "path": "vault/api/grpc/protobuf-schema-and-wire-format.md",
+        "block": "card-koad"
+      },
+      "citations": [
+        "Protocol Buffers Language Guide (proto3)",
+        "Protocol Buffers Encoding"
+      ],
+      "answer": "A protobuf message carries no field names at all on the wire — only numeric keys, most of them a single byte — while JSON repeats every field's name as a string in every message it sends. The schema, not the payload, is where the names live in protobuf; JSON has no separate schema, so the names have to travel with the data every time."
+    },
+    {
+      "id": "card-6i4w",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "protobuf",
+        "schema-evolution",
+        "reserved-fields",
+        "compatibility",
+        "proto2"
+      ],
+      "prompt": "Why is reusing a field number for a different purpose so dangerous, given that field numbers rather than names identify fields on the wire?",
+      "source": {
+        "path": "vault/api/grpc/protobuf-schema-evolution.md",
+        "block": "card-6i4w"
+      },
+      "citations": [
+        "Protocol Buffers Language Guide (proto3)",
+        "Protocol Buffers Encoding"
+      ],
+      "answer": "An old reader that never sees the schema change will decode whatever bytes show up under that number using its old understanding of what the number means, producing data that is structurally valid but semantically wrong — with no error to signal the mismatch."
+    },
+    {
+      "id": "card-s03o",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "protobuf",
+        "schema-evolution",
+        "reserved-fields",
+        "compatibility",
+        "proto2"
+      ],
+      "prompt": "Once a number (or a retired field's name) is marked ___, the compiler refuses to let anyone declare a field that reuses it, turning a silent runtime hazard into a build-time error.",
+      "source": {
+        "path": "vault/api/grpc/protobuf-schema-evolution.md",
+        "block": "card-s03o"
+      },
+      "citations": [
+        "Protocol Buffers Language Guide (proto3)",
+        "Protocol Buffers Encoding"
+      ],
+      "answer": "reserved"
+    },
+    {
+      "id": "card-zt26",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "protobuf",
+        "schema-evolution",
+        "reserved-fields",
+        "compatibility",
+        "proto2"
+      ],
+      "prompt": "A server adds a brand-new optional field to a message and starts populating it, while some clients are still running the old generated code without that field. What happens when those old clients receive a message containing the new field?",
+      "source": {
+        "path": "vault/api/grpc/protobuf-schema-evolution.md",
+        "block": "card-zt26"
+      },
+      "citations": [
+        "Protocol Buffers Language Guide (proto3)",
+        "Protocol Buffers Encoding"
+      ],
+      "choices": [
+        {
+          "text": "They ignore or preserve the unrecognized field and parse everything else normally",
+          "correct": true
+        },
+        {
+          "text": "Parsing fails outright because the message doesn't match the old schema",
+          "correct": false
+        },
+        {
+          "text": "The new field is silently coerced into whichever old field shares its wire type",
+          "correct": false
+        },
+        {
+          "text": "The client crashes unless it reserves the field number in advance",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-3fsq",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "protobuf",
+        "schema-evolution",
+        "reserved-fields",
+        "compatibility",
+        "proto2"
+      ],
+      "prompt": "What must accompany the removal of a field from a `.proto` message, and why?",
+      "source": {
+        "path": "vault/api/grpc/protobuf-schema-evolution.md",
+        "block": "card-3fsq"
+      },
+      "citations": [
+        "Protocol Buffers Language Guide (proto3)",
+        "Protocol Buffers Encoding"
+      ],
+      "answer": "Its number should be marked `reserved` in that same change, otherwise nothing stops a later schema edit from assigning that number to something unrelated and reviving the old-reader-misreads-new-data hazard."
+    },
+    {
+      "id": "card-fgva",
+      "format": "recall",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "protobuf",
+        "schema-evolution",
+        "reserved-fields",
+        "compatibility",
+        "proto2"
+      ],
+      "prompt": "Renaming a `.proto` field is described as \"harmless on the wire and breaks generated code instead.\" Explain both halves of that claim.",
+      "source": {
+        "path": "vault/api/grpc/protobuf-schema-evolution.md",
+        "block": "card-fgva"
+      },
+      "citations": [
+        "Protocol Buffers Language Guide (proto3)",
+        "Protocol Buffers Encoding"
+      ],
+      "answer": "Harmless on the wire: serialized messages are keyed by field number, and a rename doesn't touch the number, so an old binary and a new binary can still exchange messages with the field renamed on one side and not the other, with no decoding problem at all. Breaks generated code: the getters, setters, and struct members the compiler generates are named after the field, so every piece of code that referenced the old name won't compile against the regenerated stubs until it's updated — the damage shows up at compile time in each language's generated bindings, not on the wire between services."
+    },
+    {
+      "id": "card-uegx",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "protobuf",
+        "schema-evolution",
+        "reserved-fields",
+        "compatibility",
+        "proto2"
+      ],
+      "prompt": "Is changing a field's type from `int32` to `string` generally a safe or a breaking change, and why does that differ from changing `int32` to `int64`?",
+      "source": {
+        "path": "vault/api/grpc/protobuf-schema-evolution.md",
+        "block": "card-uegx"
+      },
+      "citations": [
+        "Protocol Buffers Language Guide (proto3)",
+        "Protocol Buffers Encoding"
+      ],
+      "answer": "Generally breaking — `int32` and `string` use different wire types (varint versus length-delimited), so a reader expecting one can't correctly decode bytes written as the other. `int32` to `int64` stays compatible because both are varint-encoded on the wire; the change is only in how the decoded value is later interpreted in memory, not in how the bytes are read off the wire."
+    },
+    {
+      "id": "card-4agv",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "protobuf",
+        "schema-evolution",
+        "reserved-fields",
+        "compatibility",
+        "proto2"
+      ],
+      "prompt": "Proto3's response was to drop ___ entirely: every field is effectively optional, and validation that a message is \"complete enough\" is pushed into application code instead of being enforced by the schema itself.",
+      "source": {
+        "path": "vault/api/grpc/protobuf-schema-evolution.md",
+        "block": "card-4agv"
+      },
+      "citations": [
+        "Protocol Buffers Language Guide (proto3)",
+        "Protocol Buffers Encoding"
+      ],
+      "answer": "required"
+    },
+    {
+      "id": "card-27s9",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "protobuf",
+        "schema-evolution",
+        "reserved-fields",
+        "compatibility",
+        "proto2"
+      ],
+      "prompt": "How do field numbers let a protobuf service add new data to a message over time without publishing a new versioned endpoint the way a REST API might?",
+      "source": {
+        "path": "vault/api/grpc/protobuf-schema-evolution.md",
+        "block": "card-27s9"
+      },
+      "citations": [
+        "Protocol Buffers Language Guide (proto3)",
+        "Protocol Buffers Encoding"
+      ],
+      "answer": "Because a new field just claims an unused number and old readers that don't recognize it simply ignore or preserve it, additive change is safe within a single evolving schema — there's no need for a second endpoint or a version marker, since the field number itself is what keeps old and new readers from colliding."
+    },
+    {
+      "id": "card-72qb",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "load-balancing",
+        "retries",
+        "backoff",
+        "hedging",
+        "grpc"
+      ],
+      "prompt": "Why can an ordinary network load balancer end up sending every one of a client's ten thousand gRPC calls to a single backend, even though it appears to be doing its job correctly?",
+      "source": {
+        "path": "vault/api/grpc/retries-load-balancing-and-connection-reuse.md",
+        "block": "card-72qb"
+      },
+      "citations": [
+        "gRPC documentation (grpc.io)"
+      ],
+      "answer": "The balancer only makes a placement decision once, at connection time, because it operates on connections rather than on the individual calls multiplexed inside them. A gRPC client that opens one long-lived connection and streams many calls through it gives the balancer exactly one opportunity to distribute load; every subsequent call rides that same already-placed connection, invisible to the balancer as a separate unit of work."
+    },
+    {
+      "id": "card-jpxz",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "load-balancing",
+        "retries",
+        "backoff",
+        "hedging",
+        "grpc"
+      ],
+      "prompt": "A team wants gRPC calls balanced across backends without introducing any extra network hop between client and server. Which approach achieves that?",
+      "source": {
+        "path": "vault/api/grpc/retries-load-balancing-and-connection-reuse.md",
+        "block": "card-jpxz"
+      },
+      "citations": [
+        "gRPC documentation (grpc.io)"
+      ],
+      "choices": [
+        {
+          "text": "Client-side load balancing — the client itself resolves backend addresses and chooses per call",
+          "correct": true
+        },
+        {
+          "text": "A standard Layer 4 load balancer placed in front of the backends",
+          "correct": false
+        },
+        {
+          "text": "Increasing the number of connections the load balancer accepts",
+          "correct": false
+        },
+        {
+          "text": "Reducing the client's connection pool to a single connection",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-7xcl",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "load-balancing",
+        "retries",
+        "backoff",
+        "hedging",
+        "grpc"
+      ],
+      "prompt": "The other fix moves the decision into an intermediary, but only one built to understand the protocol riding over the connection. A ___ that is aware of gRPC/HTTP/2 semantics can look inside a connection, see each individual call multiplexed over it, and balance per call instead of per connection — restoring the granularity an ordinary connection-level balancer lost.",
+      "source": {
+        "path": "vault/api/grpc/retries-load-balancing-and-connection-reuse.md",
+        "block": "card-7xcl"
+      },
+      "citations": [
+        "gRPC documentation (grpc.io)"
+      ],
+      "answer": "proxy"
+    },
+    {
+      "id": "card-faz7",
+      "format": "recall",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "load-balancing",
+        "retries",
+        "backoff",
+        "hedging",
+        "grpc"
+      ],
+      "prompt": "A call fails. Name the two independent things that must both be true before that call is safe to retry, and explain why checking only one of them is not enough.",
+      "source": {
+        "path": "vault/api/grpc/retries-load-balancing-and-connection-reuse.md",
+        "block": "card-faz7"
+      },
+      "citations": [
+        "gRPC documentation (grpc.io)"
+      ],
+      "answer": "First, the operation's own semantics must tolerate being repeated — retrying something that isn't safe to double-apply can cause the effect to happen twice. Second, the failure must have come back with a status that indicates the work did not actually happen, since some failures mean the server did the work but the response never made it back. Checking only the status ignores whether re-running the operation itself is safe; checking only the operation's semantics ignores whether this particular failure even indicates it's worth retrying at all. Both conditions have to hold together."
+    },
+    {
+      "id": "card-gfqu",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "load-balancing",
+        "retries",
+        "backoff",
+        "hedging",
+        "grpc"
+      ],
+      "prompt": "Why does an unbounded per-call retry policy risk turning a slow downstream dependency into a full outage, and what does a retry budget change about that?",
+      "source": {
+        "path": "vault/api/grpc/retries-load-balancing-and-connection-reuse.md",
+        "block": "card-gfqu"
+      },
+      "citations": [
+        "gRPC documentation (grpc.io)"
+      ],
+      "answer": "Each individual retry looks reasonable in isolation, but when many calls are failing for the same reason — an overloaded dependency — unbounded retries multiply the total load hitting that dependency at exactly the moment it can least absorb more, deepening the very problem causing the failures. A retry budget caps what fraction of overall outbound traffic is allowed to be retries, so once that ceiling is hit, further failures are surfaced as failures instead of adding more retry traffic on top of an already-struggling dependency."
+    },
+    {
+      "id": "card-odb6",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "load-balancing",
+        "retries",
+        "backoff",
+        "hedging",
+        "grpc"
+      ],
+      "prompt": "A large number of clients all fail a call at roughly the same instant because a backend briefly stalled. All of them retry using plain exponential backoff with no jitter. What is the likely result?",
+      "source": {
+        "path": "vault/api/grpc/retries-load-balancing-and-connection-reuse.md",
+        "block": "card-odb6"
+      },
+      "citations": [
+        "gRPC documentation (grpc.io)"
+      ],
+      "choices": [
+        {
+          "text": "The retries stay synchronized across clients, arriving in waves that hit the backend at the same moments, reproducing the load spike",
+          "correct": true
+        },
+        {
+          "text": "The retries spread out evenly over time regardless of jitter, because exponential backoff alone guarantees that",
+          "correct": false
+        },
+        {
+          "text": "The backend never receives any of the retries, since backoff always exceeds the deadline",
+          "correct": false
+        },
+        {
+          "text": "Exponential backoff prevents any client from retrying more than once",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-l5au",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "load-balancing",
+        "retries",
+        "backoff",
+        "hedging",
+        "grpc"
+      ],
+      "prompt": "The opposite trade from backoff is waiting less, not more. Rather than delaying after a failure, ___ sends one or more duplicate copies of a call *before* any failure has occurred — proactively, after a short delay if the first attempt hasn't returned yet — specifically to cut tail latency for calls that would otherwise be waiting on a single slow attempt.",
+      "source": {
+        "path": "vault/api/grpc/retries-load-balancing-and-connection-reuse.md",
+        "block": "card-l5au"
+      },
+      "citations": [
+        "gRPC documentation (grpc.io)"
+      ],
+      "answer": "hedging"
+    },
+    {
+      "id": "card-zjph",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "load-balancing",
+        "retries",
+        "backoff",
+        "hedging",
+        "grpc"
+      ],
+      "prompt": "Hedging cuts tail latency by sending duplicate calls proactively, without waiting for a failure — what does a service pay for that benefit, and how does that cost differ from what a retry costs?",
+      "source": {
+        "path": "vault/api/grpc/retries-load-balancing-and-connection-reuse.md",
+        "block": "card-zjph"
+      },
+      "citations": [
+        "gRPC documentation (grpc.io)"
+      ],
+      "answer": "Hedging pays in extra load: every hedged call means more than one copy of the same operation is sent to backends, consuming capacity regardless of whether the original attempt would have succeeded on its own. An ordinary retry only spends that extra load after a failure has actually happened, so it adds work in proportion to how often calls fail; hedging adds work in proportion to how often calls are merely slow, which can be a much larger and more constant tax on capacity."
+    },
+    {
+      "id": "card-9tdx",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "status-codes",
+        "error-handling",
+        "api-design"
+      ],
+      "prompt": "Given a request rejected before any business logic ran, what single question distinguishes whether it should be INVALID_ARGUMENT or a state-dependent code like FAILED_PRECONDITION?",
+      "source": {
+        "path": "vault/api/grpc/status-codes-and-the-error-model.md",
+        "block": "card-9tdx"
+      },
+      "citations": [
+        "gRPC over HTTP/2 Protocol Specification",
+        "gRPC-Web documentation"
+      ],
+      "answer": "Whether the exact same request would succeed if the system were simply in a different state. If it would always fail regardless of state, it's INVALID_ARGUMENT; if changing something about the system (not the request) would let it succeed, it's the state-dependent code."
+    },
+    {
+      "id": "card-e795",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "status-codes",
+        "error-handling",
+        "api-design"
+      ],
+      "prompt": "A client sends a well-formed request to delete a non-empty directory, which the server rejects. What status code fits, and why isn't it INVALID_ARGUMENT?",
+      "source": {
+        "path": "vault/api/grpc/status-codes-and-the-error-model.md",
+        "block": "card-e795"
+      },
+      "citations": [
+        "gRPC over HTTP/2 Protocol Specification",
+        "gRPC-Web documentation"
+      ],
+      "choices": [
+        {
+          "text": "The request's shape is fine; it fails only because of the directory's current contents — a state-dependent failure, not a malformed one",
+          "correct": true
+        },
+        {
+          "text": "INVALID_ARGUMENT, because deleting a non-empty directory is never a valid operation",
+          "correct": false
+        },
+        {
+          "text": "INVALID_ARGUMENT, because the client should have checked the directory first",
+          "correct": false
+        },
+        {
+          "text": "Either code is equally correct here",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-6xe7",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "status-codes",
+        "error-handling",
+        "api-design"
+      ],
+      "prompt": "An ___ response is the signal that the failure was a concurrency conflict rather than a durable precondition, and that the right response is to retry at a higher level — redo the whole operation, not just resend the same request — rather than to treat the state as fixed and unchangeable.",
+      "source": {
+        "path": "vault/api/grpc/status-codes-and-the-error-model.md",
+        "block": "card-6xe7"
+      },
+      "citations": [
+        "gRPC over HTTP/2 Protocol Specification",
+        "gRPC-Web documentation"
+      ],
+      "answer": "ABORTED"
+    },
+    {
+      "id": "card-11ly",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "status-codes",
+        "error-handling",
+        "api-design"
+      ],
+      "prompt": "Why does ABORTED call for retrying at a higher level, rather than simply resending the identical request the way a client might after a transient network blip?",
+      "source": {
+        "path": "vault/api/grpc/status-codes-and-the-error-model.md",
+        "block": "card-11ly"
+      },
+      "citations": [
+        "gRPC over HTTP/2 Protocol Specification",
+        "gRPC-Web documentation"
+      ],
+      "answer": "Because the failure came from a concurrency conflict — another operation touched the same data first — and that condition may already be gone by the time of a bare retry, or may recur if the retry doesn't redo enough of the surrounding operation. Retrying at a higher level lets the client redo whatever read-modify-write sequence led to the conflict, not just replay one request against data that has since moved on."
+    },
+    {
+      "id": "card-fudd",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "status-codes",
+        "error-handling",
+        "api-design"
+      ],
+      "prompt": "A client calls a method that requires a valid credential, but the call carries no credential at all (not an invalid one — none). Which status code fits?",
+      "source": {
+        "path": "vault/api/grpc/status-codes-and-the-error-model.md",
+        "block": "card-fudd"
+      },
+      "citations": [
+        "gRPC over HTTP/2 Protocol Specification",
+        "gRPC-Web documentation"
+      ],
+      "choices": [
+        {
+          "text": "UNAUTHENTICATED — the caller's identity was never established in the first place",
+          "correct": true
+        },
+        {
+          "text": "PERMISSION_DENIED — the caller isn't allowed to do this",
+          "correct": false
+        },
+        {
+          "text": "NOT_FOUND — hiding the method's existence from an anonymous caller",
+          "correct": false
+        },
+        {
+          "text": "FAILED_PRECONDITION — the call arrived in the wrong state",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-6n80",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "status-codes",
+        "error-handling",
+        "api-design"
+      ],
+      "prompt": "`UNAVAILABLE` is the one code in the set that's ___, because it signals that the service could not be reached or serve the request right now — an overload, a restart, a transient network problem — rather than anything wrong with the request or a conflict that a retry would repeat.",
+      "source": {
+        "path": "vault/api/grpc/status-codes-and-the-error-model.md",
+        "block": "card-6n80"
+      },
+      "citations": [
+        "gRPC over HTTP/2 Protocol Specification",
+        "gRPC-Web documentation"
+      ],
+      "answer": "generally safe to retry"
+    },
+    {
+      "id": "card-u2yd",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "status-codes",
+        "error-handling",
+        "api-design"
+      ],
+      "prompt": "What does it mean, structurally, that a gRPC status code comes from a small fixed set defined by the protocol rather than one a service can extend?",
+      "source": {
+        "path": "vault/api/grpc/status-codes-and-the-error-model.md",
+        "block": "card-u2yd"
+      },
+      "citations": [
+        "gRPC over HTTP/2 Protocol Specification",
+        "gRPC-Web documentation"
+      ],
+      "answer": "It means a client can write exhaustive handling over every possible code in advance — there is no way for a service to introduce a new code the client hasn't already accounted for. Any richer, service-specific detail about a failure has to travel by some other means than inventing a new code."
+    },
+    {
+      "id": "card-wcq4",
+      "format": "recall",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "status-codes",
+        "error-handling",
+        "api-design"
+      ],
+      "prompt": "Explain why it's possible for a gRPC call to come back with a definite status code even though the server's application logic never executed. What kinds of failures produce that outcome?",
+      "source": {
+        "path": "vault/api/grpc/status-codes-and-the-error-model.md",
+        "block": "card-wcq4"
+      },
+      "citations": [
+        "gRPC over HTTP/2 Protocol Specification",
+        "gRPC-Web documentation"
+      ],
+      "answer": "A status describes the outcome of the call as a whole, not specifically a decision made by the application handler. If the service is unreachable, overloaded, or the deadline expires before a connection is even established, the call fails and gets a status like UNAVAILABLE or DEADLINE_EXCEEDED, without the request ever reaching the application code that would otherwise have handled it."
+    },
+    {
+      "id": "card-vgns",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "streaming",
+        "backpressure",
+        "half-close"
+      ],
+      "prompt": "Why does saying a gRPC stream carries \"whole messages, not bytes\" matter for the application code reading it?",
+      "source": {
+        "path": "vault/api/grpc/streaming-semantics-and-flow-control.md",
+        "block": "card-vgns"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "answer": "The application never has to buffer partial data and figure out where one message ends and the next begins — every read yields exactly one complete message, in the order it was sent. Any splitting or reassembly needed to move that message over the wire happens beneath the application and is not its concern."
+    },
+    {
+      "id": "card-einf",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "streaming",
+        "backpressure",
+        "half-close"
+      ],
+      "prompt": "Either side of a stream can finish sending independently of the other — this is called ___. A client that has sent everything it needs to send can close its sending direction while still reading responses that keep arriving; the server can likewise finish responding on its own schedule. Neither side's send-half ending forces the other's send-half to end at the same moment.",
+      "source": {
+        "path": "vault/api/grpc/streaming-semantics-and-flow-control.md",
+        "block": "card-einf"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "answer": "half-close"
+    },
+    {
+      "id": "card-qate",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "streaming",
+        "backpressure",
+        "half-close"
+      ],
+      "prompt": "In a bidirectional streaming call, the client finishes sending its last request message and calls half-close. What is the server allowed to do afterward?",
+      "source": {
+        "path": "vault/api/grpc/streaming-semantics-and-flow-control.md",
+        "block": "card-qate"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "choices": [
+        {
+          "text": "Nothing further; half-close on either side ends the whole call immediately",
+          "correct": false
+        },
+        {
+          "text": "Keep sending response messages on its own schedule, since half-close only ends the client's sending direction",
+          "correct": true
+        },
+        {
+          "text": "Only send exactly one final response message, as if the call had been client streaming all along",
+          "correct": false
+        },
+        {
+          "text": "Re-open the client's sending direction to request more input",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-6tk1",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "streaming",
+        "backpressure",
+        "half-close"
+      ],
+      "prompt": "Why is it accurate to say the client and server \"close\" a gRPC stream independently rather than the two of them closing it together?",
+      "source": {
+        "path": "vault/api/grpc/streaming-semantics-and-flow-control.md",
+        "block": "card-6tk1"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "answer": "Each side controls only its own sending direction. A side that has no more to send finishes that direction on its own, without needing the other side to be done, and without ending the other direction — so the call's two directions can stop sending at different times rather than in lockstep."
+    },
+    {
+      "id": "card-lny7",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "streaming",
+        "backpressure",
+        "half-close"
+      ],
+      "prompt": "None of this ordering or half-close machinery solves the problem of a reader that can't keep up. If a writer is fast and the reader is slow, something has to give: either the writer is made to slow down to match the reader, or messages pile up somewhere waiting to be consumed. The mechanism for the first option is called ___: a capability for a slow reader to signal a fast writer to hold off, so consumption speed governs production speed instead of the other way around.",
+      "source": {
+        "path": "vault/api/grpc/streaming-semantics-and-flow-control.md",
+        "block": "card-lny7"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "answer": "backpressure"
+    },
+    {
+      "id": "card-6cs5",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "streaming",
+        "backpressure",
+        "half-close"
+      ],
+      "prompt": "What goes wrong if an application ignores backpressure and keeps writing to a stream faster than the reader consumes?",
+      "source": {
+        "path": "vault/api/grpc/streaming-semantics-and-flow-control.md",
+        "block": "card-6cs5"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "answer": "With nothing to make the writer wait, messages the reader hasn't gotten to yet have to be held somewhere, so they accumulate in an unbounded buffer. That buffer grows for as long as the mismatch continues, consuming memory without limit and turning what should be a flow-control problem into a resource-exhaustion one."
+    },
+    {
+      "id": "card-fmwq",
+      "format": "recall",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "streaming",
+        "backpressure",
+        "half-close"
+      ],
+      "prompt": "A client is streaming ledger entries to a server. The connection drops partway through. Explain, in terms of what a gRPC stream is and is not, why the server cannot assume any of the entries sent so far are safe, and why simply reconnecting does not fix this on its own.",
+      "source": {
+        "path": "vault/api/grpc/streaming-semantics-and-flow-control.md",
+        "block": "card-fmwq"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ]
+    },
+    {
+      "id": "card-gdly",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "streaming",
+        "backpressure",
+        "half-close"
+      ],
+      "prompt": "Why is \"the connection reconnected, so the stream picked up where it left off\" a wrong mental model for gRPC?",
+      "source": {
+        "path": "vault/api/grpc/streaming-semantics-and-flow-control.md",
+        "block": "card-gdly"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "answer": "A stream does not survive its connection dying — a new connection means a new stream with no memory of the old one's messages or position. Nothing about resuming from a known point, replaying unacknowledged messages, or tracking what was already delivered is handled by gRPC itself; an application that needs that has to build it, for instance by having the stream carry its own resumption markers."
+    },
+    {
+      "id": "card-nm4a",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "streaming",
+        "service-contract",
+        "rpc"
+      ],
+      "prompt": "The plainest shape, ___, is one request in and one response out — ordinary RPC, no `stream` keyword anywhere in the signature. It's the default choice for anything that resembles a normal function call: fetch a record, submit a form, run a computation, and get back a single answer.",
+      "source": {
+        "path": "vault/api/grpc/the-four-call-types.md",
+        "block": "card-nm4a"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "answer": "unary"
+    },
+    {
+      "id": "card-kd7h",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "streaming",
+        "service-contract",
+        "rpc"
+      ],
+      "prompt": "What distinguishes client streaming from server streaming in terms of which side sends a sequence versus a single message?",
+      "source": {
+        "path": "vault/api/grpc/the-four-call-types.md",
+        "block": "card-kd7h"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "answer": "In client streaming the client sends a sequence of messages and gets back one response; in server streaming the client sends one message and gets back a sequence of responses. The sequence always sits on the sending side named by the term."
+    },
+    {
+      "id": "card-5fze",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "streaming",
+        "service-contract",
+        "rpc"
+      ],
+      "prompt": "A method needs to accept a phone's photo library, uploaded in chunks as the user scrolls, and once every photo has arrived, return a single summary of how many were stored and how many failed. Which call type fits this method's contract?",
+      "source": {
+        "path": "vault/api/grpc/the-four-call-types.md",
+        "block": "card-5fze"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "choices": [
+        {
+          "text": "Unary",
+          "correct": false
+        },
+        {
+          "text": "Server streaming",
+          "correct": false
+        },
+        {
+          "text": "Client streaming",
+          "correct": true
+        },
+        {
+          "text": "Bidirectional streaming",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-84rq",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "streaming",
+        "service-contract",
+        "rpc"
+      ],
+      "prompt": "Bidirectional streaming lets both sides send a sequence of messages, and critically, those two sequences are ___ — neither side is obligated to wait for a message from the other before sending its next one. This is what a request-then-batch-response pattern like client streaming can't express: an interactive back-and-forth, or a long-lived session where either party may need to push something at any moment, such as a chat or a live collaborative edit.",
+      "source": {
+        "path": "vault/api/grpc/the-four-call-types.md",
+        "block": "card-84rq"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "answer": "independent"
+    },
+    {
+      "id": "card-tw75",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "streaming",
+        "service-contract",
+        "rpc"
+      ],
+      "prompt": "Why can't an interactive exchange, where either side might send its next message before receiving the other's reply, be built as client streaming with a very chatty final response?",
+      "source": {
+        "path": "vault/api/grpc/the-four-call-types.md",
+        "block": "card-tw75"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "answer": "Client streaming's contract fixes the server to send exactly one response for the whole call, delivered only after it's done consuming the request sequence — there's no way for it to send anything back mid-stream. An exchange where either side needs to push a message before the other has replied requires both directions to carry a sequence, which is what bidirectional streaming's contract provides."
+    },
+    {
+      "id": "card-x3lo",
+      "format": "recall",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "streaming",
+        "service-contract",
+        "rpc"
+      ],
+      "prompt": "Name all four gRPC call types and, for each, state which side (client, server, or both) sends a sequence of messages rather than a single one.",
+      "source": {
+        "path": "vault/api/grpc/the-four-call-types.md",
+        "block": "card-x3lo"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ]
+    },
+    {
+      "id": "card-3duq",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "streaming",
+        "service-contract",
+        "rpc"
+      ],
+      "prompt": "A large or unbounded result set and a subscription to ongoing updates sound like different problems, but they're solved by the same call type. Why does one call type cover both?",
+      "source": {
+        "path": "vault/api/grpc/the-four-call-types.md",
+        "block": "card-3duq"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "answer": "Both cases share the same shape at the .proto level — one request, many responses read off the call as they arrive — regardless of whether \"many\" means \"more than fits in one message\" or \"an unknown number arriving over time.\" Server streaming's contract only commits to a sequence of responses; it says nothing about whether that sequence is finite and already known or open-ended and produced live."
+    },
+    {
+      "id": "card-pycz",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "streaming",
+        "service-contract",
+        "rpc"
+      ],
+      "prompt": "Why is switching a method from unary to server streaming a breaking change to the interface rather than an internal implementation detail?",
+      "source": {
+        "path": "vault/api/grpc/the-four-call-types.md",
+        "block": "card-pycz"
+      },
+      "citations": [
+        "gRPC Core Concepts (grpc.io)"
+      ],
+      "answer": "The call type is part of the .proto contract that generated stubs are built from on both sides. A unary stub exposes a single call-and-block-for-one-response shape; changing the method to stream responses changes what the generated client code looks like and how it must be called, so every consumer's generated stub needs to be regenerated and its call sites updated."
+    },
     {
       "id": "card-b72q",
       "format": "qa",
