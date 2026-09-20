@@ -77,17 +77,20 @@ function ratingRow(): string {
  * passing the SAME array back in on both the unrevealed and revealed
  * render, so the two renders agree on which button is which.
  *
- * `clozeOutcome` carries whether a revealed cloze's typed answer was
- * correct or wrong — set by review.ts once it has checked the input — so
- * this function can render the matching feedback and, for a correct
- * answer, suppress the "I actually knew this" override (meaningless when
- * the user was already right).
+ * `clozeOutcome` carries how a revealed cloze got here — 'correct' or
+ * 'wrong' once review.ts has checked a typed answer, or 'self-graded' when
+ * the user tapped "Show answer" instead of typing — so this function can
+ * render the matching state: typed-correct confirms itself and shows its
+ * citation; typed-wrong keeps the "I actually knew this" override; and
+ * self-graded shows the answer plus the four rating buttons with NO
+ * correct/wrong feedback and NO override, since the user never claimed an
+ * answer for there to be anything to override.
  */
 export function renderActions(
   card: StoredCard,
   revealed: boolean,
   mcqChoices?: Choice[],
-  clozeOutcome?: 'correct' | 'wrong'
+  clozeOutcome?: 'correct' | 'wrong' | 'self-graded'
 ): string {
   const tail = `${citations(card)}${flagButton()}`;
 
@@ -119,7 +122,20 @@ export function renderActions(
                  ${numeric ? 'inputmode="numeric" pattern="[0-9]*"' : ''}
                  placeholder="type answer" />
           <button class="btn" data-role="check">Check</button>
+          <button class="btn-quiet" data-role="reveal">Show answer</button>
           ${flagButton()}
+        </div>
+      `;
+    }
+    // "Show answer" skips typing entirely and self-grades like a qa card:
+    // the answer plus the four rating buttons, no correct/wrong claim was
+    // ever made so there's nothing to confirm or override.
+    if (clozeOutcome === 'self-graded') {
+      return `
+        <div class="action-area">
+          <p class="expected">${escapeHtml(card.answer ?? '')}</p>
+          ${ratingRow()}
+          ${tail}
         </div>
       `;
     }
@@ -146,10 +162,12 @@ export function renderActions(
   }
 
   if (!revealed) {
-    // qa has an answer key to show; recall is self-graded with none (spec
-    // 3.2), so its pre-reveal label must not promise one — "Show answer"
-    // on a recall card that then shows nothing reads as broken.
-    const label = card.format === 'recall' ? 'Rate yourself' : 'Show answer';
+    // Keyed off whether an answer key actually exists, not off format:
+    // recall cards can optionally carry one now, and a card with no answer
+    // must not promise one — "Show answer" on a card that then shows
+    // nothing reads as broken. A qa (or recall) card with an answer gets
+    // "Show answer"; one without gets "Rate yourself" instead.
+    const label = card.answer ? 'Show answer' : 'Rate yourself';
     return `<div class="action-area"><button class="btn" data-role="reveal">${label}</button>${flagButton()}</div>`;
   }
   // A recall card with no answer key would otherwise reveal into just a

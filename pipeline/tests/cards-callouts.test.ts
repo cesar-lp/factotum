@@ -61,4 +61,86 @@ describe('parseCards — callouts', () => {
     const cards = parseCards(body, 0);
     expect(cards.map((c) => c.format)).toEqual(['mcq', 'cloze']);
   });
+
+  it('splits a recall callout into prompt and answer on a --- separator', () => {
+    const body = [
+      '> [!card] recall',
+      '> Explain why wait-free implies lock-free, but not the reverse.',
+      '> ---',
+      '> Wait-free bounds every thread; lock-free only guarantees some progress.'
+    ].join('\n');
+    const cards = parseCards(body, 0);
+    expect(cards).toEqual([
+      {
+        id: null,
+        format: 'recall',
+        prompt: 'Explain why wait-free implies lock-free, but not the reverse.',
+        answer: 'Wait-free bounds every thread; lock-free only guarantees some progress.',
+        anchorLine: 3
+      }
+    ]);
+  });
+
+  it('leaves a recall callout with no separator without an answer field', () => {
+    const body = ['> [!card] recall', '> Explain why TCP suits bulk transfer.'].join('\n');
+    const cards = parseCards(body, 0);
+    expect(cards[0]?.answer).toBeUndefined();
+    expect(Object.keys(cards[0] ?? {})).not.toContain('answer');
+  });
+
+  it('joins a multi-line answer after the separator', () => {
+    const body = [
+      '> [!card] recall',
+      '> Explain the thing.',
+      '> ---',
+      '> First line of the answer',
+      '> and a second line.'
+    ].join('\n');
+    const cards = parseCards(body, 0);
+    expect(cards[0]?.answer).toBe('First line of the answer and a second line.');
+  });
+
+  it('keeps a second --- inside the answer text', () => {
+    const body = [
+      '> [!card] recall',
+      '> Explain the thing.',
+      '> ---',
+      '> The answer has a divider below',
+      '> ---',
+      '> and this trailing bit too.'
+    ].join('\n');
+    const cards = parseCards(body, 0);
+    expect(cards[0]?.answer).toBe('The answer has a divider below --- and this trailing bit too.');
+  });
+
+  it('yields no answer when the separator is followed only by blank lines', () => {
+    const body = ['> [!card] recall', '> Explain the thing.', '> ---', '>', '>   '].join('\n');
+    const cards = parseCards(body, 0);
+    expect(cards[0]?.answer).toBeUndefined();
+  });
+
+  it('skips a recall card whose separator is the first line, and warns', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const body = ['> [!card] recall', '> ---', '> Only an answer, no prompt.'].join('\n');
+    expect(parseCards(body, 0)).toEqual([]);
+    expect(warn).toHaveBeenCalled();
+    warn.mockRestore();
+  });
+
+  it('does not treat --- as a separator inside an mcq callout', () => {
+    const body = ['> [!card] mcq', '> Broken?', '> ---', '> - [x] a', '> - [ ] b'].join('\n');
+    const cards = parseCards(body, 0);
+    expect(cards).toEqual([
+      {
+        id: null,
+        format: 'mcq',
+        prompt: 'Broken? ---',
+        choices: [
+          { text: 'a', correct: true },
+          { text: 'b', correct: false }
+        ],
+        anchorLine: 4
+      }
+    ]);
+  });
 });

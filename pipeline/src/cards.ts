@@ -11,6 +11,7 @@ export const FENCE = /^\s*(```|~~~)/;
 const CALLOUT_OPEN = /^>\s*\[!card\]\s*(mcq|recall)\s*$/i;
 const CALLOUT_LINE = /^>\s?(.*)$/;
 const CHOICE = /^-\s*\[( |x)\]\s*(.+)$/i;
+const RECALL_SEPARATOR = /^-{3}$/;
 const HEADING = /^#{1,6}\s/;
 const LIST_ITEM = /^\s*([-*+]|\d+\.)\s/;
 const BLOCKQUOTE = /^>/;
@@ -187,11 +188,13 @@ function parseCallout(
   format: 'mcq' | 'recall'
 ): CalloutResult {
   const promptParts: string[] = [];
+  const answerParts: string[] = [];
   const choices: Choice[] = [];
   let id: string | null = null;
   let anchorLine: number | null = null;
   let lastContentLine = start;
   let i = start + 1;
+  let sawSeparator = false;
 
   for (; i < lines.length; i++) {
     const raw = lines[i] ?? '';
@@ -208,6 +211,19 @@ function parseCallout(
     const content = stripped.text.trim();
     if (content === '') continue;
     lastContentLine = i;
+
+    // The `> ---` separator only has meaning inside a recall callout, and
+    // only the first one splits prompt from answer — a later `---` is just
+    // part of the answer text.
+    if (format === 'recall' && !sawSeparator && RECALL_SEPARATOR.test(content)) {
+      sawSeparator = true;
+      continue;
+    }
+
+    if (format === 'recall' && sawSeparator) {
+      answerParts.push(content);
+      continue;
+    }
 
     const choice = content.match(CHOICE);
     if (choice && choice[2]) {
@@ -229,7 +245,11 @@ function parseCallout(
   }
 
   if (format === 'recall') {
-    return { card: { id, format, prompt, anchorLine }, nextIndex: i };
+    const answer = answerParts.length > 0 ? answerParts.join(' ') : undefined;
+    return {
+      card: answer !== undefined ? { id, format, prompt, answer, anchorLine } : { id, format, prompt, anchorLine },
+      nextIndex: i
+    };
   }
 
   if (!choices.some((c) => c.correct)) {

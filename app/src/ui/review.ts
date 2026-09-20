@@ -162,7 +162,7 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
     advance();
   };
 
-  function draw(revealed: boolean, pendingOutcome: 'correct' | 'wrong' | null = null): void {
+  function draw(revealed: boolean, pendingOutcome: 'correct' | 'wrong' | 'self-graded' | null = null): void {
     const card = deps.session[index];
     if (!card) return deps.onDone(reviewed);
 
@@ -194,7 +194,18 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
       });
     });
 
-    root.querySelector('[data-role="reveal"]')?.addEventListener('click', () => draw(true));
+    // Shared by qa/recall's "Rate yourself"/"Show answer" AND, now, cloze's
+    // "Show answer" (skip typing, self-grade instead). Only cloze needs a
+    // pendingOutcome here — 'self-graded' — so renderActions renders the
+    // answer-plus-rating-row state instead of the typed correct/wrong one;
+    // qa/recall ignore pendingOutcome entirely. Either way this never calls
+    // submit() itself, so it doesn't need the `submitting` guard: the
+    // actual recording happens when a rating button is tapped afterward,
+    // via the SAME generic `[data-outcome]` handler below that qa/recall's
+    // rating row already uses — no separate grading path to duplicate.
+    root.querySelector('[data-role="reveal"]')?.addEventListener('click', () => {
+      draw(true, card.format === 'cloze' ? 'self-graded' : undefined);
+    });
 
     root.querySelectorAll<HTMLButtonElement>('[data-choice]').forEach((button) => {
       button.addEventListener('click', () => {
@@ -255,7 +266,11 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
         submitting = true;
         lockControls();
         const value = button.dataset['outcome'];
-        if (value === 'continue') return void submit(card, pendingOutcome ?? 'wrong', startedAt);
+        // 'continue' only ever renders for a typed correct/wrong reveal (never
+        // for the self-graded one, which has its own rating row instead), so
+        // narrowing to 'correct'/'wrong' here — rather than passing
+        // pendingOutcome through as-is — keeps this an Outcome for submit().
+        if (value === 'continue') return void submit(card, pendingOutcome === 'correct' ? 'correct' : 'wrong', startedAt);
         if (value === 'override') return void submit(card, 'correct', startedAt);
         void submit(card, value as Outcome, startedAt);
       });

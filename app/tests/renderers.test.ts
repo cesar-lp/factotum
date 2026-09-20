@@ -143,16 +143,48 @@ describe('renderActions', () => {
     });
   });
 
-  describe('pre-reveal label: qa vs recall', () => {
+  describe('pre-reveal label: keyed off card.answer, not format', () => {
     it('qa keeps "Show answer" — there is an answer key to show', () => {
       const html = renderActions(qa, false);
       expect(html).toContain('Show answer');
     });
 
-    it('recall gets a different label, since it has no answer key by design', () => {
+    it('recall with no answer key is labelled "Rate yourself"', () => {
       const html = renderActions(recall, false);
       expect(html).not.toContain('Show answer');
       expect(html).toContain('data-role="reveal"');
+    });
+
+    it('recall WITH an answer key is labelled "Show answer", not "Rate yourself"', () => {
+      const recallWithAnswer: StoredCard = { ...recall, answer: 'Automatic repeat request' };
+      const html = renderActions(recallWithAnswer, false);
+      expect(html).toContain('Show answer');
+    });
+  });
+
+  describe('cloze "Show answer" (self-graded reveal, no typing required)', () => {
+    it('the pre-reveal state offers a show-answer control beside the input and Check button', () => {
+      const html = renderActions(cloze, false);
+      expect(html).toContain('data-role="cloze-input"');
+      expect(html).toContain('data-role="check"');
+      expect(html).toContain('data-role="reveal"');
+    });
+
+    it('a self-graded reveal shows the answer and a rating row', () => {
+      const html = renderActions(cloze, true, undefined, 'self-graded');
+      expect(html).toContain('1500 bytes');
+      for (const outcome of ['again', 'hard', 'good', 'easy']) {
+        expect(html).toContain(`data-outcome="${outcome}"`);
+      }
+    });
+
+    it('a self-graded reveal shows neither correct/wrong feedback nor the override', () => {
+      const html = renderActions(cloze, true, undefined, 'self-graded');
+      expect(html).not.toContain('class="feedback');
+      expect(html).not.toContain('data-outcome="continue"');
+      expect(html).not.toContain('data-outcome="override"');
+      expect(html.toLowerCase()).not.toContain('correct');
+      expect(html.toLowerCase()).not.toContain('not quite');
     });
   });
 
