@@ -118,6 +118,39 @@ function isSessionRoute(hash: string): boolean {
 }
 
 /**
+ * Whether `hash` is a return to the suspended session `suspendedHash`
+ * identifies (null when nothing is suspended). This is the same condition
+ * `decideRoute` uses to return `resume`, exported so main.ts can act on it
+ * BEFORE it loads a DashboardState: a resume needs nothing from that state,
+ * and rebuilding the whole deck just to hand back a node already in hand
+ * would put a needless I/O window between the reader and their card.
+ */
+export function resumesSuspendedSession(hash: string, suspendedHash: string | null): boolean {
+  return suspendedHash !== null && hash === suspendedHash && isSessionRoute(hash);
+}
+
+/**
+ * Whether a decision keeps a suspended review session alive, or ends it.
+ *
+ * This is the whole anti-resurrection rule, and it is load-bearing in both
+ * directions: classify a kind as retaining when it is not, and a finished
+ * session lingers to be resurrected by a later back/forward; classify one as
+ * ending when it is not, and the reader is thrown out of a session that is
+ * still running. It lives here, as an exhaustive function of the decision
+ * kind, so a new `RouteDecision` member cannot be added without deciding
+ * which side it falls on — `route.test.ts` tables it against every member of
+ * the union, so an unclassified kind fails in node rather than in the app.
+ *
+ * `note` is the detour the whole note viewer exists to make survivable.
+ * `resume` is the return trip from it, which obviously keeps the session.
+ * Everything else — the dashboard, topics, settings, a focus or extend hash
+ * that starts a DIFFERENT session — means the reader has left for good.
+ */
+export function retainsSuspendedSession(kind: RouteDecision['kind']): boolean {
+  return kind === 'note' || kind === 'resume';
+}
+
+/**
  * The routing DECISION, pulled apart from main.ts's route()'s side effects
  * (DOM render, hash mutation, db fetch) so the one invariant that matters
  * here — due cards always come first, so `#review-extend` may only win when
@@ -148,9 +181,7 @@ export function decideRoute(
   // a session still in progress. The caller drops `suspendedHash` the moment
   // the session is finished or the reader goes anywhere that is not a note,
   // so nothing stale can be resurrected through here.
-  if (suspendedHash !== null && hash === suspendedHash && isSessionRoute(hash)) {
-    return { kind: 'resume' };
-  }
+  if (resumesSuspendedSession(hash, suspendedHash)) return { kind: 'resume' };
 
   if (hash === '#review' && state.session.length > 0) return { kind: 'review' };
 

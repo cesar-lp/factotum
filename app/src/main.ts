@@ -15,7 +15,10 @@ import { renderNote } from './ui/note.js';
 import { loadNotes, findNote, prefetchNotes } from './db/notes.js';
 import { maskedCardIds } from './ui/note-mask.js';
 import { obsidianUrl } from './ui/obsidian.js';
-import { decideRoute, focusHash, noteHash, type DashboardState } from './route.js';
+import {
+  decideRoute, focusHash, noteHash, resumesSuspendedSession, retainsSuspendedSession,
+  type DashboardState
+} from './route.js';
 import type { Deck } from '../../pipeline/src/types.js';
 
 const REPO = 'cesar-lp/factotum';
@@ -107,30 +110,42 @@ export async function loadDashboardState(db: FactotumDb, now: Date): Promise<Das
 async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: boolean): Promise<void> {
   const hash = window.location.hash;
 
-  // Detach the review screen BEFORE anything else here can overwrite
-  // appRoot: every render path below replaces its content wholesale, so a
-  // review screen still parented to it would be destroyed — closure and
-  // all — the instant one of them ran. This is synchronous and ahead of the
-  // await below on purpose; the awaits are where another render could
-  // otherwise slip in. Detaching is free when the session turns out to be
-  // resumable, since re-attaching is all that takes.
-  suspendedReview?.node.remove();
+  // The return trip from a note, handled BEFORE the state load below. A
+  // resume uses nothing from `state`, and that load is real I/O — six
+  // IndexedDB reads plus a queue rebuild over the whole deck — so routing it
+  // the long way would leave the reader staring at the note for the duration
+  // of a rebuild whose result is thrown away. Nothing has to be detached
+  // first: `replaceChildren` (like the `innerHTML =` every other screen
+  // uses) merely unparents whatever is there, and this node is held by a
+  // live reference, so its subtree, its listeners and the startReview
+  // closure they keep alive all survive being taken out of the document.
+  if (suspendedReview && resumesSuspendedSession(hash, suspendedReview.hash)) {
+    appRoot.replaceChildren(suspendedReview.node);
+    return;
+  }
 
   const now = new Date();
   const state = await loadDashboardState(db, now);
   const decision = decideRoute(hash, state, suspendedReview?.hash ?? null);
 
+  // Unreachable while the fast path above agrees with decideRoute — both
+  // ask resumesSuspendedSession the same question. Kept so that if the two
+  // ever drift, the answer is a correct resume rather than a lost session.
   if (decision.kind === 'resume' && suspendedReview) {
     appRoot.replaceChildren(suspendedReview.node);
     return;
   }
 
-  // Everything past here ends the retained session. A note is the ONLY
-  // detour it survives: any other destination — the summary's Done, the
-  // header ×, the dashboard, topics, settings, a focus hash — means the
-  // reader has left for good, and a session kept past that point could be
-  // resurrected later by a stale back/forward entry.
-  if (decision.kind !== 'note') suspendedReview = null;
+  // THE anti-resurrection rule. Delegated to route.ts so it is an exhaustive
+  // function of the decision kind rather than an `!== 'note'` that silently
+  // stops being right the day a kind is added — see its doc comment.
+  //
+  // Note that the header × is NOT one of the endings this catches: it calls
+  // finishSession(), which renders the summary INTO the retained node and
+  // changes no hash, so nothing routes and `suspendedReview` stays set,
+  // pointing at the summary. It is the summary's Done — which sets the hash
+  // — that ends up here and clears it.
+  if (!retainsSuspendedSession(decision.kind)) suspendedReview = null;
 
   // Renders a review session into its own node so the whole screen can be
   // detached and re-attached across a note detour (see suspendedReview).

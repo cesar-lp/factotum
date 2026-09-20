@@ -286,12 +286,21 @@ never served.
 
 So the session is not rebuilt. `main.ts` renders the review screen into its
 own node (`.screen-host`, `display: contents`, so `.screen` stays the direct
-flex item of `#app` it is everywhere else), **detaches that node whole**
-when routing away, and re-attaches it on return. A detached node keeps its
-event listeners, and those listeners keep the closure alive, so nothing has
-to be extracted, snapshotted or replayed — there is no list of fields to
-forget, and no way for a later addition to `startReview` to be silently
-left behind.
+flex item of `#app` it is everywhere else), **holds that node whole** while
+the reader is away, and re-attaches it on return. Nothing has to be detached
+deliberately: rendering another screen is `innerHTML =` or
+`replaceChildren`, both of which merely *unparent* what was there, and a node
+held by a live reference keeps its subtree, its listeners, and therefore the
+`startReview` closure those listeners close over. (Detached-DOM leaks exist
+precisely because that is true.) So nothing is extracted, snapshotted or
+replayed — there is no list of fields to forget, and no way for a later
+addition to `startReview` to be silently left behind.
+
+The return trip is short-circuited *ahead of* the `DashboardState` load, via
+`resumesSuspendedSession` — the same predicate `decideRoute` uses. A resume
+reads nothing from that state, and the load is six IndexedDB reads plus a
+queue rebuild over the whole deck; making the reader wait through one to be
+handed a node already in hand would be pure latency.
 
 Routing follows suit rather than being bypassed: `decideRoute` takes the
 suspended session's hash as a third argument (passed in, never read from a
@@ -303,11 +312,23 @@ against a freshly loaded `DashboardState` fails precisely *because* the
 session is mid-flight. With nothing suspended, every existing decision is
 unchanged.
 
-A note is the **only** detour a session survives. The summary's Done, the
-header ×, and every other destination drop the retained node, so a stale
-session can never be resurrected by a later back/forward. A full reload
-destroys it too — the app persists no session state today, and this does
-not add any.
+A note is the **only** detour a session survives. Every other destination
+drops the retained node, so a stale session can never be resurrected by a
+later back/forward. The rule lives in `route.ts` as
+`retainsSuspendedSession`, an exhaustive function of the decision kind
+tabled against every member of the union, so a kind added later cannot skip
+being classified. Note that the header × is *not* one of these endings and
+does not route at all: it renders the summary into the retained node, and it
+is the summary's **Done**, which sets the hash, that clears the retention. A
+full reload destroys the session — the app persists no session state today,
+and this does not add any.
+
+Two accepted costs, neither worth machinery: the review body's scroll offset
+resets across the detour, so a long prompt comes back scrolled to the top;
+and the per-card timer keeps running while the note is open, so the logged
+`durationMs` includes reading time. The `obsidian://` link had the same
+timer behaviour, but the in-app viewer will be used far more, so that field
+gets noisier.
 
 **Entry point B — topics.** `renderTopics` already walks topic → category;
 notes are the natural third level. A category expands to its note list,

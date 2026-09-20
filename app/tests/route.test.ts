@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { decideRoute, focusHash, noteHash, type DashboardState } from '../src/route.js';
+import {
+  decideRoute, focusHash, noteHash, resumesSuspendedSession, retainsSuspendedSession,
+  type DashboardState, type RouteDecision
+} from '../src/route.js';
 import type { TopicSummary } from '../src/topics.js';
 import type { StoredCard } from '../src/db/schema.js';
 
@@ -161,6 +164,68 @@ describe('decideRoute with a suspended session', () => {
     const s = state([card('due-1')], [card('new-1')]);
     expect(decideRoute('#review-extend', s, null)).toEqual({ kind: 'dashboard' });
     expect(decideRoute('#review', state([], []), null)).toEqual({ kind: 'dashboard' });
+  });
+});
+
+describe('retainsSuspendedSession', () => {
+  // THE anti-resurrection rule, and the one thing main.ts's session
+  // retention rests on that decideRoute cannot see (it is handed
+  // suspendedHash already computed). Typed as a total Record over the
+  // union, so adding a RouteDecision kind without deciding whether it keeps
+  // a running session alive fails to compile here rather than shipping as
+  // either a dropped session or a resurrected one.
+  const expected: Record<RouteDecision['kind'], boolean> = {
+    // The detour the note viewer exists to make survivable, and the return
+    // trip from it.
+    note: true,
+    resume: true,
+    // Every other destination means the reader has left for good.
+    review: false,
+    'review-extend': false,
+    focus: false,
+    topics: false,
+    settings: false,
+    dashboard: false
+  };
+
+  for (const [kind, retains] of Object.entries(expected)) {
+    it(`${retains ? 'keeps' : 'ends'} a suspended session on '${kind}'`, () => {
+      expect(retainsSuspendedSession(kind as RouteDecision['kind'])).toBe(retains);
+    });
+  }
+
+  it('agrees with decideRoute about every kind it can return', () => {
+    // The two halves of the rule must not drift: whatever decideRoute calls
+    // a resume, this must classify as retaining, or main.ts's fast path and
+    // its cleanup would disagree about the same navigation.
+    expect(retainsSuspendedSession(decideRoute('#review', state([], []), '#review').kind)).toBe(true);
+    expect(retainsSuspendedSession(decideRoute(noteHash('vault/a.md'), state([], [])).kind)).toBe(true);
+    expect(retainsSuspendedSession(decideRoute('', state([], [])).kind)).toBe(false);
+  });
+});
+
+describe('resumesSuspendedSession', () => {
+  it('is exactly the condition decideRoute returns `resume` for', () => {
+    // main.ts calls this directly to short-circuit the return trip ahead of
+    // a DashboardState load it would not use, so the two must not drift.
+    const cases: [string, string | null][] = [
+      ['#review', '#review'],
+      ['#review-extend', '#review-extend'],
+      ['#focus/amp', '#focus/amp'],
+      ['#review', '#review-extend'],
+      ['#topics', '#review'],
+      ['#settings', '#settings'],
+      ['#topics', '#topics'],
+      [noteHash('vault/a.md'), '#review'],
+      ['#review', null],
+      ['', null]
+    ];
+    for (const [hash, suspended] of cases) {
+      expect([hash, resumesSuspendedSession(hash, suspended)]).toEqual([
+        hash,
+        decideRoute(hash, state([], [], topics('amp')), suspended).kind === 'resume'
+      ]);
+    }
   });
 });
 
