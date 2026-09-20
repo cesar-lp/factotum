@@ -9,8 +9,8 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'app/index.html'),
-        sw: resolve(__dirname, 'app/src/sw.ts')
+        main: resolve(import.meta.dirname, 'app/index.html'),
+        sw: resolve(import.meta.dirname, 'app/src/sw.ts')
       },
       output: {
         entryFileNames: (chunk) => (chunk.name === 'sw' ? 'sw.js' : 'assets/[name]-[hash].js')
