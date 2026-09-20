@@ -1,0 +1,16 @@
+/* The note viewer. */
+
+/* A masked span keeps its width so revealing it reflows nothing --
+   reading flow has to survive the tap. */
+.is-masked {
+  filter: blur(6px);
+  cursor: pointer;
+  border-radius: var(--r-sm);
+  transition: filter 120ms ease-out;
+}
+.is-masked:hover { filter: blur(4px); }
+.is-revealed { filter: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .is-masked { transition: none; }
+}
