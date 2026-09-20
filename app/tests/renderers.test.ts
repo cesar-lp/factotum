@@ -83,11 +83,12 @@ describe('renderActions', () => {
     expect((html.match(/data-choice=/g) ?? [])).toHaveLength(2);
   });
 
-  it('shows citations and a continue button once an mcq is revealed', () => {
+  it('shows a continue button once an mcq is revealed (citations render in renderPrompt now)', () => {
     const html = renderActions(mcq, true);
-    expect(html).toContain('RFC 9293');
     expect(html).toContain('data-outcome="continue"');
     expect(html).toContain('disabled');
+    const promptHtml = renderPrompt(mcq, true);
+    expect(promptHtml).toContain('RFC 9293');
   });
 
   it('renders mcq choices in the order it is given, not deck order', () => {
@@ -96,7 +97,7 @@ describe('renderActions', () => {
     // (review.ts), which is where the actual shuffle happens.
     const reordered: Choice[] = [mcq.choices![1]!, mcq.choices![0]!];
     const html = renderActions(mcq, false, reordered);
-    const texts = [...html.matchAll(/data-correct="(true|false)"[^>]*>\s*([^<]+?)\s*</g)].map((m) => m[2]);
+    const texts = [...html.matchAll(/<span class="choice-text">([^<]+)<\/span>/g)].map((m) => m[1]!.trim());
     expect(texts).toEqual(['Network', 'Transport']);
   });
 
@@ -127,21 +128,63 @@ describe('renderActions', () => {
   });
 
   describe('revealed cloze feedback (the correct-path bug this branch fixes)', () => {
-    it('a correct answer shows the expected answer and citations, and suppresses the override', () => {
+    it('a correct answer substitutes into the prompt (tinted ok) and shows citations, and suppresses the override', () => {
+      const promptHtml = renderPrompt(cloze, true, { outcome: 'correct' });
+      expect(promptHtml).toContain('1500 bytes'); // substituted into the blank now, not a detached paragraph
+      expect(promptHtml).toContain('cloze-fill is-ok');
+      expect(promptHtml).toContain('RFC 9293'); // citation — this is the bug: it never rendered before
+
       const html = renderActions(cloze, true, undefined, 'correct');
-      expect(html).toContain('1500 bytes'); // expected answer still shown
-      expect(html).toContain('RFC 9293'); // citation — this is the bug: it never rendered before
       expect(html).toContain('data-outcome="continue"');
       expect(html).not.toContain('data-outcome="override"'); // meaningless when already correct
-      expect(html.toLowerCase()).toContain('correct');
     });
 
-    it('a wrong answer shows the override alongside Continue and citations', () => {
+    it('a wrong answer shows the override alongside Continue, citations, and what was typed', () => {
+      const promptHtml = renderPrompt(cloze, true, { outcome: 'wrong', typedAnswer: '1400 bytes' });
+      expect(promptHtml).toContain('1500 bytes'); // correct answer substituted in
+      expect(promptHtml).toContain('cloze-fill is-accent');
+      expect(promptHtml).toContain('You typed: 1400 bytes'); // previously discarded entirely
+      expect(promptHtml).toContain('RFC 9293');
+
       const html = renderActions(cloze, true, undefined, 'wrong');
-      expect(html).toContain('1500 bytes');
-      expect(html).toContain('RFC 9293');
       expect(html).toContain('data-outcome="continue"');
       expect(html).toContain('data-outcome="override"');
+    });
+  });
+
+  describe('cloze reveal state label (WCAG 1.4.1 — colour is never the only signal)', () => {
+    // correct and self-graded differ ONLY by --ok green vs --accent ochre
+    // otherwise (no typed line, no override on either), so each of the
+    // three reveal states must carry distinguishing TEXT, not just a class
+    // name a sighted user with typical colour vision would read as intent.
+    it('a correct reveal is labelled "Correct" in an aria-live region', () => {
+      const html = renderPrompt(cloze, true, { outcome: 'correct' });
+      expect(html).toMatch(/aria-live="polite"[^>]*>Correct</);
+    });
+
+    it('a self-graded reveal is labelled distinctly from "Correct", in an aria-live region', () => {
+      const html = renderPrompt(cloze, true, { outcome: 'self-graded' });
+      expect(html).toMatch(/aria-live="polite"[^>]*>Answer revealed</);
+      expect(html).not.toContain('>Correct<');
+    });
+
+    it('a wrong reveal is labelled "Not quite" in an aria-live region', () => {
+      const html = renderPrompt(cloze, true, { outcome: 'wrong', typedAnswer: '1400 bytes' });
+      expect(html).toMatch(/aria-live="polite"[^>]*>Not quite</);
+    });
+
+    it('the three reveal states are all textually distinct from one another', () => {
+      const correct = renderPrompt(cloze, true, { outcome: 'correct' });
+      const wrong = renderPrompt(cloze, true, { outcome: 'wrong' });
+      const selfGraded = renderPrompt(cloze, true, { outcome: 'self-graded' });
+      const extractLabel = (html: string): string | undefined => html.match(/class="cloze-state[^>]*>([^<]+)</)?.[1];
+      const labels = [extractLabel(correct), extractLabel(wrong), extractLabel(selfGraded)];
+      expect(labels).toEqual(['Correct', 'Not quite', 'Answer revealed']);
+      expect(new Set(labels).size).toBe(3);
+    });
+
+    it('an unrevealed cloze has no state label at all', () => {
+      expect(renderPrompt(cloze, false)).not.toContain('cloze-state');
     });
   });
 
@@ -172,9 +215,12 @@ describe('renderActions', () => {
       expect(html).toContain('data-role="reveal"');
     });
 
-    it('a self-graded reveal shows the answer and a rating row', () => {
+    it('a self-graded reveal substitutes the answer (tinted accent) and shows a rating row', () => {
+      const promptHtml = renderPrompt(cloze, true, { outcome: 'self-graded' });
+      expect(promptHtml).toContain('1500 bytes');
+      expect(promptHtml).toContain('cloze-fill is-accent');
+
       const html = renderActions(cloze, true, undefined, 'self-graded');
-      expect(html).toContain('1500 bytes');
       for (const outcome of ['again', 'hard', 'good', 'easy']) {
         expect(html).toContain(`data-outcome="${outcome}"`);
       }
@@ -194,9 +240,10 @@ describe('renderActions', () => {
     it('does not throw, and renders no answer paragraph', () => {
       const qaNoAnswer: StoredCard = { ...qa, answer: undefined };
       expect(() => renderActions(qaNoAnswer, true)).not.toThrow();
-      const html = renderActions(qaNoAnswer, true);
-      expect(html).not.toContain('class="expected"');
+      expect(() => renderPrompt(qaNoAnswer, true)).not.toThrow();
+      expect(renderPrompt(qaNoAnswer, true)).not.toContain('class="expected"');
       // still gets the rating row — nothing about the missing answer breaks the reveal
+      const html = renderActions(qaNoAnswer, true);
       for (const outcome of ['again', 'hard', 'good', 'easy']) {
         expect(html).toContain(`data-outcome="${outcome}"`);
       }
@@ -366,7 +413,7 @@ describe('inlineMarkup wired into renderers', () => {
 
   it('renders markup in the answer paragraph', () => {
     const card: StoredCard = { ...base, id: 'card-ffff', format: 'qa', prompt: 'p', answer: 'It is `1500 bytes`' };
-    const html = renderActions(card, true);
+    const html = renderPrompt(card, true);
     expect(html).toContain('<code>1500 bytes</code>');
   });
 

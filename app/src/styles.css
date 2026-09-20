@@ -4,6 +4,7 @@
 
 @import './styles/base.css';
 @import './styles/review.css';
+@import './styles/summary.css';
 @import './styles/dashboard.css';
 @import './styles/topics.css';
 @import './styles/settings.css';

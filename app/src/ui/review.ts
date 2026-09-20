@@ -1,11 +1,13 @@
+import { Rating } from 'ts-fsrs';
 import type { FactotumDb, ReviewState, StoredCard } from '../db/schema.js';
 import type { Choice } from '../../../pipeline/src/types.js';
 import type { Outcome } from '../scheduler/fsrs.js';
-import { isStillLearning } from '../scheduler/fsrs.js';
-import { recordReview, flagCard } from '../db/reviews.js';
+import { initialState, isStillLearning, previewIntervals, ratingFor } from '../scheduler/fsrs.js';
+import { loadReviews, recordReview, flagCard } from '../db/reviews.js';
 import { getSettings } from '../db/settings.js';
 import { checkCloze, renderActions, renderPrompt, shuffle } from './renderers.js';
 import { issueUrl } from './flag.js';
+import { renderSummary, type RatingCounts } from './summary.js';
 
 // How many OTHER cards must be shown before a learning-step card (Again/
 // Hard/Good on a card that hasn't graduated to FSRS state Review) reappears
@@ -91,6 +93,52 @@ export function highlightClasses(choices: Choice[], tappedIndex: number): Highli
   });
 }
 
+/**
+ * The session progress denominator: the count of DISTINCT cards in the
+ * session. Must be captured ONCE, before any requeue splices more entries
+ * into the (mutated-by-reference) session array -- otherwise it climbs as
+ * learning cards requeue (observed going 1/10 -> 2/11 -> 3/12 within three
+ * cards), which reads as losing ground rather than the requeue policy
+ * working as designed.
+ */
+export function distinctCardCount(session: StoredCard[]): number {
+  return new Set(session.map((c) => c.id)).size;
+}
+
+/**
+ * The session progress numerator: how many DISTINCT cards have been shown
+ * up to and including `index`. A requeued card reoccupies a new slot
+ * later in `session`, but its id was already counted the first time it
+ * was shown, so reaching that slot again does not advance the numerator
+ * -- exactly mirroring distinctCardCount's denominator, which also never
+ * counts a requeue as a new card.
+ */
+export function distinctPosition(session: StoredCard[], index: number): number {
+  const seen = new Set<string>();
+  const end = Math.min(index, session.length - 1);
+  for (let i = 0; i <= end; i++) {
+    const card = session[i];
+    if (card) seen.add(card.id);
+  }
+  return seen.size;
+}
+
+/** Maps an FSRS Rating to the key summary.ts's per-rating breakdown uses. Rating.Manual never reaches here -- applyRating/ratingFor never produce it. */
+function ratingKey(rating: Rating): keyof RatingCounts {
+  switch (rating) {
+    case Rating.Again:
+      return 'again';
+    case Rating.Hard:
+      return 'hard';
+    case Rating.Good:
+      return 'good';
+    case Rating.Easy:
+      return 'easy';
+    default:
+      throw new Error(`Unexpected rating for summary tally: ${String(rating)}`);
+  }
+}
+
 export interface ReviewDeps {
   db: FactotumDb;
   session: StoredCard[];
@@ -103,12 +151,31 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
   let index = 0;
   let reviewed = 0;
 
+  // Captured ONCE, before any requeue splices into deps.session. See
+  // distinctCardCount's doc comment.
+  const totalCards = distinctCardCount(deps.session);
+
+  // Current on-disk FSRS state per card, kept in sync as each submit()
+  // resolves, so previewIntervals() (used for the rating row's interval
+  // labels) always sees the state the NEXT rating would actually apply
+  // against -- including a card's own prior requeued rating within this
+  // same session.
+  const reviewStates = await loadReviews(deps.db);
+
+  // Session-level totals for the summary screen (section 5), collected
+  // in-session as cards are graded rather than re-querying reviewLog, so
+  // the summary reflects exactly the session just finished.
+  const ratingCounts: RatingCounts = { again: 0, hard: 0, good: 0, easy: 0 };
+  let totalDurationMs = 0;
+  const sessionStartedAt = Date.now();
+
   // Guards against double-taps (and any other re-entrant handler firing)
   // recording a card more than once. A rendered card sets this true the
-  // instant any handler starts down a path that ends in submit()/advance(),
-  // and it is only ever reset back to false when the NEXT card is drawn —
-  // never inside a handler — so a second tap on the same card, no matter
-  // how fast, finds it already true and returns immediately.
+  // instant any handler starts down a path that ends in submit()/advance()
+  // /finishSession(), and it is only ever reset back to false when the
+  // NEXT card is drawn — never inside a handler — so a second tap on the
+  // same card, no matter how fast, finds it already true and returns
+  // immediately. The header's × (finishSession) follows the same rule.
   let submitting = false;
 
   // How many times each card has already been re-queued in THIS session
@@ -131,21 +198,40 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
     });
   };
 
+  // Ends the session -- either it ran out of cards, or the header × was
+  // tapped -- and shows the completion screen instead of routing straight
+  // back out. Every card up to this point was already persisted by
+  // recordReview as it was graded, so there is nothing to lose by cutting
+  // a session short. Done, on the summary screen, is what actually invokes
+  // deps.onDone.
+  const finishSession = (): void => {
+    renderSummary(root, {
+      cardsReviewed: reviewed,
+      timeSpentMs: Date.now() - sessionStartedAt,
+      ratingCounts,
+      onDone: () => deps.onDone(reviewed)
+    });
+  };
+
   const advance = (): void => {
     index += 1;
-    if (index >= deps.session.length) deps.onDone(reviewed);
+    if (index >= deps.session.length) finishSession();
     else draw(false);
   };
 
   const submit = async (card: StoredCard, outcome: Outcome, startedAt: number): Promise<void> => {
+    const durationMs = Date.now() - startedAt;
     const next = await recordReview(deps.db, {
       card,
       outcome,
       now: new Date(),
       desiredRetention: settings.desiredRetention,
-      durationMs: Date.now() - startedAt
+      durationMs
     });
+    reviewStates.set(card.id, next);
     reviewed += 1;
+    totalDurationMs += durationMs;
+    ratingCounts[ratingKey(ratingFor(outcome))] += 1;
 
     // Every rating still reaches FSRS exactly as above, unchanged; this
     // only decides whether the SAME card comes back later in this session
@@ -162,9 +248,13 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
     advance();
   };
 
-  function draw(revealed: boolean, pendingOutcome: 'correct' | 'wrong' | 'self-graded' | null = null): void {
+  function draw(
+    revealed: boolean,
+    pendingOutcome: 'correct' | 'wrong' | 'self-graded' | null = null,
+    typedAnswer?: string
+  ): void {
     const card = deps.session[index];
-    if (!card) return deps.onDone(reviewed);
+    if (!card) return finishSession();
 
     // A fresh render always starts unlocked, whether this is a new card or
     // the same card re-rendered after a reveal.
@@ -173,15 +263,50 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
     choicesCache = getPresentationChoices(card, choicesCache, index);
     const choices = choicesCache.choices;
 
+    // The rating row (qa/recall, and cloze's self-graded reveal only --
+    // mcq and typed cloze grade themselves via ratingFor and keep their
+    // Continue button instead) previews each grade's next interval.
+    // Computed only when that row is actually about to render: it needs a
+    // DB round-trip's worth of state, but that state is already loaded
+    // into reviewStates up front, so this is a pure, synchronous lookup.
+    const showsRatingRow =
+      revealed && (card.format === 'qa' || card.format === 'recall' || (card.format === 'cloze' && pendingOutcome === 'self-graded'));
+    const preview = showsRatingRow
+      ? previewIntervals(reviewStates.get(card.id) ?? initialState(card.id, new Date()), new Date(), settings.desiredRetention)
+      : undefined;
+
     const startedAt = Date.now();
+    const position = distinctPosition(deps.session, index);
     root.innerHTML = `
       <section class="screen review">
-        <div class="top"><span>${index + 1} / ${deps.session.length}</span></div>
-        <div class="progress"><i style="width:${(index / deps.session.length) * 100}%"></i></div>
-        ${renderPrompt(card)}
-        ${renderActions(card, revealed, choices, pendingOutcome ?? undefined)}
+        <header class="review-header">
+          <div class="review-top">
+            <span class="review-counter">${position} / ${totalCards}</span>
+            <button class="review-close" data-role="close" aria-label="End session">×</button>
+          </div>
+          <div class="progress"><i style="width:${(position / totalCards) * 100}%"></i></div>
+        </header>
+        <div class="review-body">
+          ${renderPrompt(card, revealed, { outcome: pendingOutcome ?? undefined, typedAnswer })}
+        </div>
+        <div class="review-actions">
+          ${renderActions(card, revealed, choices, pendingOutcome ?? undefined, preview)}
+        </div>
       </section>
     `;
+
+    // Ends the session on demand. Guarded exactly like every other control
+    // here: the instant it's tapped, submitting flips true and further taps
+    // (on this now-frozen card) are inert. Nothing to await -- unlike
+    // submit(), finishSession() doesn't record anything itself, it only
+    // shows the completion screen -- so there's no reset-on-the-next-draw
+    // concern; this card's render is simply done.
+    root.querySelector('[data-role="close"]')?.addEventListener('click', () => {
+      if (submitting) return;
+      submitting = true;
+      lockControls();
+      finishSession();
+    });
 
     root.querySelector('[data-role="flag"]')?.addEventListener('click', () => {
       if (submitting) return;
@@ -197,12 +322,12 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
     // Shared by qa/recall's "Rate yourself"/"Show answer" AND, now, cloze's
     // "Show answer" (skip typing, self-grade instead). Only cloze needs a
     // pendingOutcome here — 'self-graded' — so renderActions renders the
-    // answer-plus-rating-row state instead of the typed correct/wrong one;
-    // qa/recall ignore pendingOutcome entirely. Either way this never calls
-    // submit() itself, so it doesn't need the `submitting` guard: the
-    // actual recording happens when a rating button is tapped afterward,
-    // via the SAME generic `[data-outcome]` handler below that qa/recall's
-    // rating row already uses — no separate grading path to duplicate.
+    // rating row instead of the typed correct/wrong one; qa/recall ignore
+    // pendingOutcome entirely. Either way this never calls submit() itself,
+    // so it doesn't need the `submitting` guard: the actual recording
+    // happens when a rating button is tapped afterward, via the SAME
+    // generic `[data-outcome]` handler below that qa/recall's rating row
+    // already uses — no separate grading path to duplicate.
     root.querySelector('[data-role="reveal"]')?.addEventListener('click', () => {
       draw(true, card.format === 'cloze' ? 'self-graded' : undefined);
     });
@@ -224,6 +349,9 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
         // enclosing draw() (cache-backed via getPresentationChoices), never
         // a fresh lookup or re-shuffle — it has to be the exact order the
         // user just saw and tapped, or this highlight marks the wrong button.
+        // A badge (A/B/C/D) is rendered by renderActions purely off each
+        // choice's RENDERED position too, so it can never drift from which
+        // button this highlight actually lands on.
         const classes = highlightClasses(choices, tappedIndex);
         root.querySelectorAll<HTMLButtonElement>('[data-choice]').forEach((b) => {
           const highlight = classes[Number(b.dataset['choice'])];
@@ -233,18 +361,19 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
     });
 
     // Mirrors the mcq tap handler: mark correct/wrong and re-render revealed
-    // (with citations and, for a wrong answer, the override) rather than
-    // submitting immediately — a correct cloze was previously advancing
-    // with no confirmation and no citation, the same bug Task 16 already
-    // fixed for mcq. draw() resets `submitting` for the revealed render, so
-    // Continue/override still work.
+    // (with citations and, for a wrong answer, the override and what was
+    // typed) rather than submitting immediately — a correct cloze was
+    // previously advancing with no confirmation and no citation, the same
+    // bug Task 16 already fixed for mcq. draw() resets `submitting` for the
+    // revealed render, so Continue/override still work.
     const runCheck = (): void => {
       if (submitting) return;
       submitting = true;
       lockControls();
       const input = root.querySelector<HTMLInputElement>('[data-role="cloze-input"]');
-      const correct = checkCloze(input?.value ?? '', card.answer ?? '');
-      draw(true, correct ? 'correct' : 'wrong');
+      const typed = input?.value ?? '';
+      const correct = checkCloze(typed, card.answer ?? '');
+      draw(true, correct ? 'correct' : 'wrong', typed);
     };
 
     root.querySelector('[data-role="check"]')?.addEventListener('click', runCheck);
