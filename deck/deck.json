@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-20T14:59:05.773Z",
+  "generatedAt": "2026-09-20T15:16:45.364Z",
   "cards": [
     {
       "id": "card-6fmp",
@@ -24845,6 +24845,2441 @@
         "Petrov, Database Internals, Ch. 5"
       ],
       "answer": "LSN"
+    },
+    {
+      "id": "card-h8m6",
+      "format": "cloze",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "balls-and-bins",
+        "birthday-problem",
+        "coupon-collector",
+        "maximum-load"
+      ],
+      "prompt": "The birthday problem asks: with n balls thrown into m equally likely bins, how large must n be before some bin is likely to hold two or more? The naming comes from the classic version — m = 365 days, balls being people's birthdays — where the surprising fact is that a ___ becomes likely once n exceeds about sqrt(m), not once n approaches m. With 23 people (n = 23) sharing 365 birthdays, the probability two share a birthday already exceeds 1/2, even though 23 is tiny next to 365.",
+      "source": {
+        "path": "vault/math/probability/balls-bins-and-collisions.md",
+        "block": "card-h8m6"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 4",
+        "Mitzenmacher & Upfal, Probability and Computing, Ch. 5"
+      ],
+      "answer": "collision"
+    },
+    {
+      "id": "card-44ph",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "balls-and-bins",
+        "birthday-problem",
+        "coupon-collector",
+        "maximum-load"
+      ],
+      "prompt": "Why does the birthday problem's threshold scale as sqrt(m) rather than as m itself?",
+      "source": {
+        "path": "vault/math/probability/balls-bins-and-collisions.md",
+        "block": "card-44ph"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 4",
+        "Mitzenmacher & Upfal, Probability and Computing, Ch. 5"
+      ],
+      "answer": "Because a collision only requires ONE of the roughly n(n-1)/2 pairs of balls to land in the same bin, and each pair collides with probability about 1/m; summing that small probability over the quadratically many pairs (a union-bound-style argument) makes the expected number of collisions cross 1 once n is on the order of sqrt(m), not once n approaches m."
+    },
+    {
+      "id": "card-8omr",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "balls-and-bins",
+        "birthday-problem",
+        "coupon-collector",
+        "maximum-load"
+      ],
+      "prompt": "With n balls thrown into m bins, the birthday problem says a collision (two balls in the same bin) becomes likely once n is roughly what size, relative to m?",
+      "source": {
+        "path": "vault/math/probability/balls-bins-and-collisions.md",
+        "block": "card-8omr"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 4",
+        "Mitzenmacher & Upfal, Probability and Computing, Ch. 5"
+      ],
+      "choices": [
+        {
+          "text": "On the order of sqrt(m) — far smaller than m itself",
+          "correct": true
+        },
+        {
+          "text": "On the order of m — you need nearly as many balls as bins",
+          "correct": false
+        },
+        {
+          "text": "On the order of m^2 — many more balls than bins",
+          "correct": false
+        },
+        {
+          "text": "On the order of log(m)",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-w0a3",
+      "format": "cloze",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "balls-and-bins",
+        "birthday-problem",
+        "coupon-collector",
+        "maximum-load"
+      ],
+      "prompt": "The coupon collector problem asks the opposite kind of question: given m distinct bins, how many balls must you throw, on average, before *every* bin has been hit at least once? Each new ball is likely to land in an already-hit bin once most bins are full, so the last few empty bins are disproportionately expensive to fill — the expected number of throws needed grows as m times the harmonic sum, which works out to ___, not m.",
+      "source": {
+        "path": "vault/math/probability/balls-bins-and-collisions.md",
+        "block": "card-w0a3"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 4",
+        "Mitzenmacher & Upfal, Probability and Computing, Ch. 5"
+      ],
+      "answer": "m ln(m)"
+    },
+    {
+      "id": "card-uya4",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "balls-and-bins",
+        "birthday-problem",
+        "coupon-collector",
+        "maximum-load"
+      ],
+      "prompt": "Why does filling the last few empty bins dominate the cost in the coupon collector problem, rather than the cost being spread evenly across all m bins?",
+      "source": {
+        "path": "vault/math/probability/balls-bins-and-collisions.md",
+        "block": "card-uya4"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 4",
+        "Mitzenmacher & Upfal, Probability and Computing, Ch. 5"
+      ],
+      "answer": "Once k bins have already been hit, a new ball only has probability (m - k)/m of landing in one of the remaining empty bins, so the expected wait for the next new bin is m/(m - k); as k approaches m that wait blows up, meaning the final few empty bins each take, in expectation, a number of throws proportional to m, while the very first bin costs only 1 throw."
+    },
+    {
+      "id": "card-84uy",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "balls-and-bins",
+        "birthday-problem",
+        "coupon-collector",
+        "maximum-load"
+      ],
+      "prompt": "What is the expected number of balls needed to fill all m bins at least once, and how does it compare in growth rate to filling only half of them?",
+      "source": {
+        "path": "vault/math/probability/balls-bins-and-collisions.md",
+        "block": "card-84uy"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 4",
+        "Mitzenmacher & Upfal, Probability and Computing, Ch. 5"
+      ],
+      "answer": "The expectation is m times the mth harmonic number, which is roughly m*ln(m); filling only half the bins takes only about m*ln(2) throws by the same harmonic-sum argument restricted to the still-empty half, so the second half of the bins — going from half-full to completely full — costs far more than the first half did, even though both halves have the same number of bins."
+    },
+    {
+      "id": "card-whhc",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "balls-and-bins",
+        "birthday-problem",
+        "coupon-collector",
+        "maximum-load"
+      ],
+      "prompt": "Throwing n balls independently and uniformly into n bins, the maximum load of any single bin is, with high probability, of what order?",
+      "source": {
+        "path": "vault/math/probability/balls-bins-and-collisions.md",
+        "block": "card-whhc"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 4",
+        "Mitzenmacher & Upfal, Probability and Computing, Ch. 5"
+      ],
+      "choices": [
+        {
+          "text": "Theta(log n / log log n)",
+          "correct": true
+        },
+        {
+          "text": "Theta(1) — the same order as the average load",
+          "correct": false
+        },
+        {
+          "text": "Theta(log n)",
+          "correct": false
+        },
+        {
+          "text": "Theta(sqrt(n))",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-qhvb",
+      "format": "recall",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "balls-and-bins",
+        "birthday-problem",
+        "coupon-collector",
+        "maximum-load"
+      ],
+      "prompt": "Explain, in one or two sentences, why the maximum load of Theta(log n / log log n) balls in the fullest of n bins is much larger than the average load of 1 ball per bin, without invoking any specific proof technique.",
+      "source": {
+        "path": "vault/math/probability/balls-bins-and-collisions.md",
+        "block": "card-qhvb"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 4",
+        "Mitzenmacher & Upfal, Probability and Computing, Ch. 5"
+      ],
+      "answer": "The average load only says what happens when the n balls are spread perfectly evenly, but the throws are independent and random rather than coordinated, so by chance some bins receive a run of several balls in a row while others receive none; the maximum-load result quantifies how large that lucky-bin effect gets, and it grows (slowly, like log n / log log n) rather than staying bounded, precisely because with n independent trials there are n chances for some bin to get an unusually long run of hits."
+    },
+    {
+      "id": "card-dmx5",
+      "format": "cloze",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "bayes-theorem",
+        "posterior",
+        "base-rate-fallacy",
+        "false-positive-paradox"
+      ],
+      "prompt": "In inference problems, A is usually a hypothesis and B is observed evidence, and the three pieces of the formula get names: P(A) is the ___ — what you believed about the hypothesis before seeing the evidence — P(B|A) is the likelihood — how probable the evidence is under that hypothesis — and P(A|B) is the posterior, your belief after updating on the evidence. P(B), the overall probability of the evidence regardless of hypothesis, acts as a normalizing constant and is often expanded with the law of total probability, conditioning on whether A holds or not:",
+      "source": {
+        "path": "vault/math/probability/bayes-theorem-and-inference.md",
+        "block": "card-dmx5"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 2"
+      ],
+      "answer": "prior"
+    },
+    {
+      "id": "card-3ep6",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "bayes-theorem",
+        "posterior",
+        "base-rate-fallacy",
+        "false-positive-paradox"
+      ],
+      "prompt": "Why does the denominator P(B) in Bayes' theorem need to be expanded using the law of total probability rather than measured directly, in a typical inference problem?",
+      "source": {
+        "path": "vault/math/probability/bayes-theorem-and-inference.md",
+        "block": "card-3ep6"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 2"
+      ],
+      "answer": "Because the evidence's overall probability P(B) depends on how likely it is under every hypothesis, weighted by how likely each hypothesis is, and that is exactly what the law of total probability computes; conditioning on whether the hypothesis A holds or not (or on a full partition of hypotheses) turns an otherwise unknown quantity into one built from pieces the problem already supplies — the likelihood and the prior."
+    },
+    {
+      "id": "card-87fy",
+      "format": "recall",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "bayes-theorem",
+        "posterior",
+        "base-rate-fallacy",
+        "false-positive-paradox"
+      ],
+      "prompt": "Write Bayes' theorem, and name which of its four quantities is the prior, which is the likelihood, and which is the posterior.",
+      "source": {
+        "path": "vault/math/probability/bayes-theorem-and-inference.md",
+        "block": "card-87fy"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 2"
+      ],
+      "answer": "P(A|B) = P(B|A) P(A) / P(B). P(A) is the prior (belief in the hypothesis before seeing evidence), P(B|A) is the likelihood (how probable the evidence is if the hypothesis is true), P(A|B) is the posterior (updated belief after seeing the evidence), and P(B) is the normalizing constant — the overall probability of the evidence across every hypothesis."
+    },
+    {
+      "id": "card-fjp0",
+      "format": "cloze",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "bayes-theorem",
+        "posterior",
+        "base-rate-fallacy",
+        "false-positive-paradox"
+      ],
+      "prompt": "The most common real-world Bayes mistake is the ___ fallacy: judging P(hypothesis|evidence) by the likelihood P(evidence|hypothesis) alone, while ignoring how rare the hypothesis was to begin with. A highly specific piece of evidence can still leave the posterior low if the prior was low enough — the likelihood being large does not override a prior being small, since the posterior is a *product* of both.",
+      "source": {
+        "path": "vault/math/probability/bayes-theorem-and-inference.md",
+        "block": "card-fjp0"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 2"
+      ],
+      "answer": "base rate"
+    },
+    {
+      "id": "card-m1hq",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "bayes-theorem",
+        "posterior",
+        "base-rate-fallacy",
+        "false-positive-paradox"
+      ],
+      "prompt": "Why can a \"99% accurate\" test still leave most positive results false, when the disease is rare?",
+      "source": {
+        "path": "vault/math/probability/bayes-theorem-and-inference.md",
+        "block": "card-m1hq"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 2"
+      ],
+      "answer": "Because the healthy population vastly outnumbers the sick population, so a small false-positive rate applied to that much larger group produces more false positives in raw count than the true positives coming from the small sick group, even though each individual accuracy number looks high."
+    },
+    {
+      "id": "card-skkj",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "bayes-theorem",
+        "posterior",
+        "base-rate-fallacy",
+        "false-positive-paradox"
+      ],
+      "prompt": "A test with the same 99%/99% accuracy is run for a disease with prevalence 1 in 10 instead of 1 in 1,000. What happens to the posterior P(disease|positive), and why?",
+      "source": {
+        "path": "vault/math/probability/bayes-theorem-and-inference.md",
+        "block": "card-skkj"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 2"
+      ],
+      "choices": [
+        {
+          "text": "It rises substantially, because a much higher prior means the sick group is no longer swamped by false positives from the much larger healthy group",
+          "correct": true
+        },
+        {
+          "text": "It stays at roughly 9%, since the test's accuracy numbers haven't changed",
+          "correct": false
+        },
+        {
+          "text": "It falls, since a more common disease is intuitively harder to diagnose",
+          "correct": false
+        },
+        {
+          "text": "It becomes exactly 99%, matching the test's stated accuracy",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-75d7",
+      "format": "recall",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "bayes-theorem",
+        "posterior",
+        "base-rate-fallacy",
+        "false-positive-paradox"
+      ],
+      "prompt": "A friend says \"the test is 99% accurate, so a positive result means I'm 99% likely to have the disease.\" Using the base-rate idea from this note, explain what's wrong with that reasoning without recomputing the exact number.",
+      "source": {
+        "path": "vault/math/probability/bayes-theorem-and-inference.md",
+        "block": "card-75d7"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 2"
+      ],
+      "answer": "They are treating the likelihood P(positive|disease) as if it were the posterior P(disease|positive), skipping the prior entirely. The disease's rarity (a low prior) matters just as much as the test's accuracy: Bayes' theorem multiplies the likelihood by the prior and renormalizes, so a low enough prior can pull the posterior far below the likelihood's own value, however accurate the test looks in isolation."
+    },
+    {
+      "id": "card-fzs3",
+      "format": "cloze",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "tail-bounds",
+        "markov-chebyshev-chernoff",
+        "concentration",
+        "union-bound"
+      ],
+      "prompt": "The weakest and most universally applicable is Markov's inequality. It needs only two facts: that X is ___, and that you know (or can bound) E[X]. Given just that, it says the probability X exceeds any threshold a is capped by the ratio of the mean to the threshold.",
+      "source": {
+        "path": "vault/math/probability/concentration-and-tail-bounds.md",
+        "block": "card-fzs3"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 6, 10"
+      ],
+      "answer": "nonnegative"
+    },
+    {
+      "id": "card-i7rc",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "tail-bounds",
+        "markov-chebyshev-chernoff",
+        "concentration",
+        "union-bound"
+      ],
+      "prompt": "Which two facts does Markov's inequality require about a random variable X before it can be applied?",
+      "source": {
+        "path": "vault/math/probability/concentration-and-tail-bounds.md",
+        "block": "card-i7rc"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 6, 10"
+      ],
+      "answer": "That X takes only nonnegative values, and that you know (or have an upper bound on) E[X]; given those two facts alone, no distributional shape or independence assumption is needed."
+    },
+    {
+      "id": "card-gx64",
+      "format": "cloze",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "tail-bounds",
+        "markov-chebyshev-chernoff",
+        "concentration",
+        "union-bound"
+      ],
+      "prompt": "Chebyshev's inequality tightens this by spending a second piece of information: a finite ___. Applying Markov to the nonnegative random variable (X - E[X])^2 with threshold a^2 gives a bound on how far X deviates from its own mean in *either* direction, not just above a fixed threshold — Chebyshev is inherently a two-sided, symmetric-deviation statement.",
+      "source": {
+        "path": "vault/math/probability/concentration-and-tail-bounds.md",
+        "block": "card-gx64"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 6, 10"
+      ],
+      "answer": "variance"
+    },
+    {
+      "id": "card-bju7",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "tail-bounds",
+        "markov-chebyshev-chernoff",
+        "concentration",
+        "union-bound"
+      ],
+      "prompt": "How is Chebyshev's inequality derived from Markov's inequality?",
+      "source": {
+        "path": "vault/math/probability/concentration-and-tail-bounds.md",
+        "block": "card-bju7"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 6, 10"
+      ],
+      "answer": "By applying Markov's inequality to the nonnegative random variable (X - E[X])^2 with threshold a^2, since P(|X - E[X]| >= a) equals P((X - E[X])^2 >= a^2); the mean of that squared quantity is by definition Var(X), so Markov's E[Y]/a form becomes Var(X)/a^2."
+    },
+    {
+      "id": "card-q493",
+      "format": "cloze",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "tail-bounds",
+        "markov-chebyshev-chernoff",
+        "concentration",
+        "union-bound"
+      ],
+      "prompt": "That is what Chernoff bounds (and the closely related Hoeffding bound for bounded variables) deliver, at a steeper price: they require the variable of interest to be a sum of ___ random variables, and typically that each summand is bounded (or, for the classic Chernoff form, that each is an indicator or otherwise has a controllable moment generating function). Given those, the probability of deviating from the sum's mean by even a small fraction of its size falls off exponentially in the number of terms, not polynomially.",
+      "source": {
+        "path": "vault/math/probability/concentration-and-tail-bounds.md",
+        "block": "card-q493"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 6, 10"
+      ],
+      "answer": "independent"
+    },
+    {
+      "id": "card-pego",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "tail-bounds",
+        "markov-chebyshev-chernoff",
+        "concentration",
+        "union-bound"
+      ],
+      "prompt": "You are told only that a random variable X is nonnegative and you know E[X] — nothing about its variance or independence structure. Which bound can you legally apply?",
+      "source": {
+        "path": "vault/math/probability/concentration-and-tail-bounds.md",
+        "block": "card-pego"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 6, 10"
+      ],
+      "choices": [
+        {
+          "text": "Markov's inequality",
+          "correct": true
+        },
+        {
+          "text": "Chebyshev's inequality",
+          "correct": false
+        },
+        {
+          "text": "A Chernoff bound",
+          "correct": false
+        },
+        {
+          "text": "None of these apply without more assumptions",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-l5wg",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "tail-bounds",
+        "markov-chebyshev-chernoff",
+        "concentration",
+        "union-bound"
+      ],
+      "prompt": "You have a sum of n independent, bounded random variables and want a bound that decays exponentially in n rather than polynomially in the deviation. Which tool fits?",
+      "source": {
+        "path": "vault/math/probability/concentration-and-tail-bounds.md",
+        "block": "card-l5wg"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 6, 10"
+      ],
+      "choices": [
+        {
+          "text": "A Chernoff or Hoeffding bound",
+          "correct": true
+        },
+        {
+          "text": "Markov's inequality alone",
+          "correct": false
+        },
+        {
+          "text": "Chebyshev's inequality alone",
+          "correct": false
+        },
+        {
+          "text": "The union bound alone",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-t25m",
+      "format": "cloze",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "tail-bounds",
+        "markov-chebyshev-chernoff",
+        "concentration",
+        "union-bound"
+      ],
+      "prompt": "The fourth tool, the ___, is not a concentration inequality at all — it makes no use of means, variances, or independence. It simply says the probability that *any* of several events occurs is at most the sum of their individual probabilities, and it holds unconditionally, even when the events are heavily dependent or negatively correlated.",
+      "source": {
+        "path": "vault/math/probability/concentration-and-tail-bounds.md",
+        "block": "card-t25m"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 6, 10"
+      ],
+      "answer": "union bound"
+    },
+    {
+      "id": "card-iirk",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "tail-bounds",
+        "markov-chebyshev-chernoff",
+        "concentration",
+        "union-bound"
+      ],
+      "prompt": "Why does the union bound require no assumption about independence between the events A_1, ..., A_n, unlike a Chernoff bound?",
+      "source": {
+        "path": "vault/math/probability/concentration-and-tail-bounds.md",
+        "block": "card-iirk"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 6, 10"
+      ],
+      "answer": "Because it is proved purely from the axiom that probability is countably subadditive over a union of sets, which holds for any events regardless of how they are correlated; a Chernoff bound instead needs independence to control the joint moment generating function of a sum, so it fails outright if that assumption is dropped."
+    },
+    {
+      "id": "card-kc75",
+      "format": "recall",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "tail-bounds",
+        "markov-chebyshev-chernoff",
+        "concentration",
+        "union-bound"
+      ],
+      "prompt": "Rank Markov, Chebyshev, and a Chernoff/Hoeffding bound from loosest to sharpest for bounding the tail of a sum of independent bounded variables, and explain what extra piece of information each step up the ranking requires you to already know about the variable.",
+      "source": {
+        "path": "vault/math/probability/concentration-and-tail-bounds.md",
+        "block": "card-kc75"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 6, 10"
+      ],
+      "answer": "Markov is loosest (needs only nonnegativity and a mean); Chebyshev is tighter for large deviations because it additionally uses the variance; Chernoff/Hoeffding is tightest for sums because it additionally uses independence and boundedness of the summands, converting polynomial decay into exponential decay in the number of terms."
+    },
+    {
+      "id": "card-i5rs",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "conditional-probability",
+        "independence",
+        "total-probability",
+        "multiplication-rule"
+      ],
+      "prompt": "A rare disease test is 99% accurate. A patient tests positive. Which quantity does \"99% accurate\" most directly describe, and which quantity does the patient actually want to know?",
+      "source": {
+        "path": "vault/math/probability/conditional-probability-and-independence.md",
+        "block": "card-i5rs"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 2"
+      ],
+      "choices": [
+        {
+          "text": "It describes something like P(positive|disease) or P(negative|no disease); the patient wants P(disease|positive)",
+          "correct": true
+        },
+        {
+          "text": "It describes P(disease|positive) directly, which is also what the patient wants",
+          "correct": false
+        },
+        {
+          "text": "It describes P(disease), the overall prevalence, which is what the patient wants",
+          "correct": false
+        },
+        {
+          "text": "The two quantities are interchangeable here since the test is highly accurate",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-wnhl",
+      "format": "cloze",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "conditional-probability",
+        "independence",
+        "total-probability",
+        "multiplication-rule"
+      ],
+      "prompt": "This is the ___, and it is the standard move whenever an event's overall probability is hard to see directly but becomes easy once you condition on which \"case\" occurred.",
+      "source": {
+        "path": "vault/math/probability/conditional-probability-and-independence.md",
+        "block": "card-wnhl"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 2"
+      ],
+      "answer": "law of total probability"
+    },
+    {
+      "id": "card-t5t7",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "conditional-probability",
+        "independence",
+        "total-probability",
+        "multiplication-rule"
+      ],
+      "prompt": "What does the law of total probability let you compute, and what must be true of the Bi for it to apply?",
+      "source": {
+        "path": "vault/math/probability/conditional-probability-and-independence.md",
+        "block": "card-t5t7"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 2"
+      ],
+      "answer": "It lets you compute the overall probability P(A) by weighting each conditional probability P(A|Bi) by how likely that case is, P(Bi), and summing over all cases; the Bi must partition the sample space — pairwise disjoint and collectively exhaustive — so every outcome falls into exactly one Bi."
+    },
+    {
+      "id": "card-h5il",
+      "format": "cloze",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "conditional-probability",
+        "independence",
+        "total-probability",
+        "multiplication-rule"
+      ],
+      "prompt": "Independence is a separate idea from conditioning, and it is easy to blur the two. Events A and B are ___ when P(A ∩ B) = P(A)P(B) — equivalently, when P(A|B) = P(A): learning B occurred doesn't move A's probability at all. Mutual exclusivity is nearly the opposite: if A and B are mutually exclusive with both having positive probability, then learning B occurred tells you A definitely did not — maximally informative, not uninformative. Confusing \"the events can't both happen\" with \"the events don't affect each other\" is one of the most common early mistakes in probability.",
+      "source": {
+        "path": "vault/math/probability/conditional-probability-and-independence.md",
+        "block": "card-h5il"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 2"
+      ],
+      "answer": "independent"
+    },
+    {
+      "id": "card-pexs",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "conditional-probability",
+        "independence",
+        "total-probability",
+        "multiplication-rule"
+      ],
+      "prompt": "Which best describes the relationship between \"independent\" and \"mutually exclusive,\" for two events A and B that each have positive probability?",
+      "source": {
+        "path": "vault/math/probability/conditional-probability-and-independence.md",
+        "block": "card-pexs"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 2"
+      ],
+      "choices": [
+        {
+          "text": "They are close to opposites: independence means learning about one tells you nothing about the other, while mutual exclusivity means learning one occurred tells you the other definitely did not",
+          "correct": true
+        },
+        {
+          "text": "They are the same property described in two different ways",
+          "correct": false
+        },
+        {
+          "text": "Independent events are always mutually exclusive",
+          "correct": false
+        },
+        {
+          "text": "Mutually exclusive events are always independent",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-4osk",
+      "format": "recall",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "conditional-probability",
+        "independence",
+        "total-probability",
+        "multiplication-rule"
+      ],
+      "prompt": "Explain, using the restricted-sample-space view of conditioning, why two events being independent in the full sample space gives no guarantee that they stay independent once you condition on some event C.",
+      "source": {
+        "path": "vault/math/probability/conditional-probability-and-independence.md",
+        "block": "card-4osk"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 2"
+      ],
+      "answer": "Conditioning on C means the \"universe\" being reasoned about shrinks from the whole sample space down to just the outcomes in C, and the relative sizes (probabilities) of A and B's overlap can look completely different inside that smaller universe than they did in the full one. Independence in the full space is a statement about proportions in S; restricting to C can distort those proportions arbitrarily, so nothing about the unconditional relationship constrains the conditional one."
+    },
+    {
+      "id": "card-ucfo",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "continuous-distributions",
+        "exponential",
+        "normal",
+        "memorylessness",
+        "poisson-process"
+      ],
+      "prompt": "A quantity is equally likely to fall anywhere in an interval [a, b], with no sub-region favored — which family, and what are E[X] and Var(X)?",
+      "source": {
+        "path": "vault/math/probability/continuous-distribution-families.md",
+        "block": "card-ucfo"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 5, 7"
+      ],
+      "answer": "Uniform(a, b); E[X] = (a+b)/2, Var(X) = (b-a)^2 / 12."
+    },
+    {
+      "id": "card-n6s6",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "continuous-distributions",
+        "exponential",
+        "normal",
+        "memorylessness",
+        "poisson-process"
+      ],
+      "prompt": "The waiting time until the next event of a process running at constant rate lambda — which family, and what are E[X] and Var(X)?",
+      "source": {
+        "path": "vault/math/probability/continuous-distribution-families.md",
+        "block": "card-n6s6"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 5, 7"
+      ],
+      "answer": "Exponential(lambda); E[X] = 1/lambda, Var(X) = 1/lambda^2."
+    },
+    {
+      "id": "card-358u",
+      "format": "cloze",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "continuous-distributions",
+        "exponential",
+        "normal",
+        "memorylessness",
+        "poisson-process"
+      ],
+      "prompt": "Exponential has a defining, unusual property: however long you have already waited, the remaining wait looks exactly like a fresh draw from the same distribution — past waiting time carries no information about what's left. This is the ___ property, and among continuous distributions on [0, infinity), exponential is the *only* one that has it.",
+      "source": {
+        "path": "vault/math/probability/continuous-distribution-families.md",
+        "block": "card-358u"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 5, 7"
+      ],
+      "answer": "memoryless"
+    },
+    {
+      "id": "card-7hdf",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "continuous-distributions",
+        "exponential",
+        "normal",
+        "memorylessness",
+        "poisson-process"
+      ],
+      "prompt": "A lightbulb's remaining lifetime, given it has already survived 500 hours, has the exact same distribution as a brand-new bulb's lifetime. Which family must the lifetime follow?",
+      "source": {
+        "path": "vault/math/probability/continuous-distribution-families.md",
+        "block": "card-7hdf"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 5, 7"
+      ],
+      "choices": [
+        {
+          "text": "Exponential — the only continuous family on [0, infinity) with this no-aging property",
+          "correct": true
+        },
+        {
+          "text": "Normal — normal lifetimes would imply the bulb gets predictably more or less likely to fail as it ages",
+          "correct": false
+        },
+        {
+          "text": "Uniform — a uniform lifetime is bounded above, so remaining life shrinks deterministically as time passes",
+          "correct": false
+        },
+        {
+          "text": "Gamma with shape > 1 — gamma lifetimes model wear that accumulates, the opposite of memorylessness",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-ro5k",
+      "format": "recall",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "continuous-distributions",
+        "exponential",
+        "normal",
+        "memorylessness",
+        "poisson-process"
+      ],
+      "prompt": "A server receives requests as a Poisson process at rate lambda per second. What distribution describes the time gap between one request and the next, and why does that follow from the Poisson-process assumption rather than needing a separate derivation?",
+      "source": {
+        "path": "vault/math/probability/continuous-distribution-families.md",
+        "block": "card-ro5k"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 5, 7"
+      ],
+      "answer": "Exponential(lambda). The Poisson process assumption already says arrivals in disjoint time windows are independent and occur at a constant rate, and \"no arrival yet in the next t seconds\" is exactly the memoryless waiting-time question — so the inter-arrival gap inherits the exponential distribution directly from how the process was defined, rather than as a new fact needing its own proof."
+    },
+    {
+      "id": "card-l3j2",
+      "format": "cloze",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "continuous-distributions",
+        "exponential",
+        "normal",
+        "memorylessness",
+        "poisson-process"
+      ],
+      "prompt": "Every Normal(mu, sigma^2) can be rescaled into the single reference copy of the family, N(0, 1), by subtracting the mean and dividing by the standard deviation: Z = (X - mu) / sigma. This ___ is why one table of Z-values covers every normal distribution at once, regardless of its own particular mu and sigma.",
+      "source": {
+        "path": "vault/math/probability/continuous-distribution-families.md",
+        "block": "card-l3j2"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 5, 7"
+      ],
+      "answer": "standardization"
+    },
+    {
+      "id": "card-9abv",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "continuous-distributions",
+        "exponential",
+        "normal",
+        "memorylessness",
+        "poisson-process"
+      ],
+      "prompt": "Given X ~ Normal(mu, sigma^2), what transformation produces a standard normal Z, and why is that transformation useful in practice?",
+      "source": {
+        "path": "vault/math/probability/continuous-distribution-families.md",
+        "block": "card-9abv"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 5, 7"
+      ],
+      "answer": "Z = (X - mu) / sigma; it recenters X to mean 0 and rescales it to variance 1, so a single N(0, 1) table (or software routine) can answer probability questions for any normal distribution instead of needing one table per (mu, sigma) pair."
+    },
+    {
+      "id": "card-tzrp",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "discrete-distributions",
+        "binomial",
+        "poisson",
+        "geometric",
+        "hypergeometric"
+      ],
+      "prompt": "A single yes/no trial with success probability p, where you care about the 0/1 outcome itself — which family, and what are E[X] and Var(X)?",
+      "source": {
+        "path": "vault/math/probability/discrete-distribution-families.md",
+        "block": "card-tzrp"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 3-4"
+      ],
+      "answer": "Bernoulli(p); E[X] = p, Var(X) = p(1 - p)."
+    },
+    {
+      "id": "card-zmdo",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "discrete-distributions",
+        "binomial",
+        "poisson",
+        "geometric",
+        "hypergeometric"
+      ],
+      "prompt": "You repeat that trial n independent times and count the total successes — which family, and what are E[X] and Var(X)?",
+      "source": {
+        "path": "vault/math/probability/discrete-distribution-families.md",
+        "block": "card-zmdo"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 3-4"
+      ],
+      "answer": "Binomial(n, p); E[X] = np, Var(X) = np(1 - p). It is literally a sum of n iid Bernoulli(p) trials, which is also the fastest way to derive its mean by linearity."
+    },
+    {
+      "id": "card-qys7",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "discrete-distributions",
+        "binomial",
+        "poisson",
+        "geometric",
+        "hypergeometric"
+      ],
+      "prompt": "You flip a p-coin until the first success and count the failures that preceded it — which family, and what are E[X] and Var(X)?",
+      "source": {
+        "path": "vault/math/probability/discrete-distribution-families.md",
+        "block": "card-qys7"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 3-4"
+      ],
+      "answer": "Geometric(p); E[X] = (1-p)/p, Var(X) = (1-p)/p^2."
+    },
+    {
+      "id": "card-7ggm",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "discrete-distributions",
+        "binomial",
+        "poisson",
+        "geometric",
+        "hypergeometric"
+      ],
+      "prompt": "Generalize by waiting for the rth success instead of the first, still counting failures along the way — which family, and what are E[X] and Var(X)?",
+      "source": {
+        "path": "vault/math/probability/discrete-distribution-families.md",
+        "block": "card-7ggm"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 3-4"
+      ],
+      "answer": "Negative Binomial(r, p); E[X] = r(1-p)/p, Var(X) = r(1-p)/p^2."
+    },
+    {
+      "id": "card-g68g",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "discrete-distributions",
+        "binomial",
+        "poisson",
+        "geometric",
+        "hypergeometric"
+      ],
+      "prompt": "A goalkeeper faces penalty kicks and saves each independently with probability p. Which family models the number of goals scored before her 4th save?",
+      "source": {
+        "path": "vault/math/probability/discrete-distribution-families.md",
+        "block": "card-g68g"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 3-4"
+      ],
+      "choices": [
+        {
+          "text": "Negative binomial with r = 4 — counting failures (goals) before the 4th success (save)",
+          "correct": true
+        },
+        {
+          "text": "Binomial(4, p) — that would fix the number of kicks, not the number of saves",
+          "correct": false
+        },
+        {
+          "text": "Geometric(p) — that only counts failures before the *first* save",
+          "correct": false
+        },
+        {
+          "text": "Poisson(4p) — there is no continuous rate here, just discrete trials",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-4gp5",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "discrete-distributions",
+        "binomial",
+        "poisson",
+        "geometric",
+        "hypergeometric"
+      ],
+      "prompt": "You count events occurring at a constant average rate over a fixed interval, with no natural trial count — which family, and what are E[X] and Var(X)?",
+      "source": {
+        "path": "vault/math/probability/discrete-distribution-families.md",
+        "block": "card-4gp5"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 3-4"
+      ],
+      "answer": "Poisson(lambda); E[X] = lambda, Var(X) = lambda — the only common family whose mean and variance coincide."
+    },
+    {
+      "id": "card-5mgt",
+      "format": "cloze",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "discrete-distributions",
+        "binomial",
+        "poisson",
+        "geometric",
+        "hypergeometric"
+      ],
+      "prompt": "This same family also arises as a *limit* of the trial-based one above: hold the product n*p fixed at lambda while n grows large and p shrinks toward zero, and the binomial PMF converges term by term to the Poisson PMF. This is the ___, and it is the standard justification for using Poisson to model counts like typos or accident claims, where many opportunities exist but each is individually unlikely.",
+      "source": {
+        "path": "vault/math/probability/discrete-distribution-families.md",
+        "block": "card-5mgt"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 3-4"
+      ],
+      "answer": "law of rare events"
+    },
+    {
+      "id": "card-6m2u",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "discrete-distributions",
+        "binomial",
+        "poisson",
+        "geometric",
+        "hypergeometric"
+      ],
+      "prompt": "State the regime under which Binomial(n, p) is well approximated by Poisson(lambda).",
+      "source": {
+        "path": "vault/math/probability/discrete-distribution-families.md",
+        "block": "card-6m2u"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 3-4"
+      ],
+      "answer": "n large, p small, with the product n*p held roughly fixed at lambda — many trials, each individually rare."
+    },
+    {
+      "id": "card-71o2",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "discrete-distributions",
+        "binomial",
+        "poisson",
+        "geometric",
+        "hypergeometric"
+      ],
+      "prompt": "A website gets 10,000 visitors a day, each independently completing a purchase with probability 0.0003. Which distribution is the standard approximation for the day's total purchases, and why?",
+      "source": {
+        "path": "vault/math/probability/discrete-distribution-families.md",
+        "block": "card-71o2"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 3-4"
+      ],
+      "choices": [
+        {
+          "text": "Poisson(3) — n is large and p is tiny with n*p = 3 held moderate, the classic rare-events regime",
+          "correct": true
+        },
+        {
+          "text": "Normal(3, 3) — a normal approximation is a separate large-sample tool, not this family's namesake limit",
+          "correct": false
+        },
+        {
+          "text": "Geometric(0.0003) — that models waiting for one success, not counting successes in a day",
+          "correct": false
+        },
+        {
+          "text": "Binomial(10000, 0.0003) exactly — correct in principle but exactly the thing the approximation exists to avoid computing",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-3lc0",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "discrete-distributions",
+        "binomial",
+        "poisson",
+        "geometric",
+        "hypergeometric"
+      ],
+      "prompt": "You draw n objects without replacement from a finite population of w desired and b undesired items, and count the desired ones — which family, and how does it differ mechanically from binomial?",
+      "source": {
+        "path": "vault/math/probability/discrete-distribution-families.md",
+        "block": "card-3lc0"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 3-4"
+      ],
+      "answer": "Hypergeometric(w, b, n); it counts successes in n draws like binomial does, but the draws are dependent since sampling is without replacement, so each draw's odds shift based on what was already removed from the population."
+    },
+    {
+      "id": "card-btep",
+      "format": "recall",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "discrete-distributions",
+        "binomial",
+        "poisson",
+        "geometric",
+        "hypergeometric"
+      ],
+      "prompt": "State the mean of Hypergeometric(w, b, n), and compare it to Binomial(n, p) with p = w/(w+b).",
+      "source": {
+        "path": "vault/math/probability/discrete-distribution-families.md",
+        "block": "card-btep"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 3-4"
+      ],
+      "answer": "E[X] = n * w/(w+b) — identical in form to the binomial mean np with p = w/(w+b). The variance carries an extra finite-population correction factor (w+b-n)/(w+b-1), which shrinks toward 0 as n approaches the full population and equals 1 in the with-replacement limit, recovering the binomial variance exactly."
+    },
+    {
+      "id": "card-809a",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "expectation",
+        "lotus",
+        "linearity",
+        "discrete-vs-continuous"
+      ],
+      "prompt": "A fair six-sided die is rolled. Which computation gives E[X] for the result X?",
+      "source": {
+        "path": "vault/math/probability/expectation-and-linearity.md",
+        "block": "card-809a"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 4-5"
+      ],
+      "choices": [
+        {
+          "text": "(1+2+3+4+5+6) * (1/6)",
+          "correct": true
+        },
+        {
+          "text": "The most likely single outcome, since all six are equally likely",
+          "correct": false
+        },
+        {
+          "text": "max(support(X)) - min(support(X)), divided by 2",
+          "correct": false
+        },
+        {
+          "text": "P(X = 1) + P(X = 2) + ... + P(X = 6)",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-k1q8",
+      "format": "recall",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "expectation",
+        "lotus",
+        "linearity",
+        "discrete-vs-continuous"
+      ],
+      "prompt": "A fair six-sided die has E[X] = 3.5, a value the die can never actually land on. What does this reveal about E[X] in general, for any random variable?",
+      "source": {
+        "path": "vault/math/probability/expectation-and-linearity.md",
+        "block": "card-k1q8"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 4-5"
+      ],
+      "answer": "E[X] is a probability-weighted average over the support, not a prediction of a single trial's outcome, so there is no requirement that E[X] itself be one of the values the random variable can take. An expectation can fall anywhere between the extremes of the support, including at points the random variable never visits."
+    },
+    {
+      "id": "card-d4eu",
+      "format": "recall",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "expectation",
+        "lotus",
+        "linearity",
+        "discrete-vs-continuous"
+      ],
+      "prompt": "Explain what LOTUS lets you skip when you want E[X^2] for a random variable X whose PMF you already know.",
+      "source": {
+        "path": "vault/math/probability/expectation-and-linearity.md",
+        "block": "card-d4eu"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 4-5"
+      ],
+      "answer": "Without LOTUS you would need to derive the PMF of the new random variable Y = X^2 — figuring out, for each possible value y, which x's square to it and summing their probabilities — and only then apply the definition of expectation to Y. LOTUS says you can instead plug g(x) = x^2 straight into sum_x g(x) f_X(x) using X's own PMF, skipping the intermediate distribution of Y entirely."
+    },
+    {
+      "id": "card-y18n",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "expectation",
+        "lotus",
+        "linearity",
+        "discrete-vs-continuous"
+      ],
+      "prompt": "A continuous random variable X has PDF f_X(x) = 2x on the interval [0,1]. Which expression, by LOTUS, computes E[X^2]?",
+      "source": {
+        "path": "vault/math/probability/expectation-and-linearity.md",
+        "block": "card-y18n"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 4-5"
+      ],
+      "choices": [
+        {
+          "text": "int_0^1 x^2 * 2x dx",
+          "correct": true
+        },
+        {
+          "text": "int_0^1 2x dx",
+          "correct": false
+        },
+        {
+          "text": "sum_{x in [0,1]} x^2 * 2x",
+          "correct": false
+        },
+        {
+          "text": "(int_0^1 x * 2x dx)^2",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-c49t",
+      "format": "recall",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "expectation",
+        "lotus",
+        "linearity",
+        "discrete-vs-continuous"
+      ],
+      "prompt": "What is E[c] when c is a constant — a \"random variable\" that always takes the same value with probability 1 — and why does the definition of expectation force that answer?",
+      "source": {
+        "path": "vault/math/probability/expectation-and-linearity.md",
+        "block": "card-c49t"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 4-5"
+      ],
+      "answer": "E[c] = c. The definition of expectation is a probability-weighted average over the support, and a constant's support is the single point c with probability 1, so the weighted average collapses to exactly that one value with no averaging left to do."
+    },
+    {
+      "id": "card-c1wg",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "expectation",
+        "lotus",
+        "linearity",
+        "discrete-vs-continuous"
+      ],
+      "prompt": "X and Y are two random variables with a complicated joint dependence — knowing X tells you a great deal about Y. What additional assumption is needed to conclude E[X + Y] = E[X] + E[Y]?",
+      "source": {
+        "path": "vault/math/probability/expectation-and-linearity.md",
+        "block": "card-c1wg"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 4-5"
+      ],
+      "choices": [
+        {
+          "text": "None — the identity holds regardless of any dependence between X and Y",
+          "correct": true
+        },
+        {
+          "text": "X and Y must be independent",
+          "correct": false
+        },
+        {
+          "text": "X and Y must have the same distribution",
+          "correct": false
+        },
+        {
+          "text": "Cov(X, Y) must be computed and shown to be zero first",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-8qea",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "expectation",
+        "lotus",
+        "linearity",
+        "discrete-vs-continuous"
+      ],
+      "prompt": "Which statement correctly contrasts the LOTUS approach to computing E[g(X)] with the naive approach?",
+      "source": {
+        "path": "vault/math/probability/expectation-and-linearity.md",
+        "block": "card-8qea"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 4-5"
+      ],
+      "choices": [
+        {
+          "text": "LOTUS weights g(x) by X's own PMF or PDF directly; the naive approach first derives the distribution of Y = g(X) and then averages that",
+          "correct": true
+        },
+        {
+          "text": "LOTUS first derives the distribution of Y = g(X); the naive approach skips straight to weighting g(x) by X's distribution",
+          "correct": false
+        },
+        {
+          "text": "LOTUS only applies when g is linear; the naive approach is needed for any nonlinear g",
+          "correct": false
+        },
+        {
+          "text": "The two approaches only differ for discrete random variables",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-s15o",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "joint-distribution",
+        "independence",
+        "conditional-expectation",
+        "adams-law"
+      ],
+      "prompt": "What is the marginal PMF f_X(x), computed from a joint PMF f_{X,Y}?",
+      "source": {
+        "path": "vault/math/probability/joint-distributions-and-conditional-expectation.md",
+        "block": "card-s15o"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 3, 7, 9"
+      ],
+      "answer": "Sum f_{X,Y}(x,y) over every value y in Y's support while holding x fixed — this \"sums out\" Y, leaving a function of x alone that is exactly X's own PMF."
+    },
+    {
+      "id": "card-iugc",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "joint-distribution",
+        "independence",
+        "conditional-expectation",
+        "adams-law"
+      ],
+      "prompt": "Given only the marginal distribution of X and the marginal distribution of Y, can you reconstruct the joint distribution f_{X,Y}(x,y)?",
+      "source": {
+        "path": "vault/math/probability/joint-distributions-and-conditional-expectation.md",
+        "block": "card-iugc"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 3, 7, 9"
+      ],
+      "choices": [
+        {
+          "text": "Not in general — the marginals discard all information about how X and Y relate to each other",
+          "correct": true
+        },
+        {
+          "text": "Yes, always, by multiplying f_X(x) by f_Y(y)",
+          "correct": false
+        },
+        {
+          "text": "Yes, but only by adding f_X(x) and f_Y(y)",
+          "correct": false
+        },
+        {
+          "text": "Yes, but only for continuous random variables",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-dztk",
+      "format": "cloze",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "joint-distribution",
+        "independence",
+        "conditional-expectation",
+        "adams-law"
+      ],
+      "prompt": "Random variables X and Y are ___ if knowing the value of one tells you nothing about the distribution of the other — formally, if their joint PMF (or PDF) factors as the product of the marginals for every x and y:",
+      "source": {
+        "path": "vault/math/probability/joint-distributions-and-conditional-expectation.md",
+        "block": "card-dztk"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 3, 7, 9"
+      ],
+      "answer": "independent"
+    },
+    {
+      "id": "card-odva",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "joint-distribution",
+        "independence",
+        "conditional-expectation",
+        "adams-law"
+      ],
+      "prompt": "A joint PMF is given by f_{X,Y}(x,y) = c * x * y^2 over some range of x and y. Based on the factoring condition, are X and Y independent?",
+      "source": {
+        "path": "vault/math/probability/joint-distributions-and-conditional-expectation.md",
+        "block": "card-odva"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 3, 7, 9"
+      ],
+      "choices": [
+        {
+          "text": "Yes — the formula factors into a function of x alone (x) times a function of y alone (y^2)",
+          "correct": true
+        },
+        {
+          "text": "No — since both x and y appear in the same formula, they must be dependent",
+          "correct": false
+        },
+        {
+          "text": "It cannot be determined without first computing the marginals",
+          "correct": false
+        },
+        {
+          "text": "Only if the constant c happens to equal 1",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-b7b2",
+      "format": "recall",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "joint-distribution",
+        "independence",
+        "conditional-expectation",
+        "adams-law"
+      ],
+      "prompt": "Two random variables X and Y are independent. What does that imply about the conditional distribution f_{X|Y}(x|y), and why does that match the informal idea of \"independent\"?",
+      "source": {
+        "path": "vault/math/probability/joint-distributions-and-conditional-expectation.md",
+        "block": "card-b7b2"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 3, 7, 9"
+      ],
+      "answer": "f_{X|Y}(x|y) = f_X(x) for every y — conditioning on Y's value does not change X's distribution at all, because independence means f_{X,Y}(x,y) = f_X(x) f_Y(y), and dividing that by f_Y(y) leaves just f_X(x). This matches the informal idea directly: learning what Y did gives you no new information about X."
+    },
+    {
+      "id": "card-2td2",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "joint-distribution",
+        "independence",
+        "conditional-expectation",
+        "adams-law"
+      ],
+      "prompt": "E[X|Y] is best described as which of the following?",
+      "source": {
+        "path": "vault/math/probability/joint-distributions-and-conditional-expectation.md",
+        "block": "card-2td2"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 3, 7, 9"
+      ],
+      "choices": [
+        {
+          "text": "A random variable — a function of Y, since its value depends on which outcome Y takes",
+          "correct": true
+        },
+        {
+          "text": "A single fixed number, computed once from the joint distribution",
+          "correct": false
+        },
+        {
+          "text": "Another name for E[X], unaffected by Y",
+          "correct": false
+        },
+        {
+          "text": "The correlation between X and Y",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-c2ir",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "joint-distribution",
+        "independence",
+        "conditional-expectation",
+        "adams-law"
+      ],
+      "prompt": "Suppose E[X|Y=1] = 3.5, E[X|Y=2] = 2, and P(Y=1) = P(Y=2) = 0.5. What does the law of total expectation give for E[X]?",
+      "source": {
+        "path": "vault/math/probability/joint-distributions-and-conditional-expectation.md",
+        "block": "card-c2ir"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 3, 7, 9"
+      ],
+      "answer": "E[X] = E[E[X|Y]] = 3.5*0.5 + 2*0.5 = 2.75 — average the conditional expectations, each weighted by how likely its condition is."
+    },
+    {
+      "id": "card-ug32",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "law-of-large-numbers",
+        "central-limit-theorem",
+        "sampling-distribution",
+        "standard-error"
+      ],
+      "prompt": "What is the key logical difference between the weak and the strong law of large numbers?",
+      "source": {
+        "path": "vault/math/probability/limit-theorems-lln-and-clt.md",
+        "block": "card-ug32"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 10"
+      ],
+      "answer": "The weak law only says that at each fixed large n, the probability the sample mean deviates from the true mean by more than any fixed tolerance shrinks to zero; the strong law says the entire sequence of sample means converges to the true mean with probability 1, a statement about the whole infinite trajectory, not just about each n considered separately."
+    },
+    {
+      "id": "card-65ms",
+      "format": "cloze",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "law-of-large-numbers",
+        "central-limit-theorem",
+        "sampling-distribution",
+        "standard-error"
+      ],
+      "prompt": "The quantity sigma / sqrt(n) — the standard deviation of the sampling distribution of the sample mean itself, not of a single observation — is called the ___. It shrinks as sqrt(n) grows, which is why averaging more data narrows a confidence interval, but only at the square-root rate: quadrupling n only halves it.",
+      "source": {
+        "path": "vault/math/probability/limit-theorems-lln-and-clt.md",
+        "block": "card-65ms"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 10"
+      ],
+      "answer": "standard error"
+    },
+    {
+      "id": "card-4rqc",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "law-of-large-numbers",
+        "central-limit-theorem",
+        "sampling-distribution",
+        "standard-error"
+      ],
+      "prompt": "The \"sampling distribution of the sample mean\" refers to which of these?",
+      "source": {
+        "path": "vault/math/probability/limit-theorems-lln-and-clt.md",
+        "block": "card-4rqc"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 10"
+      ],
+      "choices": [
+        {
+          "text": "The distribution of Xbar_n itself, viewed as a random variable that varies from one sample of size n to the next",
+          "correct": true
+        },
+        {
+          "text": "The distribution of a single observation X_i drawn from the population",
+          "correct": false
+        },
+        {
+          "text": "The empirical histogram of one particular observed sample's values",
+          "correct": false
+        },
+        {
+          "text": "The population's true underlying distribution",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-jo7n",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "law-of-large-numbers",
+        "central-limit-theorem",
+        "sampling-distribution",
+        "standard-error"
+      ],
+      "prompt": "Why does the standard error shrink at rate sqrt(n) rather than at rate n?",
+      "source": {
+        "path": "vault/math/probability/limit-theorems-lln-and-clt.md",
+        "block": "card-jo7n"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 10"
+      ],
+      "answer": "Because Var(Xbar_n) = Var(X)/n, so the standard deviation of the sample mean is sigma/sqrt(n); halving the standard error therefore requires quadrupling the sample size, not just doubling it."
+    },
+    {
+      "id": "card-gxra",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "law-of-large-numbers",
+        "central-limit-theorem",
+        "sampling-distribution",
+        "standard-error"
+      ],
+      "prompt": "Which of these is a correct statement of what the central limit theorem claims?",
+      "source": {
+        "path": "vault/math/probability/limit-theorems-lln-and-clt.md",
+        "block": "card-gxra"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 10"
+      ],
+      "choices": [
+        {
+          "text": "The distribution of the (rescaled) sample mean approaches a normal distribution as n grows, regardless of the shape of the original population distribution",
+          "correct": true
+        },
+        {
+          "text": "Individual observations from a non-normal population become approximately normal once enough of them have been collected",
+          "correct": false
+        },
+        {
+          "text": "Any distribution converges to the normal distribution as its parameters grow",
+          "correct": false
+        },
+        {
+          "text": "The sample mean converges to a normal distribution only if the population distribution is already close to normal",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-c3oe",
+      "format": "recall",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "law-of-large-numbers",
+        "central-limit-theorem",
+        "sampling-distribution",
+        "standard-error"
+      ],
+      "prompt": "A colleague says \"n = 30 is always enough for the CLT to kick in.\" Explain what is missing from that claim, using the idea of heavy tails.",
+      "source": {
+        "path": "vault/math/probability/limit-theorems-lln-and-clt.md",
+        "block": "card-c3oe"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 10"
+      ],
+      "answer": "The CLT guarantees normality only in the limit as n goes to infinity and says nothing about the rate of convergence for any finite n; how large n needs to be depends on the shape of the underlying distribution. A distribution with heavy tails (large or infinite variance) can need a far larger sample size before the sample mean's distribution looks approximately normal, and if the variance is infinite the classical theorem does not apply at all — so a fixed rule like \"n = 30\" is not a universal guarantee, only a common rule of thumb for reasonably light-tailed populations."
+    },
+    {
+      "id": "card-olw7",
+      "format": "cloze",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "sample-space",
+        "probability-axioms",
+        "inclusion-exclusion",
+        "combinatorics",
+        "binomial-coefficient"
+      ],
+      "prompt": "A function P from events to numbers is a legitimate probability only if it obeys three axioms: P(S) = 1 (something in the sample space happens), P(A) ≥ 0 for every event, and for any countable collection of ___ events, the probability of their union is the sum of their individual probabilities. Two events are called mutually exclusive precisely when they cannot both occur — their intersection is empty — which is the set-theoretic reading of \"disjoint.\"",
+      "source": {
+        "path": "vault/math/probability/probability-axioms-and-counting.md",
+        "block": "card-olw7"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 1"
+      ],
+      "answer": "pairwise disjoint"
+    },
+    {
+      "id": "card-5z8x",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "sample-space",
+        "probability-axioms",
+        "inclusion-exclusion",
+        "combinatorics",
+        "binomial-coefficient"
+      ],
+      "prompt": "Which pair of events are mutually exclusive, given a single roll of a six-sided die?",
+      "source": {
+        "path": "vault/math/probability/probability-axioms-and-counting.md",
+        "block": "card-5z8x"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 1"
+      ],
+      "choices": [
+        {
+          "text": "\"the roll is 2\" and \"the roll is 5\"",
+          "correct": true
+        },
+        {
+          "text": "\"the roll is even\" and \"the roll is at least 4\"",
+          "correct": false
+        },
+        {
+          "text": "\"the roll is prime\" and \"the roll is odd\"",
+          "correct": false
+        },
+        {
+          "text": "\"the roll is at most 3\" and \"the roll is odd\"",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-eftf",
+      "format": "cloze",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "sample-space",
+        "probability-axioms",
+        "inclusion-exclusion",
+        "combinatorics",
+        "binomial-coefficient"
+      ],
+      "prompt": "When two events can overlap, adding their probabilities double-counts the overlap, so P(A ∪ B) = P(A) + P(B) - P(A ∩ B). Extending this pattern to three or more events — add the singles, subtract the pairwise overlaps, add back the triple overlap, and so on with alternating sign — is the ___ formula.",
+      "source": {
+        "path": "vault/math/probability/probability-axioms-and-counting.md",
+        "block": "card-eftf"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 1"
+      ],
+      "answer": "inclusion-exclusion"
+    },
+    {
+      "id": "card-ddc2",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "sample-space",
+        "probability-axioms",
+        "inclusion-exclusion",
+        "combinatorics",
+        "binomial-coefficient"
+      ],
+      "prompt": "Why is subtracting pairwise intersections not already the final answer once you go past two events?",
+      "source": {
+        "path": "vault/math/probability/probability-axioms-and-counting.md",
+        "block": "card-ddc2"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 1"
+      ],
+      "answer": "Subtracting every pairwise overlap removes the triple overlaps three times (once per pair that contains them) after having added them in three times (once per single event), so a region covered by three events ends up net-zero and has to be added back in; the alternating sum continues so that every region of the union is counted exactly once regardless of how many of the events contain it."
+    },
+    {
+      "id": "card-hb24",
+      "format": "cloze",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "sample-space",
+        "probability-axioms",
+        "inclusion-exclusion",
+        "combinatorics",
+        "binomial-coefficient"
+      ],
+      "prompt": "The two counting tools that come up constantly: a ___ counts arrangements where order matters, and a combination counts selections where it doesn't. The number of ways to arrange all n distinct objects in a row is n!, and the number of ways to arrange k of them in order is n!/(n-k)!. Dropping the order — asking only which k objects are chosen, not in what sequence — divides that by k!, giving the binomial coefficient:",
+      "source": {
+        "path": "vault/math/probability/probability-axioms-and-counting.md",
+        "block": "card-hb24"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 1"
+      ],
+      "answer": "permutation"
+    },
+    {
+      "id": "card-yywu",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "sample-space",
+        "probability-axioms",
+        "inclusion-exclusion",
+        "combinatorics",
+        "binomial-coefficient"
+      ],
+      "prompt": "Why does dividing the ordered-selection count by k! convert it into an unordered count?",
+      "source": {
+        "path": "vault/math/probability/probability-axioms-and-counting.md",
+        "block": "card-yywu"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 1"
+      ],
+      "answer": "Every unordered selection of k objects corresponds to exactly k! different ordered selections (the k! ways to arrange those same k objects), so the ordered count treats each unordered outcome as k! duplicates; dividing by k! collapses each group of duplicates back down to the single unordered outcome it represents."
+    },
+    {
+      "id": "card-s88j",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "sample-space",
+        "probability-axioms",
+        "inclusion-exclusion",
+        "combinatorics",
+        "binomial-coefficient"
+      ],
+      "prompt": "A committee of 3 is chosen from 10 people, with no distinction between roles (no chair, secretary, etc.). Which expression counts the number of possible committees?",
+      "source": {
+        "path": "vault/math/probability/probability-axioms-and-counting.md",
+        "block": "card-s88j"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 1"
+      ],
+      "choices": [
+        {
+          "text": "C(10,3)",
+          "correct": true
+        },
+        {
+          "text": "10!/(10-3)! — the ordered-selection count",
+          "correct": false
+        },
+        {
+          "text": "10^3 — choices made independently with repetition allowed",
+          "correct": false
+        },
+        {
+          "text": "3! × C(10,3) — committees times an ordering of the members",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-kdme",
+      "format": "recall",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "sample-space",
+        "probability-axioms",
+        "inclusion-exclusion",
+        "combinatorics",
+        "binomial-coefficient"
+      ],
+      "prompt": "A byte is a string of 8 bits, each 0 or 1. Using the sample-space and equally-likely-outcomes framework of this note, explain how to compute the probability that a uniformly random byte has exactly 3 ones, without listing outcomes by hand.",
+      "source": {
+        "path": "vault/math/probability/probability-axioms-and-counting.md",
+        "block": "card-kdme"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 1"
+      ],
+      "answer": "S is the set of all 2^8 bit strings of length 8, all equally likely, so |S| = 2^8. The event \"exactly 3 ones\" is the set of strings with exactly three 1-positions among the eight slots; choosing which 3 of the 8 positions hold a 1 is a combination, so |A| = C(8,3). The probability is C(8,3) / 2^8 — count the favorable outcomes, count the total, divide."
+    },
+    {
+      "id": "card-7hav",
+      "format": "cloze",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "random-variable",
+        "pmf",
+        "cdf",
+        "pdf",
+        "support"
+      ],
+      "prompt": "The ___ of a random variable is the set of values it can actually take on — everything else has probability zero and can be ignored when describing its distribution.",
+      "source": {
+        "path": "vault/math/probability/random-variables-and-distributions.md",
+        "block": "card-7hav"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 2-3"
+      ],
+      "answer": "support"
+    },
+    {
+      "id": "card-eout",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "random-variable",
+        "pmf",
+        "cdf",
+        "pdf",
+        "support"
+      ],
+      "prompt": "For a continuous random variable X with PDF f_X, what does f_X(x) itself represent?",
+      "source": {
+        "path": "vault/math/probability/random-variables-and-distributions.md",
+        "block": "card-eout"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 2-3"
+      ],
+      "choices": [
+        {
+          "text": "A density — it can exceed 1, and only becomes a probability once integrated over an interval",
+          "correct": true
+        },
+        {
+          "text": "The probability that X equals exactly x",
+          "correct": false
+        },
+        {
+          "text": "The probability that X is less than or equal to x",
+          "correct": false
+        },
+        {
+          "text": "The fraction of all possible values of X that are less than x",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-af6f",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "random-variable",
+        "pmf",
+        "cdf",
+        "pdf",
+        "support"
+      ],
+      "prompt": "Which of the following is NOT a property every CDF F_X must satisfy?",
+      "source": {
+        "path": "vault/math/probability/random-variables-and-distributions.md",
+        "block": "card-af6f"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 2-3"
+      ],
+      "choices": [
+        {
+          "text": "F_X must be symmetric around its mean",
+          "correct": true
+        },
+        {
+          "text": "F_X is nondecreasing as x increases",
+          "correct": false
+        },
+        {
+          "text": "F_X(x) approaches 0 as x approaches negative infinity",
+          "correct": false
+        },
+        {
+          "text": "F_X(x) approaches 1 as x approaches positive infinity",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-5umz",
+      "format": "cloze",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "random-variable",
+        "pmf",
+        "cdf",
+        "pdf",
+        "support"
+      ],
+      "prompt": "For a continuous random variable, the PDF is the ___ of the CDF, and going the other way, the CDF is the PDF's running integral — the two functions determine each other completely.",
+      "source": {
+        "path": "vault/math/probability/random-variables-and-distributions.md",
+        "block": "card-5umz"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 2-3"
+      ],
+      "answer": "derivative"
+    },
+    {
+      "id": "card-10gi",
+      "format": "recall",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "random-variable",
+        "pmf",
+        "cdf",
+        "pdf",
+        "support"
+      ],
+      "prompt": "A discrete random variable X has support {1, 2, 3} with f_X(1) = 0.2, f_X(2) = 0.5, f_X(3) = 0.3. What is F_X(2), and why is F_X(2) not simply equal to f_X(2)?",
+      "source": {
+        "path": "vault/math/probability/random-variables-and-distributions.md",
+        "block": "card-10gi"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 2-3"
+      ],
+      "answer": "F_X(2) = P(X <= 2) = f_X(1) + f_X(2) = 0.7. The CDF accumulates all probability at or below the point, while the PMF gives the probability of that one value in isolation; they only coincide at the smallest point in the support, where there is nothing smaller to accumulate."
+    },
+    {
+      "id": "card-k0ae",
+      "format": "recall",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "random-variable",
+        "pmf",
+        "cdf",
+        "pdf",
+        "support"
+      ],
+      "prompt": "Y = g(X) is formed by applying a function g to a random variable X. In what sense is Y itself a genuine random variable, rather than merely a formula written in terms of X?",
+      "source": {
+        "path": "vault/math/probability/random-variables-and-distributions.md",
+        "block": "card-k0ae"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 2-3"
+      ],
+      "answer": "X is already a function from the sample space to the reals, so composing it with g gives Y = g(X) as another function from that same sample space to the reals: for every outcome, first apply X to get a number, then apply g to that number. That composition is exactly what a random variable is, so Y inherits well-defined randomness from the same underlying experiment without needing a new probability model."
+    },
+    {
+      "id": "card-45es",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "random-variable",
+        "pmf",
+        "cdf",
+        "pdf",
+        "support"
+      ],
+      "prompt": "A random variable's set of possible values is countably infinite, with gaps between consecutive values (like the nonnegative integers). Which kind of random variable must it be?",
+      "source": {
+        "path": "vault/math/probability/random-variables-and-distributions.md",
+        "block": "card-45es"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 2-3"
+      ],
+      "choices": [
+        {
+          "text": "Discrete",
+          "correct": true
+        },
+        {
+          "text": "Continuous",
+          "correct": false
+        },
+        {
+          "text": "Neither discrete nor continuous",
+          "correct": false
+        },
+        {
+          "text": "It could be either, depending only on its PDF",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-wwx1",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "variance",
+        "covariance",
+        "correlation",
+        "uncorrelated",
+        "independence"
+      ],
+      "prompt": "If Y = 3X - 7, how does Var(Y) relate to Var(X)?",
+      "source": {
+        "path": "vault/math/probability/variance-covariance-and-correlation.md",
+        "block": "card-wwx1"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 4, 6"
+      ],
+      "choices": [
+        {
+          "text": "Var(Y) = 9 * Var(X) — the shift by -7 does not matter, and the scale factor is squared",
+          "correct": true
+        },
+        {
+          "text": "Var(Y) = 3 * Var(X) - 7",
+          "correct": false
+        },
+        {
+          "text": "Var(Y) = 3 * Var(X)",
+          "correct": false
+        },
+        {
+          "text": "Var(Y) = Var(X) - 7",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-5tjy",
+      "format": "qa",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "variance",
+        "covariance",
+        "correlation",
+        "uncorrelated",
+        "independence"
+      ],
+      "prompt": "What is Cov(X,X), and how does it relate to Var(X)?",
+      "source": {
+        "path": "vault/math/probability/variance-covariance-and-correlation.md",
+        "block": "card-5tjy"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 4, 6"
+      ],
+      "answer": "Cov(X,X) = E[(X - E[X])(X - E[X])] = E[(X - E[X])^2] = Var(X) — covariance of a random variable with itself is exactly its own variance, since the two factors in the definition become identical."
+    },
+    {
+      "id": "card-5z78",
+      "format": "recall",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "variance",
+        "covariance",
+        "correlation",
+        "uncorrelated",
+        "independence"
+      ],
+      "prompt": "Under what condition on X and Y does Var(X + Y) reduce to just Var(X) + Var(Y), with no extra term, and why does that condition make the cross term disappear?",
+      "source": {
+        "path": "vault/math/probability/variance-covariance-and-correlation.md",
+        "block": "card-5z78"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 4, 6"
+      ],
+      "answer": "When X and Y are independent (or, more precisely, whenever Cov(X,Y) = 0). Independence forces E[XY] = E[X]E[Y], which makes Cov(X,Y) = E[XY] - E[X]E[Y] equal to zero, so the 2*Cov(X,Y) term in Var(X+Y) = Var(X) + Var(Y) + 2*Cov(X,Y) vanishes and the sum's variance is just the sum of the individual variances."
+    },
+    {
+      "id": "card-d0vg",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "variance",
+        "covariance",
+        "correlation",
+        "uncorrelated",
+        "independence"
+      ],
+      "prompt": "Two random variables X and Y are independent. Which of the following is guaranteed to hold?",
+      "source": {
+        "path": "vault/math/probability/variance-covariance-and-correlation.md",
+        "block": "card-d0vg"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 4, 6"
+      ],
+      "choices": [
+        {
+          "text": "Both E[X+Y] = E[X]+E[Y] and Var(X+Y) = Var(X)+Var(Y)",
+          "correct": true
+        },
+        {
+          "text": "Only Var(X+Y) = Var(X)+Var(Y); expectation of a sum needs independence too",
+          "correct": false
+        },
+        {
+          "text": "Only E[X+Y] = E[X]+E[Y]; variance of a sum always needs a cross term",
+          "correct": false
+        },
+        {
+          "text": "Neither — independence only guarantees Cov(X,Y) is small, not zero",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-rlgk",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "variance",
+        "covariance",
+        "correlation",
+        "uncorrelated",
+        "independence"
+      ],
+      "prompt": "Which property does correlation Corr(X,Y) have that covariance Cov(X,Y) does not?",
+      "source": {
+        "path": "vault/math/probability/variance-covariance-and-correlation.md",
+        "block": "card-rlgk"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 4, 6"
+      ],
+      "choices": [
+        {
+          "text": "It is unitless and always falls between -1 and 1, no matter the units of X and Y",
+          "correct": true
+        },
+        {
+          "text": "It can only be zero when X and Y are independent",
+          "correct": false
+        },
+        {
+          "text": "It ignores the sign of the relationship between X and Y",
+          "correct": false
+        },
+        {
+          "text": "It is undefined whenever Var(X) is different from Var(Y)",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-w7b8",
+      "format": "cloze",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "variance",
+        "covariance",
+        "correlation",
+        "uncorrelated",
+        "independence"
+      ],
+      "prompt": "X and Y are called ___ when Cov(X,Y) = 0, equivalently Corr(X,Y) = 0.",
+      "source": {
+        "path": "vault/math/probability/variance-covariance-and-correlation.md",
+        "block": "card-w7b8"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 4, 6"
+      ],
+      "answer": "uncorrelated"
+    },
+    {
+      "id": "card-2v2g",
+      "format": "mcq",
+      "topic": "math",
+      "category": "math-probability",
+      "tags": [
+        "variance",
+        "covariance",
+        "correlation",
+        "uncorrelated",
+        "independence"
+      ],
+      "prompt": "X is uniform on {-1, 0, 1} and Y = X^2. X and Y are perfectly dependent (Y is a deterministic function of X), yet Cov(X,Y) turns out to be exactly 0. What does this example demonstrate?",
+      "source": {
+        "path": "vault/math/probability/variance-covariance-and-correlation.md",
+        "block": "card-2v2g"
+      },
+      "citations": [
+        "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 4, 6"
+      ],
+      "choices": [
+        {
+          "text": "Uncorrelated does not imply independent — zero covariance only rules out a linear relationship",
+          "correct": true
+        },
+        {
+          "text": "Independent does not imply uncorrelated",
+          "correct": false
+        },
+        {
+          "text": "The formula for covariance is wrong for deterministic functions",
+          "correct": false
+        },
+        {
+          "text": "X and Y must actually be independent, since Cov(X,Y) = 0",
+          "correct": false
+        }
+      ]
     },
     {
       "id": "card-uprv",
