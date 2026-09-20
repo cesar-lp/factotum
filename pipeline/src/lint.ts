@@ -1,4 +1,4 @@
-import { HIGHLIGHT, QA, FENCE } from './cards.js';
+import { HIGHLIGHT, QA, FENCE, CALLOUT_OPEN, CALLOUT_LINE, CHOICE, stripAnchor } from './cards.js';
 import { parseFrontmatter } from './frontmatter.js';
 
 export interface LintProblem {
@@ -86,6 +86,8 @@ export function lintNote(text: string): LintProblem[] {
     }
   }
 
+  problems.push(...lintMcqCallouts(lines, bodyStartLine));
+
   if (inFence) {
     problems.push({
       line: fenceOpenLine,
@@ -95,6 +97,68 @@ export function lintNote(text: string): LintProblem[] {
         'skipped by the parser, so every card in the rest of this note silently disappears. ' +
         'Add a matching closing fence.'
     });
+  }
+
+  return problems;
+}
+
+/**
+ * Flags an mcq callout with more than one `- [x]` choice.
+ *
+ * A callout continues across a blank `>` line -- CALLOUT_LINE matches `>`
+ * with no content -- so writing two questions inside one `> [!card] mcq`
+ * block, separated by a blank `>`, does not produce two cards. The parser
+ * concatenates both prompts and pools all the choices into ONE card with
+ * two correct answers, which is unanswerable: only one choice can be
+ * tapped, and either of the two "correct" ones scores it right.
+ *
+ * This is silent -- no warning, no crash, a plausible-looking card. It had
+ * already happened once in this vault (an 8-choice AWS IAM card) and went
+ * unnoticed until every card was rendered and checked.
+ *
+ * cards.ts already warns about the opposite case (a callout with NO correct
+ * choice, which it skips outright); there is no equivalent guard for too
+ * many, because nothing downstream treats it as an error.
+ *
+ * Mirrors parseCallout's own scanning exactly -- same CALLOUT_OPEN,
+ * CALLOUT_LINE, CHOICE and stripAnchor -- so what this counts is what the
+ * build actually parses, not an approximation of it.
+ */
+function lintMcqCallouts(lines: string[], bodyStartLine: number): LintProblem[] {
+  const problems: LintProblem[] = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const open = (lines[i] ?? '').match(CALLOUT_OPEN);
+    if (!open || (open[1] ?? '').toLowerCase() !== 'mcq') continue;
+
+    const openLine = bodyStartLine + i + 1;
+    let correct = 0;
+    let total = 0;
+
+    for (i += 1; i < lines.length; i++) {
+      const match = (lines[i] ?? '').match(CALLOUT_LINE);
+      if (!match) break;
+      const content = stripAnchor((match[1] ?? '').trim()).text.trim();
+      if (content === '') continue;
+      const choice = content.match(CHOICE);
+      if (!choice || !choice[2]) continue;
+      total += 1;
+      if ((choice[1] ?? '').toLowerCase() === 'x') correct += 1;
+    }
+    i -= 1;
+
+    if (correct > 1) {
+      problems.push({
+        line: openLine,
+        rule: 'mcq-multiple-correct',
+        message:
+          `This mcq callout has ${correct} choices marked \`- [x]\` (${total} choices in total), ` +
+          'but a card can only have one. This usually means two questions were written in one ' +
+          'callout separated by a blank `>` line — a blank `>` does NOT end a callout, so the ' +
+          'parser fuses them into a single unanswerable card. Split them into two separate ' +
+          '`> [!card] mcq` blocks with a truly blank line between them.'
+      });
+    }
   }
 
   return problems;

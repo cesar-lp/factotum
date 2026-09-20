@@ -260,7 +260,18 @@ function ratingRow(preview?: IntervalPreview): string {
   `;
 }
 
-const MCQ_BADGES = ['A', 'B', 'C', 'D'];
+/**
+ * Badge for a choice at a given RENDERED position. Generated rather than
+ * held in a fixed array: a four-entry list silently produced empty badges
+ * for a fifth choice onward, and the deck has already contained an eight
+ * choice card (two questions fused into one callout -- see the
+ * mcq-multiple-correct lint rule that now catches that at its source).
+ * Past Z it falls back to the 1-based number, so this can never render a
+ * blank badge no matter how malformed the card.
+ */
+function mcqBadge(index: number): string {
+  return index < 26 ? String.fromCharCode(65 + index) : String(index + 1);
+}
 
 /**
  * Renders the action area for a card: the interactive controls only
@@ -321,7 +332,7 @@ export function renderActions(
         (choice, index) =>
           `<button class="choice" data-choice="${index}" data-correct="${choice.correct}"
                  ${revealed ? 'disabled' : ''}>
-             <span class="choice-badge">${MCQ_BADGES[index] ?? ''}</span>
+             <span class="choice-badge">${mcqBadge(index)}</span>
              <span class="choice-text">${inlineMarkup(escapeHtml(choice.text))}</span>
            </button>`
       )
