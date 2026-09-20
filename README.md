@@ -246,6 +246,47 @@ happens, and the live site silently stops updating with no obvious signal
 why. `ci.yml` is read-only (`permissions: contents: read`) — it never
 pushes or commits, unlike `build-deck.yml`.
 
+Two smaller PR-only workflows sit alongside it. **`branch-name.yml`**
+rejects a PR whose branch doesn't follow the `<type>/<kebab-description>`
+convention in `CLAUDE.md` — the agent tooling that creates worktrees
+proposes names like `claude/…-fed542`, and a rename that relies on someone
+remembering it eventually doesn't happen. It skips fork PRs, whose branch
+names live in someone else's repo and never land here.
+
+**`deck-diff.yml`** and **`deck-diff-comment.yml`** post a comment on every
+PR saying how many cards it adds or removes and to which notes, and warn
+about any touched note left under the 6-card minimum. `deck/deck.json` is
+one 1.2MB generated file that every content PR rewrites, so GitHub's diff
+view tells a reviewer nothing; this makes the number visible instead. They
+are split in two on purpose: posting a comment needs `pull-requests:
+write`, which must never be held by a workflow that touches PR-authored
+content on a public repo. `deck-diff.yml` reads the PR with no permissions
+and uploads an artifact; `deck-diff-comment.yml` holds the write token,
+runs on `workflow_run`, and never checks out PR code. Merging them — or
+switching to `pull_request_target` — would hand repository write access to
+anyone who opens a PR.
+
+**`auto-merge.yml`** turns on GitHub's native auto-merge for PRs the
+maintainer opens from a branch in this repo, so they land by themselves
+once every required check is green. It needs a repo secret
+`AUTO_MERGE_TOKEN` — a fine-grained PAT scoped to this repo with
+**`Contents: Read and write`** and **`Pull requests: Read and write`** —
+and does nothing when that secret is absent. Contents write is not
+optional and is easy to miss: arming auto-merge queues a change to
+`main`, so GitHub treats it as a repository write and rejects a
+pull-requests-only token with `Resource not accessible by personal
+access token (enablePullRequestAutoMerge)`.
+
+It does **not** fall back to `GITHUB_TOKEN`, and the reason matters.
+Auto-merge performs the merge as whoever enabled it, and pushes by
+`GITHUB_TOKEN` don't trigger workflow runs. Enabling it with
+`GITHUB_TOKEN` would therefore land every merge on `main` as
+`github-actions[bot]`, `build-deck.yml` would never fire, and the deck
+and the deployed site would silently stop updating — the failure this
+repo's CI layout exists to prevent, caused by the automation meant to
+save a click. Without the secret the workflow stays quiet and you press
+the button yourself, which is only tedious.
+
 ## One-time setup
 
 1. **Enable GitHub Pages**: repo Settings → Pages → Source: **GitHub
@@ -266,12 +307,47 @@ pushes or commits, unlike `build-deck.yml`.
    - Under **Rules**, enable **Require status checks to pass**, then **Add
      checks** and select **`PR checks (test, typecheck, deck drift)`** —
      that's the job name `ci.yml` reports (not the workflow name `PR
-     checks`, which won't appear as a selectable check itself).
-   - Under **Bypass list**, click **Add bypass** and add the **GitHub
-     Actions** app (not a specific user or team). This is the step that
-     keeps `build-deck.yml`'s direct push to `main` working; without it,
-     that push starts failing the moment the ruleset is enforced, exactly
-     as `build-deck.yml`'s own comment warns.
+     checks`, which won't appear as a selectable check itself). Add
+     **`Branch name follows convention`** the same way.
+   - Do **not** enable **Require approvals**. Every PR here is authored by
+     the maintainer, and GitHub does not let you approve your own PR — so
+     the rule can only ever deadlock, and the usual escape (a workflow that
+     auto-approves) would approve fork PRs from strangers too. Required
+     status checks are what actually gate a merge; approvals add nothing on
+     a solo repo. Enable **Settings → General → Allow auto-merge** instead:
+     it is a per-PR button only someone with write access can press, so it
+     never lets an outside PR land on its own.
+   - Under **Bypass list**, click **Add bypass** and add **Repository
+     admin** and **Write**. This is the step that keeps
+     `build-deck.yml`'s direct push to `main` working; without it, that
+     push starts failing the moment the ruleset is enforced, exactly as
+     `build-deck.yml`'s own comment warns.
+
+     Note for anyone following older instructions (including an earlier
+     version of this list): there is **no "GitHub Actions" bypass actor on
+     a user-owned repo**. That actor only exists in organization rulesets.
+     The full actor list here is `Deploy keys`, `Repository admin`,
+     `Maintain`, `Write`, and installed Marketplace apps — searching it for
+     "GitHub" returns nothing. `Write` is the closest equivalent: the deck
+     push comes from `github-actions[bot]` using `GITHUB_TOKEN` with
+     `contents: write`, and on a solo repo the only holders of write are
+     the maintainer and that bot.
+
+     **Verify this rather than assuming it.** Whether ruleset evaluation
+     treats `github-actions[bot]` as holding the `Write` role is not
+     something the GitHub docs state plainly. After enabling the ruleset,
+     merge a PR that touches `vault/` and confirm `Build deck` goes green
+     and its rebuild commit lands on `main`. The failure is silent — no
+     deck commit, no `deploy` run, site quietly stale — so it is worth one
+     deliberate check.
+
+     If the push is still rejected, the fallback is a fine-grained PAT
+     stored as a secret and used for the push: it acts as the maintainer,
+     which `Repository admin` covers. The cost is real, and
+     `build-deck.yml`'s own comments spell it out — a PAT push **does**
+     re-trigger workflows, so `[skip ci]` becomes the only thing preventing
+     a self-triggering rebuild loop, and the token needs renewing on
+     expiry. Prefer the role bypass if it works.
    - Set **Enforcement status** to **Active** and save.
 3. **Install to the iPhone Home Screen**: open the deployed Pages URL in
    Safari, tap Share → **Add to Home Screen**. This is not optional

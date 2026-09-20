@@ -1,0 +1,86 @@
+# .github/workflows/branch-name.yml
+name: Branch name
+
+# Enforces the branch naming convention in CLAUDE.md:
+# `<conventional-type>/<short-kebab-description>`.
+#
+# This exists because the convention is violated by tooling rather than by
+# people: the agent tooling that creates worktrees proposes names like
+# `claude/some-description-fed542`, and CLAUDE.md asks for those to be
+# renamed before pushing. A rename that depends on someone remembering it
+# is a rename that eventually doesn't happen, and the branch name is baked
+# into the merge commit on main permanently. This turns "remember to
+# rename" into a red X that can be fixed in one command.
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: branch-name-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  branch-name:
+    name: Branch name follows convention
+    runs-on: ubuntu-latest
+    # Fork branches live in someone else's repo and never become a branch
+    # here, so their names are not ours to police — holding an outside
+    # contributor to an internal convention they can't read from the PR UI
+    # is pure friction. A job skipped by `if:` reports as skipped, which
+    # GitHub counts as passing for a required status check, so this stays
+    # safe to mark as required.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - name: Check branch name
+        env:
+          # github.head_ref is the source branch name on a pull_request
+          # event (github.ref_name would be the PR merge ref, e.g.
+          # "12/merge", which is never what we want to validate).
+          BRANCH: ${{ github.head_ref }}
+        run: |
+          # Types are exactly the set documented in CLAUDE.md's Commits
+          # section. Keep the two in sync: widening this regex without
+          # updating CLAUDE.md makes the docs the wrong source of truth.
+          types='feat|fix|docs|chore|test|refactor'
+          if [[ "$BRANCH" =~ ^($types)/[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
+            echo "Branch name '$BRANCH' is fine."
+            exit 0
+          fi
+
+          echo "::error::Branch name '$BRANCH' does not follow the convention in CLAUDE.md."
+          echo
+          echo "Expected: <type>/<short-kebab-description>"
+          echo "  type:   $types"
+          echo "  suffix: lowercase words joined by single hyphens"
+          echo
+          echo "Examples: feat/keep-going, fix/cloze-feedback-and-input, docs/state-and-roadmap"
+          echo
+
+          # The failure modes CLAUDE.md calls out by name, diagnosed
+          # individually — a generic "doesn't match regex" sends you to
+          # read the regex, which is not where the fix is.
+          case "$BRANCH" in
+            claude/*|*-bot/*|agent/*)
+              echo "This looks like a tool-generated branch name. The prefix should say"
+              echo "what the change is, not who or what made it." ;;
+            */*-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f])
+              echo "This looks like it still carries a generated suffix. Drop it." ;;
+            */*[A-Z]*)
+              echo "Use lowercase only." ;;
+            */*_*)
+              echo "Use hyphens, not underscores." ;;
+            */*)
+              echo "The '${BRANCH%%/*}' prefix is not one of the allowed types." ;;
+            *)
+              echo "There is no '<type>/' prefix at all." ;;
+          esac
+
+          echo
+          echo "Rename it, then force-push the new name:"
+          echo "  git branch -m <type>/<description>"
+          echo "  git push origin -u <type>/<description>"
+          echo "  git push origin --delete $BRANCH"
+          exit 1

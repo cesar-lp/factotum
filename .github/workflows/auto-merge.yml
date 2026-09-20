@@ -1,0 +1,100 @@
+# .github/workflows/auto-merge.yml
+name: Auto-merge
+
+# Enables GitHub's native auto-merge on the maintainer's own PRs, so a PR
+# lands by itself once every required check is green instead of needing the
+# button clicked by hand.
+#
+# READ THIS BEFORE SWITCHING THE TOKEN BELOW TO GITHUB_TOKEN.
+#
+# Auto-merge records who enabled it, and performs the eventual merge as that
+# actor. Pushes made by GITHUB_TOKEN do not trigger workflow runs -- the
+# same rule build-deck.yml relies on to avoid self-triggering. Put those
+# together and enabling auto-merge with GITHUB_TOKEN means the merge lands
+# on main attributed to github-actions[bot], and **build-deck.yml never
+# fires**: no id minting, no deck rebuild, no deploy.yml run chained off it,
+# and the live site silently stops updating. That is the exact failure this
+# repo's whole CI layout is arranged to prevent, and it would be caused by
+# the automation meant to save a click.
+#
+# So this workflow requires a separate personal access token whose only job
+# is to enable auto-merge, and it deliberately does nothing at all when that
+# token is absent. Doing nothing means you click the button yourself, which
+# is merely tedious; falling back to GITHUB_TOKEN would be silently broken.
+#
+# Note this PAT is NOT the one build-deck.yml's comments warn about. That
+# one would push commits and reintroduce loop risk. This one only flips a
+# flag on a PR, so it needs `pull_requests: write` and nothing else.
+#
+# Setup:
+#   1. Settings -> General -> Pull Requests -> tick "Allow auto-merge".
+#   2. Create a fine-grained PAT scoped to this repo with
+#      "Pull requests: Read and write".
+#   3. Save it as the repo secret AUTO_MERGE_TOKEN.
+#   4. Remember it expires. When it does, this workflow goes quiet rather
+#      than failing loudly -- the symptom is PRs no longer merging
+#      themselves, which is at least a visible one.
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: auto-merge-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  auto-merge:
+    name: Enable auto-merge
+    runs-on: ubuntu-latest
+    # Three gates, all of which must hold:
+    #  - not a draft: a draft PR is explicitly not ready to land.
+    #  - same-repo branch: a fork PR must never be put on a path to merging
+    #    itself. This is the security-relevant one.
+    #  - authored by the repo owner: the convenience is for the maintainer's
+    #    own PRs. A collaborator added later gets the button, not the
+    #    automation, until someone decides otherwise deliberately.
+    if: >-
+      !github.event.pull_request.draft &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.user.login == github.repository_owner
+    steps:
+      - name: Enable auto-merge
+        env:
+          # Not GITHUB_TOKEN. See the header comment -- using it here breaks
+          # the deck rebuild and the deploy that chains off it.
+          GH_TOKEN: ${{ secrets.AUTO_MERGE_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          if [ -z "${GH_TOKEN:-}" ]; then
+            echo "::notice::AUTO_MERGE_TOKEN is not set, so auto-merge was not enabled."
+            echo "Click 'Enable auto-merge' on the PR instead, or see this workflow's"
+            echo "header comment for why GITHUB_TOKEN is deliberately not used as a"
+            echo "fallback (it would stop build-deck.yml running after the merge)."
+            exit 0
+          fi
+
+          # --merge, not --squash or --rebase: main's history is merge
+          # commits ("Merge pull request #31 from ..."), and the merge method
+          # has to be one the repo actually allows or this call fails.
+          #
+          # Auto-merge needs at least one unmet requirement to wait on. With
+          # required status checks configured on main that holds; without
+          # them GitHub has nothing to wait for and rejects the request,
+          # which is the correct outcome -- silently merging on open is not
+          # what anyone wants.
+          if ! gh pr merge "$PR_URL" --auto --merge; then
+            echo "::error::Could not enable auto-merge. The two things that cause this:"
+            echo "1. AUTO_MERGE_TOKEN is missing a permission. 'Resource not accessible"
+            echo "   by personal access token (enablePullRequestAutoMerge)' means exactly"
+            echo "   this. Arming auto-merge is a WRITE to the repo -- it queues a change"
+            echo "   to main -- so 'Pull requests: Read and write' alone is not enough."
+            echo "   The token needs 'Contents: Read and write' as well."
+            echo "2. 'Allow auto-merge' is unticked in Settings -> General -> Pull"
+            echo "   Requests, or main has no required status checks, leaving auto-merge"
+            echo "   with nothing to wait on."
+            exit 1
+          fi
