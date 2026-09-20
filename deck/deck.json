@@ -1,6 +1,2214 @@
 {
-  "generatedAt": "2026-09-20T17:26:13.019Z",
+  "generatedAt": "2026-09-20T17:46:45.272Z",
   "cards": [
+    {
+      "id": "card-b72q",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "api-versioning",
+        "breaking-changes",
+        "deprecation",
+        "tolerant-reader",
+        "sunset-header"
+      ],
+      "prompt": "Name five distinct kinds of change to an API's contract that count as breaking, each capable of failing an unmodified client.",
+      "source": {
+        "path": "vault/api/rest/api-versioning-and-evolution.md",
+        "block": "card-b72q"
+      },
+      "citations": [
+        "Richardson & Ruby, RESTful Web Services",
+        "RFC 9110",
+        "RFC 8594"
+      ],
+      "answer": "Removing a field, renaming a field, tightening a validation rule, changing a field's type, and changing a default value."
+    },
+    {
+      "id": "card-fadq",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "api-versioning",
+        "breaking-changes",
+        "deprecation",
+        "tolerant-reader",
+        "sunset-header"
+      ],
+      "prompt": "Against that, purely ___ change — a new optional field, a new endpoint, a new optional query parameter — leaves every existing client untouched, because nothing that client already depends on has moved or disappeared.",
+      "source": {
+        "path": "vault/api/rest/api-versioning-and-evolution.md",
+        "block": "card-fadq"
+      },
+      "citations": [
+        "Richardson & Ruby, RESTful Web Services",
+        "RFC 9110",
+        "RFC 8594"
+      ],
+      "answer": "additive"
+    },
+    {
+      "id": "card-byg6",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "api-versioning",
+        "breaking-changes",
+        "deprecation",
+        "tolerant-reader",
+        "sunset-header"
+      ],
+      "prompt": "What does the principle \"the cheapest version is the one you never cut\" mean in practice?",
+      "source": {
+        "path": "vault/api/rest/api-versioning-and-evolution.md",
+        "block": "card-byg6"
+      },
+      "citations": [
+        "Richardson & Ruby, RESTful Web Services",
+        "RFC 9110",
+        "RFC 8594"
+      ],
+      "answer": "Introducing, maintaining, and retiring a new API version carries real ongoing cost, so a change that can be made additively — without forcing a new version at all — is strictly cheaper than even a well-executed version bump, because it skips that whole lifecycle entirely."
+    },
+    {
+      "id": "card-1njy",
+      "format": "recall",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "api-versioning",
+        "breaking-changes",
+        "deprecation",
+        "tolerant-reader",
+        "sunset-header"
+      ],
+      "prompt": "Name the three common places an API can signal its version, and give one real tradeoff for each — not just an advantage, but something it actually costs you.",
+      "source": {
+        "path": "vault/api/rest/api-versioning-and-evolution.md",
+        "block": "card-1njy"
+      },
+      "citations": [
+        "Richardson & Ruby, RESTful Web Services",
+        "RFC 9110",
+        "RFC 8594"
+      ],
+      "answer": "URI path versioning (e.g. `/v2/orders`) is simple, cache-friendly, and visible in logs and browser bars, but it means the same underlying resource now lives at two different URIs depending on version, and it tempts teams into big, infrequent version bumps rather than gradual change. Custom header versioning (e.g. an `Api-Version` header) keeps one stable URI per resource, but it's invisible to a browser address bar or a plain `curl` call without extra flags, harder for a newcomer to discover, and a cache keyed only on the URL can't tell two versions of the same request apart without extra care. Media-type versioning (e.g. `Accept: application/vnd.example.v2+json`) ties the version to the requested representation format rather than to resource identity, which is arguably the most REST-purist of the three, but it needs clients willing to construct custom Accept headers and needs caches to vary their stored responses by that header or risk serving the wrong version back."
+    },
+    {
+      "id": "card-kft6",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "api-versioning",
+        "breaking-changes",
+        "deprecation",
+        "tolerant-reader",
+        "sunset-header"
+      ],
+      "prompt": "Versioning by putting the version inside the media type requested via the Accept header (as opposed to the URI path or a custom header) ties the version most directly to which of these?",
+      "source": {
+        "path": "vault/api/rest/api-versioning-and-evolution.md",
+        "block": "card-kft6"
+      },
+      "citations": [
+        "Richardson & Ruby, RESTful Web Services",
+        "RFC 9110",
+        "RFC 8594"
+      ],
+      "choices": [
+        {
+          "text": "The representation format being requested for the resource",
+          "correct": true
+        },
+        {
+          "text": "The resource's own identity and URI",
+          "correct": false
+        },
+        {
+          "text": "The HTTP method used for the request",
+          "correct": false
+        },
+        {
+          "text": "The transport protocol version (HTTP/1.1 vs HTTP/2)",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-oglk",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "api-versioning",
+        "breaking-changes",
+        "deprecation",
+        "tolerant-reader",
+        "sunset-header"
+      ],
+      "prompt": "That only works, though, if clients cooperate on their end. A ___ is a client built to ignore fields it doesn't recognize in a response, rather than treating any unexpected field as an error.",
+      "source": {
+        "path": "vault/api/rest/api-versioning-and-evolution.md",
+        "block": "card-oglk"
+      },
+      "citations": [
+        "Richardson & Ruby, RESTful Web Services",
+        "RFC 9110",
+        "RFC 8594"
+      ],
+      "answer": "tolerant reader"
+    },
+    {
+      "id": "card-j4zr",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "api-versioning",
+        "breaking-changes",
+        "deprecation",
+        "tolerant-reader",
+        "sunset-header"
+      ],
+      "prompt": "When a breaking change genuinely can't be avoided, RFC 8594 defines a pair of headers for announcing it ahead of time. A `Deprecation` header marks that a version (or a specific field or endpoint within it) is on its way out. The ___ header goes further, giving a concrete date after which the server may actually stop serving it.",
+      "source": {
+        "path": "vault/api/rest/api-versioning-and-evolution.md",
+        "block": "card-j4zr"
+      },
+      "citations": [
+        "Richardson & Ruby, RESTful Web Services",
+        "RFC 9110",
+        "RFC 8594"
+      ],
+      "answer": "Sunset"
+    },
+    {
+      "id": "card-jbp5",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "api-versioning",
+        "breaking-changes",
+        "deprecation",
+        "tolerant-reader",
+        "sunset-header"
+      ],
+      "prompt": "What is the difference in what a Deprecation header and a Sunset header each communicate to a client?",
+      "source": {
+        "path": "vault/api/rest/api-versioning-and-evolution.md",
+        "block": "card-jbp5"
+      },
+      "citations": [
+        "Richardson & Ruby, RESTful Web Services",
+        "RFC 9110",
+        "RFC 8594"
+      ],
+      "answer": "Deprecation signals that something is being phased out, without necessarily committing to when. Sunset gives a concrete date (or date-time) after which the resource or version may no longer be available at all — it's the deadline, where Deprecation is just the warning."
+    },
+    {
+      "id": "card-f108",
+      "format": "recall",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "api-versioning",
+        "breaking-changes",
+        "deprecation",
+        "tolerant-reader",
+        "sunset-header"
+      ],
+      "prompt": "A version has been marked deprecated and given a Sunset date. Describe what actually needs to happen, in practice, between that announcement and the version being fully retired — not just \"wait for the date.\"",
+      "source": {
+        "path": "vault/api/rest/api-versioning-and-evolution.md",
+        "block": "card-f108"
+      },
+      "citations": [
+        "Richardson & Ruby, RESTful Web Services",
+        "RFC 9110",
+        "RFC 8594"
+      ],
+      "answer": "The server needs to actually monitor who's still calling the deprecated version and communicate with those remaining consumers directly where possible, since headers alone don't guarantee anyone reads them. Only once traffic has genuinely migrated (or the Sunset date has passed and the server is willing to accept breaking the stragglers) does the server stop serving the version outright — typically by returning an error for it rather than silently changing its behavior — so that retirement is a deliberate cutover, not something that happens quietly in the middle of everyone's night."
+    },
+    {
+      "id": "card-r9ld",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "async-operations",
+        "job-resource",
+        "polling",
+        "webhooks",
+        "long-running-requests"
+      ],
+      "prompt": "What makes holding a request connection open until a long-running operation finishes a poor fit, even when the work will eventually succeed?",
+      "source": {
+        "path": "vault/api/rest/async-operations-and-long-running-requests.md",
+        "block": "card-r9ld"
+      },
+      "citations": [
+        "RFC 9110",
+        "WHATWG Fetch Standard (CORS)"
+      ],
+      "answer": "Several failure modes stack up at once: the client's own timeout can fire first, an intermediate proxy often enforces a shorter timeout than either endpoint expects and kills the connection regardless of outcome, a client that gives up and retries risks starting a second expensive attempt at the same work, and there is no channel to report progress while it waits."
+    },
+    {
+      "id": "card-5fe9",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "async-operations",
+        "job-resource",
+        "polling",
+        "webhooks",
+        "long-running-requests"
+      ],
+      "prompt": "The fix is to stop pretending the operation is synchronous. The server accepts the request, kicks off the work in the background, and responds right away with ___ — success in the sense that the request was well-formed and has been queued, but an explicit signal that the work itself has not completed yet.",
+      "source": {
+        "path": "vault/api/rest/async-operations-and-long-running-requests.md",
+        "block": "card-5fe9"
+      },
+      "citations": [
+        "RFC 9110",
+        "WHATWG Fetch Standard (CORS)"
+      ],
+      "answer": "202 Accepted"
+    },
+    {
+      "id": "card-1pos",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "async-operations",
+        "job-resource",
+        "polling",
+        "webhooks",
+        "long-running-requests"
+      ],
+      "prompt": "The server represents that in-progress operation as its own ___, addressable by URL just like anything else in the API, with a status representation the client can fetch independently of whatever the job eventually produces.",
+      "source": {
+        "path": "vault/api/rest/async-operations-and-long-running-requests.md",
+        "block": "card-1pos"
+      },
+      "citations": [
+        "RFC 9110",
+        "WHATWG Fetch Standard (CORS)"
+      ],
+      "answer": "job resource"
+    },
+    {
+      "id": "card-qujs",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "async-operations",
+        "job-resource",
+        "polling",
+        "webhooks",
+        "long-running-requests"
+      ],
+      "prompt": "Why model the operation as a resource the client can fetch, rather than handing back an opaque ticket string the server interprets internally?",
+      "source": {
+        "path": "vault/api/rest/async-operations-and-long-running-requests.md",
+        "block": "card-qujs"
+      },
+      "citations": [
+        "RFC 9110",
+        "WHATWG Fetch Standard (CORS)"
+      ],
+      "answer": "Because a resource has a uniform way to be addressed and read back — the client just performs a normal GET against its URL and gets a representation of its current state. An opaque ticket has no defined interface: the client would need out-of-band knowledge of some other endpoint and format to check on it. Making the job itself an addressable resource means checking on it, and eventually following a link to whatever it produced, both use the exact same request/response machinery as everything else in the API."
+    },
+    {
+      "id": "card-esnz",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "async-operations",
+        "job-resource",
+        "polling",
+        "webhooks",
+        "long-running-requests"
+      ],
+      "prompt": "How does a client learn the outcome of an async job, both on success and on failure?",
+      "source": {
+        "path": "vault/api/rest/async-operations-and-long-running-requests.md",
+        "block": "card-esnz"
+      },
+      "citations": [
+        "RFC 9110",
+        "WHATWG Fetch Standard (CORS)"
+      ],
+      "answer": "It keeps fetching the job resource until status leaves pending/running. On success, the response includes a link to the resource the job produced (or updated), so the client follows that link to get the actual result — the job resource itself is a pointer, not the payload. On failure, status becomes failed, and the response should carry enough detail for the client to understand why, though the shape of that error detail is a separate concern from the job mechanism itself."
+    },
+    {
+      "id": "card-aoe8",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "async-operations",
+        "job-resource",
+        "polling",
+        "webhooks",
+        "long-running-requests"
+      ],
+      "prompt": "When a job status response includes a Retry-After hint, what should a polling client do with it, and why is that better than polling on a fixed interval chosen by the client?",
+      "source": {
+        "path": "vault/api/rest/async-operations-and-long-running-requests.md",
+        "block": "card-aoe8"
+      },
+      "citations": [
+        "RFC 9110",
+        "WHATWG Fetch Standard (CORS)"
+      ],
+      "answer": "Wait at least that long before the next GET. The server is in the best position to know roughly how much longer the work will take, or to signal that it's currently overloaded and would like clients to back off — a fixed client-side interval either wastes requests polling too often early on or adds needless latency polling too rarely later."
+    },
+    {
+      "id": "card-eua6",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "async-operations",
+        "job-resource",
+        "polling",
+        "webhooks",
+        "long-running-requests"
+      ],
+      "prompt": "A job takes an unpredictable amount of time to finish, sometimes seconds and sometimes many minutes. Which polling strategy best matches the job-resource pattern?",
+      "source": {
+        "path": "vault/api/rest/async-operations-and-long-running-requests.md",
+        "block": "card-eua6"
+      },
+      "citations": [
+        "RFC 9110",
+        "WHATWG Fetch Standard (CORS)"
+      ],
+      "choices": [
+        {
+          "text": "Poll the job resource at server-suggested intervals until its status leaves pending/running, then follow the result link",
+          "correct": true
+        },
+        {
+          "text": "Keep the original request connection open and block until the server pushes the final response down it",
+          "correct": false
+        },
+        {
+          "text": "Poll once immediately after 202, and treat no result yet as failure",
+          "correct": false
+        },
+        {
+          "text": "Re-send the original request repeatedly until one of the attempts happens to return the final result",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-toxo",
+      "format": "recall",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "async-operations",
+        "job-resource",
+        "polling",
+        "webhooks",
+        "long-running-requests"
+      ],
+      "prompt": "Compare polling a job resource against having the server deliver a webhook when the job completes. What shifts from the client to the server when the design moves to a webhook, and what new problems does the server now have to handle that polling didn't create?",
+      "source": {
+        "path": "vault/api/rest/async-operations-and-long-running-requests.md",
+        "block": "card-toxo"
+      },
+      "citations": [
+        "RFC 9110",
+        "WHATWG Fetch Standard (CORS)"
+      ],
+      "answer": "With polling, the client controls timing and retries entirely on its own side; the server just answers GETs. With a webhook, the server becomes responsible for successfully delivering that final callback — it has to retry the delivery if the callback endpoint is briefly unreachable, and those retries can mean the same completion notice arrives more than once, so the receiver has to tolerate a duplicate delivery. The client also now needs an endpoint that the server can reach from the outside, which polling never required at all."
+    },
+    {
+      "id": "card-ru6d",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "pagination",
+        "keyset",
+        "filtering",
+        "sorting",
+        "rest-api"
+      ],
+      "prompt": "Why does an offset/limit request for a page deep into a large collection cost more than a request for an early page, even though both ask for the same number of rows?",
+      "source": {
+        "path": "vault/api/rest/collection-queries-pagination-and-filtering.md",
+        "block": "card-ru6d"
+      },
+      "citations": [
+        "RFC 9457 (Problem Details for HTTP APIs)",
+        "RFC 8288 (Web Linking)"
+      ],
+      "answer": "The database still has to walk past (or count) every skipped row before it can return the requested page, so the work grows with the offset itself, not with the page size — a late page can cost orders of magnitude more than an early one."
+    },
+    {
+      "id": "card-mvuf",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "pagination",
+        "keyset",
+        "filtering",
+        "sorting",
+        "rest-api"
+      ],
+      "prompt": "Why can offset/limit pagination cause a client to see the same item twice, or to skip an item entirely, when paging through a collection that's being written to concurrently?",
+      "source": {
+        "path": "vault/api/rest/collection-queries-pagination-and-filtering.md",
+        "block": "card-mvuf"
+      },
+      "citations": [
+        "RFC 9457 (Problem Details for HTTP APIs)",
+        "RFC 8288 (Web Linking)"
+      ],
+      "answer": "Because each page is defined by a row count from the start, not by anything about the rows themselves. An insert before the current offset shifts every later row forward, so an already-seen row reappears (a duplicate); a delete before the offset shifts every later row backward, so a not-yet-seen row slides into an already-fetched page and is skipped."
+    },
+    {
+      "id": "card-uhr9",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "pagination",
+        "keyset",
+        "filtering",
+        "sorting",
+        "rest-api"
+      ],
+      "prompt": "A cursor/keyset page is requested with a token that encodes ___, such as the last item's sort key and id, rather than a row count.",
+      "source": {
+        "path": "vault/api/rest/collection-queries-pagination-and-filtering.md",
+        "block": "card-uhr9"
+      },
+      "citations": [
+        "RFC 9457 (Problem Details for HTTP APIs)",
+        "RFC 8288 (Web Linking)"
+      ],
+      "answer": "a position in the sort order"
+    },
+    {
+      "id": "card-jloi",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "pagination",
+        "keyset",
+        "filtering",
+        "sorting",
+        "rest-api"
+      ],
+      "prompt": "A collection is being paged while other clients concurrently insert and delete rows before the client's current position. Which pagination style keeps the client from seeing duplicates or skipped items?",
+      "source": {
+        "path": "vault/api/rest/collection-queries-pagination-and-filtering.md",
+        "block": "card-jloi"
+      },
+      "citations": [
+        "RFC 9457 (Problem Details for HTTP APIs)",
+        "RFC 8288 (Web Linking)"
+      ],
+      "choices": [
+        {
+          "text": "Keyset (cursor) pagination, since each page is defined by a position in the sort order rather than a row count",
+          "correct": true
+        },
+        {
+          "text": "Offset/limit pagination, since the limit stays fixed regardless of writes",
+          "correct": false
+        },
+        {
+          "text": "Neither — both are equally affected by concurrent writes",
+          "correct": false
+        },
+        {
+          "text": "Offset/limit pagination, but only if the offset is small",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-eika",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "pagination",
+        "keyset",
+        "filtering",
+        "sorting",
+        "rest-api"
+      ],
+      "prompt": "Why can't cursor/keyset pagination jump directly to an arbitrary page the way offset/limit can?",
+      "source": {
+        "path": "vault/api/rest/collection-queries-pagination-and-filtering.md",
+        "block": "card-eika"
+      },
+      "citations": [
+        "RFC 9457 (Problem Details for HTTP APIs)",
+        "RFC 8288 (Web Linking)"
+      ],
+      "answer": "A cursor only encodes a position to continue from, not a count of rows before it, so there's no way to compute \"the start of page 47\" without walking the collection page by page from a known position — arbitrary page jumps are exactly what a row count gives you and a cursor doesn't."
+    },
+    {
+      "id": "card-19u7",
+      "format": "recall",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "pagination",
+        "keyset",
+        "filtering",
+        "sorting",
+        "rest-api"
+      ],
+      "prompt": "Explain why an API returning a page of results might deliberately leave out an exact total-item count, even though clients often want one for building \"page X of Y\" UI.",
+      "source": {
+        "path": "vault/api/rest/collection-queries-pagination-and-filtering.md",
+        "block": "card-19u7"
+      },
+      "citations": [
+        "RFC 9457 (Problem Details for HTTP APIs)",
+        "RFC 8288 (Web Linking)"
+      ],
+      "answer": "Computing an exact total means counting every row matching the query, which for a large or heavily filtered collection can cost as much as or more than fetching the requested page — and for keyset pagination there is no counting step in the normal query path at all, so a count means an entirely separate, expensive query. APIs often trade the exact total for something cheaper: just a has-next-page flag, or an approximate count computed on a delay."
+    },
+    {
+      "id": "card-wxzg",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "pagination",
+        "keyset",
+        "filtering",
+        "sorting",
+        "rest-api"
+      ],
+      "prompt": "The ___ header carries one or more URIs tagged with a relation, and a paginated response uses `rel=\"next\"` and `rel=\"prev\"` to give the client the next and previous page's URLs directly.",
+      "source": {
+        "path": "vault/api/rest/collection-queries-pagination-and-filtering.md",
+        "block": "card-wxzg"
+      },
+      "citations": [
+        "RFC 9457 (Problem Details for HTTP APIs)",
+        "RFC 8288 (Web Linking)"
+      ],
+      "answer": "Link"
+    },
+    {
+      "id": "card-fk0l",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "pagination",
+        "keyset",
+        "filtering",
+        "sorting",
+        "rest-api"
+      ],
+      "prompt": "What convention do many REST APIs use in a `sort` query parameter to request a field in descending rather than ascending order?",
+      "source": {
+        "path": "vault/api/rest/collection-queries-pagination-and-filtering.md",
+        "block": "card-fk0l"
+      },
+      "citations": [
+        "RFC 9457 (Problem Details for HTTP APIs)",
+        "RFC 8288 (Web Linking)"
+      ],
+      "answer": "A leading minus sign before the field name (for example `sort=-created_at`), with no prefix meaning ascending order; multiple comma-separated fields give a secondary sort key."
+    },
+    {
+      "id": "card-9sxo",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "pagination",
+        "keyset",
+        "filtering",
+        "sorting",
+        "rest-api"
+      ],
+      "prompt": "A `fields` query parameter naming a comma-separated subset of a resource's own fields to include in the representation, such as `?fields=id,name`, is called ___.",
+      "source": {
+        "path": "vault/api/rest/collection-queries-pagination-and-filtering.md",
+        "block": "card-9sxo"
+      },
+      "citations": [
+        "RFC 9457 (Problem Details for HTTP APIs)",
+        "RFC 8288 (Web Linking)"
+      ],
+      "answer": "sparse fieldsets"
+    },
+    {
+      "id": "card-b8gv",
+      "format": "recall",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "cors",
+        "same-origin-policy",
+        "preflight",
+        "browser-security",
+        "fetch-standard"
+      ],
+      "prompt": "Explain why setting permissive CORS headers on an endpoint does nothing to stop a non-browser client — say, a script calling the API directly with curl — from reading data it shouldn't have access to. What mechanism, if any, actually restricts that client?",
+      "source": {
+        "path": "vault/api/rest/cors-and-browser-enforced-access.md",
+        "block": "card-b8gv"
+      },
+      "citations": [
+        "WHATWG Fetch Standard (CORS)",
+        "RFC 9110",
+        "RFC 7231"
+      ],
+      "answer": "CORS headers are instructions to a browser about whether to let a cross-origin script read a response it already received; the browser is the thing that reads and enforces them. A curl script isn't a browser and has no same-origin sandbox to begin with, so there's nothing for the headers to relax or restrict for it — it simply reads whatever the server sends back. Real access control has to come from authentication and authorization on the server itself, which CORS headers play no part in."
+    },
+    {
+      "id": "card-5k0l",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "cors",
+        "same-origin-policy",
+        "preflight",
+        "browser-security",
+        "fetch-standard"
+      ],
+      "prompt": "Why does the same-origin policy exist as a default restriction in browsers at all?",
+      "source": {
+        "path": "vault/api/rest/cors-and-browser-enforced-access.md",
+        "block": "card-5k0l"
+      },
+      "citations": [
+        "WHATWG Fetch Standard (CORS)",
+        "RFC 9110",
+        "RFC 7231"
+      ],
+      "answer": "Because a browser routinely has multiple tabs and embedded frames open at once, each potentially loaded from a different site, while also holding cookies and other ambient credentials for those sites. Without a default restriction, a script from one origin could freely read responses (and thus data) from any other origin the browser happens to have access to, turning every open tab into a potential data leak for every other one. The same-origin policy makes \"different origin\" a hard boundary by default, and CORS is the mechanism a server uses to deliberately punch a hole in that boundary for specific origins."
+    },
+    {
+      "id": "card-ooxo",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "cors",
+        "same-origin-policy",
+        "preflight",
+        "browser-security",
+        "fetch-standard"
+      ],
+      "prompt": "Not every cross-origin request needs a round trip to ask permission first. A request qualifies as a ___ if it uses one of a short list of methods (GET, HEAD, POST), only sets headers from a small allowed set, and if it sets `Content-Type` at all, restricts it to one of a few plain form or text values.",
+      "source": {
+        "path": "vault/api/rest/cors-and-browser-enforced-access.md",
+        "block": "card-ooxo"
+      },
+      "citations": [
+        "WHATWG Fetch Standard (CORS)",
+        "RFC 9110",
+        "RFC 7231"
+      ],
+      "answer": "simple request"
+    },
+    {
+      "id": "card-fkh9",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "cors",
+        "same-origin-policy",
+        "preflight",
+        "browser-security",
+        "fetch-standard"
+      ],
+      "prompt": "Which three properties of a cross-origin request determine whether it counts as simple or triggers a preflight first?",
+      "source": {
+        "path": "vault/api/rest/cors-and-browser-enforced-access.md",
+        "block": "card-fkh9"
+      },
+      "citations": [
+        "WHATWG Fetch Standard (CORS)",
+        "RFC 9110",
+        "RFC 7231"
+      ],
+      "answer": "Its HTTP method, whether it sets any headers outside the small allowed set, and its Content-Type value if one is set — anything outside the simple bounds on any of these three forces a preflight."
+    },
+    {
+      "id": "card-65qz",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "cors",
+        "same-origin-policy",
+        "preflight",
+        "browser-security",
+        "fetch-standard"
+      ],
+      "prompt": "Before sending a preflighted request, the browser sends an ___ request of its own to the same URL, asking the server to name what the real request would be allowed to do:",
+      "source": {
+        "path": "vault/api/rest/cors-and-browser-enforced-access.md",
+        "block": "card-65qz"
+      },
+      "citations": [
+        "WHATWG Fetch Standard (CORS)",
+        "RFC 9110",
+        "RFC 7231"
+      ],
+      "answer": "OPTIONS"
+    },
+    {
+      "id": "card-g6qb",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "cors",
+        "same-origin-policy",
+        "preflight",
+        "browser-security",
+        "fetch-standard"
+      ],
+      "prompt": "A script at `https://app.example.com` sends a cross-origin `DELETE` request carrying an `Authorization` header. The server's OPTIONS response lists `Access-Control-Allow-Methods: GET, POST` and no `Access-Control-Allow-Headers` at all. What happens?",
+      "source": {
+        "path": "vault/api/rest/cors-and-browser-enforced-access.md",
+        "block": "card-g6qb"
+      },
+      "citations": [
+        "WHATWG Fetch Standard (CORS)",
+        "RFC 9110",
+        "RFC 7231"
+      ],
+      "choices": [
+        {
+          "text": "The browser blocks the DELETE request from being sent — the preflight didn't authorize the method or the header",
+          "correct": true
+        },
+        {
+          "text": "The DELETE request is sent and succeeds, since the origin itself was allowed",
+          "correct": false
+        },
+        {
+          "text": "The DELETE request is sent, but the response body is hidden from the script",
+          "correct": false
+        },
+        {
+          "text": "The preflight is ignored for authenticated requests",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-dtkg",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "cors",
+        "same-origin-policy",
+        "preflight",
+        "browser-security",
+        "fetch-standard"
+      ],
+      "prompt": "What must a cross-origin request set to send credentials such as cookies or an Authorization header, and what must the server's response set in turn for the browser to expose the result to the script?",
+      "source": {
+        "path": "vault/api/rest/cors-and-browser-enforced-access.md",
+        "block": "card-dtkg"
+      },
+      "citations": [
+        "WHATWG Fetch Standard (CORS)",
+        "RFC 9110",
+        "RFC 7231"
+      ],
+      "answer": "The client-side fetch has to explicitly opt in to including credentials. The server must respond with Access-Control-Allow-Credentials set to true, and critically, Access-Control-Allow-Origin naming that one specific origin exactly — a wildcard value there is disallowed the moment credentials are involved, so credentialed cross-origin access can never be paired with \"allow any origin.\""
+    },
+    {
+      "id": "card-3rko",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "cors",
+        "same-origin-policy",
+        "preflight",
+        "browser-security",
+        "fetch-standard"
+      ],
+      "prompt": "What does loosening an endpoint's CORS policy to allow any origin actually cost, given that it does stop the immediate browser error?",
+      "source": {
+        "path": "vault/api/rest/cors-and-browser-enforced-access.md",
+        "block": "card-3rko"
+      },
+      "citations": [
+        "WHATWG Fetch Standard (CORS)",
+        "RFC 9110",
+        "RFC 7231"
+      ],
+      "answer": "It removes the browser-side restriction on which cross-origin scripts may read the endpoint's responses entirely, so any website's script can read that data from a visitor's browser. For a public, non-credentialed GET that may be harmless, but for anything that returns data scoped to who is asking, it turns the endpoint into one any third-party page can read through a visiting user's browser."
+    },
+    {
+      "id": "card-lsf9",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "error-handling",
+        "problem-details",
+        "validation",
+        "rest-api"
+      ],
+      "prompt": "Why is a bare status code like 422 not enough for either a machine client or a human debugging a failed request?",
+      "source": {
+        "path": "vault/api/rest/error-responses-and-problem-details.md",
+        "block": "card-lsf9"
+      },
+      "citations": [
+        "RFC 9457 (Problem Details for HTTP APIs)",
+        "RFC 8288 (Web Linking)"
+      ],
+      "answer": "Because many distinct failures can legitimately share one status code — the code only says what kind of problem occurred in general, not which specific one. A machine client can't branch its handling on \"which validation rule failed,\" and a human has no indication of what to actually change about the request, without more information than the code alone provides."
+    },
+    {
+      "id": "card-sijr",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "error-handling",
+        "problem-details",
+        "validation",
+        "rest-api"
+      ],
+      "prompt": "The `type` field is a ___ that names a category of problem; RFC 9457 does not require it to be dereferenceable, only consistent, so the same failure kind always reports the same value.",
+      "source": {
+        "path": "vault/api/rest/error-responses-and-problem-details.md",
+        "block": "card-sijr"
+      },
+      "citations": [
+        "RFC 9457 (Problem Details for HTTP APIs)",
+        "RFC 8288 (Web Linking)"
+      ],
+      "answer": "stable URI"
+    },
+    {
+      "id": "card-zcbl",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "error-handling",
+        "problem-details",
+        "validation",
+        "rest-api"
+      ],
+      "prompt": "The field that identifies this one specific occurrence of a problem, distinct from the general kind named by `type`, is ___, given as a URI reference such as a path to the resource or request involved.",
+      "source": {
+        "path": "vault/api/rest/error-responses-and-problem-details.md",
+        "block": "card-zcbl"
+      },
+      "citations": [
+        "RFC 9457 (Problem Details for HTTP APIs)",
+        "RFC 8288 (Web Linking)"
+      ],
+      "answer": "instance"
+    },
+    {
+      "id": "card-m5sj",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "error-handling",
+        "problem-details",
+        "validation",
+        "rest-api"
+      ],
+      "prompt": "A problem detail's `title` field is \"Insufficient Funds\" on every response describing that error kind. What best describes the intended relationship between `title` and `detail`?",
+      "source": {
+        "path": "vault/api/rest/error-responses-and-problem-details.md",
+        "block": "card-m5sj"
+      },
+      "citations": [
+        "RFC 9457 (Problem Details for HTTP APIs)",
+        "RFC 8288 (Web Linking)"
+      ],
+      "choices": [
+        {
+          "text": "`title` is a reusable, generic summary of the problem kind; `detail` fills in what's specific to this particular occurrence",
+          "correct": true
+        },
+        {
+          "text": "`title` and `detail` are redundant and either may be omitted",
+          "correct": false
+        },
+        {
+          "text": "`detail` is the generic summary and `title` holds the occurrence-specific explanation",
+          "correct": false
+        },
+        {
+          "text": "`title` is machine-readable and `detail` is only for logging, never shown to a human",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-ic4u",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "error-handling",
+        "problem-details",
+        "validation",
+        "rest-api"
+      ],
+      "prompt": "Why should a client branch its error handling on a field like `type` rather than on the wording of `title` or `detail`, and why is parsing the human-readable message considered fragile?",
+      "source": {
+        "path": "vault/api/rest/error-responses-and-problem-details.md",
+        "block": "card-ic4u"
+      },
+      "citations": [
+        "RFC 9457 (Problem Details for HTTP APIs)",
+        "RFC 8288 (Web Linking)"
+      ],
+      "answer": "`type` is a stable identifier meant to stay constant for a given problem kind across API versions, so code that checks it keeps working as long as the failure kind is unchanged. `title` and `detail` are free-text meant for a human and can be reworded at any time without that being considered a breaking change, so a client that parses their text for meaning can break from a wording change alone, with no change to the actual error."
+    },
+    {
+      "id": "card-w78n",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "error-handling",
+        "problem-details",
+        "validation",
+        "rest-api"
+      ],
+      "prompt": "Why should a validation error response report every field that failed validation at once, rather than stopping at the first failure found?",
+      "source": {
+        "path": "vault/api/rest/error-responses-and-problem-details.md",
+        "block": "card-w78n"
+      },
+      "citations": [
+        "RFC 9457 (Problem Details for HTTP APIs)",
+        "RFC 8288 (Web Linking)"
+      ],
+      "answer": "Reporting only the first failure means the client can only ever fix one problem per request, so a request with several validation errors takes one round trip per error to fully resolve. Reporting all of them at once lets the client (or the person behind it) fix every failing field before resubmitting, cutting an N-error case down to a single retry."
+    },
+    {
+      "id": "card-8ei7",
+      "format": "recall",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "error-handling",
+        "problem-details",
+        "validation",
+        "rest-api"
+      ],
+      "prompt": "Explain the tension involved in deciding what to put in a problem detail's `detail` field, and describe a reasonable policy for handling it (for example, treating a validation failure differently from an internal server error).",
+      "source": {
+        "path": "vault/api/rest/error-responses-and-problem-details.md",
+        "block": "card-8ei7"
+      },
+      "citations": [
+        "RFC 9457 (Problem Details for HTTP APIs)",
+        "RFC 8288 (Web Linking)"
+      ],
+      "answer": "A `detail` message detailed enough to help a legitimate client debug its request is also detailed enough to potentially expose internal implementation details — table names, internal paths, stack traces — to anyone who triggers an error, including an attacker probing the system. A reasonable policy distinguishes by cause: a validation failure on the client's own input is safe to describe precisely, since the client already knows its own request, while an internal server error should return a generic `detail` to the client (something like \"an unexpected error occurred\") and log the full, specific detail only server-side."
+    },
+    {
+      "id": "card-g31c",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "idempotency-key",
+        "retries",
+        "post",
+        "reliability",
+        "rest"
+      ],
+      "prompt": "Given that a client cannot tell whether a dropped connection means its POST was processed or not, why is neither \"always retry\" nor \"never retry\" a safe default?",
+      "source": {
+        "path": "vault/api/rest/idempotency-keys-and-safe-retries.md",
+        "block": "card-g31c"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)",
+        "IETF Idempotency-Key HTTP Header Field (draft)"
+      ],
+      "answer": "Always retrying risks performing the operation twice if the original request actually succeeded server-side before the connection dropped. Never retrying risks losing the operation entirely if the request never reached the server or was never processed. Without more information, either choice can produce the wrong outcome for the client's actual intent."
+    },
+    {
+      "id": "card-rfsg",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "idempotency-key",
+        "retries",
+        "post",
+        "reliability",
+        "rest"
+      ],
+      "prompt": "An ___ is the fix: a unique value the client generates itself and attaches to the request, meant to identify one particular attempt at \"create this payment\" so that sending the same attempt twice is recognizable as the same attempt rather than two separate ones.",
+      "source": {
+        "path": "vault/api/rest/idempotency-keys-and-safe-retries.md",
+        "block": "card-rfsg"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)",
+        "IETF Idempotency-Key HTTP Header Field (draft)"
+      ],
+      "answer": "idempotency key"
+    },
+    {
+      "id": "card-wixc",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "idempotency-key",
+        "retries",
+        "post",
+        "reliability",
+        "rest"
+      ],
+      "prompt": "Why must the idempotency key be generated by the client rather than handed out by the server on an earlier response?",
+      "source": {
+        "path": "vault/api/rest/idempotency-keys-and-safe-retries.md",
+        "block": "card-wixc"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)",
+        "IETF Idempotency-Key HTTP Header Field (draft)"
+      ],
+      "answer": "Only the client knows whether a given request is a fresh operation or a retry of one it already attempted — the server has no way to distinguish a retry from a coincidentally identical new request by looking at the request alone. The key is how the client communicates that intent, so it has to originate wherever that intent lives."
+    },
+    {
+      "id": "card-95ic",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "idempotency-key",
+        "retries",
+        "post",
+        "reliability",
+        "rest"
+      ],
+      "prompt": "That record holds the key itself, a ___ capturing the body that came with it, and the response the request produced.",
+      "source": {
+        "path": "vault/api/rest/idempotency-keys-and-safe-retries.md",
+        "block": "card-95ic"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)",
+        "IETF Idempotency-Key HTTP Header Field (draft)"
+      ],
+      "answer": "request fingerprint"
+    },
+    {
+      "id": "card-exra",
+      "format": "recall",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "idempotency-key",
+        "retries",
+        "post",
+        "reliability",
+        "rest"
+      ],
+      "prompt": "When a server first processes a request carrying a new idempotency key, what three things does it need to store together, and roughly for how long? What does it do differently the next time it sees that same key?",
+      "source": {
+        "path": "vault/api/rest/idempotency-keys-and-safe-retries.md",
+        "block": "card-exra"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)",
+        "IETF Idempotency-Key HTTP Header Field (draft)"
+      ],
+      "answer": "It stores the key, a fingerprint of the request body that came with it, and the response the request produced. That record is kept for a bounded retention window — long enough to cover realistic retry delays, not indefinitely. On seeing the same key again within that window, the server does not repeat the work at all; it just returns the stored response from the first attempt."
+    },
+    {
+      "id": "card-cj4s",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "idempotency-key",
+        "retries",
+        "post",
+        "reliability",
+        "rest"
+      ],
+      "prompt": "A second request arrives reusing an idempotency key from an earlier request, but its body differs from what that key was originally recorded with. What should the server do?",
+      "source": {
+        "path": "vault/api/rest/idempotency-keys-and-safe-retries.md",
+        "block": "card-cj4s"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)",
+        "IETF Idempotency-Key HTTP Header Field (draft)"
+      ],
+      "choices": [
+        {
+          "text": "Reject it as a client error — reusing a key for a different request body is a bug, and the request must not be silently served the earlier response",
+          "correct": true
+        },
+        {
+          "text": "Serve the stored response from the original request, since the key matched",
+          "correct": false
+        },
+        {
+          "text": "Process the new body normally and overwrite the stored response under that key",
+          "correct": false
+        },
+        {
+          "text": "Merge the two request bodies and process the combination",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-ohx8",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "idempotency-key",
+        "retries",
+        "post",
+        "reliability",
+        "rest"
+      ],
+      "prompt": "How must a server handle two requests with the same idempotency key that arrive concurrently, before either has finished processing?",
+      "source": {
+        "path": "vault/api/rest/idempotency-keys-and-safe-retries.md",
+        "block": "card-ohx8"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)",
+        "IETF Idempotency-Key HTTP Header Field (draft)"
+      ],
+      "answer": "It must serialize them around that key — for example by having the second one block until the first finishes and then reuse its stored result, or by having the second one reject with a conflict — rather than letting both pass the \"is this key new?\" check at once and both perform the operation."
+    },
+    {
+      "id": "card-j73k",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "idempotency-key",
+        "retries",
+        "post",
+        "reliability",
+        "rest"
+      ],
+      "prompt": "What is the difference between the idempotency an idempotency key gives POST and the idempotent guarantee GET or PUT already has by definition?",
+      "source": {
+        "path": "vault/api/rest/idempotency-keys-and-safe-retries.md",
+        "block": "card-j73k"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)",
+        "IETF Idempotency-Key HTTP Header Field (draft)"
+      ],
+      "answer": "GET and PUT are idempotent as part of their HTTP semantics, with no extra machinery required to make repeating them safe. POST has no such built-in guarantee; an idempotency key only makes it behave idempotently at the application level, and only for as long as the key, fingerprint check, and stored-response lookup described above are actually in place — remove that machinery and POST loses the guarantee entirely."
+    },
+    {
+      "id": "card-2ufe",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "concurrency",
+        "conditional-requests",
+        "optimistic-locking",
+        "preconditions",
+        "rest"
+      ],
+      "prompt": "No error is raised anywhere in that sequence. Both writes succeed. Nothing in an access log distinguishes them from two unrelated, perfectly legitimate updates. This is the ___ problem, and what makes it dangerous is exactly that silence — there is no signal, at the time it happens, that anything went wrong at all.",
+      "source": {
+        "path": "vault/api/rest/optimistic-concurrency-and-conditional-writes.md",
+        "block": "card-2ufe"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "lost update"
+    },
+    {
+      "id": "card-eeq1",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "concurrency",
+        "conditional-requests",
+        "optimistic-locking",
+        "preconditions",
+        "rest"
+      ],
+      "prompt": "Why is a lost update dangerous in a way that a rejected write is not?",
+      "source": {
+        "path": "vault/api/rest/optimistic-concurrency-and-conditional-writes.md",
+        "block": "card-eeq1"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "A rejected write is visible — the client gets an error and knows to react. A lost update produces no error on either PUT; both look like ordinary successful writes, so nothing tells either client that its change was silently discarded by the other."
+    },
+    {
+      "id": "card-zbru",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "concurrency",
+        "conditional-requests",
+        "optimistic-locking",
+        "preconditions",
+        "rest"
+      ],
+      "prompt": "Why does pessimistic locking fit poorly with an API made of independent, stateless requests, rather than being merely inconvenient?",
+      "source": {
+        "path": "vault/api/rest/optimistic-concurrency-and-conditional-writes.md",
+        "block": "card-zbru"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "Holding a lock across requests requires the server to keep session state tying a lock to whichever client acquired it, and a client that disappears before releasing it — crashing or simply never sending the follow-up request — leaves that resource locked indefinitely, with nothing left to release it."
+    },
+    {
+      "id": "card-tnpt",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "concurrency",
+        "conditional-requests",
+        "optimistic-locking",
+        "preconditions",
+        "rest"
+      ],
+      "prompt": "The mechanism for a PUT is the ___ header, carrying the validator the client read earlier as a precondition on the write itself — \"apply this only if the resource still matches what I last saw.\"",
+      "source": {
+        "path": "vault/api/rest/optimistic-concurrency-and-conditional-writes.md",
+        "block": "card-tnpt"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "If-Match"
+    },
+    {
+      "id": "card-y6gi",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "concurrency",
+        "conditional-requests",
+        "optimistic-locking",
+        "preconditions",
+        "rest"
+      ],
+      "prompt": "If the resource has moved on since that read, the validator sent in If-Match no longer matches, and the server must refuse the write rather than silently proceeding with stale assumptions. That refusal has its own status: ___, meaning the precondition failed and the write was not applied to the resource at all.",
+      "source": {
+        "path": "vault/api/rest/optimistic-concurrency-and-conditional-writes.md",
+        "block": "card-y6gi"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "412"
+    },
+    {
+      "id": "card-rfyv",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "concurrency",
+        "conditional-requests",
+        "optimistic-locking",
+        "preconditions",
+        "rest"
+      ],
+      "prompt": "What does a 412 response to a conditional PUT tell the client about the write it sent?",
+      "source": {
+        "path": "vault/api/rest/optimistic-concurrency-and-conditional-writes.md",
+        "block": "card-rfyv"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "That the precondition — the If-Match validator — did not match the resource's current state, and the server therefore did not apply the write at all. The resource is unchanged by that request."
+    },
+    {
+      "id": "card-qmw9",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "concurrency",
+        "conditional-requests",
+        "optimistic-locking",
+        "preconditions",
+        "rest"
+      ],
+      "prompt": "How does a client use If-None-Match to make a create fail if the resource already exists, rather than silently overwriting it?",
+      "source": {
+        "path": "vault/api/rest/optimistic-concurrency-and-conditional-writes.md",
+        "block": "card-qmw9"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "It sends If-None-Match with a value of \"*\", which matches any existing representation at all. The server applies the write only if no representation currently exists at that URL, and returns a precondition failure instead of creating over — or replacing — whatever is already there."
+    },
+    {
+      "id": "card-8l2y",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "concurrency",
+        "conditional-requests",
+        "optimistic-locking",
+        "preconditions",
+        "rest"
+      ],
+      "prompt": "A client's conditional PUT (with If-Match) gets back a 412. What should the client do next?",
+      "source": {
+        "path": "vault/api/rest/optimistic-concurrency-and-conditional-writes.md",
+        "block": "card-8l2y"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "choices": [
+        {
+          "text": "Re-read the resource to get its current state and validator, re-apply its intended change on top of that, and retry the write with the new validator",
+          "correct": true
+        },
+        {
+          "text": "Immediately resend the exact same PUT request unchanged",
+          "correct": false
+        },
+        {
+          "text": "Treat 412 like a transient server error and retry after a short backoff with no other changes",
+          "correct": false
+        },
+        {
+          "text": "Fall back to a plain PUT with no If-Match header, since the conditional one failed",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-uqzq",
+      "format": "recall",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "concurrency",
+        "conditional-requests",
+        "optimistic-locking",
+        "preconditions",
+        "rest"
+      ],
+      "prompt": "Walk through the full sequence, from a client's initial GET through a rejected write and its recovery: what does the client hold after the GET, what does it send with its PUT, what does a 412 mean about that write, and what must the client do before it can succeed?",
+      "source": {
+        "path": "vault/api/rest/optimistic-concurrency-and-conditional-writes.md",
+        "block": "card-uqzq"
+      },
+      "citations": [
+        "RFC 9110 (HTTP Semantics)"
+      ],
+      "answer": "The client's GET returns the resource along with its current validator. When the client PUTs its edited copy back, it sends that same validator in If-Match, asking the server to apply the write only if the resource still matches it. A 412 means the resource changed underneath the client since its GET, and the write was not applied. The client cannot just resend the same PUT — it must re-read the resource to see the new state and validator, re-apply its intended change on top of that current state, and retry the write with the fresh validator."
+    },
+    {
+      "id": "card-gmee",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "representations",
+        "media-types",
+        "content-negotiation",
+        "api-design"
+      ],
+      "prompt": "A resource is the underlying concept an API exposes — an order, a customer, the current state of a search — independent of any particular format. What actually crosses the wire in response to a request is a ___ of that resource: a specific byte sequence, in a specific format, capturing the resource's state at that moment.",
+      "source": {
+        "path": "vault/api/rest/representations-and-media-types.md",
+        "block": "card-gmee"
+      },
+      "citations": [
+        "Fielding, Architectural Styles and the Design of Network-based Software Architectures, Ch. 5"
+      ],
+      "answer": "representation"
+    },
+    {
+      "id": "card-sl0v",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "representations",
+        "media-types",
+        "content-negotiation",
+        "api-design"
+      ],
+      "prompt": "Why can the same order resource legitimately have both an `application/json` representation and a `text/html` representation returned from the same URI, without either one being \"the real\" order?",
+      "source": {
+        "path": "vault/api/rest/representations-and-media-types.md",
+        "block": "card-sl0v"
+      },
+      "citations": [
+        "Fielding, Architectural Styles and the Design of Network-based Software Architectures, Ch. 5"
+      ],
+      "answer": "Because the resource is the order's state as a concept, not any particular encoding of it; JSON and HTML are just two different serializations of that same underlying state, produced for different consumers (a program versus a browser). Neither byte stream *is* the resource — each is one representation of it, selected via content negotiation, and the server is free to produce further representations (XML, a PDF invoice) without the resource itself changing at all."
+    },
+    {
+      "id": "card-wgoj",
+      "format": "recall",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "representations",
+        "media-types",
+        "content-negotiation",
+        "api-design"
+      ],
+      "prompt": "A teammate says \"the resource at `/orders/42` is just the JSON object it returns.\" Explain what's wrong with that statement, using the resource/representation distinction.",
+      "source": {
+        "path": "vault/api/rest/representations-and-media-types.md",
+        "block": "card-wgoj"
+      },
+      "citations": [
+        "Fielding, Architectural Styles and the Design of Network-based Software Architectures, Ch. 5"
+      ],
+      "answer": "The JSON object is one representation of the resource, produced for that particular request, not the resource itself. The resource is the order's actual state as a concept on the server; that state existed before this request and can be serialized into more than one representation — JSON, XML, an HTML page — at the server's discretion, without the underlying resource ever having been \"the JSON.\" Treating one representation as identical to the resource breaks down the moment a second, differently formatted representation of the same resource has to exist."
+    },
+    {
+      "id": "card-9pxg",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "representations",
+        "media-types",
+        "content-negotiation",
+        "api-design"
+      ],
+      "prompt": "A representation's shape isn't left to guesswork: the contract for what a given representation must structurally look like is declared by its ___, the same mechanism (`Content-Type` and `Accept`) that HTTP uses to negotiate which one is being sent or requested.",
+      "source": {
+        "path": "vault/api/rest/representations-and-media-types.md",
+        "block": "card-9pxg"
+      },
+      "citations": [
+        "Fielding, Architectural Styles and the Design of Network-based Software Architectures, Ch. 5"
+      ],
+      "answer": "media type"
+    },
+    {
+      "id": "card-wwc6",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "representations",
+        "media-types",
+        "content-negotiation",
+        "api-design"
+      ],
+      "prompt": "What does declaring a representation's media type as `application/json` actually guarantee about its content, and what does it leave completely unspecified?",
+      "source": {
+        "path": "vault/api/rest/representations-and-media-types.md",
+        "block": "card-wwc6"
+      },
+      "citations": [
+        "Fielding, Architectural Styles and the Design of Network-based Software Architectures, Ch. 5"
+      ],
+      "answer": "It guarantees only that the bytes parse as syntactically valid JSON — an object, array, string, number, boolean, or null, correctly nested and quoted. It says nothing about which fields exist, which are required, or what any of them mean; that has to be established separately, whether through documentation, a JSON Schema, or convention shared out of band with whoever consumes the representation."
+    },
+    {
+      "id": "card-ii7d",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "representations",
+        "media-types",
+        "content-negotiation",
+        "api-design"
+      ],
+      "prompt": "A team defines a custom media type, `application/vnd.example.order+json`, for its order representations instead of using the generic `application/json`. What does the custom media type buy them that the generic one does not?",
+      "source": {
+        "path": "vault/api/rest/representations-and-media-types.md",
+        "block": "card-ii7d"
+      },
+      "citations": [
+        "Fielding, Architectural Styles and the Design of Network-based Software Architectures, Ch. 5"
+      ],
+      "choices": [
+        {
+          "text": "A single negotiable identifier for a specific, versionable field contract, so a client can request or detect exactly that shape instead of just \"some JSON\"",
+          "correct": true
+        },
+        {
+          "text": "Faster parsing, since custom media types skip standard JSON parsing rules",
+          "correct": false
+        },
+        {
+          "text": "It is required by RFC 9110 for any resource with more than one field",
+          "correct": false
+        },
+        {
+          "text": "It removes the need for an Accept header entirely",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-3k3z",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "representations",
+        "media-types",
+        "content-negotiation",
+        "api-design"
+      ],
+      "prompt": "What trade-off does a team accept when it chooses a custom vendor media type for its representations instead of a generic standard one?",
+      "source": {
+        "path": "vault/api/rest/representations-and-media-types.md",
+        "block": "card-3k3z"
+      },
+      "citations": [
+        "Fielding, Architectural Styles and the Design of Network-based Software Architectures, Ch. 5"
+      ],
+      "answer": "It gains a precise, negotiable contract for exactly one shape of data — useful for distinguishing versions or variants of a resource's representation — but loses the broad, out-of-the-box interoperability a generic media type gets from every existing HTTP client, proxy, and tool already knowing what to do with it. Some APIs fold a version number into the custom type itself as one way of managing that contract's evolution over time, though how far to take that is a separate design question on its own."
+    },
+    {
+      "id": "card-ml8v",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "resource-modelling",
+        "uri-design",
+        "identifiers",
+        "api-design"
+      ],
+      "prompt": "A URI path should read as a ___ — the resource itself — never as a verb describing an operation on that resource.",
+      "source": {
+        "path": "vault/api/rest/resource-modelling-and-uri-design.md",
+        "block": "card-ml8v"
+      },
+      "citations": [
+        "Fielding, Architectural Styles and the Design of Network-based Software Architectures, Ch. 5"
+      ],
+      "answer": "noun"
+    },
+    {
+      "id": "card-m5dx",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "resource-modelling",
+        "uri-design",
+        "identifiers",
+        "api-design"
+      ],
+      "prompt": "What is the difference between a collection resource and an item resource, and how does that difference typically show up in a URI?",
+      "source": {
+        "path": "vault/api/rest/resource-modelling-and-uri-design.md",
+        "block": "card-m5dx"
+      },
+      "citations": [
+        "Fielding, Architectural Styles and the Design of Network-based Software Architectures, Ch. 5"
+      ],
+      "answer": "A collection resource represents the set of all resources of a kind — for example every order — while an item resource is one specific member of that set. The convention is a plural collection path, with the item's identifier appended as a further path segment: `/orders` for the collection, `/orders/42` for one member of it. `GET` on the collection lists members; `GET` on the item retrieves that one; `POST` on the collection is the conventional way to create a new member, since the client doesn't yet know the identifier a fresh item will get."
+    },
+    {
+      "id": "card-n953",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "resource-modelling",
+        "uri-design",
+        "identifiers",
+        "api-design"
+      ],
+      "prompt": "An API currently identifies orders by their auto-incrementing database primary key, e.g. `/orders/8842`. A reviewer flags this as a design decision worth reconsidering rather than a safe default. What is the strongest reason for that concern?",
+      "source": {
+        "path": "vault/api/rest/resource-modelling-and-uri-design.md",
+        "block": "card-n953"
+      },
+      "citations": [
+        "Fielding, Architectural Styles and the Design of Network-based Software Architectures, Ch. 5"
+      ],
+      "choices": [
+        {
+          "text": "It leaks internal implementation detail — competitors or attackers can estimate order volume and growth rate, and the API is now coupled to that column never changing shape",
+          "correct": true
+        },
+        {
+          "text": "Numeric identifiers are invalid in URIs and must be percent-encoded",
+          "correct": false
+        },
+        {
+          "text": "Database primary keys are always slower to look up than a UUID",
+          "correct": false
+        },
+        {
+          "text": "REST forbids exposing any server-generated value in a URI",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-5rte",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "resource-modelling",
+        "uri-design",
+        "identifiers",
+        "api-design"
+      ],
+      "prompt": "An ___ — a random or hashed token with no guessable structure — avoids that leak entirely, at the cost of being unreadable and unguessable by a human working with the API directly.",
+      "source": {
+        "path": "vault/api/rest/resource-modelling-and-uri-design.md",
+        "block": "card-5rte"
+      },
+      "citations": [
+        "Fielding, Architectural Styles and the Design of Network-based Software Architectures, Ch. 5"
+      ],
+      "answer": "opaque identifier"
+    },
+    {
+      "id": "card-0de0",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "resource-modelling",
+        "uri-design",
+        "identifiers",
+        "api-design"
+      ],
+      "prompt": "What must hold true of a natural key for it to be a safe choice as a public resource identifier?",
+      "source": {
+        "path": "vault/api/rest/resource-modelling-and-uri-design.md",
+        "block": "card-0de0"
+      },
+      "citations": [
+        "Fielding, Architectural Styles and the Design of Network-based Software Architectures, Ch. 5"
+      ],
+      "answer": "Its uniqueness has to be guaranteed permanently by the domain itself, and it must not be a value the owning user or system is allowed to change later — otherwise a resource's identifier would shift out from under anyone who had linked to or stored it."
+    },
+    {
+      "id": "card-xocv",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "resource-modelling",
+        "uri-design",
+        "identifiers",
+        "api-design"
+      ],
+      "prompt": "When should a sub-resource nested under its parent, like `/orders/42/line-items`, be promoted to a top-level resource addressed directly, like `/line-items/{id}`?",
+      "source": {
+        "path": "vault/api/rest/resource-modelling-and-uri-design.md",
+        "block": "card-xocv"
+      },
+      "citations": [
+        "Fielding, Architectural Styles and the Design of Network-based Software Architectures, Ch. 5"
+      ],
+      "answer": "When it develops an identity and a lifecycle independent of that one parent — callers need to fetch, link, or reference a specific line item without knowing which order it belongs to, or the same item conceptually needs to be reachable, queried, or modified outside its parent's context. As long as a sub-resource is only ever meaningful in the context of exactly one parent and is never addressed on its own, nesting it one level deep is fine; nesting several levels deep (`/orders/42/line-items/7/adjustments/3`) is usually a sign that at least one of those levels should have been promoted, since a client now has to carry the whole chain of parent ids just to name one adjustment."
+    },
+    {
+      "id": "card-43cg",
+      "format": "recall",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "resource-modelling",
+        "uri-design",
+        "identifiers",
+        "api-design"
+      ],
+      "prompt": "Give an example of an operation that is not naturally a resource to be created, replaced, or deleted, and describe the pragmatic way REST APIs commonly model it in the URI despite the noun-not-verb convention.",
+      "source": {
+        "path": "vault/api/rest/resource-modelling-and-uri-design.md",
+        "block": "card-43cg"
+      },
+      "citations": [
+        "Fielding, Architectural Styles and the Design of Network-based Software Architectures, Ch. 5"
+      ],
+      "answer": "Something like canceling an order, resetting a password, or resending a verification email doesn't map onto a resource being created, fully replaced, or removed — it's an action with a side effect. The common pragmatic approach is a `POST` to a path that names the action as a sub-resource of the noun it acts on, such as `/orders/42/cancel` or `/users/9/password-resets`: the path still hangs off a real resource, and `POST`'s \"process this, with server-defined effect\" semantics fit an action far better than contorting a `PUT` or `PATCH` to represent it."
+    },
+    {
+      "id": "card-p05x",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "architectural-style",
+        "uniform-interface",
+        "statelessness",
+        "api-design"
+      ],
+      "prompt": "Fielding's dissertation does not define REST as a set of technologies; it defines REST as an ___ — constraints applied to a base style, each chosen deliberately.",
+      "source": {
+        "path": "vault/api/rest/rest-constraints-and-the-uniform-interface.md",
+        "block": "card-p05x"
+      },
+      "citations": [
+        "Fielding, Architectural Styles and the Design of Network-based Software Architectures, Ch. 5"
+      ],
+      "answer": "architectural style"
+    },
+    {
+      "id": "card-09nm",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "architectural-style",
+        "uniform-interface",
+        "statelessness",
+        "api-design"
+      ],
+      "prompt": "Why is REST's statelessness constraint an architectural requirement on the server's design, rather than merely a description of how the underlying transport happens to behave?",
+      "source": {
+        "path": "vault/api/rest/rest-constraints-and-the-uniform-interface.md",
+        "block": "card-09nm"
+      },
+      "citations": [
+        "Fielding, Architectural Styles and the Design of Network-based Software Architectures, Ch. 5"
+      ],
+      "answer": "Because REST demands that *no server-side session state survive between requests* — any request must be self-contained, carrying everything needed to service it. That is a design discipline imposed on the application, chosen because it lets any server in a pool handle any client's next request and lets intermediaries sit transparently between them, which is what makes horizontal scaling and layered caching or load-balancing actually work. A protocol happening not to carry state on the wire says nothing about whether the application built on top of it still keeps a session somewhere on the server."
+    },
+    {
+      "id": "card-hpuy",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "architectural-style",
+        "uniform-interface",
+        "statelessness",
+        "api-design"
+      ],
+      "prompt": "What are the four sub-constraints Fielding groups under REST's uniform interface?",
+      "source": {
+        "path": "vault/api/rest/rest-constraints-and-the-uniform-interface.md",
+        "block": "card-hpuy"
+      },
+      "citations": [
+        "Fielding, Architectural Styles and the Design of Network-based Software Architectures, Ch. 5"
+      ],
+      "answer": "Identification of resources; manipulation of resources through representations; self-descriptive messages; and hypermedia as the engine of application state (HATEOAS)."
+    },
+    {
+      "id": "card-sho0",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "architectural-style",
+        "uniform-interface",
+        "statelessness",
+        "api-design"
+      ],
+      "prompt": "A message that satisfies \"self-descriptive messages\" must carry enough information for a recipient to process it without any ___ knowledge beyond the message itself.",
+      "source": {
+        "path": "vault/api/rest/rest-constraints-and-the-uniform-interface.md",
+        "block": "card-sho0"
+      },
+      "citations": [
+        "Fielding, Architectural Styles and the Design of Network-based Software Architectures, Ch. 5"
+      ],
+      "answer": "out-of-band"
+    },
+    {
+      "id": "card-1rx2",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "architectural-style",
+        "uniform-interface",
+        "statelessness",
+        "api-design"
+      ],
+      "prompt": "Which single constraint in Fielding's REST style is explicitly optional rather than required of a conforming architecture?",
+      "source": {
+        "path": "vault/api/rest/rest-constraints-and-the-uniform-interface.md",
+        "block": "card-1rx2"
+      },
+      "citations": [
+        "Fielding, Architectural Styles and the Design of Network-based Software Architectures, Ch. 5"
+      ],
+      "choices": [
+        {
+          "text": "Code-on-demand",
+          "correct": true
+        },
+        {
+          "text": "Statelessness",
+          "correct": false
+        },
+        {
+          "text": "Uniform interface",
+          "correct": false
+        },
+        {
+          "text": "Layered system",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-q2et",
+      "format": "recall",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "architectural-style",
+        "uniform-interface",
+        "statelessness",
+        "api-design"
+      ],
+      "prompt": "Explain what the layered-system constraint requires of a client and of the components between a client and an origin server, and name one capability this buys a deployment that a strictly direct client-to-server connection would not have.",
+      "source": {
+        "path": "vault/api/rest/rest-constraints-and-the-uniform-interface.md",
+        "block": "card-q2et"
+      },
+      "citations": [
+        "Fielding, Architectural Styles and the Design of Network-based Software Architectures, Ch. 5"
+      ],
+      "answer": "A client must be unable to tell, from the interaction alone, whether it is talking to the origin server or to some intermediary, and each component in the chain can only interact with the layer immediately next to it rather than reaching past it. This lets operators insert shared caches, load balancers, or security gateways transparently, and lets a legacy service sit behind a translating gateway, all without any client-side change."
+    },
+    {
+      "id": "card-y8kz",
+      "format": "recall",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "architectural-style",
+        "uniform-interface",
+        "statelessness",
+        "api-design"
+      ],
+      "prompt": "Fielding's REST is a set of six constraints, yet almost no production \"REST API\" satisfies all of them. Given that, what is the more useful question to ask about a given API than \"is it RESTfully pure?\"",
+      "source": {
+        "path": "vault/api/rest/rest-constraints-and-the-uniform-interface.md",
+        "block": "card-y8kz"
+      },
+      "citations": [
+        "Fielding, Architectural Styles and the Design of Network-based Software Architectures, Ch. 5"
+      ],
+      "answer": "Which specific constraints the API is choosing not to honor — for instance dropping hypermedia-driven navigation for a fixed, documented set of endpoints, or relaxing statelessness for a performance shortcut — and what capability that trade-off costs the system (independent client evolution, transparent intermediaries, horizontal scalability) in exchange for whatever it gains. \"RESTful\" is a spectrum of deliberate trades, not a pass/fail label."
+    },
+    {
+      "id": "card-9ao9",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "hateoas",
+        "richardson-maturity-model",
+        "hypermedia",
+        "api-design"
+      ],
+      "prompt": "What does level 0 of the maturity model look like, and what role does HTTP actually play in it?",
+      "source": {
+        "path": "vault/api/rest/richardson-maturity-and-hateoas.md",
+        "block": "card-9ao9"
+      },
+      "citations": [
+        "Richardson & Ruby, RESTful Web Services",
+        "RFC 9110"
+      ],
+      "answer": "A single endpoint handles every kind of request, typically via POST, with the operation and its target encoded entirely in the body. HTTP is used only as a transport tunnel — it doesn't contribute any of its own routing or verb semantics to the design."
+    },
+    {
+      "id": "card-kdeb",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "hateoas",
+        "richardson-maturity-model",
+        "hypermedia",
+        "api-design"
+      ],
+      "prompt": "What single move separates level 1 from level 2 of the maturity model?",
+      "source": {
+        "path": "vault/api/rest/richardson-maturity-and-hateoas.md",
+        "block": "card-kdeb"
+      },
+      "citations": [
+        "Richardson & Ruby, RESTful Web Services",
+        "RFC 9110"
+      ],
+      "answer": "Level 2 starts using HTTP's own verbs and status codes as they're actually defined to mean something, rather than using HTTP only as a generic transport for a payload that carries all the real meaning itself."
+    },
+    {
+      "id": "card-s75j",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "hateoas",
+        "richardson-maturity-model",
+        "hypermedia",
+        "api-design"
+      ],
+      "prompt": "An API assigns a distinct URL to every resource and issues correct, meaningful HTTP status codes for every outcome, but its verbs and status codes are exactly what you'd expect from their definitions — nothing here yet tells a client what it's allowed to do next beyond what it already assumed. Which level of the Richardson Maturity Model does this sit at?",
+      "source": {
+        "path": "vault/api/rest/richardson-maturity-and-hateoas.md",
+        "block": "card-s75j"
+      },
+      "citations": [
+        "Richardson & Ruby, RESTful Web Services",
+        "RFC 9110"
+      ],
+      "choices": [
+        {
+          "text": "Level 2",
+          "correct": true
+        },
+        {
+          "text": "Level 1",
+          "correct": false
+        },
+        {
+          "text": "Level 3",
+          "correct": false
+        },
+        {
+          "text": "Level 0",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-eou1",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "hateoas",
+        "richardson-maturity-model",
+        "hypermedia",
+        "api-design"
+      ],
+      "prompt": "At the top of the ladder sits ___, where responses stop being plain data and start carrying hypermedia controls — one of the elements the uniform interface calls for. A response doesn't just report a resource's state; it also embeds information about what the client can legitimately do from here.",
+      "source": {
+        "path": "vault/api/rest/richardson-maturity-and-hateoas.md",
+        "block": "card-eou1"
+      },
+      "citations": [
+        "Richardson & Ruby, RESTful Web Services",
+        "RFC 9110"
+      ],
+      "answer": "level 3"
+    },
+    {
+      "id": "card-4g0z",
+      "format": "cloze",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "hateoas",
+        "richardson-maturity-model",
+        "hypermedia",
+        "api-design"
+      ],
+      "prompt": "That idea has a name: ___.",
+      "source": {
+        "path": "vault/api/rest/richardson-maturity-and-hateoas.md",
+        "block": "card-4g0z"
+      },
+      "citations": [
+        "Richardson & Ruby, RESTful Web Services",
+        "RFC 9110"
+      ],
+      "answer": "HATEOAS"
+    },
+    {
+      "id": "card-nx1v",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "hateoas",
+        "richardson-maturity-model",
+        "hypermedia",
+        "api-design"
+      ],
+      "prompt": "What does it mean, concretely, for a response to embed HATEOAS-style hypermedia controls?",
+      "source": {
+        "path": "vault/api/rest/richardson-maturity-and-hateoas.md",
+        "block": "card-nx1v"
+      },
+      "citations": [
+        "Richardson & Ruby, RESTful Web Services",
+        "RFC 9110"
+      ],
+      "answer": "The response body includes links (or link-like descriptions) naming the actions available from the current state, so the client reads those out of the response instead of relying on a URI it already knew how to build."
+    },
+    {
+      "id": "card-v9xf",
+      "format": "qa",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "hateoas",
+        "richardson-maturity-model",
+        "hypermedia",
+        "api-design"
+      ],
+      "prompt": "What is the specific payoff HATEOAS is supposed to deliver, and what does it assume about how clients navigate?",
+      "source": {
+        "path": "vault/api/rest/richardson-maturity-and-hateoas.md",
+        "block": "card-v9xf"
+      },
+      "citations": [
+        "Richardson & Ruby, RESTful Web Services",
+        "RFC 9110"
+      ],
+      "answer": "It's supposed to let a server change its URIs freely without breaking existing clients, on the assumption that clients navigate purely by following links returned in responses rather than by constructing URIs from a template they hard-coded in advance."
+    },
+    {
+      "id": "card-luus",
+      "format": "recall",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "hateoas",
+        "richardson-maturity-model",
+        "hypermedia",
+        "api-design"
+      ],
+      "prompt": "Level 3 / HATEOAS is uncommon in real APIs even though it's the top of the maturity ladder. Give at least two concrete reasons this happens, beyond \"nobody bothered.\"",
+      "source": {
+        "path": "vault/api/rest/richardson-maturity-and-hateoas.md",
+        "block": "card-luus"
+      },
+      "citations": [
+        "Richardson & Ruby, RESTful Web Services",
+        "RFC 9110"
+      ],
+      "answer": "Clients tend to hard-code URIs anyway, because reading and following links on every call is more work than remembering a path once. Client tooling and code generators (SDK generators, typed API clients) are largely built around fixed, known endpoints, not around dynamically discovered ones. And the decoupling benefit HATEOAS promises rarely shows up in practice: a client still has to understand what a given link relation *means* in order to do anything useful with it, and that understanding already couples the client to the server's semantics — so moving the URI saves less than it looks like it should."
+    },
+    {
+      "id": "card-yhqg",
+      "format": "mcq",
+      "topic": "api-design",
+      "category": "api-rest",
+      "tags": [
+        "rest",
+        "hateoas",
+        "richardson-maturity-model",
+        "hypermedia",
+        "api-design"
+      ],
+      "prompt": "Which statement best captures why HATEOAS's decoupling promise often fails to fully materialize, even in a correctly implemented level-3 API?",
+      "source": {
+        "path": "vault/api/rest/richardson-maturity-and-hateoas.md",
+        "block": "card-yhqg"
+      },
+      "citations": [
+        "Richardson & Ruby, RESTful Web Services",
+        "RFC 9110"
+      ],
+      "choices": [
+        {
+          "text": "A client still has to understand what a given link relation means to act on it, and that semantic understanding already couples it to the server — moving the URI itself saves comparatively little",
+          "correct": true
+        },
+        {
+          "text": "HTTP has no mechanism for including links in a response body at all",
+          "correct": false
+        },
+        {
+          "text": "Search engines refuse to index APIs that use hypermedia links",
+          "correct": false
+        },
+        {
+          "text": "Level 3 requires a different transport protocol than levels 0-2",
+          "correct": false
+        }
+      ]
+    },
     {
       "id": "card-6fmp",
       "format": "qa",
