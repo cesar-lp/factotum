@@ -29,6 +29,7 @@ export type RouteDecision =
   | { kind: 'review' }
   | { kind: 'review-extend' }
   | { kind: 'focus'; category: string }
+  | { kind: 'note'; path: string; cardId: string | null }
   | { kind: 'topics' }
   | { kind: 'settings' }
   | { kind: 'dashboard' };
@@ -53,6 +54,47 @@ function focusCategory(hash: string): string | null {
   try {
     const decoded = decodeURIComponent(raw);
     return decoded === '' ? null : decoded;
+  } catch {
+    return null;
+  }
+}
+
+export const NOTE_PREFIX = '#note/';
+
+/** Card ids are always exactly this shape, which is what makes the split unambiguous. */
+const CARD_ID = /^card-[a-z0-9]{4}$/;
+
+/**
+ * Builds the hash for the note viewer. The optional arrived-from card is
+ * appended as a trailing segment rather than a leading one: vault paths
+ * contain `/` themselves, so only the card id can safely be the last
+ * segment.
+ */
+export function noteHash(path: string, cardId?: string): string {
+  const base = `${NOTE_PREFIX}${encodeURIComponent(path)}`;
+  return cardId ? `${base}/${cardId}` : base;
+}
+
+/**
+ * Decodes a `#note/...` hash. Returns null for a bare prefix, an empty
+ * path, and a malformed percent-escape -- decodeURIComponent throws a
+ * URIError on input like `%E0%A4%A`, and a hash is plain client state that
+ * arrives hand-edited, from stale history, and from bookmarks.
+ */
+function noteTarget(hash: string): { path: string; cardId: string | null } | null {
+  const raw = hash.slice(NOTE_PREFIX.length);
+  if (raw === '') return null;
+
+  const slash = raw.lastIndexOf('/');
+  const trailing = slash >= 0 ? raw.slice(slash + 1) : '';
+  const hasCard = CARD_ID.test(trailing);
+  const encodedPath = hasCard ? raw.slice(0, slash) : raw;
+  if (encodedPath === '') return null;
+
+  try {
+    const path = decodeURIComponent(encodedPath);
+    if (path === '') return null;
+    return { path, cardId: hasCard ? trailing : null };
   } catch {
     return null;
   }
@@ -92,6 +134,16 @@ export function decideRoute(hash: string, state: DashboardState): RouteDecision 
     if (category !== null && hasFocusableCards(state.topics, category)) {
       return { kind: 'focus', category };
     }
+    return { kind: 'dashboard' };
+  }
+
+  // Not validated against the deck here, unlike focus: the note set lives in
+  // notes.json, which is fetched lazily and may not be loaded yet. The
+  // viewer resolves the path itself and renders a not-found state, which it
+  // needs anyway for a note deleted since the hash was bookmarked.
+  if (hash.startsWith(NOTE_PREFIX)) {
+    const target = noteTarget(hash);
+    if (target) return { kind: 'note', path: target.path, cardId: target.cardId };
     return { kind: 'dashboard' };
   }
 

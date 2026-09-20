@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { decideRoute, focusHash, type DashboardState } from '../src/route.js';
+import { decideRoute, focusHash, noteHash, type DashboardState } from '../src/route.js';
 import type { TopicSummary } from '../src/topics.js';
 import type { StoredCard } from '../src/db/schema.js';
 
@@ -119,5 +119,52 @@ describe('focusHash', () => {
     const s = state([], [], topics('data systems'));
     expect(decideRoute(focusHash('data systems'), s))
       .toEqual({ kind: 'focus', category: 'data systems' });
+  });
+});
+
+describe('#note routing', () => {
+  const s = () => state([], []);
+
+  it('routes a note hash to the note screen', () => {
+    expect(decideRoute(noteHash('vault/db/consensus.md'), s()))
+      .toEqual({ kind: 'note', path: 'vault/db/consensus.md', cardId: null });
+  });
+
+  it('carries an arrived-from card id', () => {
+    expect(decideRoute(noteHash('vault/db/consensus.md', 'card-ubdh'), s()))
+      .toEqual({ kind: 'note', path: 'vault/db/consensus.md', cardId: 'card-ubdh' });
+  });
+
+  it('splits on the LAST segment, since vault paths contain slashes', () => {
+    // THE parsing hazard: 'vault/aws/iam/conditions.md' has three slashes
+    // of its own, so the card id must be taken from the end, not the start.
+    expect(decideRoute('#note/vault%2Faws%2Fiam%2Fconditions.md/card-ab12', s()))
+      .toEqual({ kind: 'note', path: 'vault/aws/iam/conditions.md', cardId: 'card-ab12' });
+  });
+
+  it('treats a trailing segment that is not a card id as part of nothing', () => {
+    // Only ^card-[a-z0-9]{4} is a card id. Anything else is not one, and the
+    // whole remainder is the path.
+    expect(decideRoute('#note/vault%2Fa.md', s()))
+      .toEqual({ kind: 'note', path: 'vault/a.md', cardId: null });
+  });
+
+  it('falls back to the dashboard on a bare #note/', () => {
+    expect(decideRoute('#note/', s())).toEqual({ kind: 'dashboard' });
+  });
+
+  it('falls back to the dashboard on a malformed percent-escape', () => {
+    // decodeURIComponent throws a URIError on input like %E0%A4%A, and a
+    // hash is plain client state that can arrive hand-edited.
+    expect(decideRoute('#note/%E0%A4%A', s())).toEqual({ kind: 'dashboard' });
+  });
+});
+
+describe('noteHash', () => {
+  it('round-trips a path containing slashes', () => {
+    const hash = noteHash('vault/aws/iam/conditions.md');
+    expect(decideRoute(hash, state([], []))).toEqual({
+      kind: 'note', path: 'vault/aws/iam/conditions.md', cardId: null
+    });
   });
 });
