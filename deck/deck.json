@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-20T18:05:53.262Z",
+  "generatedAt": "2026-09-20T18:35:21.581Z",
   "cards": [
     {
       "id": "card-hdu0",
@@ -13643,6 +13643,2158 @@
         "AWS Developer Guide — Amazon Simple Queue Service, 'Amazon SQS visibility timeout'"
       ],
       "answer": "ChangeMessageVisibility."
+    },
+    {
+      "id": "card-ggx9",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc-dns",
+        "route53",
+        "private-hosted-zone",
+        "split-horizon"
+      ],
+      "prompt": "What IP address does the Amazon-provided DNS resolver for a VPC live at, relative to the VPC's own CIDR block?",
+      "source": {
+        "path": "vault/aws/networking/dns-in-a-vpc.md",
+        "block": "card-ggx9"
+      },
+      "citations": [
+        "Amazon VPC User Guide",
+        "Amazon Route 53 Developer Guide"
+      ],
+      "answer": "The VPC's base network address plus two — a VPC carved from 10.0.0.0/16 has its resolver reachable at 10.0.0.2, informally \"the .2 resolver.\""
+    },
+    {
+      "id": "card-pnup",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc-dns",
+        "route53",
+        "private-hosted-zone",
+        "split-horizon"
+      ],
+      "prompt": "___ decides whether that Amazon-provided resolver answers queries at all inside the VPC.",
+      "source": {
+        "path": "vault/aws/networking/dns-in-a-vpc.md",
+        "block": "card-pnup"
+      },
+      "citations": [
+        "Amazon VPC User Guide",
+        "Amazon Route 53 Developer Guide"
+      ],
+      "answer": "enableDnsSupport"
+    },
+    {
+      "id": "card-cdr9",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc-dns",
+        "route53",
+        "private-hosted-zone",
+        "split-horizon"
+      ],
+      "prompt": "___ decides a completely different thing: whether instances launched in the VPC are assigned public DNS hostnames in the first place. It says nothing about whether anything inside the VPC can resolve names.",
+      "source": {
+        "path": "vault/aws/networking/dns-in-a-vpc.md",
+        "block": "card-cdr9"
+      },
+      "citations": [
+        "Amazon VPC User Guide",
+        "Amazon Route 53 Developer Guide"
+      ],
+      "answer": "enableDnsHostnames"
+    },
+    {
+      "id": "card-ylu6",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc-dns",
+        "route53",
+        "private-hosted-zone",
+        "split-horizon"
+      ],
+      "prompt": "A VPC has enableDnsHostnames set to true but enableDnsSupport set to false. What's the practical effect?",
+      "source": {
+        "path": "vault/aws/networking/dns-in-a-vpc.md",
+        "block": "card-ylu6"
+      },
+      "citations": [
+        "Amazon VPC User Guide",
+        "Amazon Route 53 Developer Guide"
+      ],
+      "choices": [
+        {
+          "text": "Instances get assigned public DNS hostnames, but nothing inside the VPC can actually resolve any name, because the resolver isn't answering queries",
+          "correct": true
+        },
+        {
+          "text": "Instances get assigned public DNS hostnames and can resolve names normally",
+          "correct": false
+        },
+        {
+          "text": "Neither hostnames nor resolution work, since the two settings are really one switch",
+          "correct": false
+        },
+        {
+          "text": "enableDnsHostnames silently forces enableDnsSupport on",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-doe1",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc-dns",
+        "route53",
+        "private-hosted-zone",
+        "split-horizon"
+      ],
+      "prompt": "What is a Route 53 private hosted zone, and what can it hold that a public hosted zone cannot?",
+      "source": {
+        "path": "vault/aws/networking/dns-in-a-vpc.md",
+        "block": "card-doe1"
+      },
+      "citations": [
+        "Amazon VPC User Guide",
+        "Amazon Route 53 Developer Guide"
+      ],
+      "answer": "A hosted zone associated with one or more specific VPCs rather than published to the public internet; it can hold names that don't exist in public DNS at all, resolvable only from inside its associated VPCs."
+    },
+    {
+      "id": "card-geap",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc-dns",
+        "route53",
+        "private-hosted-zone",
+        "split-horizon"
+      ],
+      "prompt": "Can a single private hosted zone be associated with more than one VPC, and what does that association actually control?",
+      "source": {
+        "path": "vault/aws/networking/dns-in-a-vpc.md",
+        "block": "card-geap"
+      },
+      "citations": [
+        "Amazon VPC User Guide",
+        "Amazon Route 53 Developer Guide"
+      ],
+      "answer": "Yes — a private hosted zone can be associated with multiple VPCs, even across accounts; the association is precisely what makes the zone's records resolvable from within those VPCs, since a private zone answers nothing outside them."
+    },
+    {
+      "id": "card-jzdz",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc-dns",
+        "route53",
+        "private-hosted-zone",
+        "split-horizon"
+      ],
+      "prompt": "A private hosted zone can also share a name with a public zone for the same domain. When it does, ___ DNS results: a resolver inside one of the zone's associated VPCs gets the private zone's answer, while a resolver outside gets the public zone's answer for the identical name.",
+      "source": {
+        "path": "vault/aws/networking/dns-in-a-vpc.md",
+        "block": "card-jzdz"
+      },
+      "citations": [
+        "Amazon VPC User Guide",
+        "Amazon Route 53 Developer Guide"
+      ],
+      "answer": "split-horizon"
+    },
+    {
+      "id": "card-5for",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc-dns",
+        "route53",
+        "private-hosted-zone",
+        "split-horizon"
+      ],
+      "prompt": "A VPC peering connection is up and an instance in each VPC can already reach the other by IP address. Why might one of them still fail to resolve the other VPC's private DNS name?",
+      "source": {
+        "path": "vault/aws/networking/dns-in-a-vpc.md",
+        "block": "card-5for"
+      },
+      "citations": [
+        "Amazon VPC User Guide",
+        "Amazon Route 53 Developer Guide"
+      ],
+      "answer": "Address reachability and DNS resolution across a peering connection are controlled separately — resolving the peer's names requires DNS resolution support to be turned on for the peering connection itself, which reachability alone does not imply."
+    },
+    {
+      "id": "card-7ols",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "eni",
+        "network-interface",
+        "ip-addressing",
+        "aws-networking"
+      ],
+      "prompt": "An instance's ___ network interface cannot be detached for as long as the instance is running, and it is deleted the moment the instance terminates.",
+      "source": {
+        "path": "vault/aws/networking/elastic-network-interfaces-and-ip-addressing.md",
+        "block": "card-7ols"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "primary"
+    },
+    {
+      "id": "card-x5ru",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "eni",
+        "network-interface",
+        "ip-addressing",
+        "aws-networking"
+      ],
+      "prompt": "A secondary interface carries no such restriction: it can be ___ from one instance and attached to another, taking its private address, its MAC address, and its security group associations along with it.",
+      "source": {
+        "path": "vault/aws/networking/elastic-network-interfaces-and-ip-addressing.md",
+        "block": "card-x5ru"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "detached"
+    },
+    {
+      "id": "card-bniu",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "eni",
+        "network-interface",
+        "ip-addressing",
+        "aws-networking"
+      ],
+      "prompt": "Why does an elastic network interface hold the private IP address rather than the instance it's attached to?",
+      "source": {
+        "path": "vault/aws/networking/elastic-network-interfaces-and-ip-addressing.md",
+        "block": "card-bniu"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "The address, MAC address, and security group associations are all properties of the interface object, not the instance. The instance only appears to \"have\" them because an interface carrying them is currently attached to it — swap the interface and the addressing and security posture move with it, leaving the instance behind."
+    },
+    {
+      "id": "card-ujan",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "eni",
+        "network-interface",
+        "ip-addressing",
+        "aws-networking"
+      ],
+      "prompt": "Why is a network interface permanently tied to the subnet it was created in?",
+      "source": {
+        "path": "vault/aws/networking/elastic-network-interfaces-and-ip-addressing.md",
+        "block": "card-ujan"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "Its address is allocated out of that subnet's own address range at creation time, so the interface and the subnet's addressing are bound together from the start. It can be detached and reattached to a different instance, but only to one that can sit in that same subnet — moving it to a different subnet isn't an operation that exists."
+    },
+    {
+      "id": "card-vgdz",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "eni",
+        "network-interface",
+        "ip-addressing",
+        "aws-networking"
+      ],
+      "prompt": "An Elastic IP address is associated with a network interface rather than an instance. Explain how that lets you fail over from a broken instance to a standby one without changing anything a client is told to connect to, such as a DNS record.",
+      "source": {
+        "path": "vault/aws/networking/elastic-network-interfaces-and-ip-addressing.md",
+        "block": "card-vgdz"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "Because the Elastic IP is bound to the interface, you can detach that interface from the failed instance and attach it to the standby (or simply re-associate the Elastic IP with a different interface already in place). Traffic aimed at that address starts arriving at the new instance immediately — no DNS change, propagation delay, or client reconfiguration is involved, because the address never moved from the interface's point of view."
+    },
+    {
+      "id": "card-i0b1",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "eni",
+        "network-interface",
+        "ip-addressing",
+        "aws-networking"
+      ],
+      "prompt": "A subnet has plenty of unused instances' worth of room by headcount alone, yet a team reports it has run out of available IP addresses. Explain what is actually consuming those addresses, given that the count of running instances looks low.",
+      "source": {
+        "path": "vault/aws/networking/elastic-network-interfaces-and-ip-addressing.md",
+        "block": "card-i0b1"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "Instances are not the only thing drawing from a subnet's address pool. Every elastic network interface placed in that subnet consumes an address, and a single instance can carry more than one interface; managed services and other AWS-created interfaces placed in the subnet consume addresses the same way. The number of running instances is a poor proxy for how many addresses are actually allocated, because interfaces — not instances — are what the subnet is actually handing addresses out to."
+    },
+    {
+      "id": "card-zzqz",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "eni",
+        "network-interface",
+        "ip-addressing",
+        "aws-networking"
+      ],
+      "prompt": "A managed AWS service is configured to run \"inside your VPC.\" What does that actually mean at the networking level, and what follows from it?",
+      "source": {
+        "path": "vault/aws/networking/elastic-network-interfaces-and-ip-addressing.md",
+        "block": "card-zzqz"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "choices": [
+        {
+          "text": "The service places a network interface in one of your subnets, so it draws an address from your subnet's pool and its traffic is subject to your security groups",
+          "correct": true
+        },
+        {
+          "text": "The service runs on AWS-managed infrastructure outside your VPC but is granted an exception to reach your subnets",
+          "correct": false
+        },
+        {
+          "text": "The service is granted a route into your VPC without occupying any address space of its own",
+          "correct": false
+        },
+        {
+          "text": "The service's traffic bypasses your security groups because it originates from AWS-managed infrastructure",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-vqng",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "eni",
+        "network-interface",
+        "ip-addressing",
+        "aws-networking"
+      ],
+      "prompt": "What two costs does that consequence impose on you as the account owner, beyond just \"the service works\"?",
+      "source": {
+        "path": "vault/aws/networking/elastic-network-interfaces-and-ip-addressing.md",
+        "block": "card-vqng"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "It consumes address space out of your subnet's own pool, the same as any instance-attached interface would, so a subnet with several such services in it can run short of addresses without you adding a single instance. And because the interface is a first-class member of your subnet, its traffic obeys whatever security groups you've associated with it — the service doesn't get a free pass just because AWS operates it."
+    },
+    {
+      "id": "card-p5l6",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "flow-logs",
+        "troubleshooting",
+        "connectivity",
+        "diagnostics"
+      ],
+      "prompt": "A flow log captures a record for the IP traffic going to and from a network interface. What it captures is strictly ___ — source and destination interface, addresses, ports, protocol, packet and byte counts, and a verdict of ACCEPT or REJECT.",
+      "source": {
+        "path": "vault/aws/networking/flow-logs-and-connectivity-troubleshooting.md",
+        "block": "card-p5l6"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "metadata"
+    },
+    {
+      "id": "card-uvqs",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "flow-logs",
+        "troubleshooting",
+        "connectivity",
+        "diagnostics"
+      ],
+      "prompt": "What fields does a flow log record about a connection, beyond the verdict of ACCEPT or REJECT?",
+      "source": {
+        "path": "vault/aws/networking/flow-logs-and-connectivity-troubleshooting.md",
+        "block": "card-uvqs"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "The interface it crossed, the source and destination addresses and ports, the protocol in use, and counts of the packets and bytes transferred — a description of the traffic's shape and disposition, not its contents."
+    },
+    {
+      "id": "card-f7a8",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "flow-logs",
+        "troubleshooting",
+        "connectivity",
+        "diagnostics"
+      ],
+      "prompt": "At which three scopes can a flow log be enabled?",
+      "source": {
+        "path": "vault/aws/networking/flow-logs-and-connectivity-troubleshooting.md",
+        "block": "card-f7a8"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "VPC, subnet, or individual network interface — enabling one at a wider scope (VPC or subnet) covers every interface underneath it, while enabling one directly on an interface captures only that interface's traffic. Records are delivered to a log destination for later review."
+    },
+    {
+      "id": "card-3w8x",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "flow-logs",
+        "troubleshooting",
+        "connectivity",
+        "diagnostics"
+      ],
+      "prompt": "A security group rejection appears in the flow log as an inbound ___ record with no matching outbound entry at all, because a security group evaluates the connection as a single unit rather than its two directions separately — if the inbound side is denied, there is no session for a reply to belong to.",
+      "source": {
+        "path": "vault/aws/networking/flow-logs-and-connectivity-troubleshooting.md",
+        "block": "card-3w8x"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "REJECT"
+    },
+    {
+      "id": "card-chz2",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "flow-logs",
+        "troubleshooting",
+        "connectivity",
+        "diagnostics"
+      ],
+      "prompt": "Both a security group rejection and a network ACL rejection can make the same connection fail, but their flow log signatures differ. If the inbound request itself shows up as ACCEPT in the log and the failure only appears on the return trip, which of the two caused it?",
+      "source": {
+        "path": "vault/aws/networking/flow-logs-and-connectivity-troubleshooting.md",
+        "block": "card-chz2"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "The network ACL. NACLs evaluate each direction of traffic independently, so an accepted inbound request can still have its reply rejected as a separate flow; a security group rejection would instead have shown the inbound request itself as REJECT, with no return trip to speak of at all."
+    },
+    {
+      "id": "card-yel6",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "flow-logs",
+        "troubleshooting",
+        "connectivity",
+        "diagnostics"
+      ],
+      "prompt": "Unlike either kind of rejection, a routing failure leaves no REJECT record anywhere. Where should you look for evidence of it, and why won't you find a REJECT entry to explain it?",
+      "source": {
+        "path": "vault/aws/networking/flow-logs-and-connectivity-troubleshooting.md",
+        "block": "card-yel6"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "Look at the destination interface's flow log for the connection's time window and expect to find no entry at all, in either direction. A REJECT record requires the packet to have reached an interface and been evaluated against its rules; a missing or wrong route means the packet was never delivered there, so no evaluation — and no log entry — ever happens."
+    },
+    {
+      "id": "card-3r6w",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "flow-logs",
+        "troubleshooting",
+        "connectivity",
+        "diagnostics"
+      ],
+      "prompt": "As a rule of thumb, what does it mean if flow logs show a request going out but never any reply, versus showing nothing at all for the attempt?",
+      "source": {
+        "path": "vault/aws/networking/flow-logs-and-connectivity-troubleshooting.md",
+        "block": "card-3r6w"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "Seeing the request but never a reply points at stateless filtering blocking only the return direction, or at an asymmetric route sending the reply somewhere else entirely. Seeing nothing at all — no request logged at the destination either — points at a routing problem or simply the wrong target, since the packet never got there to produce any record."
+    },
+    {
+      "id": "card-yzac",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "flow-logs",
+        "troubleshooting",
+        "connectivity",
+        "diagnostics"
+      ],
+      "prompt": "An application team reports that a connection \"just hangs.\" Flow logs at the destination interface show the inbound request accepted, but no reply is ever recorded in either direction — not even a rejected one. What does this pattern point to?",
+      "source": {
+        "path": "vault/aws/networking/flow-logs-and-connectivity-troubleshooting.md",
+        "block": "card-yzac"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "choices": [
+        {
+          "text": "Stateless filtering blocking the return path, or an asymmetric route carrying the reply elsewhere — not a security group problem",
+          "correct": true
+        },
+        {
+          "text": "A security group rejecting the inbound request",
+          "correct": false
+        },
+        {
+          "text": "A missing or incorrect route to the destination",
+          "correct": false
+        },
+        {
+          "text": "An application-layer timeout unrelated to networking",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-r3de",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "flow-logs",
+        "troubleshooting",
+        "connectivity",
+        "diagnostics"
+      ],
+      "prompt": "You're handed three flow log observations from three different connectivity complaints: (a) an inbound REJECT record with no corresponding outbound entry (b) an inbound ACCEPT record followed by a rejected return flow (c) no flow log entry at all at the destination interface For each, name the most likely cause and explain the reasoning that lets you tell the three apart using only the pattern in the log — without inspecting any rule directly.",
+      "source": {
+        "path": "vault/aws/networking/flow-logs-and-connectivity-troubleshooting.md",
+        "block": "card-r3de"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "(a) A security group rejection: security groups evaluate a connection as one unit, so a denied inbound request never produces an outbound counterpart. (b) A network ACL rejection: NACLs evaluate inbound and outbound traffic independently, so the request can be accepted while its reply is rejected as a separate flow. (c) A missing or wrong route: the packet never reached that interface at all, so nothing was evaluated and nothing was logged — silence itself is the signature, in contrast to the other two, which both leave at least one record behind."
+    },
+    {
+      "id": "card-8as7",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "internet-gateway",
+        "public-ip",
+        "elastic-ip",
+        "connectivity",
+        "vpc-networking"
+      ],
+      "prompt": "An internet gateway is the component that connects a VPC to the public internet. It isn't something you size or scale yourself: an internet gateway is a ___, redundant, highly available VPC component that AWS manages, so there's no capacity to provision and no single appliance that can fail under load.",
+      "source": {
+        "path": "vault/aws/networking/internet-gateway-and-public-addressing.md",
+        "block": "card-8as7"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "horizontally scaled"
+    },
+    {
+      "id": "card-81rf",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "internet-gateway",
+        "public-ip",
+        "elastic-ip",
+        "connectivity",
+        "vpc-networking"
+      ],
+      "prompt": "What has to happen before a VPC that already has one internet gateway attached can be given a different one?",
+      "source": {
+        "path": "vault/aws/networking/internet-gateway-and-public-addressing.md",
+        "block": "card-81rf"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "The existing internet gateway must be detached first — an attached gateway occupies the VPC's single attachment slot, so a second one can't simply be added alongside it."
+    },
+    {
+      "id": "card-21x0",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "internet-gateway",
+        "public-ip",
+        "elastic-ip",
+        "connectivity",
+        "vpc-networking"
+      ],
+      "prompt": "When a request arrives addressed to a resource's public address, what does the internet gateway do to it before the packet reaches that resource inside the VPC?",
+      "source": {
+        "path": "vault/aws/networking/internet-gateway-and-public-addressing.md",
+        "block": "card-21x0"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "It translates the destination address from the resource's public address to its private address, and performs the reverse translation on the way out, so the resource itself only ever sees its own private address."
+    },
+    {
+      "id": "card-1ae9",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "internet-gateway",
+        "public-ip",
+        "elastic-ip",
+        "connectivity",
+        "vpc-networking"
+      ],
+      "prompt": "Public IPv4 addressing comes in two flavors that behave very differently over an instance's life. An address that AWS assigns automatically at launch is not something you keep: it is ___, released back to AWS's pool and replaced by a new one each time the instance stops and then starts again.",
+      "source": {
+        "path": "vault/aws/networking/internet-gateway-and-public-addressing.md",
+        "block": "card-1ae9"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "ephemeral"
+    },
+    {
+      "id": "card-f50s",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "internet-gateway",
+        "public-ip",
+        "elastic-ip",
+        "connectivity",
+        "vpc-networking"
+      ],
+      "prompt": "An ___ address is different in kind, not just in durability: you allocate it to your own account explicitly, and it stays associated with your account — and can stay attached to an instance across a stop and start — until you choose to release it.",
+      "source": {
+        "path": "vault/aws/networking/internet-gateway-and-public-addressing.md",
+        "block": "card-f50s"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "Elastic IP"
+    },
+    {
+      "id": "card-mo53",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "internet-gateway",
+        "public-ip",
+        "elastic-ip",
+        "connectivity",
+        "vpc-networking"
+      ],
+      "prompt": "Why might a service break right after an EC2 instance is stopped and restarted, if the service depends on the instance's automatically assigned public IPv4 address rather than an Elastic IP?",
+      "source": {
+        "path": "vault/aws/networking/internet-gateway-and-public-addressing.md",
+        "block": "card-mo53"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "Stopping and starting the instance releases the old auto-assigned address and hands out a new one, so anything that recorded the old address — a DNS record, a firewall allowlist entry, a client's cached config — now points at an address the instance no longer has. An Elastic IP would have stayed attached across that same restart."
+    },
+    {
+      "id": "card-x101",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "internet-gateway",
+        "public-ip",
+        "elastic-ip",
+        "connectivity",
+        "vpc-networking"
+      ],
+      "prompt": "Reaching a resource from the public internet requires three independent things to all be true at once. Name them.",
+      "source": {
+        "path": "vault/aws/networking/internet-gateway-and-public-addressing.md",
+        "block": "card-x101"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "(1) the resource has a public address, (2) its subnet's route table sends 0.0.0.0/0 traffic to an internet gateway, and (3) its security group permits the traffic. These are independent controls maintained in different places, so any one of them missing on its own is enough to block connectivity."
+    },
+    {
+      "id": "card-2dbc",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "internet-gateway",
+        "public-ip",
+        "elastic-ip",
+        "connectivity",
+        "vpc-networking"
+      ],
+      "prompt": "An EC2 instance has an Elastic IP attached, and its security group allows inbound HTTPS from 0.0.0.0/0. You still can't reach it from the internet, and its subnet's route table has no route to an internet gateway at all. What's going on?",
+      "source": {
+        "path": "vault/aws/networking/internet-gateway-and-public-addressing.md",
+        "block": "card-2dbc"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "choices": [
+        {
+          "text": "The route table is missing the 0.0.0.0/0 route to an internet gateway, so traffic to and from the public internet never gets there",
+          "correct": true
+        },
+        {
+          "text": "An Elastic IP alone requires a NAT gateway, not an internet gateway, to be reachable",
+          "correct": false
+        },
+        {
+          "text": "The security group must also explicitly allow the internet gateway as a source",
+          "correct": false
+        },
+        {
+          "text": "Having a public address is sufficient regardless of routing or security group rules",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-g8kt",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "nat-gateway",
+        "egress",
+        "availability-zone",
+        "nat-instance",
+        "ipv6"
+      ],
+      "prompt": "Although a NAT gateway exists to serve resources sitting in private subnets, the NAT gateway itself must be created inside a ___ subnet — it needs its own route to an internet gateway in order to reach the internet at all.",
+      "source": {
+        "path": "vault/aws/networking/nat-gateways-and-egress.md",
+        "block": "card-g8kt"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "public"
+    },
+    {
+      "id": "card-x8k4",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "nat-gateway",
+        "egress",
+        "availability-zone",
+        "nat-instance",
+        "ipv6"
+      ],
+      "prompt": "If the NAT gateway sits in a public subnet, what does the associated private subnet's route table need to point at for 0.0.0.0/0 traffic?",
+      "source": {
+        "path": "vault/aws/networking/nat-gateways-and-egress.md",
+        "block": "card-x8k4"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "The NAT gateway itself, referenced by its NAT gateway ID — not at an internet gateway directly. The private subnet's resources get outbound-only internet access by routing through the NAT gateway, which in turn relies on the public subnet's own route to reach the internet from there. The two subnets play genuinely different roles: one hosts the gateway, the other only points at it."
+    },
+    {
+      "id": "card-fze5",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "nat-gateway",
+        "egress",
+        "availability-zone",
+        "nat-instance",
+        "ipv6"
+      ],
+      "prompt": "A NAT gateway is ___: it runs in one specific Availability Zone and is built to serve subnets within that same zone.",
+      "source": {
+        "path": "vault/aws/networking/nat-gateways-and-egress.md",
+        "block": "card-fze5"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "zonal"
+    },
+    {
+      "id": "card-zfsx",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "nat-gateway",
+        "egress",
+        "availability-zone",
+        "nat-instance",
+        "ipv6"
+      ],
+      "prompt": "Because of that, relying on a single NAT gateway to serve an entire multi-AZ VPC creates two separate problems at once. What are they?",
+      "source": {
+        "path": "vault/aws/networking/nat-gateways-and-egress.md",
+        "block": "card-zfsx"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "It becomes a single point of failure — if that one Availability Zone has an outage, every private subnet in the other zones loses internet-bound egress too — and it generates cross-AZ data transfer charges, since traffic from resources in other zones has to cross an AZ boundary just to reach the NAT gateway in the first place."
+    },
+    {
+      "id": "card-sn8o",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "nat-gateway",
+        "egress",
+        "availability-zone",
+        "nat-instance",
+        "ipv6"
+      ],
+      "prompt": "What's the recommended pattern for making NAT gateway egress resilient to a single Availability Zone failure?",
+      "source": {
+        "path": "vault/aws/networking/nat-gateways-and-egress.md",
+        "block": "card-sn8o"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "Deploy one NAT gateway per Availability Zone, each sitting in that zone's own public subnet, and route each zone's private subnets to the NAT gateway in the same zone rather than sharing one gateway across zones."
+    },
+    {
+      "id": "card-lon8",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "nat-gateway",
+        "egress",
+        "availability-zone",
+        "nat-instance",
+        "ipv6"
+      ],
+      "prompt": "How is a NAT gateway billed?",
+      "source": {
+        "path": "vault/aws/networking/nat-gateways-and-egress.md",
+        "block": "card-lon8"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "With an hourly charge for every hour it's provisioned, plus a per-GB data processing charge on all traffic that flows through it. The per-GB charge is the part that most often surprises people on a bill, since it scales with traffic volume rather than being a flat, predictable fee."
+    },
+    {
+      "id": "card-k61d",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "nat-gateway",
+        "egress",
+        "availability-zone",
+        "nat-instance",
+        "ipv6"
+      ],
+      "prompt": "Before NAT gateways existed, what was the self-managed alternative, and what did it cost you that a NAT gateway doesn't?",
+      "source": {
+        "path": "vault/aws/networking/nat-gateways-and-egress.md",
+        "block": "card-k61d"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "A NAT instance — an ordinary EC2 instance configured to forward and translate traffic for a private subnet. Running one means patching and maintaining its software yourself, sizing and scaling its instance type by hand as throughput needs grow, and building your own failover if that instance or its Availability Zone goes down — all of which a managed NAT gateway takes off your plate."
+    },
+    {
+      "id": "card-tcxr",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "nat-gateway",
+        "egress",
+        "availability-zone",
+        "nat-instance",
+        "ipv6"
+      ],
+      "prompt": "The IPv6 equivalent of a NAT gateway is the ___ internet gateway.",
+      "source": {
+        "path": "vault/aws/networking/nat-gateways-and-egress.md",
+        "block": "card-tcxr"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "egress-only"
+    },
+    {
+      "id": "card-wddw",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "nat-gateway",
+        "egress",
+        "availability-zone",
+        "nat-instance",
+        "ipv6"
+      ],
+      "prompt": "Explain why IPv6 egress from a VPC is handled by an egress-only internet gateway rather than by something that performs address translation the way a NAT gateway does for IPv4. What is the actual problem an egress-only internet gateway is solving?",
+      "source": {
+        "path": "vault/aws/networking/nat-gateways-and-egress.md",
+        "block": "card-wddw"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ]
+    },
+    {
+      "id": "card-acgw",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "route-tables",
+        "routing",
+        "cidr",
+        "longest-prefix-match"
+      ],
+      "prompt": "Every subnet is associated with exactly ___ route table — never zero, and never two at the same time. AWS treats a subnet without any route table as an impossible state, not a default-deny state, which is why every VPC ships with a route table already in place before you create a single subnet.",
+      "source": {
+        "path": "vault/aws/networking/route-tables-and-the-implicit-router.md",
+        "block": "card-acgw"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "one"
+    },
+    {
+      "id": "card-643q",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "route-tables",
+        "routing",
+        "cidr",
+        "longest-prefix-match"
+      ],
+      "prompt": "What happens to a subnet's routing if you create it and never explicitly associate it with a route table?",
+      "source": {
+        "path": "vault/aws/networking/route-tables-and-the-implicit-router.md",
+        "block": "card-643q"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "It is not left without one; AWS associates it with the VPC's main route table by default, since a subnet with zero route table associations isn't an allowed state at all."
+    },
+    {
+      "id": "card-vyt8",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "route-tables",
+        "routing",
+        "cidr",
+        "longest-prefix-match"
+      ],
+      "prompt": "Explain the difference between the main route table and a custom route table in terms of what determines which subnets use which — not in terms of what routes each is allowed to contain.",
+      "source": {
+        "path": "vault/aws/networking/route-tables-and-the-implicit-router.md",
+        "block": "card-vyt8"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ]
+    },
+    {
+      "id": "card-vbrf",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "route-tables",
+        "routing",
+        "cidr",
+        "longest-prefix-match"
+      ],
+      "prompt": "Every route table, main or custom, carries one entry that you did not write and cannot remove: the ___ route, covering the VPC's own CIDR block, which keeps every subnet in the VPC able to reach every other subnet in it by default.",
+      "source": {
+        "path": "vault/aws/networking/route-tables-and-the-implicit-router.md",
+        "block": "card-vbrf"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "local"
+    },
+    {
+      "id": "card-oq2s",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "route-tables",
+        "routing",
+        "cidr",
+        "longest-prefix-match"
+      ],
+      "prompt": "Why can the local route never be removed or overridden by a more specific conflicting entry?",
+      "source": {
+        "path": "vault/aws/networking/route-tables-and-the-implicit-router.md",
+        "block": "card-oq2s"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "It is what guarantees baseline connectivity between every subnet in the VPC; if it could be deleted or superseded, resources in different subnets of the same VPC could lose the ability to reach each other, which would break the VPC's basic function as a single network."
+    },
+    {
+      "id": "card-wmf5",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "route-tables",
+        "routing",
+        "cidr",
+        "longest-prefix-match"
+      ],
+      "prompt": "A route table has the mandatory local route covering the VPC's CIDR block, plus a custom route sending a narrower, more specific slice of that same CIDR range to a different target. A packet's destination falls inside that narrower slice. Which route wins?",
+      "source": {
+        "path": "vault/aws/networking/route-tables-and-the-implicit-router.md",
+        "block": "card-wmf5"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "choices": [
+        {
+          "text": "The custom route — the route table always chooses the most specific matching route, regardless of which one was added first",
+          "correct": true
+        },
+        {
+          "text": "The local route — it always takes priority as the default entry",
+          "correct": false
+        },
+        {
+          "text": "Neither — overlapping ranges in one table are rejected outright",
+          "correct": false
+        },
+        {
+          "text": "Both — traffic is split between the two targets",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-5jd6",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "route-tables",
+        "routing",
+        "cidr",
+        "longest-prefix-match"
+      ],
+      "prompt": "How does a route table decide which entry to use when a packet's destination matches more than one route in the table?",
+      "source": {
+        "path": "vault/aws/networking/route-tables-and-the-implicit-router.md",
+        "block": "card-5jd6"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "It applies longest-prefix match: among all the routes whose CIDR range contains the destination address, the one with the most specific (longest) prefix wins, regardless of the order the routes appear in the table."
+    },
+    {
+      "id": "card-x2e7",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "route-tables",
+        "routing",
+        "cidr",
+        "longest-prefix-match"
+      ],
+      "prompt": "A subnet's route table has only the mandatory local route and no other entries. State what that subnet can and cannot reach as a result, and what kind of entry would need to be added to change that.",
+      "source": {
+        "path": "vault/aws/networking/route-tables-and-the-implicit-router.md",
+        "block": "card-x2e7"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ]
+    },
+    {
+      "id": "card-gwl8",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "security-groups",
+        "network-acls",
+        "vpc",
+        "stateful",
+        "stateless"
+      ],
+      "prompt": "A security group is ___: a reply to a connection your instance initiated outbound, or a connection an allowed inbound rule let in, is automatically permitted back through in the opposite direction, with no matching rule required for the reply itself.",
+      "source": {
+        "path": "vault/aws/networking/security-groups-versus-network-acls.md",
+        "block": "card-gwl8"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "stateful"
+    },
+    {
+      "id": "card-z9qu",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "security-groups",
+        "network-acls",
+        "vpc",
+        "stateful",
+        "stateless"
+      ],
+      "prompt": "A network ACL is ___: it treats each direction independently, so allowing inbound traffic on a port grants nothing to the reply going back out — that reply needs its own explicit outbound rule, evaluated on its own merits.",
+      "source": {
+        "path": "vault/aws/networking/security-groups-versus-network-acls.md",
+        "block": "card-z9qu"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "stateless"
+    },
+    {
+      "id": "card-94pj",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "security-groups",
+        "network-acls",
+        "vpc",
+        "stateful",
+        "stateless"
+      ],
+      "prompt": "Where does a network ACL enforce its rules, compared to where a security group enforces its rules?",
+      "source": {
+        "path": "vault/aws/networking/security-groups-versus-network-acls.md",
+        "block": "card-94pj"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "A network ACL enforces at the subnet boundary and applies identically to every resource in that subnet; a security group attaches to individual resources (their network interfaces), so two instances in the same subnet can have entirely different security group rules."
+    },
+    {
+      "id": "card-7x1c",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "security-groups",
+        "network-acls",
+        "vpc",
+        "stateful",
+        "stateless"
+      ],
+      "prompt": "How does a security group deny traffic, given that it has no deny rule, and how does that differ from how a network ACL reaches a deny decision?",
+      "source": {
+        "path": "vault/aws/networking/security-groups-versus-network-acls.md",
+        "block": "card-7x1c"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "A security group denies implicitly — traffic not matched by any allow rule is dropped simply because nothing permitted it. A network ACL denies explicitly, using its own numbered deny rules evaluated in order alongside its allow rules, so an earlier deny can block traffic a later, more permissive rule would have allowed."
+    },
+    {
+      "id": "card-4w0c",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "security-groups",
+        "network-acls",
+        "vpc",
+        "stateful",
+        "stateless"
+      ],
+      "prompt": "Which single statement correctly holds true for BOTH security groups and network ACLs at once?",
+      "source": {
+        "path": "vault/aws/networking/security-groups-versus-network-acls.md",
+        "block": "card-4w0c"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "choices": [
+        {
+          "text": "Both can be used to control traffic at layer 3/4 based on protocol, port, and source or destination",
+          "correct": true
+        },
+        {
+          "text": "Both are stateful, tracking connections so replies are automatically permitted",
+          "correct": false
+        },
+        {
+          "text": "Both attach to individual resources rather than to a subnet",
+          "correct": false
+        },
+        {
+          "text": "Both support explicit deny rules alongside allow rules",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-hac3",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "security-groups",
+        "network-acls",
+        "vpc",
+        "stateful",
+        "stateless"
+      ],
+      "prompt": "Statelessness has a consequence that trips people up because it looks like an application-layer bug. A client's reply to an allowed inbound connection doesn't come back on the port it connected to — it lands on whichever high-numbered ___ port the client's own OS picked for that connection. A network ACL that allows inbound 443 but has no outbound rule covering that high-numbered range will happily let requests in and then silently drop every single reply.",
+      "source": {
+        "path": "vault/aws/networking/security-groups-versus-network-acls.md",
+        "block": "card-hac3"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "ephemeral"
+    },
+    {
+      "id": "card-auqd",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "security-groups",
+        "network-acls",
+        "vpc",
+        "stateful",
+        "stateless"
+      ],
+      "prompt": "A network ACL allows inbound TCP 443 and allows outbound TCP 443, nothing else. External clients can open HTTPS connections to the instance, but every response times out on the client side. What's the most likely cause?",
+      "source": {
+        "path": "vault/aws/networking/security-groups-versus-network-acls.md",
+        "block": "card-auqd"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "choices": [
+        {
+          "text": "The NACL is stateless, so replies leave on ephemeral ports that aren't covered by any outbound rule",
+          "correct": true
+        },
+        {
+          "text": "The security group attached to the instance is missing an inbound 443 rule",
+          "correct": false
+        },
+        {
+          "text": "The NACL's numbered rules are being evaluated out of order",
+          "correct": false
+        },
+        {
+          "text": "Port 443 cannot be used for stateless firewalls",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-lc7e",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "security-groups",
+        "network-acls",
+        "vpc",
+        "stateful",
+        "stateless"
+      ],
+      "prompt": "A three-tier application wants its database tier to accept connections only from instances in its app tier, and the app tier's instance count changes constantly under autoscaling. Explain why referencing the app tier's security group as the database security group's source is a better fit here than writing CIDR-based rules, and what would break if the app tier's address range shifted after a CIDR rule had been written.",
+      "source": {
+        "path": "vault/aws/networking/security-groups-versus-network-acls.md",
+        "block": "card-lc7e"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ]
+    },
+    {
+      "id": "card-10y1",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "subnets",
+        "availability-zones",
+        "route-tables",
+        "public-subnet"
+      ],
+      "prompt": "A subnet is scoped to exactly ___ availability zone. That fact is what everything else in this note follows from: a VPC itself spans an entire region, but the moment you carve a subnet out of it, that subnet is pinned to whichever AZ you created it in and can never spread into another.",
+      "source": {
+        "path": "vault/aws/networking/subnets-availability-zones-and-public-vs-private.md",
+        "block": "card-10y1"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "one"
+    },
+    {
+      "id": "card-8eks",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "subnets",
+        "availability-zones",
+        "route-tables",
+        "public-subnet"
+      ],
+      "prompt": "Why can't a single subnet ever span two availability zones, even though its parent VPC spans the whole region?",
+      "source": {
+        "path": "vault/aws/networking/subnets-availability-zones-and-public-vs-private.md",
+        "block": "card-8eks"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "A subnet is defined as belonging to exactly one availability zone at creation time — that scoping is fixed, so spanning AZs would require the subnet to belong to more than one AZ at once, which AWS's model doesn't allow; multi-AZ coverage is achieved by creating separate subnets, one per AZ, not by widening a single subnet."
+    },
+    {
+      "id": "card-gtl6",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "subnets",
+        "availability-zones",
+        "route-tables",
+        "public-subnet"
+      ],
+      "prompt": "A VPC and its subnets are being laid out for a new application. State which of the two — the VPC or an individual subnet — spans the entire region, and which is confined to a single availability zone, and explain why that asymmetry is what forces you to create multiple subnets when you want multi-AZ coverage.",
+      "source": {
+        "path": "vault/aws/networking/subnets-availability-zones-and-public-vs-private.md",
+        "block": "card-gtl6"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ]
+    },
+    {
+      "id": "card-9mot",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "subnets",
+        "availability-zones",
+        "route-tables",
+        "public-subnet"
+      ],
+      "prompt": "What single condition makes a subnet \"public,\" as opposed to any naming convention, size, or instance-level setting?",
+      "source": {
+        "path": "vault/aws/networking/subnets-availability-zones-and-public-vs-private.md",
+        "block": "card-9mot"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "Its associated route table has a route sending 0.0.0.0/0 (all traffic with no more specific match) to an internet gateway; a subnet with no such route is private regardless of anything else about it or the resources placed in it."
+    },
+    {
+      "id": "card-p6j9",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "subnets",
+        "availability-zones",
+        "route-tables",
+        "public-subnet"
+      ],
+      "prompt": "A subnet is named \"public-subnet-1\" and every instance in it has a public IP address, but its route table has no route to an internet gateway. Is this subnet actually public?",
+      "source": {
+        "path": "vault/aws/networking/subnets-availability-zones-and-public-vs-private.md",
+        "block": "card-p6j9"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "choices": [
+        {
+          "text": "No — without a route table entry sending 0.0.0.0/0 to an internet gateway, the subnet is private no matter its name or the instances in it",
+          "correct": true
+        },
+        {
+          "text": "Yes — the name settles it",
+          "correct": false
+        },
+        {
+          "text": "Yes — having instances with public IPs makes a subnet public",
+          "correct": false
+        },
+        {
+          "text": "It depends on whether the VPC itself is marked public",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-upo6",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "subnets",
+        "availability-zones",
+        "route-tables",
+        "public-subnet"
+      ],
+      "prompt": "Why does a standard multi-tier design create a separate subnet per AZ per tier, instead of one public subnet and one private subnet covering the whole VPC?",
+      "source": {
+        "path": "vault/aws/networking/subnets-availability-zones-and-public-vs-private.md",
+        "block": "card-upo6"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "Because a subnet cannot span more than one AZ, giving each tier only one subnet would confine that entire tier to a single AZ; to place resources for the same tier across multiple AZs, each AZ needs its own subnet for that tier."
+    },
+    {
+      "id": "card-m1k6",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "subnets",
+        "availability-zones",
+        "route-tables",
+        "public-subnet"
+      ],
+      "prompt": "An application's database tier currently has only one subnet, in a single availability zone. Explain why this leaves the application unable to survive an AZ failure, and what has to be added — in terms of subnets — to fix it.",
+      "source": {
+        "path": "vault/aws/networking/subnets-availability-zones-and-public-vs-private.md",
+        "block": "card-m1k6"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ]
+    },
+    {
+      "id": "card-7pj3",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "subnets",
+        "availability-zones",
+        "route-tables",
+        "public-subnet"
+      ],
+      "prompt": "Anything that has to keep running through an AZ failure therefore needs subnets in ___ AZs, never just one, no matter how large that one subnet's CIDR block is sized.",
+      "source": {
+        "path": "vault/aws/networking/subnets-availability-zones-and-public-vs-private.md",
+        "block": "card-7pj3"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "several"
+    },
+    {
+      "id": "card-wrw1",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "cidr",
+        "ip-address-planning",
+        "network-design"
+      ],
+      "prompt": "Why is a VPC's initial CIDR block choice so hard to undo once the VPC is in active use?",
+      "source": {
+        "path": "vault/aws/networking/vpc-and-cidr-planning.md",
+        "block": "card-wrw1"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "Everything downstream — subnet ranges, route tables, peering connections, on-premises routing — gets built against that address space, so changing it means re-carving every subnet and re-establishing every connection rather than editing one setting."
+    },
+    {
+      "id": "card-b4n7",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "cidr",
+        "ip-address-planning",
+        "network-design"
+      ],
+      "prompt": "A team picks the largest CIDR block AWS allows for a new VPC, reasoning that more address space is strictly safer than less. Explain why this reasoning is incomplete: what does an oversized CIDR block cost you, and when does that cost actually show up?",
+      "source": {
+        "path": "vault/aws/networking/vpc-and-cidr-planning.md",
+        "block": "card-b4n7"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ]
+    },
+    {
+      "id": "card-wqiq",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "cidr",
+        "ip-address-planning",
+        "network-design"
+      ],
+      "prompt": "AWS reserves ___ addresses in every subnet you create, regardless of that subnet's size: the network address, the address AWS uses for the VPC router, the address reserved for DNS, one reserved for future use, and the broadcast address at the top of the range (even though VPCs don't support broadcast traffic, AWS still reserves it for consistency).",
+      "source": {
+        "path": "vault/aws/networking/vpc-and-cidr-planning.md",
+        "block": "card-wqiq"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "five"
+    },
+    {
+      "id": "card-9kbg",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "cidr",
+        "ip-address-planning",
+        "network-design"
+      ],
+      "prompt": "Why does a /28 subnet, which spans 16 addresses on paper, only provide 11 usable addresses for your own resources?",
+      "source": {
+        "path": "vault/aws/networking/vpc-and-cidr-planning.md",
+        "block": "card-9kbg"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "Because AWS reserves 5 of those 16 addresses in every subnet no matter its size — the network address, the VPC router address, the DNS address, one reserved for future use, and the broadcast address — leaving 16 minus 5, or 11, for you to assign."
+    },
+    {
+      "id": "card-59sn",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "cidr",
+        "ip-address-planning",
+        "network-design"
+      ],
+      "prompt": "A subnet is sized as a /28. How many addresses can actually be assigned to instances or interfaces in that subnet?",
+      "source": {
+        "path": "vault/aws/networking/vpc-and-cidr-planning.md",
+        "block": "card-59sn"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "choices": [
+        {
+          "text": "11 — AWS reserves 5 of the 16 addresses in every subnet",
+          "correct": true
+        },
+        {
+          "text": "16 — the full range is usable",
+          "correct": false
+        },
+        {
+          "text": "14 — only the network and broadcast addresses are reserved",
+          "correct": false
+        },
+        {
+          "text": "5 — only the reserved addresses are usable",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-cax4",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "cidr",
+        "ip-address-planning",
+        "network-design"
+      ],
+      "prompt": "When the original CIDR block runs out of room for new subnets, a ___ block is the escape hatch: you attach an additional range to the existing VPC rather than recreating it, buying more address space without disturbing anything already built on the primary range.",
+      "source": {
+        "path": "vault/aws/networking/vpc-and-cidr-planning.md",
+        "block": "card-cax4"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "secondary CIDR"
+    },
+    {
+      "id": "card-w5v7",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "cidr",
+        "ip-address-planning",
+        "network-design"
+      ],
+      "prompt": "Why does an overlapping CIDR range between two networks rule out peering between them, rather than just making it awkward?",
+      "source": {
+        "path": "vault/aws/networking/vpc-and-cidr-planning.md",
+        "block": "card-w5v7"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "Peering (and most other VPC-to-VPC or VPC-to-on-premises connectivity) routes traffic by destination address, so if both networks claim the same addresses there is no way to tell which network a given address actually belongs to — the connection has no way to route traffic correctly, so AWS refuses to establish it at all."
+    },
+    {
+      "id": "card-hwjw",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "cidr",
+        "ip-address-planning",
+        "network-design"
+      ],
+      "prompt": "What single planning rule, if violated, blocks future connectivity outright rather than just wasting address space?",
+      "source": {
+        "path": "vault/aws/networking/vpc-and-cidr-planning.md",
+        "block": "card-hwjw"
+      },
+      "citations": [
+        "Amazon VPC User Guide"
+      ],
+      "answer": "The VPC's CIDR range must not overlap with any network it might later need to connect to; overlap doesn't just waste space, it makes routing between the two networks ambiguous and connectivity impossible."
+    },
+    {
+      "id": "card-vkdq",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc-endpoints",
+        "privatelink",
+        "gateway-endpoint",
+        "interface-endpoint"
+      ],
+      "prompt": "A ___ only exists for two services, S3 and DynamoDB, and it isn't a device on the network at all — it's an entry added to a route table. Traffic destined for that service's address range, identified by a prefix list rather than a fixed CIDR block, gets routed to the endpoint instead of wherever it would otherwise go. It costs nothing to use.",
+      "source": {
+        "path": "vault/aws/networking/vpc-endpoints-and-privatelink.md",
+        "block": "card-vkdq"
+      },
+      "citations": [
+        "Amazon VPC User Guide",
+        "AWS PrivateLink documentation"
+      ],
+      "answer": "gateway endpoint"
+    },
+    {
+      "id": "card-q4bz",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc-endpoints",
+        "privatelink",
+        "gateway-endpoint",
+        "interface-endpoint"
+      ],
+      "prompt": "A gateway endpoint only exists for two services, S3 and DynamoDB, and it isn't a device on the network at all — it's an entry added to a route table. Traffic destined for that service's address range, identified by a ___ rather than a fixed CIDR block, gets routed to the endpoint instead of wherever it would otherwise go. It costs nothing to use.",
+      "source": {
+        "path": "vault/aws/networking/vpc-endpoints-and-privatelink.md",
+        "block": "card-q4bz"
+      },
+      "citations": [
+        "Amazon VPC User Guide",
+        "AWS PrivateLink documentation"
+      ],
+      "answer": "prefix list"
+    },
+    {
+      "id": "card-6lgs",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc-endpoints",
+        "privatelink",
+        "gateway-endpoint",
+        "interface-endpoint"
+      ],
+      "prompt": "An ___ is a real elastic network interface, sitting in one of your subnets with a private address of its own, and it exists for a much broader set of services than just S3 and DynamoDB. Unlike a gateway endpoint it's billed hourly plus a per-GB data processing charge.",
+      "source": {
+        "path": "vault/aws/networking/vpc-endpoints-and-privatelink.md",
+        "block": "card-6lgs"
+      },
+      "citations": [
+        "Amazon VPC User Guide",
+        "AWS PrivateLink documentation"
+      ],
+      "answer": "interface endpoint"
+    },
+    {
+      "id": "card-c5ks",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc-endpoints",
+        "privatelink",
+        "gateway-endpoint",
+        "interface-endpoint"
+      ],
+      "prompt": "What does it cost to route traffic through a gateway endpoint, versus through an interface endpoint?",
+      "source": {
+        "path": "vault/aws/networking/vpc-endpoints-and-privatelink.md",
+        "block": "card-c5ks"
+      },
+      "citations": [
+        "Amazon VPC User Guide",
+        "AWS PrivateLink documentation"
+      ],
+      "answer": "A gateway endpoint costs nothing to use. An interface endpoint is billed hourly for the endpoint itself plus a per-GB charge for data processed through it, because it's a running network interface rather than a free route table entry."
+    },
+    {
+      "id": "card-07cc",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc-endpoints",
+        "privatelink",
+        "gateway-endpoint",
+        "interface-endpoint"
+      ],
+      "prompt": "An application in a peered VPC needs to read objects from an S3 bucket entirely over private AWS networking, without traversing the public internet. Which endpoint type in the bucket's own VPC will NOT satisfy this by itself?",
+      "source": {
+        "path": "vault/aws/networking/vpc-endpoints-and-privatelink.md",
+        "block": "card-07cc"
+      },
+      "citations": [
+        "Amazon VPC User Guide",
+        "AWS PrivateLink documentation"
+      ],
+      "choices": [
+        {
+          "text": "A gateway endpoint — it only serves traffic following that VPC's own route table, not traffic arriving across a peering connection",
+          "correct": true
+        },
+        {
+          "text": "An interface endpoint for S3 — it's reachable from anything that can route to its subnet, including a peered VPC",
+          "correct": false
+        },
+        {
+          "text": "Either endpoint type would work equally well here",
+          "correct": false
+        },
+        {
+          "text": "Neither endpoint type can serve S3 traffic privately",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-j07k",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc-endpoints",
+        "privatelink",
+        "gateway-endpoint",
+        "interface-endpoint"
+      ],
+      "prompt": "An interface endpoint for an AWS service is created with private DNS enabled. Explain what changes for application code that already calls the service's standard public hostname, and why that matters compared to requiring the endpoint's own DNS name.",
+      "source": {
+        "path": "vault/aws/networking/vpc-endpoints-and-privatelink.md",
+        "block": "card-j07k"
+      },
+      "citations": [
+        "Amazon VPC User Guide",
+        "AWS PrivateLink documentation"
+      ]
+    },
+    {
+      "id": "card-ik26",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc-endpoints",
+        "privatelink",
+        "gateway-endpoint",
+        "interface-endpoint"
+      ],
+      "prompt": "Why does exposing a service through PrivateLink avoid the exposure that peering two VPCs together would create?",
+      "source": {
+        "path": "vault/aws/networking/vpc-endpoints-and-privatelink.md",
+        "block": "card-ik26"
+      },
+      "citations": [
+        "Amazon VPC User Guide",
+        "AWS PrivateLink documentation"
+      ],
+      "answer": "PrivateLink only connects consumers to the specific service endpoint, as a network interface in the consumer's subnet; it never joins the two VPCs' networks the way peering does, so neither side gains a route into the other's broader address space, only into that one published service."
+    },
+    {
+      "id": "card-he7f",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc-endpoints",
+        "privatelink",
+        "gateway-endpoint",
+        "interface-endpoint"
+      ],
+      "prompt": "A gateway endpoint for S3 has an endpoint policy restricting access to a single bucket. A caller's IAM identity policy grants broad `s3:*` access to every bucket in the account. What happens when that caller tries to reach a different bucket through this endpoint?",
+      "source": {
+        "path": "vault/aws/networking/vpc-endpoints-and-privatelink.md",
+        "block": "card-he7f"
+      },
+      "citations": [
+        "Amazon VPC User Guide",
+        "AWS PrivateLink documentation"
+      ],
+      "choices": [
+        {
+          "text": "Denied — the endpoint policy also has to allow the request, regardless of how permissive the caller's IAM policy is",
+          "correct": true
+        },
+        {
+          "text": "Allowed, since the IAM policy is the only control that matters once the endpoint routes the traffic",
+          "correct": false
+        },
+        {
+          "text": "Allowed, because endpoint policies only restrict which services can be reached, not which resources within them",
+          "correct": false
+        },
+        {
+          "text": "Denied, and the endpoint policy would have blocked the same caller from every bucket, including the allowed one",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-y42g",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc-peering",
+        "transit-gateway",
+        "routing",
+        "hub-and-spoke"
+      ],
+      "prompt": "That directness is also the limit. Peering connections are ___: if VPC A peers with VPC B, and VPC B separately peers with VPC C, A still cannot reach C. There is no forwarding through B — each peering connection only ever links the exact two VPCs on its own ends, and this trips people up constantly.",
+      "source": {
+        "path": "vault/aws/networking/vpc-peering-and-transit-gateway.md",
+        "block": "card-y42g"
+      },
+      "citations": [
+        "Amazon VPC User Guide",
+        "Amazon Route 53 Developer Guide"
+      ],
+      "answer": "non-transitive"
+    },
+    {
+      "id": "card-gqr5",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc-peering",
+        "transit-gateway",
+        "routing",
+        "hub-and-spoke"
+      ],
+      "prompt": "A peering connection also cannot be created at all between two VPCs whose CIDR ranges ___. Peering routes traffic by address, so an address that could belong to either VPC leaves nothing for the connection to route.",
+      "source": {
+        "path": "vault/aws/networking/vpc-peering-and-transit-gateway.md",
+        "block": "card-gqr5"
+      },
+      "citations": [
+        "Amazon VPC User Guide",
+        "Amazon Route 53 Developer Guide"
+      ],
+      "answer": "overlap"
+    },
+    {
+      "id": "card-ryle",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc-peering",
+        "transit-gateway",
+        "routing",
+        "hub-and-spoke"
+      ],
+      "prompt": "VPC A and VPC B create a peering connection. An engineer adds a route to the connection in A's route table but forgets to do the same in B's route table. What happens when an instance in A tries to reach one in B?",
+      "source": {
+        "path": "vault/aws/networking/vpc-peering-and-transit-gateway.md",
+        "block": "card-ryle"
+      },
+      "citations": [
+        "Amazon VPC User Guide",
+        "Amazon Route 53 Developer Guide"
+      ],
+      "choices": [
+        {
+          "text": "A's packets can leave toward B, but B has no route back through the peering connection, so the exchange never completes",
+          "correct": true
+        },
+        {
+          "text": "Traffic flows normally in both directions once either side has a route",
+          "correct": false
+        },
+        {
+          "text": "AWS automatically mirrors the missing route onto B",
+          "correct": false
+        },
+        {
+          "text": "The peering connection refuses to pass any traffic until it is deleted and recreated",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-gxt9",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc-peering",
+        "transit-gateway",
+        "routing",
+        "hub-and-spoke"
+      ],
+      "prompt": "What three things have to be true before traffic actually flows across an established peering connection?",
+      "source": {
+        "path": "vault/aws/networking/vpc-peering-and-transit-gateway.md",
+        "block": "card-gxt9"
+      },
+      "citations": [
+        "Amazon VPC User Guide",
+        "Amazon Route 53 Developer Guide"
+      ],
+      "answer": "Both VPCs' route tables must point at the connection, and both sides' security rules must permit the traffic — the connection existing is necessary but not sufficient."
+    },
+    {
+      "id": "card-077i",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc-peering",
+        "transit-gateway",
+        "routing",
+        "hub-and-spoke"
+      ],
+      "prompt": "Connecting 6 VPCs into a full mesh with peering alone requires how many separate peering connections?",
+      "source": {
+        "path": "vault/aws/networking/vpc-peering-and-transit-gateway.md",
+        "block": "card-077i"
+      },
+      "citations": [
+        "Amazon VPC User Guide",
+        "Amazon Route 53 Developer Guide"
+      ],
+      "answer": "15 — n(n-1)/2 with n = 6, i.e. (6 x 5) / 2."
+    },
+    {
+      "id": "card-no54",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc-peering",
+        "transit-gateway",
+        "routing",
+        "hub-and-spoke"
+      ],
+      "prompt": "Transit Gateway exists to remove that arithmetic. It's a ___ that each VPC attaches to just once; every attached VPC can then reach every other attached VPC transitively, with the actual routing decisions made in the gateway's own route tables rather than replicated across every VPC pair.",
+      "source": {
+        "path": "vault/aws/networking/vpc-peering-and-transit-gateway.md",
+        "block": "card-no54"
+      },
+      "citations": [
+        "Amazon VPC User Guide",
+        "Amazon Route 53 Developer Guide"
+      ],
+      "answer": "hub"
+    },
+    {
+      "id": "card-wcgr",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc-peering",
+        "transit-gateway",
+        "routing",
+        "hub-and-spoke"
+      ],
+      "prompt": "Peering scales as n(n-1)/2 connections with per-pair hand-maintained routes; Transit Gateway scales as one attachment per VPC. Explain what structural difference between the two models produces that gap.",
+      "source": {
+        "path": "vault/aws/networking/vpc-peering-and-transit-gateway.md",
+        "block": "card-wcgr"
+      },
+      "citations": [
+        "Amazon VPC User Guide",
+        "Amazon Route 53 Developer Guide"
+      ],
+      "answer": "Peering routing is a property of each individual pairwise connection, so every new VPC means a new route table entry in every existing VPC it should reach. Transit Gateway centralizes routing into the gateway itself, so adding a VPC means one attachment and one set of entries in the gateway's own route table, not one new entry scattered across every existing VPC."
+    },
+    {
+      "id": "card-09ji",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-networking",
+      "tags": [
+        "vpc-peering",
+        "transit-gateway",
+        "routing",
+        "hub-and-spoke"
+      ],
+      "prompt": "What's the honest tradeoff between choosing VPC peering and Transit Gateway as the number of VPCs to connect grows?",
+      "source": {
+        "path": "vault/aws/networking/vpc-peering-and-transit-gateway.md",
+        "block": "card-09ji"
+      },
+      "citations": [
+        "Amazon VPC User Guide",
+        "Amazon Route 53 Developer Guide"
+      ],
+      "answer": "Peering is free and simplest for a small, fairly static number of VPCs; Transit Gateway charges per attachment and per GB but replaces per-pair route maintenance with one attachment per VPC, which pays for itself once the mesh gets large."
     },
     {
       "id": "card-v7fz",
