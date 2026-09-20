@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-20T16:44:10.516Z",
+  "generatedAt": "2026-09-20T17:03:28.131Z",
   "cards": [
     {
       "id": "card-6fmp",
@@ -36322,6 +36322,2263 @@
         "Aumasson, Serious Cryptography, Ch. 3"
       ],
       "answer": "These constructions provide no integrity check whatsoever; decryption always produces some plaintext for any ciphertext, valid or attacker-modified, since there's nothing to reject it against. Malleability means an attacker without the key can flip bits in the ciphertext to make predictable, controlled changes in the decrypted plaintext, and nothing in the cipher or mode itself notices or signals that the ciphertext changed."
+    },
+    {
+      "id": "card-sunu",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "certificate-validation",
+        "hostname-verification",
+        "revocation",
+        "ocsp"
+      ],
+      "prompt": "A client completes chain-of-trust verification and confirms the certificate hasn't expired, but never compares the connection target against the certificate's SAN entries. What does this omission make possible?",
+      "source": {
+        "path": "vault/security/tls/certificate-validation-and-revocation.md",
+        "block": "card-sunu"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 4",
+        "RFC 8446"
+      ],
+      "choices": [
+        {
+          "text": "Any server holding a validly-issued certificate for some name it controls can impersonate a completely different site, since nothing ties the presented certificate to the name the client meant to reach",
+          "correct": true
+        },
+        {
+          "text": "Nothing exploitable, since a valid chain already implies the correct name",
+          "correct": false
+        },
+        {
+          "text": "Only expired-certificate attacks become possible",
+          "correct": false
+        },
+        {
+          "text": "The connection fails closed automatically, so this is a safe default",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-6biy",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "certificate-validation",
+        "hostname-verification",
+        "revocation",
+        "ocsp"
+      ],
+      "prompt": "Why does skipping hostname verification make chain verification, expiry checking, and signature checking pointless, rather than merely weakening them?",
+      "source": {
+        "path": "vault/security/tls/certificate-validation-and-revocation.md",
+        "block": "card-6biy"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 4",
+        "RFC 8446"
+      ],
+      "answer": "Those three checks only establish that a trusted CA issued a currently-valid certificate for *some* domain — none of them binds the certificate to the specific server the client is trying to reach. Without the SAN-to-target comparison, an attacker just needs *any* validly issued certificate for *any* name to authenticate as *any* server, which means the other checks passed with full cryptographic rigor and still protected nothing."
+    },
+    {
+      "id": "card-a2f0",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "certificate-validation",
+        "hostname-verification",
+        "revocation",
+        "ocsp"
+      ],
+      "prompt": "___ restricts what a certificate's key is permitted to be used for, independent of whether the chain and hostname checks pass.",
+      "source": {
+        "path": "vault/security/tls/certificate-validation-and-revocation.md",
+        "block": "card-a2f0"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 4",
+        "RFC 8446"
+      ],
+      "answer": "Key usage"
+    },
+    {
+      "id": "card-yak5",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "certificate-validation",
+        "hostname-verification",
+        "revocation",
+        "ocsp"
+      ],
+      "prompt": "That fixes the bandwidth problem but introduces two new ones. First, ___ — every OCSP query tells the CA (or whoever operates the responder) exactly which site the client is about to visit, for every connection, which is a meaningful leak for a protocol whose whole point is protecting the confidentiality of that connection. Second, availability — the client now depends on a live network round trip to a third party's server before it can complete a handshake, and if that responder is slow, unreachable, or blocked, every relying client's connections suffer with it.",
+      "source": {
+        "path": "vault/security/tls/certificate-validation-and-revocation.md",
+        "block": "card-yak5"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 4",
+        "RFC 8446"
+      ],
+      "answer": "privacy"
+    },
+    {
+      "id": "card-pjsg",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "certificate-validation",
+        "hostname-verification",
+        "revocation",
+        "ocsp"
+      ],
+      "prompt": "What privacy problem is specific to plain OCSP that a CRL download does not have?",
+      "source": {
+        "path": "vault/security/tls/certificate-validation-and-revocation.md",
+        "block": "card-pjsg"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 4",
+        "RFC 8446"
+      ],
+      "choices": [
+        {
+          "text": "The responder learns which specific site the client is about to visit on every single connection",
+          "correct": true
+        },
+        {
+          "text": "OCSP responses are never signed, so they can be forged",
+          "correct": false
+        },
+        {
+          "text": "OCSP requires the client to send its private key to the CA",
+          "correct": false
+        },
+        {
+          "text": "CRLs also leak this information equally, so there is no difference",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-72it",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "certificate-validation",
+        "hostname-verification",
+        "revocation",
+        "ocsp"
+      ],
+      "prompt": "Explain what problem must-staple solves that OCSP stapling alone does not.",
+      "source": {
+        "path": "vault/security/tls/certificate-validation-and-revocation.md",
+        "block": "card-72it"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 4",
+        "RFC 8446"
+      ],
+      "answer": "OCSP stapling only helps when a server chooses to attach a staple; a client still has to decide how to treat a certificate that arrives with none, and if it accepts that silently, a server — or an attacker who has stripped the staple — can simply omit it to avoid revealing revocation status. Must-staple is a flag baked into the certificate itself that requires a staple to be present, turning \"no staple\" from an ambiguous default into a hard failure."
+    },
+    {
+      "id": "card-yhju",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "certificate-validation",
+        "hostname-verification",
+        "revocation",
+        "ocsp"
+      ],
+      "prompt": "Given the cost and fragility of live revocation checks, most clients adopt ___: if the revocation check can't be completed — the responder times out, the network is down, the query is blocked — the client proceeds as though the certificate were valid, rather than refusing the connection. The reasoning is pragmatic: hard-failing on every OCSP outage would make the entire web unreliable whenever any responder has trouble, and outages are common.",
+      "source": {
+        "path": "vault/security/tls/certificate-validation-and-revocation.md",
+        "block": "card-yhju"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 4",
+        "RFC 8446"
+      ],
+      "answer": "soft-fail"
+    },
+    {
+      "id": "card-qnp4",
+      "format": "recall",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "certificate-validation",
+        "hostname-verification",
+        "revocation",
+        "ocsp"
+      ],
+      "prompt": "Explain why soft-fail revocation checking provides weak protection specifically against the threat model revocation was designed for.",
+      "source": {
+        "path": "vault/security/tls/certificate-validation-and-revocation.md",
+        "block": "card-qnp4"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 4",
+        "RFC 8446"
+      ],
+      "answer": "Revocation exists mainly to stop an attacker who holds a compromised or mis-issued certificate from using it after the CA has flagged it. But that same attacker, if positioned to intercept the connection, can also block or drop the revocation-status request. A soft-fail client then treats the missing answer as \"proceed,\" so the attacker defeats revocation by suppressing the very check meant to catch them — the protection fails precisely in the case it was built for."
+    },
+    {
+      "id": "card-squv",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "certificate-validation",
+        "hostname-verification",
+        "revocation",
+        "ocsp"
+      ],
+      "prompt": "Why do short-lived certificates reduce the *practical* need for revocation checking, rather than making it obsolete outright?",
+      "source": {
+        "path": "vault/security/tls/certificate-validation-and-revocation.md",
+        "block": "card-squv"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 4",
+        "RFC 8446"
+      ],
+      "answer": "They shrink the exposure window a compromised certificate has to matter down to the certificate's own short lifetime, so many compromises simply expire before they'd be caught by a revocation check anyway. But the window isn't zero — a certificate can still be misused during its brief validity period — so revocation isn't rendered pointless, just far less load-bearing than it was for long-lived certificates."
+    },
+    {
+      "id": "card-vmpb",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "x509",
+        "certificates",
+        "pki",
+        "subject-alternative-name"
+      ],
+      "prompt": "Why does a public key need a certificate at all, rather than a party just publishing \"here is my public key\" directly?",
+      "source": {
+        "path": "vault/security/tls/certificates-and-x509.md",
+        "block": "card-vmpb"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "A bare claim like that is unverifiable — nothing stops an attacker from publishing a different key under the same claimed name. A certificate turns the claim into a statement signed by a third party (the issuer), so a relying party can check who is vouching for the binding between that identity and that key, rather than trusting an unauthenticated assertion from the subject itself."
+    },
+    {
+      "id": "card-pahl",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "x509",
+        "certificates",
+        "pki",
+        "subject-alternative-name"
+      ],
+      "prompt": "What does the Subject Public Key Info field contain, and why can the rest of a certificate's fields be described as scaffolding around it?",
+      "source": {
+        "path": "vault/security/tls/certificates-and-x509.md",
+        "block": "card-pahl"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "It contains the actual public key being certified. Every other field — subject identity, issuer, validity window, extensions, the issuer's signature — exists to make a trustworthy, verifiable statement about that one key; none of those other fields would need to exist if there were nothing to make a credible claim about."
+    },
+    {
+      "id": "card-k1oe",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "x509",
+        "certificates",
+        "pki",
+        "subject-alternative-name"
+      ],
+      "prompt": "What does the issuer field in a certificate actually assert?",
+      "source": {
+        "path": "vault/security/tls/certificates-and-x509.md",
+        "block": "card-k1oe"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "It names the entity whose private key produced the signature covering the rest of the certificate — who is making the \"this key belongs to this subject\" statement. It says nothing on its own about whether that issuer is trustworthy; that judgment comes from outside the certificate, via the chain leading back to a trust store."
+    },
+    {
+      "id": "card-xrln",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "x509",
+        "certificates",
+        "pki",
+        "subject-alternative-name"
+      ],
+      "prompt": "A certificate's subject field has Common Name \"example.com\", but its Subject Alternative Name extension lists only \"example.org\". Which name does a modern TLS client treat as authoritative for matching against the hostname it connected to?",
+      "source": {
+        "path": "vault/security/tls/certificates-and-x509.md",
+        "block": "card-xrln"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "choices": [
+        {
+          "text": "Only the names listed in the Subject Alternative Name extension",
+          "correct": true
+        },
+        {
+          "text": "The Common Name, since it's the primary identity field",
+          "correct": false
+        },
+        {
+          "text": "Both are checked and either match is accepted",
+          "correct": false
+        },
+        {
+          "text": "Neither — hostname matching does not use certificate fields",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-ftc6",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "x509",
+        "certificates",
+        "pki",
+        "subject-alternative-name"
+      ],
+      "prompt": "A certificate's validity window is a stated field, not a guarantee about when it will actually stop being honored — true or false?",
+      "source": {
+        "path": "vault/security/tls/certificates-and-x509.md",
+        "block": "card-ftc6"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "True. Not Before and Not After simply record the interval the issuer signed the certificate as valid for; they're part of what the issuer's signature covers, but how a relying party checks and reacts to that window is a separate concern from the field itself."
+    },
+    {
+      "id": "card-v7vq",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "x509",
+        "certificates",
+        "pki",
+        "subject-alternative-name"
+      ],
+      "prompt": "What does a certificate's Key Usage extension do?",
+      "source": {
+        "path": "vault/security/tls/certificates-and-x509.md",
+        "block": "card-v7vq"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "choices": [
+        {
+          "text": "Restricts the certified public key to specific permitted purposes, such as signing or key encipherment",
+          "correct": true
+        },
+        {
+          "text": "Records how long the private key has been in use",
+          "correct": false
+        },
+        {
+          "text": "Lists which applications are allowed to present the certificate",
+          "correct": false
+        },
+        {
+          "text": "Specifies which hash algorithm was used to compute the certificate's fingerprint",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-m0mz",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "x509",
+        "certificates",
+        "pki",
+        "subject-alternative-name"
+      ],
+      "prompt": "What does the Basic Constraints extension being set to CA:TRUE on a certificate indicate?",
+      "source": {
+        "path": "vault/security/tls/certificates-and-x509.md",
+        "block": "card-m0mz"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "That the certificate belongs to a certificate authority and is permitted to sign other certificates, distinguishing it from an end-entity certificate issued to a server or user, which is not allowed to sign further certificates."
+    },
+    {
+      "id": "card-jr16",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "pki",
+        "certificate-authority",
+        "chain-of-trust",
+        "trust-store"
+      ],
+      "prompt": "Why is a root CA's own certificate self-signed rather than signed by some other certificate?",
+      "source": {
+        "path": "vault/security/tls/chain-of-trust-and-certificate-authorities.md",
+        "block": "card-jr16"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 5"
+      ],
+      "choices": [
+        {
+          "text": "There is nothing above a root in the hierarchy to sign it — a root's trustworthiness comes from being placed directly in a trust store, not from another certificate vouching for it",
+          "correct": true
+        },
+        {
+          "text": "Self-signing is a historical artifact with no remaining technical reason",
+          "correct": false
+        },
+        {
+          "text": "Root certificates are signed by the intermediate CAs beneath them instead",
+          "correct": false
+        },
+        {
+          "text": "A root's certificate does not need a signature field at all",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-9j6s",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "pki",
+        "certificate-authority",
+        "chain-of-trust",
+        "trust-store"
+      ],
+      "prompt": "Why are path building and path validation described as two separate steps rather than one?",
+      "source": {
+        "path": "vault/security/tls/chain-of-trust-and-certificate-authorities.md",
+        "block": "card-9j6s"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 5"
+      ],
+      "answer": "Path building only answers a structural question — can a sequence of certificates be assembled that connects the presented leaf to some root the relying party trusts? Path validation answers a different question afterward — is that assembled sequence actually acceptable, checking each signature and each certificate's constraints along the way? A chain can be successfully built and still fail validation, so collapsing the two into one step would hide which kind of failure occurred."
+    },
+    {
+      "id": "card-xm5z",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "pki",
+        "certificate-authority",
+        "chain-of-trust",
+        "trust-store"
+      ],
+      "prompt": "What actually decides whether a given root CA is trusted when a TLS client validates a certificate chain?",
+      "source": {
+        "path": "vault/security/tls/chain-of-trust-and-certificate-authorities.md",
+        "block": "card-xm5z"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 5"
+      ],
+      "choices": [
+        {
+          "text": "The trust store maintained by the operating system or browser vendor, external to the TLS protocol itself",
+          "correct": true
+        },
+        {
+          "text": "A field inside the root certificate marking it as globally trusted",
+          "correct": false
+        },
+        {
+          "text": "The CA/Browser Forum, which directly configures every client's trust decisions",
+          "correct": false
+        },
+        {
+          "text": "The TLS handshake, which negotiates trust dynamically with the server at connection time",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-omgi",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "pki",
+        "certificate-authority",
+        "chain-of-trust",
+        "trust-store"
+      ],
+      "prompt": "Why would a certificate authority want its root cross-signed by another, already widely-trusted CA?",
+      "source": {
+        "path": "vault/security/tls/chain-of-trust-and-certificate-authorities.md",
+        "block": "card-omgi"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 5"
+      ],
+      "answer": "Cross-signing lets the same key be certified under more than one root, so clients that don't yet carry the newer root in their trust store can still validate a chain through the other, already-trusted root instead. It extends practical trust to a root before every client's trust store has caught up to it, and gives a CA room to migrate off an aging root gradually."
+    },
+    {
+      "id": "card-hs0h",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "pki",
+        "certificate-authority",
+        "chain-of-trust",
+        "trust-store"
+      ],
+      "prompt": "Root CAs deliberately keep their signing key ___, disconnected from any network, and use it only rarely — typically just to sign intermediate certificates in a controlled ceremony. Day-to-day certificate issuance is delegated to intermediates instead, precisely because a root compromise is catastrophic: every certificate ever issued under that root, through every intermediate beneath it, becomes suspect at once, while losing an intermediate's key only puts that one intermediate's slice of the hierarchy at risk.",
+      "source": {
+        "path": "vault/security/tls/chain-of-trust-and-certificate-authorities.md",
+        "block": "card-hs0h"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 5"
+      ],
+      "answer": "offline"
+    },
+    {
+      "id": "card-yz5l",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "pki",
+        "certificate-authority",
+        "chain-of-trust",
+        "trust-store"
+      ],
+      "prompt": "Why does keeping a root CA's key offline and delegating routine issuance to intermediates limit the damage of a key compromise?",
+      "source": {
+        "path": "vault/security/tls/chain-of-trust-and-certificate-authorities.md",
+        "block": "card-yz5l"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 5"
+      ],
+      "answer": "An offline root key is rarely used and much harder for an attacker to reach, and an intermediate's compromise only threatens the certificates issued under that one intermediate. A root key's compromise, by contrast, would threaten every certificate issued through every intermediate beneath it — the entire hierarchy at once — so keeping the root offline and delegating issuance narrows the blast radius of a successful attack."
+    },
+    {
+      "id": "card-eutj",
+      "format": "recall",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "pki",
+        "certificate-authority",
+        "chain-of-trust",
+        "trust-store"
+      ],
+      "prompt": "Explain the \"weakest link\" property of the CA trust model: why does adding one poorly-run CA to a trust store weaken security for domains that have no relationship with that CA at all?",
+      "source": {
+        "path": "vault/security/tls/chain-of-trust-and-certificate-authorities.md",
+        "block": "card-eutj"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 5"
+      ],
+      "answer": "Trust store validation doesn't scope a CA's authority to any particular set of domains — any CA in the store can issue a seemingly valid certificate for any name at all. A relying party isn't trusting only the specific CA a given site actually uses; it's trusting every CA in its store equally, for every name. A single careless or compromised CA can therefore produce a certificate that validates perfectly for a domain it has no legitimate relationship with, so the system's overall security is bounded by its weakest participating CA, not by the average or the best."
+    },
+    {
+      "id": "card-0ztf",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "cipher-suites",
+        "version-negotiation",
+        "downgrade-attacks",
+        "tls-1.3"
+      ],
+      "prompt": "Which single field in `TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256` determines whether the session has forward secrecy, and why?",
+      "source": {
+        "path": "vault/security/tls/cipher-suites-and-version-negotiation.md",
+        "block": "card-0ztf"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "The key-exchange field, `ECDHE` — it names ephemeral elliptic-curve Diffie-Hellman, so a fresh key pair is generated per handshake and the shared secret can't be reconstructed later even if the server's long-term signing key leaks. A suite naming static `RSA` key exchange instead would tie the shared secret directly to that long-term key."
+    },
+    {
+      "id": "card-ousl",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "cipher-suites",
+        "version-negotiation",
+        "downgrade-attacks",
+        "tls-1.3"
+      ],
+      "prompt": "In a pre-1.3 cipher suite name, what does the authentication component (the `RSA` in `ECDHE_RSA`) actually certify?",
+      "source": {
+        "path": "vault/security/tls/cipher-suites-and-version-negotiation.md",
+        "block": "card-ousl"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "choices": [
+        {
+          "text": "That the bulk cipher is being used correctly",
+          "correct": false
+        },
+        {
+          "text": "That the party performing the key exchange holds the private key matching its certificate",
+          "correct": true
+        },
+        {
+          "text": "That the two endpoints support the same TLS version",
+          "correct": false
+        },
+        {
+          "text": "That the MAC algorithm has not been tampered with",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-zyis",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "cipher-suites",
+        "version-negotiation",
+        "downgrade-attacks",
+        "tls-1.3"
+      ],
+      "prompt": "A ___ field never names a signature or key-exchange algorithm — go look at `TLS_AES_128_GCM_SHA256` and there's nothing there but a bulk algorithm and a hash.",
+      "source": {
+        "path": "vault/security/tls/cipher-suites-and-version-negotiation.md",
+        "block": "card-zyis"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "1.3 cipher suite"
+    },
+    {
+      "id": "card-svqi",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "cipher-suites",
+        "version-negotiation",
+        "downgrade-attacks",
+        "tls-1.3"
+      ],
+      "prompt": "Why does restricting TLS 1.3's cipher suite list to AEAD-only constructions close off a whole category of past TLS vulnerabilities, rather than just one bug?",
+      "source": {
+        "path": "vault/security/tls/cipher-suites-and-version-negotiation.md",
+        "block": "card-svqi"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "Because most of the serious record-layer flaws in earlier TLS versions — padding-oracle attacks against CBC mode, MAC-then-encrypt ordering mistakes, weaknesses in RC4's keystream — were properties of the specific construction a suite named, not of TLS's design in the abstract. Removing every non-AEAD option removes the entire family of constructions those flaws lived in, rather than patching them one at a time."
+    },
+    {
+      "id": "card-lqr4",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "cipher-suites",
+        "version-negotiation",
+        "downgrade-attacks",
+        "tls-1.3"
+      ],
+      "prompt": "Why does TLS 1.3 negotiate the protocol version through the `supported_versions` extension instead of raising the value in the ClientHello's legacy version field?",
+      "source": {
+        "path": "vault/security/tls/cipher-suites-and-version-negotiation.md",
+        "block": "card-lqr4"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "Because some deployed middleboxes are version-intolerant: they abort the connection outright on seeing an unrecognized version number in that field rather than ignoring it. Freezing that field at a familiar value and moving the real version list into an extension lets 1.3-capable clients advertise their range somewhere those middleboxes never inspect."
+    },
+    {
+      "id": "card-0662",
+      "format": "recall",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "cipher-suites",
+        "version-negotiation",
+        "downgrade-attacks",
+        "tls-1.3"
+      ],
+      "prompt": "A network attacker strips the `supported_versions` extension from a ClientHello, forcing negotiation down to TLS 1.2. Why can't the attacker also hide the fact that a downgrade happened from a 1.3-capable client?",
+      "source": {
+        "path": "vault/security/tls/cipher-suites-and-version-negotiation.md",
+        "block": "card-0662"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "Because the server embeds a fixed sentinel value in the last 8 bytes of the ServerRandom whenever it negotiates a lower version than it's actually capable of. The client can independently check that field: a 1.3-capable server that ends up on 1.2 will have marked its ServerRandom accordingly, so the client detects the mismatch and aborts, even though the attacker successfully manipulated the version field itself."
+    },
+    {
+      "id": "card-u7hv",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "cipher-suites",
+        "version-negotiation",
+        "downgrade-attacks",
+        "tls-1.3"
+      ],
+      "prompt": "What is the common failure mode shared by weak-cipher-suite negotiation and version-downgrade attacks, despite operating on completely different fields of the handshake?",
+      "source": {
+        "path": "vault/security/tls/cipher-suites-and-version-negotiation.md",
+        "block": "card-u7hv"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "Both exploit the fact that a protocol which still permits an older or weaker option leaves that option available not just to a compliant peer choosing conservatively, but to an active attacker who can manipulate the negotiation to force it — the mere presence of the option in the negotiable set is the vulnerability, independent of whether either honest endpoint would ever have chosen it itself."
+    },
+    {
+      "id": "card-q7gv",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "mtls",
+        "client-authentication",
+        "certificate-pinning",
+        "bearer-tokens"
+      ],
+      "prompt": "Why does a client with no certificate to present fail the connection outright, rather than the handshake quietly continuing without client authentication?",
+      "source": {
+        "path": "vault/security/tls/mutual-tls-and-client-authentication.md",
+        "block": "card-q7gv"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 4",
+        "RFC 8446"
+      ],
+      "answer": "Because the server explicitly requested a client certificate, and requiring one is exactly what turns an ordinary one-sided handshake into mutual authentication; silently falling back to an unauthenticated connection would defeat the point of the server having asked, so a missing or refused certificate is treated as a failed handshake rather than a downgrade."
+    },
+    {
+      "id": "card-kleh",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "mtls",
+        "client-authentication",
+        "certificate-pinning",
+        "bearer-tokens"
+      ],
+      "prompt": "An attacker manages to read a bearer token out of a compromised log file. What can they do with it that a captured mTLS handshake transcript would not let them do with a client certificate?",
+      "source": {
+        "path": "vault/security/tls/mutual-tls-and-client-authentication.md",
+        "block": "card-kleh"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 4",
+        "RFC 8446"
+      ],
+      "choices": [
+        {
+          "text": "Present the token on a new connection and be accepted as the legitimate caller, since the token alone is the entire proof of identity",
+          "correct": true
+        },
+        {
+          "text": "Nothing — bearer tokens and client certificates offer identical protection against this scenario",
+          "correct": false
+        },
+        {
+          "text": "Decrypt unrelated TLS sessions between other clients and the server",
+          "correct": false
+        },
+        {
+          "text": "Forge a new certificate authority root",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-92qv",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "mtls",
+        "client-authentication",
+        "certificate-pinning",
+        "bearer-tokens"
+      ],
+      "prompt": "Why does per-connection proof of private-key possession resist replay in a way that a bearer token structurally cannot?",
+      "source": {
+        "path": "vault/security/tls/mutual-tls-and-client-authentication.md",
+        "block": "card-92qv"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 4",
+        "RFC 8446"
+      ],
+      "answer": "A bearer token is a static value — anyone holding a copy of it is accepted, so a captured token stays useful to an attacker indefinitely. mTLS instead requires the client to demonstrate possession of the private key freshly for each connection; an attacker who only captured the handshake, without the private key itself, has nothing that lets them complete a *different* handshake later, so there is no equivalent replayable artifact to steal."
+    },
+    {
+      "id": "card-iz5d",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "mtls",
+        "client-authentication",
+        "certificate-pinning",
+        "bearer-tokens"
+      ],
+      "prompt": "Where does mTLS see far more real-world adoption — public-facing browser traffic, or internal service-to-service calls?",
+      "source": {
+        "path": "vault/security/tls/mutual-tls-and-client-authentication.md",
+        "block": "card-iz5d"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 4",
+        "RFC 8446"
+      ],
+      "answer": "Internal service-to-service calls, because the caller population is small and known in advance, making it practical to issue and verify a certificate per service — an assumption that breaks down for a public website serving an open population of arbitrary end users."
+    },
+    {
+      "id": "card-yla4",
+      "format": "recall",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "mtls",
+        "client-authentication",
+        "certificate-pinning",
+        "bearer-tokens"
+      ],
+      "prompt": "A team says \"we tried mTLS between our services once, but it became too painful to maintain.\" Given that the mTLS extension to TLS itself is small, what is almost certainly the real source of that pain, and why does it get worse as the number of services grows?",
+      "source": {
+        "path": "vault/security/tls/mutual-tls-and-client-authentication.md",
+        "block": "card-yla4"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 4",
+        "RFC 8446"
+      ],
+      "answer": "The pain is almost never the protocol — it's the surrounding lifecycle: issuing a distinct certificate to every service instance, distributing it securely, rotating each one before it expires without causing an outage, and revoking certificates for retired or compromised instances. That workload scales with the number of clients needing certificates, not with any property of the TLS handshake, so it grows painful precisely as a service-to-service deployment grows larger."
+    },
+    {
+      "id": "card-c1fm",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "mtls",
+        "client-authentication",
+        "certificate-pinning",
+        "bearer-tokens"
+      ],
+      "prompt": "What is the central risk that makes certificate pinning dangerous to deploy carelessly?",
+      "source": {
+        "path": "vault/security/tls/mutual-tls-and-client-authentication.md",
+        "block": "card-c1fm"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 4",
+        "RFC 8446"
+      ],
+      "answer": "A routine, legitimate certificate rotation on the server — with no compromise involved at all — can leave every pinned client rejecting the new certificate and unable to connect, since pinning can't distinguish \"the server rotated normally\" from \"an attacker is presenting a different certificate.\""
+    },
+    {
+      "id": "card-9gp9",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "mtls",
+        "client-authentication",
+        "certificate-pinning",
+        "bearer-tokens"
+      ],
+      "prompt": "A startup with a large, constantly-changing set of external API consumers is deciding between mTLS and bearer tokens for authenticating incoming API calls. Which consideration should weigh most heavily against choosing mTLS here?",
+      "source": {
+        "path": "vault/security/tls/mutual-tls-and-client-authentication.md",
+        "block": "card-9gp9"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 4",
+        "RFC 8446"
+      ],
+      "choices": [
+        {
+          "text": "Issuing, distributing, rotating, and revoking a certificate for every external consumer at that scale is an operational burden bearer tokens don't carry",
+          "correct": true
+        },
+        {
+          "text": "mTLS cannot be used by any client outside the company's own network",
+          "correct": false
+        },
+        {
+          "text": "Bearer tokens are cryptographically stronger than client certificates",
+          "correct": false
+        },
+        {
+          "text": "mTLS requires every API consumer to share a single private key",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-s0js",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "session-resumption",
+        "session-tickets",
+        "0-rtt",
+        "replay-attacks"
+      ],
+      "prompt": "Why does session resumption cost something worth avoiding even when the underlying key exchange itself is fast?",
+      "source": {
+        "path": "vault/security/tls/session-resumption-and-0-rtt.md",
+        "block": "card-s0js"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "Because a full handshake's cost isn't only the key-exchange computation — it also includes at least one additional round trip of latency before application data can flow, plus the signature generation and verification tied to authenticating the server (and possibly the client), and repeating all of that on every reconnect adds up even when each individual step is cheap."
+    },
+    {
+      "id": "card-bpcf",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "session-resumption",
+        "session-tickets",
+        "0-rtt",
+        "replay-attacks"
+      ],
+      "prompt": "A server wants to support session resumption without keeping any per-session cache — no memory or database entry for each active session. Which resumption mechanism achieves that?",
+      "source": {
+        "path": "vault/security/tls/session-resumption-and-0-rtt.md",
+        "block": "card-bpcf"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "choices": [
+        {
+          "text": "Session IDs, since the ID itself is small",
+          "correct": false
+        },
+        {
+          "text": "Session tickets, since the session state is encrypted and handed to the client to hold instead of being cached server-side",
+          "correct": true
+        },
+        {
+          "text": "Neither mechanism can avoid server-side state",
+          "correct": false
+        },
+        {
+          "text": "Both mechanisms require identical server-side storage",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-70ti",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "session-resumption",
+        "session-tickets",
+        "0-rtt",
+        "replay-attacks"
+      ],
+      "prompt": "What is the essential difference between session-ID resumption and session-ticket resumption in terms of where the resumable session state physically lives?",
+      "source": {
+        "path": "vault/security/tls/session-resumption-and-0-rtt.md",
+        "block": "card-70ti"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "With session IDs, the state lives on the server, indexed by an ID the client just echoes back; with session tickets, the state itself travels with the client as an encrypted blob, and the server needs no per-session storage at all — only the key it used to encrypt the ticket."
+    },
+    {
+      "id": "card-09lo",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "session-resumption",
+        "session-tickets",
+        "0-rtt",
+        "replay-attacks"
+      ],
+      "prompt": "What are the two separate controls placed on session tickets in 1.3, and how do they differ in what each one bounds?",
+      "source": {
+        "path": "vault/security/tls/session-resumption-and-0-rtt.md",
+        "block": "card-09lo"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "A ticket carries its own lifetime, bounding how long that specific issued ticket may still be redeemed; separately, the key used to encrypt tickets is rotated on its own schedule, bounding how long a single compromised encryption key can expose every ticket ever issued under it, regardless of any individual ticket's stated expiry."
+    },
+    {
+      "id": "card-xwzq",
+      "format": "recall",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "session-resumption",
+        "session-tickets",
+        "0-rtt",
+        "replay-attacks"
+      ],
+      "prompt": "A server issued a session ticket, and the client resumed the session under it weeks ago using an otherwise properly ephemeral, forward-secret original handshake. If the server's ticket-encryption key leaks today, explain what an attacker who also recorded that resumed session's traffic can now do, and why rotating the ticket key regularly is the mitigation.",
+      "source": {
+        "path": "vault/security/tls/session-resumption-and-0-rtt.md",
+        "block": "card-xwzq"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "The leaked key lets the attacker decrypt the ticket from the recorded resumed session and recover the PSK (or cached session state) it protected, which in turn lets them derive that session's traffic keys and read the recorded traffic — even though the original full handshake used ephemeral key exchange. The ticket-encryption key acts as a long-lived secret sitting underneath what's supposed to be a forward-secret system, so every session ever resumed under that key is retroactively exposed once it leaks. Rotating the key frequently limits the window of sessions any single leaked key can expose, rather than leaving one key covering the server's entire ticket history."
+    },
+    {
+      "id": "card-4rnn",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "session-resumption",
+        "session-tickets",
+        "0-rtt",
+        "replay-attacks"
+      ],
+      "prompt": "What specific latency benefit does 0-RTT early data provide beyond what ordinary PSK-based 1-RTT resumption already saves compared to a full handshake?",
+      "source": {
+        "path": "vault/security/tls/session-resumption-and-0-rtt.md",
+        "block": "card-4rnn"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "It lets the client send encrypted application data in its very first flight, before any handshake round trip completes at all — eliminating that remaining round trip's worth of latency even on top of what abbreviated PSK resumption already saves over a full signature-based handshake."
+    },
+    {
+      "id": "card-wf1c",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "session-resumption",
+        "session-tickets",
+        "0-rtt",
+        "replay-attacks"
+      ],
+      "prompt": "A payments API accepts a \"transfer $100 from account A to account B\" request as 0-RTT early data. An attacker captures that early data flight and replays it to the server later. What does TLS itself do about this replay?",
+      "source": {
+        "path": "vault/security/tls/session-resumption-and-0-rtt.md",
+        "block": "card-wf1c"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "choices": [
+        {
+          "text": "TLS rejects the replayed ClientHello automatically",
+          "correct": false
+        },
+        {
+          "text": "TLS 1.3's PSK binder detects and blocks the duplicate request",
+          "correct": false
+        },
+        {
+          "text": "Nothing — TLS has no way to distinguish the replay from the original request; the application would need to reject it itself",
+          "correct": true
+        },
+        {
+          "text": "The server's ticket lifetime check catches it",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-vmt1",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "session-resumption",
+        "session-tickets",
+        "0-rtt",
+        "replay-attacks"
+      ],
+      "prompt": "Why is \"0-RTT early data is only safe for idempotent requests\" a statement about the application built on top of TLS rather than about TLS itself?",
+      "source": {
+        "path": "vault/security/tls/session-resumption-and-0-rtt.md",
+        "block": "card-vmt1"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "Because idempotency describes a property of what a specific request does when processed twice — whether repeating it changes anything — and TLS has no visibility into request semantics at all. TLS can offer or withhold 0-RTT as a transport-level capability, but it cannot know or enforce whether the bytes inside early data represent a safely repeatable operation; that judgment belongs entirely to whatever application logic decides how to handle the request it receives."
+    },
+    {
+      "id": "card-ld6c",
+      "format": "recall",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "sni",
+        "alpn",
+        "virtual-hosting",
+        "encrypted-client-hello"
+      ],
+      "prompt": "State the chicken-and-egg problem that SNI solves. Why couldn't a TLS server, before SNI existed, simply wait and read the hostname the same way a plain HTTP server reads the `Host` header?",
+      "source": {
+        "path": "vault/security/tls/sni-and-alpn.md",
+        "block": "card-ld6c"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "A server fronting several hostnames on one IP must pick which certificate to send before the handshake finishes, but which certificate is correct depends on which hostname the client wants. That hostname is normally only available inside the request itself, and the request is carried by the connection the certificate is meant to secure — so the server would need to already be past certificate selection to learn the one fact it needs to make that selection."
+    },
+    {
+      "id": "card-wvgc",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "sni",
+        "alpn",
+        "virtual-hosting",
+        "encrypted-client-hello"
+      ],
+      "prompt": "The fix is almost embarrassingly direct: the client just says the hostname earlier, in the clear, as an extension in its ClientHello. ___ carries the intended hostname before any certificate has been sent, so the server can look it up and hand back the matching one.",
+      "source": {
+        "path": "vault/security/tls/sni-and-alpn.md",
+        "block": "card-wvgc"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "Server Name Indication"
+    },
+    {
+      "id": "card-bzi8",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "sni",
+        "alpn",
+        "virtual-hosting",
+        "encrypted-client-hello"
+      ],
+      "prompt": "Why does hosting many independent sites on a single IP address force a TLS server to know the client's intended hostname before it can even choose a certificate?",
+      "source": {
+        "path": "vault/security/tls/sni-and-alpn.md",
+        "block": "card-bzi8"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "Because each hostname may have its own certificate, and the server has no other channel to learn which site the client wants — the hostname would otherwise only appear inside the very request that a correctly-chosen certificate is needed to protect."
+    },
+    {
+      "id": "card-yp9z",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "sni",
+        "alpn",
+        "virtual-hosting",
+        "encrypted-client-hello"
+      ],
+      "prompt": "A client connects over TLS to a server that also hosts several other sites on the same IP address. The client sends SNI in its ClientHello. What can a passive network observer, who cannot decrypt any TLS traffic, still learn from this exchange?",
+      "source": {
+        "path": "vault/security/tls/sni-and-alpn.md",
+        "block": "card-yp9z"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "choices": [
+        {
+          "text": "Which hostname the client is connecting to",
+          "correct": true
+        },
+        {
+          "text": "The full URL path the client will request",
+          "correct": false
+        },
+        {
+          "text": "The contents of any cookies the client will send",
+          "correct": false
+        },
+        {
+          "text": "Nothing at all — SNI is encrypted along with the rest of the handshake",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-0wiu",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "sni",
+        "alpn",
+        "virtual-hosting",
+        "encrypted-client-hello"
+      ],
+      "prompt": "So the practical result is a strange split: TLS hides the content of your request but, by default, still tells anyone watching *which site* you visited. ___ is the current attempt to close that gap — it wraps the ClientHello, SNI included, under its own encryption negotiated with a separate, published key for the server (or the network in front of it), rather than leaving it in plaintext.",
+      "source": {
+        "path": "vault/security/tls/sni-and-alpn.md",
+        "block": "card-0wiu"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "Encrypted Client Hello"
+    },
+    {
+      "id": "card-xiy6",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "sni",
+        "alpn",
+        "virtual-hosting",
+        "encrypted-client-hello"
+      ],
+      "prompt": "Why is Encrypted Client Hello described as an in-progress answer to SNI's leak rather than a settled fix?",
+      "source": {
+        "path": "vault/security/tls/sni-and-alpn.md",
+        "block": "card-xiy6"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "Because it depends on infrastructure the client and network must already support and agree on before the handshake starts — a server or middlebox that doesn't support it, or a network path where it's blocked or stripped, falls back to a plaintext SNI, so the leak it closes is closed only where ECH is actually deployed and reachable, not universally."
+    },
+    {
+      "id": "card-2am0",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "sni",
+        "alpn",
+        "virtual-hosting",
+        "encrypted-client-hello"
+      ],
+      "prompt": "What did switching application protocols over an already-open connection cost before ALPN existed, using HTTP's own Upgrade mechanism as the example?",
+      "source": {
+        "path": "vault/security/tls/sni-and-alpn.md",
+        "block": "card-2am0"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "A full extra request-response round trip spent purely on asking to switch protocols, before any real application data could be exchanged."
+    },
+    {
+      "id": "card-hx18",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "sni",
+        "alpn",
+        "virtual-hosting",
+        "encrypted-client-hello"
+      ],
+      "prompt": "Application-Layer Protocol Negotiation removes that cost by having the client list every protocol it's willing to speak as one more ClientHello extension, and having the server pick one of them and echo its choice back in the ServerHello. By the time the handshake finishes, both sides already know ___ — there is no separate negotiation step left to run afterward.",
+      "source": {
+        "path": "vault/security/tls/sni-and-alpn.md",
+        "block": "card-hx18"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "which application protocol the connection will carry"
+    },
+    {
+      "id": "card-m4ez",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "sni",
+        "alpn",
+        "virtual-hosting",
+        "encrypted-client-hello"
+      ],
+      "prompt": "A browser and a server both support two different application protocols over the same TCP port. Which mechanism lets them agree on one of those protocols as part of the TLS handshake, rather than negotiating it afterward at the application layer?",
+      "source": {
+        "path": "vault/security/tls/sni-and-alpn.md",
+        "block": "card-m4ez"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "choices": [
+        {
+          "text": "ALPN",
+          "correct": true
+        },
+        {
+          "text": "SNI",
+          "correct": false
+        },
+        {
+          "text": "The cipher suite list in the ClientHello",
+          "correct": false
+        },
+        {
+          "text": "Session resumption",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-z00p",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "tls-1-2",
+        "handshake",
+        "key-exchange",
+        "forward-secrecy"
+      ],
+      "prompt": "Why do both ClientHello and ServerHello contribute a random value that feeds into the derived keys, rather than the derivation depending only on the key-exchange secret?",
+      "source": {
+        "path": "vault/security/tls/the-tls-1-2-handshake.md",
+        "block": "card-z00p"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "Because the key-exchange secret alone could, for RSA key transport, be replayed or reused across attempts if nothing else varied the derivation. Mixing in a random chosen fresh by each side ties the resulting keys to this specific handshake instance, so two handshakes never derive the same keys even if a client reused a premaster secret."
+    },
+    {
+      "id": "card-f5qe",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "tls-1-2",
+        "handshake",
+        "key-exchange",
+        "forward-secrecy"
+      ],
+      "prompt": "Why does RSA key transport need no ServerKeyExchange message at all, while every DHE/ECDHE suite requires one?",
+      "source": {
+        "path": "vault/security/tls/the-tls-1-2-handshake.md",
+        "block": "card-f5qe"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "ServerKeyExchange exists to carry a fresh, connection-specific contribution from the server toward the shared secret. Under RSA key transport the server contributes nothing beyond the public key it already published in its certificate — the client alone generates the secret and sends it, encrypted, in ClientKeyExchange — so there's nothing left for a ServerKeyExchange message to carry."
+    },
+    {
+      "id": "card-5of7",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "tls-1-2",
+        "handshake",
+        "key-exchange",
+        "forward-secrecy"
+      ],
+      "prompt": "Why must the server sign the ephemeral parameters it sends in ServerKeyExchange, when RSA key transport needs no equivalent signature on anything the server sends?",
+      "source": {
+        "path": "vault/security/tls/the-tls-1-2-handshake.md",
+        "block": "card-5of7"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "An unsigned ephemeral value carries no proof of origin, so an attacker sitting between client and server could substitute their own ephemeral parameters and complete a key exchange with each side separately. The signature binds those freshly generated, otherwise-anonymous parameters to the server's long-term identity. RSA key transport doesn't need this because the client already encrypts directly to the identity-bound public key from the certificate — there's no freestanding ephemeral value in that path for an attacker to swap in."
+    },
+    {
+      "id": "card-9qbg",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "tls-1-2",
+        "handshake",
+        "key-exchange",
+        "forward-secrecy"
+      ],
+      "prompt": "A cipher suite negotiated in ServerHello uses ECDHE. Which message carries the server's ephemeral key-exchange contribution?",
+      "source": {
+        "path": "vault/security/tls/the-tls-1-2-handshake.md",
+        "block": "card-9qbg"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "choices": [
+        {
+          "text": "Certificate",
+          "correct": false
+        },
+        {
+          "text": "ServerKeyExchange",
+          "correct": true
+        },
+        {
+          "text": "ServerHello itself",
+          "correct": false
+        },
+        {
+          "text": "ChangeCipherSpec",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-gb3y",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "tls-1-2",
+        "handshake",
+        "key-exchange",
+        "forward-secrecy"
+      ],
+      "prompt": "**ChangeCipherSpec** is not itself a handshake message — it belongs to its own tiny protocol — but it marks the moment each side switches from sending records in the clear to sending them protected under the ___. Everything a side sends after its own ChangeCipherSpec, including that side's Finished message, is encrypted.",
+      "source": {
+        "path": "vault/security/tls/the-tls-1-2-handshake.md",
+        "block": "card-gb3y"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "newly negotiated session keys"
+    },
+    {
+      "id": "card-r5pw",
+      "format": "recall",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "tls-1-2",
+        "handshake",
+        "key-exchange",
+        "forward-secrecy"
+      ],
+      "prompt": "A network attacker can intercept and modify the plaintext handshake messages in TLS 1.2 (ClientHello, ServerHello, ServerKeyExchange, and so on) before either side has derived any keys. Explain why the Finished message still lets both sides detect that tampering occurred, even though the tampering happened before any encryption was in place.",
+      "source": {
+        "path": "vault/security/tls/the-tls-1-2-handshake.md",
+        "block": "card-r5pw"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "Finished carries a MAC computed over a hash of the entire handshake transcript as each side actually saw it, and it is only sent after both sides have derived the session keys. If the attacker altered any earlier message, the two sides' views of the transcript diverge, so their independently computed transcript hashes diverge too. The receiver recomputes the expected hash from its own record of the handshake and compares it against the value inside the peer's Finished message; a mismatch means some earlier message was changed in transit, and the connection is torn down rather than proceeding to application data."
+    },
+    {
+      "id": "card-ay9j",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "tls-1-2",
+        "handshake",
+        "key-exchange",
+        "forward-secrecy"
+      ],
+      "prompt": "How many round trips does a full TLS 1.2 handshake require before either side can send application data?",
+      "source": {
+        "path": "vault/security/tls/the-tls-1-2-handshake.md",
+        "block": "card-ay9j"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "Two — one for the ClientHello/ServerHello exchange (through ServerHelloDone), and one for the ClientKeyExchange/ChangeCipherSpec/Finished exchange on both sides."
+    },
+    {
+      "id": "card-axsz",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "tls-1-2",
+        "handshake",
+        "key-exchange",
+        "forward-secrecy"
+      ],
+      "prompt": "Why does recovering a server's long-term RSA private key at some point in the future let an attacker decrypt recordings of every past session that used RSA key transport with that key — and not merely future sessions from that point on?",
+      "source": {
+        "path": "vault/security/tls/the-tls-1-2-handshake.md",
+        "block": "card-axsz"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "Because in RSA key transport the premaster secret for every such session was encrypted directly under that one long-term public key, and nothing else protected it. The private key is the only thing standing between a recorded, encrypted premaster secret and the session keys derived from it, so possessing that key at any later time — not just at the time of the session — is sufficient to unlock recordings made arbitrarily long before."
+    },
+    {
+      "id": "card-kith",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "tls-1-3",
+        "handshake",
+        "forward-secrecy",
+        "protocol-design"
+      ],
+      "prompt": "Why does putting a computed key_share directly into ClientHello let TLS 1.3 finish key agreement in a single round trip, when TLS 1.2 needed a full round trip just to exchange ServerKeyExchange and ClientKeyExchange?",
+      "source": {
+        "path": "vault/security/tls/the-tls-1-3-handshake.md",
+        "block": "card-kith"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "Because the client no longer waits to find out which group or parameters the server prefers before contributing its half of the exchange — it commits to a guess and sends its ephemeral value in the same flight as ClientHello. If the guess matches something the server accepts, the server's ServerHello reply already carries everything both sides need to derive a shared secret, collapsing what used to be two separate exchange messages into one guessed contribution plus one confirming reply."
+    },
+    {
+      "id": "card-qnu0",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "tls-1-3",
+        "handshake",
+        "forward-secrecy",
+        "protocol-design"
+      ],
+      "prompt": "A client's ClientHello offers key shares for groups A and B. The server only supports group C. What does the server send back?",
+      "source": {
+        "path": "vault/security/tls/the-tls-1-3-handshake.md",
+        "block": "card-qnu0"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "choices": [
+        {
+          "text": "ServerHello with an empty key_share, deferring the choice",
+          "correct": false
+        },
+        {
+          "text": "Alert and immediate connection termination",
+          "correct": false
+        },
+        {
+          "text": "HelloRetryRequest naming group C",
+          "correct": true
+        },
+        {
+          "text": "ServerHello with a key_share for group A, ignoring the mismatch",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-ja2e",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "tls-1-3",
+        "handshake",
+        "forward-secrecy",
+        "protocol-design"
+      ],
+      "prompt": "Which TLS 1.3 handshake message is the first one sent under the newly derived handshake traffic keys, immediately after the key-share exchange completes?",
+      "source": {
+        "path": "vault/security/tls/the-tls-1-3-handshake.md",
+        "block": "card-ja2e"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "EncryptedExtensions — sent by the server right after ServerHello, before its certificate or Finished, and everything the server sends from that point through the end of its handshake flight is encrypted under those same keys."
+    },
+    {
+      "id": "card-p457",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "tls-1-3",
+        "handshake",
+        "forward-secrecy",
+        "protocol-design"
+      ],
+      "prompt": "Why did removing static (non-ephemeral) Diffie-Hellman close the same forward-secrecy gap as removing RSA key transport, even though static DH is a Diffie-Hellman exchange rather than an RSA encryption?",
+      "source": {
+        "path": "vault/security/tls/the-tls-1-3-handshake.md",
+        "block": "card-p457"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "Because the weakness was never specific to RSA — it was reusing the same long-term secret across many connections' key agreements. Static DH suites reused a fixed server-side DH keypair for every connection exactly the way RSA key transport reused a fixed RSA keypair, so recovering that long-term keypair later still unlocks every past session that used it. Requiring key_share to be freshly generated per handshake removes that reuse regardless of which algorithm family it would have applied to."
+    },
+    {
+      "id": "card-oqav",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "tls-1-3",
+        "handshake",
+        "forward-secrecy",
+        "protocol-design"
+      ],
+      "prompt": "What made TLS 1.2's in-band renegotiation exploitable by an attacker who controlled no keys at all, and how does removing renegotiation as a protocol feature close that off?",
+      "source": {
+        "path": "vault/security/tls/the-tls-1-3-handshake.md",
+        "block": "card-oqav"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "An attacker could open a connection, inject their own data, and then splice in a client's renegotiation onto that same connection; the application saw the post-renegotiation, now-authenticated identity and mistakenly attributed the attacker's earlier injected data to that authenticated peer. Because the flaw lived in the ability to switch a connection's security context mid-stream and reattribute what came before, removing the ability to renegotiate at all — rather than patching how it bound old and new contexts together — removes the seam the attack depended on."
+    },
+    {
+      "id": "card-c1cz",
+      "format": "recall",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "tls-1-3",
+        "handshake",
+        "forward-secrecy",
+        "protocol-design"
+      ],
+      "prompt": "Explain why compressing plaintext before encryption created a side channel that let an attacker recover secret bytes they couldn't otherwise read, and why removing compression from the protocol (as TLS 1.3 does) closes that channel more reliably than telling implementers to disable it.",
+      "source": {
+        "path": "vault/security/tls/the-tls-1-3-handshake.md",
+        "block": "card-c1cz"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "Compression makes the size of the ciphertext depend on redundancy in the plaintext. If an attacker can inject bytes of their own choosing next to an unknown secret and observe the resulting compressed length, a guessed byte that matches part of the secret creates extra redundancy the compressor squeezes out, shrinking the output just enough to detect a hit — letting the secret be recovered one byte at a time by trying every possibility. Making compression an optional, implementation-level setting left it exposed everywhere that setting was left on by default; deleting the mechanism from the protocol means there's no setting left to get wrong."
+    },
+    {
+      "id": "card-kmu7",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "tls-1-3",
+        "handshake",
+        "forward-secrecy",
+        "protocol-design"
+      ],
+      "prompt": "Why does restricting TLS 1.3 to AEAD-only ciphers remove a whole category of past attacks, rather than just fixing the specific flaws found in older combined encrypt-and-MAC constructions?",
+      "source": {
+        "path": "vault/security/tls/the-tls-1-3-handshake.md",
+        "block": "card-kmu7"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "Those older flaws came from having two separate steps — encrypt, then authenticate, or the reverse — whose interaction an implementation had to get exactly right, and repeated real-world breaks showed that boundary was hard to implement safely no matter which order was chosen. An AEAD algorithm folds both jobs into a single operation, so there is no separate combining step left for an implementation to get wrong; the flaw class disappears along with the construction that made it possible, rather than being patched instance by instance."
+    },
+    {
+      "id": "card-wm3n",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "tls-1-3",
+        "handshake",
+        "forward-secrecy",
+        "protocol-design"
+      ],
+      "prompt": "Why does TLS 1.3 delete mechanisms like RSA key transport and compression outright, rather than simply defaulting to safer alternatives while still permitting the old ones for compatibility?",
+      "source": {
+        "path": "vault/security/tls/the-tls-1-3-handshake.md",
+        "block": "card-wm3n"
+      },
+      "citations": [
+        "RFC 8446",
+        "Ristić, Bulletproof TLS and PKI, Ch. 4"
+      ],
+      "answer": "Because leaving the insecure option reachable at all reintroduces the risk — an endpoint can still be downgraded, misconfigured, or attacked into using it regardless of what the default is. The protocol's authors treated that reachability itself as the vulnerability, so 1.3's design thesis is to shrink the protocol's own set of choices rather than to curate which choice is recommended."
+    },
+    {
+      "id": "card-h7av",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "outages",
+        "misconfiguration",
+        "hsts",
+        "interception-proxy"
+      ],
+      "prompt": "Why do teams describe an expired-certificate outage as a process failure rather than a security incident?",
+      "source": {
+        "path": "vault/security/tls/tls-failure-modes-and-operational-pitfalls.md",
+        "block": "card-h7av"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 6"
+      ],
+      "answer": "Because nothing was attacked or compromised — the certificate simply crossed a date that was fixed and known from the moment it was issued. The failure is that no renewal automation or monitoring caught the deadline in time, not that any cryptographic protection broke."
+    },
+    {
+      "id": "card-9re9",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "outages",
+        "misconfiguration",
+        "hsts",
+        "interception-proxy"
+      ],
+      "prompt": "A production service goes down at midnight because its TLS certificate crossed its expiration date with no renewal in place. What kind of failure is this, in terms of where the fix belongs?",
+      "source": {
+        "path": "vault/security/tls/tls-failure-modes-and-operational-pitfalls.md",
+        "block": "card-9re9"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 6"
+      ],
+      "choices": [
+        {
+          "text": "An operational failure — the fix is renewal automation and expiry monitoring, not anything cryptographic",
+          "correct": true
+        },
+        {
+          "text": "A cryptographic failure — the signature algorithm reached end of life",
+          "correct": false
+        },
+        {
+          "text": "A key-compromise incident requiring revocation",
+          "correct": false
+        },
+        {
+          "text": "A protocol-version failure requiring a client update",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-2lvd",
+      "format": "recall",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "outages",
+        "misconfiguration",
+        "hsts",
+        "interception-proxy"
+      ],
+      "prompt": "A server is missing an intermediate certificate from what it sends during the handshake. It works fine in a browser during testing but fails for a plain HTTP client library in production. Explain why the same misconfiguration produces two different outcomes.",
+      "source": {
+        "path": "vault/security/tls/tls-failure-modes-and-operational-pitfalls.md",
+        "block": "card-2lvd"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 6"
+      ],
+      "answer": "Many browsers cache intermediates they've seen on other connections, or can fetch a missing one from a URL embedded in the leaf, and quietly complete the chain themselves. A bare client library usually has neither behavior: given only the leaf, it has nothing to build the rest of the chain from, so validation fails outright. The misconfiguration is identical in both cases — only the client's tolerance for it differs, which is exactly why it survives testing on a browser and then breaks in production for a different caller."
+    },
+    {
+      "id": "card-a0jl",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "outages",
+        "misconfiguration",
+        "hsts",
+        "interception-proxy"
+      ],
+      "prompt": "What does clock skew on a client machine cause during certificate validation, and whose fault is it?",
+      "source": {
+        "path": "vault/security/tls/tls-failure-modes-and-operational-pitfalls.md",
+        "block": "card-a0jl"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 6"
+      ],
+      "answer": "A certificate that is genuinely within its validity window can be rejected as not-yet-valid or expired, because the comparison is against the client's own clock rather than real time — the certificate is fine; the client's clock is wrong."
+    },
+    {
+      "id": "card-l9hp",
+      "format": "recall",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "outages",
+        "misconfiguration",
+        "hsts",
+        "interception-proxy"
+      ],
+      "prompt": "Explain, in terms of trust rather than cryptography, why an interception proxy's forged-on-the-fly certificate is accepted by the client without any warning, and what that means the client is actually trusting at that point.",
+      "source": {
+        "path": "vault/security/tls/tls-failure-modes-and-operational-pitfalls.md",
+        "block": "card-l9hp"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 6"
+      ],
+      "answer": "The proxy's certificates chain up to a root that was deliberately added to the client's trust store, so from the client's point of view the chain is completely legitimate — trust was never broken cryptographically, it was extended on purpose to whoever controls that root. In practice this means the client's TLS connection only ever reaches the proxy, and everything from there to the real site is a second, separate connection the client has no visibility into and no say over."
+    },
+    {
+      "id": "card-x22a",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "outages",
+        "misconfiguration",
+        "hsts",
+        "interception-proxy"
+      ],
+      "prompt": "A page served over HTTPS can still undermine itself by pulling in some of its own resources — a script, a stylesheet, an image — over plain HTTP instead. Browsers call this ___, and for anything capable of running code they refuse or warn rather than load it silently, because an attacker who can tamper with that one plaintext request can inject or rewrite content that then runs inside the page the user believes is fully protected.",
+      "source": {
+        "path": "vault/security/tls/tls-failure-modes-and-operational-pitfalls.md",
+        "block": "card-x22a"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 6"
+      ],
+      "answer": "mixed content"
+    },
+    {
+      "id": "card-i0in",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "outages",
+        "misconfiguration",
+        "hsts",
+        "interception-proxy"
+      ],
+      "prompt": "Finally, HTTP Strict Transport Security addresses a narrower but sharper gap: the first request to a site, before HSTS has ever been seen, might still go out over plain HTTP — say, from a bookmark or a typed bare domain — and a network attacker sitting on that first request can intercept or redirect it before TLS is ever negotiated. A site sends an HSTS response header telling the browser to remember, for a stated duration, that it must ___, closing that opening for every visit after the first.",
+      "source": {
+        "path": "vault/security/tls/tls-failure-modes-and-operational-pitfalls.md",
+        "block": "card-i0in"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 6"
+      ],
+      "answer": "never attempt an unencrypted connection to this host again"
+    },
+    {
+      "id": "card-0ag0",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "outages",
+        "misconfiguration",
+        "hsts",
+        "interception-proxy"
+      ],
+      "prompt": "What specifically does an HSTS header prevent, once a browser has already seen and remembered it for a given host?",
+      "source": {
+        "path": "vault/security/tls/tls-failure-modes-and-operational-pitfalls.md",
+        "block": "card-0ag0"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 6"
+      ],
+      "choices": [
+        {
+          "text": "The browser ever issuing a plain HTTP request to that host during the remembered period, even if the user types or clicks an HTTP link",
+          "correct": true
+        },
+        {
+          "text": "An attacker forging a valid certificate for that host",
+          "correct": false
+        },
+        {
+          "text": "A certificate on that host from expiring unnoticed",
+          "correct": false
+        },
+        {
+          "text": "Mixed content from loading on that host's pages",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-tkr1",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "outages",
+        "misconfiguration",
+        "hsts",
+        "interception-proxy"
+      ],
+      "prompt": "Why is it accurate to say that TLS failures in production are \"overwhelmingly operational rather than cryptographic\"?",
+      "source": {
+        "path": "vault/security/tls/tls-failure-modes-and-operational-pitfalls.md",
+        "block": "card-tkr1"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 6"
+      ],
+      "answer": "Because the recurring causes of real outages and weakened deployments — missed renewals, incomplete certificate chains, clock skew, deliberately installed trust anchors, insecure sub-resource loading — are all failures of process, configuration, or deployment choices, none of which involve any cryptographic algorithm or key being broken."
+    },
+    {
+      "id": "card-gf1h",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "record-layer",
+        "transport-security",
+        "rfc-8446"
+      ],
+      "prompt": "Which of TLS's core connection properties is optional rather than guaranteed by default?",
+      "source": {
+        "path": "vault/security/tls/what-tls-provides-and-the-record-layer.md",
+        "block": "card-gf1h"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 1",
+        "RFC 8446"
+      ],
+      "choices": [
+        {
+          "text": "Client authentication",
+          "correct": true
+        },
+        {
+          "text": "Confidentiality",
+          "correct": false
+        },
+        {
+          "text": "Integrity",
+          "correct": false
+        },
+        {
+          "text": "Server authentication",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-l91c",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "record-layer",
+        "transport-security",
+        "rfc-8446"
+      ],
+      "prompt": "Why is it wrong to think of \"the TLS handshake\" as just another name for the same handshake TCP already performed?",
+      "source": {
+        "path": "vault/security/tls/what-tls-provides-and-the-record-layer.md",
+        "block": "card-l91c"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 1",
+        "RFC 8446"
+      ],
+      "answer": "They run at different layers and establish different things. TCP's three-way handshake only synchronizes initial sequence numbers so both sides can maintain a reliable, ordered byte stream — it has no cryptographic content. TLS's handshake runs on top of that already-established stream, and its job is to negotiate cryptographic parameters and authenticate the server (and optionally the client) before any data is protected. TLS assumes a working TCP connection; it doesn't set one up."
+    },
+    {
+      "id": "card-h543",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "record-layer",
+        "transport-security",
+        "rfc-8446"
+      ],
+      "prompt": "What does the record layer do with data handed to it from above, before any encryption happens?",
+      "source": {
+        "path": "vault/security/tls/what-tls-provides-and-the-record-layer.md",
+        "block": "card-h543"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 1",
+        "RFC 8446"
+      ],
+      "answer": "It fragments that data into records, capped at a maximum plaintext size, which become the unit that everything downstream — encryption, integrity checking, sequencing — operates on."
+    },
+    {
+      "id": "card-cn4o",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "record-layer",
+        "transport-security",
+        "rfc-8446"
+      ],
+      "prompt": "What does it mean that TLS protects a connection \"per record\" rather than treating the whole byte stream as one unit?",
+      "source": {
+        "path": "vault/security/tls/what-tls-provides-and-the-record-layer.md",
+        "block": "card-cn4o"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 1",
+        "RFC 8446"
+      ],
+      "answer": "Each record is individually encrypted and integrity-checked as a separate unit, with its own protection applied at the record layer, rather than the entire connection's data being wrapped once as a single undifferentiated blob. A receiver processes and verifies records one at a time as they arrive."
+    },
+    {
+      "id": "card-eg11",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "record-layer",
+        "transport-security",
+        "rfc-8446"
+      ],
+      "prompt": "Why does TLS include an implicit sequence number in a record's protection instead of just transmitting the number alongside the record?",
+      "source": {
+        "path": "vault/security/tls/what-tls-provides-and-the-record-layer.md",
+        "block": "card-eg11"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 1",
+        "RFC 8446"
+      ],
+      "answer": "An implicit, independently-maintained counter on each side achieves the same ordering check while giving an attacker nothing to tamper with — there's no transmitted field to reorder, strip, or forge a replacement for. If the number were sent in the clear, an attacker could rewrite it directly; folding an implicit value into the protection instead means any attempt to reorder, replay, or drop-and-splice records changes what the receiver's own counter computes, and the record fails its check."
+    },
+    {
+      "id": "card-jsk9",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "record-layer",
+        "transport-security",
+        "rfc-8446"
+      ],
+      "prompt": "Two TLS records, each individually well-formed and unmodified, are swapped in transit by an active attacker. What catches this?",
+      "source": {
+        "path": "vault/security/tls/what-tls-provides-and-the-record-layer.md",
+        "block": "card-jsk9"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 1",
+        "RFC 8446"
+      ],
+      "choices": [
+        {
+          "text": "The sequence number folded into each record's protection, since the reordered record no longer matches the value the receiver expects next",
+          "correct": true
+        },
+        {
+          "text": "The record's plaintext size field, since swapped records are usually different lengths",
+          "correct": false
+        },
+        {
+          "text": "Nothing at the record layer — reordering is only detectable at the application layer",
+          "correct": false
+        },
+        {
+          "text": "The TLS version field encoded at the start of each record",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-1z4a",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-tls",
+      "tags": [
+        "tls",
+        "record-layer",
+        "transport-security",
+        "rfc-8446"
+      ],
+      "prompt": "What is the difference between saying TLS \"provides confidentiality and integrity\" and saying TLS \"composes primitives that provide confidentiality and integrity\"?",
+      "source": {
+        "path": "vault/security/tls/what-tls-provides-and-the-record-layer.md",
+        "block": "card-1z4a"
+      },
+      "citations": [
+        "Ristić, Bulletproof TLS and PKI, Ch. 1",
+        "RFC 8446"
+      ],
+      "answer": "TLS does not implement its own novel encryption or hashing — it negotiates and assembles existing, independently-designed cryptographic primitives (a cipher, a hash, a signature scheme) into a protocol structure: the handshake to agree on and authenticate them, the record layer to apply them per unit of data. The properties an application observes come from those underlying primitives being used correctly; TLS's own contribution is the negotiation and framing around them, not the primitives themselves."
     }
   ]
 }
