@@ -36,11 +36,27 @@ describe('renderNoteBlocks', () => {
         { start: 10, end: 13, cardId: 'c2', answer: 'two' }
       ] }
     ], ['c2']);
-    // Both spans exist -- data-card no longer signals mask state -- but
-    // only c2's carries is-masked.
-    expect(html).toMatch(/data-card="c1"(?![^>]*is-masked)/);
-    expect(html).toMatch(/data-card="c2"[^>]*class="is-masked"/);
-    expect(html).toMatch(/A .*one.*and.*two.*here\./s);
+    // Assert the exact output: this pins down offset placement, which
+    // cloze got the is-masked class, and that the connective text between
+    // the two clozes survived untouched, all in one check.
+    expect(html).toContain(
+      '<p class="note-prose">A <span data-card="c1">one</span> and <span data-card="c2" class="is-masked">two</span> here.</p>'
+    );
+  });
+
+  it('keeps cloze offsets correct when preceding text needs escaping', () => {
+    // The dangerous regression: escaping before slicing shifts every
+    // offset past the first `<` or `&`, silently misplacing the mask.
+    // Offsets below are computed against the RAW string, as the pipeline
+    // does, with both an unescaped `<` and `&` sitting before the cloze.
+    const raw = 'a < b & c: answer is 42.';
+    expect(raw.slice(21, 23)).toBe('42');
+    const html = render([
+      { kind: 'prose', text: raw, clozes: [{ start: 21, end: 23, cardId: 'c1', answer: '42' }] }
+    ], ['c1']);
+    expect(html).toContain(
+      '<p class="note-prose">a &lt; b &amp; c: answer is <span data-card="c1" class="is-masked">42</span>.</p>'
+    );
   });
 
   it('hides the correct-choice marking on a masked mcq', () => {
@@ -71,6 +87,16 @@ describe('renderNoteBlocks', () => {
     const html = render([block], ['c1']);
     expect(html).toContain('Explain X.');
     expect(html).toContain('is-masked');
+  });
+
+  it('emits data-card for an answerless recall card', () => {
+    // The `> ---` separator that introduces a model answer is optional and
+    // unused by every recall card in this vault (177/177 answerless).
+    // Task 8 finds the arrived-from card via [data-card="<id>"], so this
+    // block must still carry it even with nothing to blur.
+    const html = render([{ kind: 'card', cardId: 'c1', format: 'recall', prompt: 'Explain X.' }]);
+    expect(html).toContain('data-card="c1"');
+    expect(html).toContain('Explain X.');
   });
 
   it('escapes html in prose', () => {
