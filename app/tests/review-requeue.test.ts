@@ -5,7 +5,8 @@ import {
   REQUEUE_GAP,
   MAX_REQUEUES_PER_CARD,
   distinctCardCount,
-  distinctPosition
+  distinctPosition,
+  promoteReady
 } from '../src/ui/review.js';
 import { buildSession, buildExtension } from '../src/scheduler/queue.js';
 import { recordReview, newCardsSeenToday } from '../src/db/reviews.js';
@@ -32,6 +33,13 @@ const card = (id: string): StoredCard => ({
 const learningState: ReviewState = { ...initialState('x', now), state: 1 };
 const graduatedState: ReviewState = { ...initialState('x', now), state: 2 };
 const relearningState: ReviewState = { ...initialState('x', now), state: 3 };
+
+// initialState's own `due` is `now` (a brand-new card is immediately due),
+// which makes it useless for testing promoteReady's "not ready yet" branch
+// -- every promoteReady fixture below that needs an actually-future due
+// time (mirroring a real learning-step interval of 1-10 minutes) builds off
+// this instead.
+const notYetDueState: ReviewState = { ...learningState, due: now.getTime() + 5 * 60_000 };
 
 /**
  * Mirrors exactly what `submit()` in review.ts does after `recordReview`
@@ -267,5 +275,112 @@ describe('the daily new-card counter is not inflated by a re-shown learning card
     });
     expect(second.reps).toBe(2);
     expect(await newCardsSeenToday(db, now)).toBe(1);
+  });
+});
+
+describe('promoteReady (draw-time gate: never serve a not-yet-due requeued card while a ready one waits behind it)', () => {
+  it('swaps a not-yet-due card at index behind the first ready card after it', () => {
+    const [a, b] = [card('card-a'), card('card-b')];
+    const session = [a, b];
+    const reviewStates = new Map([['card-a', notYetDueState]]);
+
+    promoteReady(session, 0, reviewStates, now);
+
+    expect(session.map((c) => c.id)).toEqual(['card-b', 'card-a']);
+  });
+
+  it('treats an unseen card (absent from reviewStates) as ready', () => {
+    const [a, b] = [card('card-a'), card('card-b')];
+    const session = [a, b];
+    // card-a has a review row and is not yet due; card-b has never been
+    // reviewed at all, i.e. no entry in reviewStates.
+    const reviewStates = new Map([['card-a', notYetDueState]]);
+
+    promoteReady(session, 0, reviewStates, now);
+
+    expect(session.map((c) => c.id)).toEqual(['card-b', 'card-a']);
+  });
+
+  it('treats a card whose due is exactly now as ready (boundary)', () => {
+    const [a, b] = [card('card-a'), card('card-b')];
+    const session = [a, b];
+    const reviewStates = new Map([
+      ['card-a', notYetDueState],
+      ['card-b', { ...learningState, due: now.getTime() }]
+    ]);
+
+    promoteReady(session, 0, reviewStates, now);
+
+    expect(session.map((c) => c.id)).toEqual(['card-b', 'card-a']);
+  });
+
+  it('leaves the session untouched when no card in the remainder is ready (serve-early fallback)', () => {
+    const [a, b, c] = [card('card-a'), card('card-b'), card('card-c')];
+    const session = [a, b, c];
+    const reviewStates = new Map([
+      ['card-a', notYetDueState],
+      ['card-b', notYetDueState],
+      ['card-c', notYetDueState]
+    ]);
+
+    promoteReady(session, 0, reviewStates, now);
+
+    expect(session.map((c) => c.id)).toEqual(['card-a', 'card-b', 'card-c']);
+  });
+
+  it('leaves the session untouched when the card at index is already ready', () => {
+    const [a, b] = [card('card-a'), card('card-b')];
+    const session = [a, b];
+    const reviewStates = new Map([['card-b', notYetDueState]]); // card-a is unseen -> ready
+
+    promoteReady(session, 0, reviewStates, now);
+
+    expect(session.map((c) => c.id)).toEqual(['card-a', 'card-b']);
+  });
+
+  it('preserves the relative order of every card other than the one promoted', () => {
+    const [a, b, c, d] = [card('card-a'), card('card-b'), card('card-c'), card('card-d')];
+    const session = [a, b, c, d];
+    // Only card-d (last) is ready; b and c are not-yet-due and sit between
+    // index 0 and the promoted card.
+    const reviewStates = new Map([
+      ['card-a', notYetDueState],
+      ['card-b', notYetDueState],
+      ['card-c', notYetDueState]
+    ]);
+
+    promoteReady(session, 0, reviewStates, now);
+
+    expect(session.map((c) => c.id)).toEqual(['card-d', 'card-a', 'card-b', 'card-c']);
+  });
+
+  it('rating a new card Hard, then promoteReady at the requeued position, serves an unseen new card instead of the just-rated one', async () => {
+    indexedDB = new IDBFactory();
+    const db = await openDb();
+    const a = card('card-a');
+    const b = card('card-b'); // added to the session only after a is rated -- mirrors feat/keep-going's mid-session buildExtension append
+
+    const session: StoredCard[] = [a];
+    const reviewStates = new Map<string, ReviewState>();
+    const requeueCounts = new Map<string, number>();
+
+    // Hard on a brand-new card: FSRS keeps it in Learning with a several-
+    // minute step, i.e. genuinely not due yet.
+    const next = await recordReview(db, { card: a, outcome: 'hard', now, desiredRetention: 0.9, durationMs: 100 });
+    expect(next.due).toBeGreaterThan(now.getTime());
+    reviewStates.set(a.id, next);
+
+    simulateSubmit(session, 0, a, next, requeueCounts);
+    // card-a was the only (and therefore last) card, so requeueIndex's clamp
+    // appends the re-queued copy immediately after it -- exactly the "reappears
+    // instantly" shape the bug report describes.
+    expect(session.map((c) => c.id)).toEqual(['card-a', 'card-a']);
+
+    session.push(b);
+    const index = 1; // advance() moved past the just-rated card
+
+    promoteReady(session, index, reviewStates, now);
+
+    expect(session[index]?.id).toBe('card-b');
   });
 });

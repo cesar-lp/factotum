@@ -59,6 +59,49 @@ export function requeueIndex(currentIndex: number, sessionLength: number, gap: n
 }
 
 /**
+ * Draw-time gate against serving a learning/relearning card long before its
+ * actual due time. shouldRequeue/requeueIndex above decide, at RATING time,
+ * whether and roughly where a card comes back -- but a card being rated is
+ * by definition not yet due (its next step is 1-10 minutes out), so a
+ * `due <= now` check can't live there; it would make requeueing never
+ * happen. It has to live here instead, called from advance() at the moment
+ * the cursor steps onto a new card, once real time may have passed.
+ *
+ * "Ready" means either the card has no `reviewStates` entry at all (an
+ * unseen new card, always presentable) or its FSRS `due` has arrived.
+ * Starting from `index` and scanning forward, the first ready card is
+ * rotated up to `index`; everything in between shifts back by one, so no
+ * card is ever dropped, only reordered. If the card already at `index` is
+ * ready, or nothing ahead of it is ready either, nothing happens --
+ * deliberately: with no ready card in the remaining session, serving the
+ * not-yet-due card slightly early is the existing "learn ahead" policy
+ * (see REQUEUE_GAP's doc comment), and it's better than stalling or ending
+ * the session with it still pending.
+ */
+export function promoteReady(
+  session: StoredCard[],
+  index: number,
+  reviewStates: Map<string, ReviewState>,
+  now: Date
+): void {
+  const nowMs = now.getTime();
+  const isReady = (c: StoredCard): boolean => {
+    const state = reviewStates.get(c.id);
+    return !state || state.due <= nowMs;
+  };
+
+  for (let j = index; j < session.length; j++) {
+    const candidate = session[j];
+    if (!candidate || !isReady(candidate)) continue;
+    if (j !== index) {
+      const [promoted] = session.splice(j, 1);
+      session.splice(index, 0, promoted as StoredCard);
+    }
+    return;
+  }
+}
+
+/**
  * Returns the mcq choice order to present for `index`, reusing `cache`
  * when it already belongs to that index and computing (and shuffling)
  * a fresh order otherwise. Pure and DOM-free so it's unit-testable on
@@ -216,8 +259,17 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
 
   const advance = (): void => {
     index += 1;
-    if (index >= deps.session.length) finishSession();
-    else draw(false);
+    if (index >= deps.session.length) return finishSession();
+    // The draw-time half of the requeue policy (see promoteReady). It runs
+    // HERE, at the one moment the cursor moves onto a new card -- NOT at the
+    // top of draw(), which is also called to RE-render the card already on
+    // screen after a reveal (draw(true, ...)) and on the way back from a
+    // note detour. Reordering the session under a re-render would swap a
+    // different card into `index` between the question and its answer: the
+    // user would be shown the reveal of a card they never saw the question
+    // for, and the rating they then tap would be recorded against it.
+    promoteReady(deps.session, index, reviewStates, new Date());
+    draw(false);
   };
 
   const submit = async (card: StoredCard, outcome: Outcome, startedAt: number): Promise<void> => {

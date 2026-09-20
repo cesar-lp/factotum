@@ -63,6 +63,34 @@ export function maskedCount(blocks: NoteBlock[], masked: ReadonlySet<string>): n
 }
 
 /**
+ * The note header's markup. Back and (when present) the Open in Obsidian
+ * link share one row inside .note-head-actions; the title, when given,
+ * follows on its own full-width line below. They used to be three flex
+ * siblings on a single row, where `flex: 1` on the title only grants it
+ * whatever width is left over after both buttons take their full content
+ * width -- on a 480px phone layout that squeezed the title down to four
+ * wrapped lines and wrapped "Open in Obsidian" onto two. Splitting the
+ * actions row from the title line fixes that; see note.css's .note-head
+ * and .note-head-actions.
+ *
+ * `title` is null for the two empty states (notes not downloaded / note no
+ * longer in the vault), which render only the Back button and no heading.
+ */
+export function noteHeadHtml(title: string | null, obsidianHref: string | null): string {
+  const obsidian = obsidianHref
+    ? `<a class="btn-secondary" href="${escapeHtml(obsidianHref)}" data-role="obsidian">Open in Obsidian</a>`
+    : '';
+  return `
+    <header class="note-head">
+      <div class="note-head-actions">
+        <button class="btn-secondary" data-role="back">Back</button>
+        ${obsidian}
+      </div>
+      ${title !== null ? `<h1 class="note-title">${escapeHtml(title)}</h1>` : ''}
+    </header>`;
+}
+
+/**
  * The note viewer. A dumb renderer, mirroring renderTopics: every decision
  * (which cards are masked, whether notes loaded at all) arrives as a prop,
  * so the logic stays in main.ts where a node test can reach it.
@@ -71,7 +99,7 @@ export function renderNote(root: HTMLElement, props: NoteProps): void {
   if (!props.available) {
     root.innerHTML = `
       <section class="screen note-screen">
-        <header class="note-head"><button class="btn-secondary" data-role="back">Back</button></header>
+        ${noteHeadHtml(null, null)}
         <p class="note-empty">Notes aren't downloaded yet. Connect to the internet once and reopen this note.</p>
       </section>`;
     root.querySelector('[data-role="back"]')?.addEventListener('click', props.onBack);
@@ -82,7 +110,7 @@ export function renderNote(root: HTMLElement, props: NoteProps): void {
   if (!maybeNote) {
     root.innerHTML = `
       <section class="screen note-screen">
-        <header class="note-head"><button class="btn-secondary" data-role="back">Back</button></header>
+        ${noteHeadHtml(null, null)}
         <p class="note-empty">That note is no longer in the vault.</p>
       </section>`;
     root.querySelector('[data-role="back"]')?.addEventListener('click', props.onBack);
@@ -91,17 +119,9 @@ export function renderNote(root: HTMLElement, props: NoteProps): void {
 
   const note: NoteDoc = maybeNote;
 
-  const obsidian = props.obsidianHref
-    ? `<a class="btn-secondary" href="${escapeHtml(props.obsidianHref)}" data-role="obsidian">Open in Obsidian</a>`
-    : '';
-
   root.innerHTML = `
     <section class="screen note-screen">
-      <header class="note-head">
-        <button class="btn-secondary" data-role="back">Back</button>
-        <h1 class="note-title">${escapeHtml(note.title)}</h1>
-        ${obsidian}
-      </header>
+      ${noteHeadHtml(note.title, props.obsidianHref)}
       ${maskedSummary(maskedCount(note.blocks, props.masked))
         ? `<div class="note-masked-bar"><span></span><button class="btn-secondary" data-role="reveal-all">Show all</button></div>`
         : ''}
