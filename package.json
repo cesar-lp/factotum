@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "scripts": {
     "test": "vitest run",
@@ -16,7 +16,7 @@
     "build:app": "vite build --config vite.config.ts"
   },
   "devDependencies": {
-    "@types/node": "^20.14.0",
+    "@types/node": "^22.10.0",
     "fake-indexeddb": "^6.2.5",
     "tsx": "^4.16.0",
     "typescript": "^5.5.0",

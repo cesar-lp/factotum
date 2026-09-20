@@ -33,7 +33,7 @@ is, and several non-obvious decisions are only documented there.
 ## Node version
 
 `.nvmrc` is the single source of truth for the Node version, and it holds a
-**fully-qualified** version (`20.12.2`), not a bare major. All three
+**fully-qualified** version (`22.23.2`), not a bare major. All three
 workflows that run Node — `ci.yml`, `build-deck.yml`, `deploy.yml` — read it
 via `setup-node`'s `node-version-file`, so CI and local development cannot
 drift apart. Bumping Node means editing this one file.
