@@ -1,6 +1,7 @@
 import type { FactotumDb, Settings } from '../db/schema.js';
 import { DEFAULT_SETTINGS, getSettings, saveSettings, sanitizeSettings } from '../db/settings.js';
 import { exportBackup } from '../db/reviews.js';
+import { escapeHtml } from './renderers.js';
 
 const THEMES: Settings['theme'][] = ['auto', 'day', 'night'];
 const THEME_LABELS: Record<Settings['theme'], string> = { auto: 'Auto', day: 'Day', night: 'Night' };
@@ -76,6 +77,14 @@ export async function renderSettings(root: HTMLElement, db: FactotumDb, onBack: 
       <label class="field">New cards per day
         <input id="newcards" type="number" step="1" min="0" max="100" value="${settings.newCardsPerDay}" />
       </label>
+      <label class="field">Obsidian vault name
+        <input id="obsidianVault" type="text" value="${escapeHtml(settings.obsidianVault)}" />
+      </label>
+      <p class="field-note">
+        Name of your Obsidian vault, used by each card's "open note" link. Leave as
+        <code>vault</code> unless you opened this repo's <code>vault/</code> folder
+        under a different vault name in Obsidian.
+      </p>
 
       <p class="field-note">${cardCount} card${cardCount === 1 ? '' : 's'} in your local deck.</p>
 
@@ -89,6 +98,7 @@ export async function renderSettings(root: HTMLElement, db: FactotumDb, onBack: 
   const retentionValue = root.querySelector<HTMLElement>('#retention-value');
   const retentionHelp = root.querySelector<HTMLElement>('#retention-help');
   const newCardsInput = root.querySelector<HTMLInputElement>('#newcards');
+  const obsidianVaultInput = root.querySelector<HTMLInputElement>('#obsidianVault');
   const backButton = root.querySelector<HTMLButtonElement>('#back');
   const exportButton = root.querySelector<HTMLButtonElement>('#export');
 
@@ -96,15 +106,17 @@ export async function renderSettings(root: HTMLElement, db: FactotumDb, onBack: 
 
   const persist = async (): Promise<void> => {
     // Re-read rather than reusing the render-time `settings` snapshot: this
-    // form owns three fields, and must not write stale values over any
+    // form owns four fields, and must not write stale values over any
     // field it does not render (disabledCategories, owned by the topics
     // screen).
     const current = await getSettings(db);
     const next = clampSettings({
       ...current,
       theme: activeTheme,
+      // The slider is in whole percent; Settings stores a 0-1 fraction.
       desiredRetention: retentionInput ? Number(retentionInput.value) / 100 : DEFAULT_SETTINGS.desiredRetention,
-      newCardsPerDay: newCardsInput ? Number(newCardsInput.value) : DEFAULT_SETTINGS.newCardsPerDay
+      newCardsPerDay: newCardsInput ? Number(newCardsInput.value) : DEFAULT_SETTINGS.newCardsPerDay,
+      obsidianVault: obsidianVaultInput ? obsidianVaultInput.value : DEFAULT_SETTINGS.obsidianVault
     });
     await saveSettings(db, next);
     applyTheme(next.theme);
@@ -123,6 +135,7 @@ export async function renderSettings(root: HTMLElement, db: FactotumDb, onBack: 
     if (retentionValue) retentionValue.textContent = `${nextRetentionPercent}%`;
     if (retentionHelp) retentionHelp.textContent = retentionCopy(nextRetentionPercent);
     if (newCardsInput) newCardsInput.value = String(next.newCardsPerDay);
+    if (obsidianVaultInput) obsidianVaultInput.value = next.obsidianVault;
   };
 
   themeGroup?.addEventListener('click', (event) => {
@@ -144,6 +157,7 @@ export async function renderSettings(root: HTMLElement, db: FactotumDb, onBack: 
   retentionInput?.addEventListener('change', () => void persist());
 
   newCardsInput?.addEventListener('change', () => void persist());
+  obsidianVaultInput?.addEventListener('change', () => void persist());
   backButton?.addEventListener('click', onBack);
 
   exportButton?.addEventListener('click', () => {

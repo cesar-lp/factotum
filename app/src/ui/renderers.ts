@@ -228,6 +228,10 @@ function flagButton(): string {
   return `<button class="btn-quiet" data-role="flag">⚑ looks wrong</button>`;
 }
 
+function sourceButton(): string {
+  return `<button class="btn-quiet" data-role="source">open note</button>`;
+}
+
 function citations(card: StoredCard): string {
   if (card.citations.length === 0) return '';
   return `<p class="citation">${escapeHtml(card.citations.join(' · '))}</p>`;
@@ -295,6 +299,21 @@ export function renderActions(
   clozeOutcome?: 'correct' | 'wrong' | 'self-graded',
   preview?: IntervalPreview
 ): string {
+  // The source link is offered ONLY once a card is revealed. The linked
+  // note contains the answer, so surfacing it before the reader has
+  // committed to a guess would be a one-tap spoiler. That is the feature
+  // working correctly, not an oversight — do not promote it to an
+  // always-shown button.
+  //
+  // Upstream expressed this by having only the revealed branches call
+  // `tail` while the pre-reveal ones called `flagButton()` directly. That
+  // no longer works here: citations moved out of `tail` into renderPrompt
+  // (the scrolling body), so every branch now ends in the same button
+  // group and the distinction was carried purely by which one was called.
+  // Gating on `revealed` keeps the rule in one place instead, where it
+  // cannot be lost by a branch being edited to call the wrong helper.
+  const tail = revealed ? `${flagButton()}${sourceButton()}` : flagButton();
+
   if (card.format === 'mcq') {
     const choiceList = mcqChoices ?? card.choices ?? [];
     const choices = choiceList
@@ -310,7 +329,7 @@ export function renderActions(
     // Revealed state keeps the marked choices on screen; citations move to
     // the body (renderPrompt), so a wrong answer is still seen next to its
     // source, just as content rather than as part of the control row.
-    const after = revealed ? `<button class="btn" data-outcome="continue">Continue</button>${flagButton()}` : flagButton();
+    const after = revealed ? `<button class="btn" data-outcome="continue">Continue</button>${tail}` : flagButton();
     return `<div class="action-area action-area--mcq">${choices}${after}</div>`;
   }
 
@@ -325,7 +344,7 @@ export function renderActions(
                  placeholder="type answer" />
           <button class="btn" data-role="check">Check</button>
           <button class="btn-quiet" data-role="reveal">Show answer</button>
-          ${flagButton()}
+          ${tail}
         </div>
       `;
     }
@@ -333,7 +352,7 @@ export function renderActions(
     // the rating row, no correct/wrong claim was ever made so there's
     // nothing to confirm or override.
     if (clozeOutcome === 'self-graded') {
-      return `<div class="action-area">${ratingRow(preview)}${flagButton()}</div>`;
+      return `<div class="action-area">${ratingRow(preview)}${tail}</div>`;
     }
     // Revealed state distinguishes correct from wrong: a correct answer
     // just needs Continue; a wrong one keeps the override, since a correct
@@ -344,7 +363,7 @@ export function renderActions(
       <div class="action-area">
         <button class="btn" data-outcome="continue">Continue</button>
         ${override}
-        ${flagButton()}
+        ${tail}
       </div>
     `;
   }
@@ -356,7 +375,7 @@ export function renderActions(
     // nothing reads as broken. A qa (or recall) card with an answer gets
     // "Show answer"; one without gets "Rate yourself" instead.
     const label = card.answer ? 'Show answer' : 'Rate yourself';
-    return `<div class="action-area"><button class="btn" data-role="reveal">${label}</button>${flagButton()}</div>`;
+    return `<div class="action-area"><button class="btn" data-role="reveal">${label}</button>${tail}</div>`;
   }
-  return `<div class="action-area">${ratingRow(preview)}${flagButton()}</div>`;
+  return `<div class="action-area">${ratingRow(preview)}${tail}</div>`;
 }
