@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-20T21:11:15.199Z",
+  "generatedAt": "2026-09-20T22:24:47.972Z",
   "notes": [
     {
       "path": "vault/api/grpc/choosing-between-grpc-rest-and-graphql.md",
@@ -20822,6 +20822,1499 @@
               "cardId": "card-bwmp"
             }
           ]
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/oauth/access-tokens-scopes-and-audience.md",
+      "title": "Access tokens, scope, and audience",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 6750 (Bearer Token Usage)"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Access tokens, scope, and audience"
+        },
+        {
+          "kind": "prose",
+          "text": "An access token is a credential the client presents to a resource server on every request it makes. The specification that defines it, RFC 6749, deliberately says nothing about what the token looks like on the wire — that silence isn't an oversight, it's the fork that everything else in this note follows from.",
+          "clozes": []
+        },
+        {
+          "kind": "heading",
+          "level": 2,
+          "text": "Opaque or self-contained"
+        },
+        {
+          "kind": "prose",
+          "text": "One option is for the authorization server to hand out a token that is opaque: a random string with no internal structure, meaningful only to the party that issued it. A resource server holding a token like that can't decide anything about it on its own — there are no fields to read — so it has to ask the authorization server what the token means before it can honor the request.",
+          "clozes": [
+            {
+              "start": 71,
+              "end": 77,
+              "answer": "opaque",
+              "cardId": "card-i6zf"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "The other option is a token that is self-contained: it carries its own claims — who it was issued to, what it grants, when it expires — bundled and signed, so a resource server can check it locally without a round trip back to the issuer.",
+          "clozes": [
+            {
+              "start": 36,
+              "end": 50,
+              "answer": "self-contained",
+              "cardId": "card-oomx"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-wad4",
+          "prompt": "What does the choice between an opaque access token and a self-contained one trade off against each other?",
+          "answer": "Revocation immediacy against per-request latency — an opaque token can be invalidated instantly at the authorization server but costs a lookup on every request, while a signed, locally-checkable token needs no round trip but keeps working until it expires, since there's nowhere to revoke a claim that's already bundled and signed."
+        },
+        {
+          "kind": "heading",
+          "level": 2,
+          "text": "Scope: what was granted, not just what was asked"
+        },
+        {
+          "kind": "prose",
+          "text": "Scope is the permission the client requested when it started the flow, and separately, the permission the authorization server actually granted when it issued the token. Those aren't guaranteed to match.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-8341",
+          "format": "mcq",
+          "prompt": "A client requests the scope `read write delete` when it starts an authorization flow. What must it assume about the access token it ultimately receives?",
+          "choices": [
+            {
+              "text": "The granted scope may be narrower than what was requested, so the client must check the token's actual scope rather than assume it got everything it asked for",
+              "correct": true
+            },
+            {
+              "text": "The granted scope always exactly matches what was requested, or the authorization server would have rejected the request outright",
+              "correct": false
+            },
+            {
+              "text": "Scope is negotiated once and then fixed for the lifetime of the client, regardless of what any single token grants",
+              "correct": false
+            },
+            {
+              "text": "A narrower grant only happens when the resource owner is a different person than the client",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-0rfn",
+          "prompt": "Why must a client read the scope it actually got back rather than assume it received everything it requested?",
+          "answer": "Because an authorization server is free to grant a narrower scope than was requested — for example if the resource owner only approves part of it — so a client that assumes the full grant and calls an action outside the actual scope will simply have that call rejected by the resource server."
+        },
+        {
+          "kind": "heading",
+          "level": 2,
+          "text": "Audience: who the token was minted for"
+        },
+        {
+          "kind": "prose",
+          "text": "Audience is a different property from scope: it names the resource server a token was minted for, rather than what the token permits once it arrives there.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "A token carries an intended audience — the specific resource server it's meant to be presented to — and that binding is what a resource server is supposed to check before honoring the token at all.",
+          "clozes": [
+            {
+              "start": 28,
+              "end": 36,
+              "answer": "audience",
+              "cardId": "card-6sgf"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Skip that check, and a token issued for one resource server becomes usable against a different one that happens to trust the same authorization server — the token was never meant for that destination, but nothing stopped it from being replayed there.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-pbf0",
+          "prompt": "What goes wrong if a resource server accepts a token without checking that the token's intended destination is itself?",
+          "answer": "A token minted for one service can be replayed against a different service that trusts the same authorization server, letting whatever the token grants at its intended target apply somewhere it was never meant to reach — a privilege escalation across service boundaries, not a mere technicality."
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-pfgq",
+          "prompt": "Scope and audience each answer a different question about the same token — which question does each one answer?",
+          "answer": "Scope answers what the token permits doing; audience answers where the token is allowed to be presented at all. A token can carry exactly the right scope and still be misused if presented to the wrong destination, and the reverse holds too."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/oauth/client-credentials-and-machine-to-machine.md",
+      "title": "Client Credentials and Machine-to-Machine Auth",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "citations": [
+        "RFC 6750 (Bearer Token Usage)",
+        "RFC 9700 (OAuth 2.0 Security Best Current Practice)"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Client Credentials and Machine-to-Machine Auth"
+        },
+        {
+          "kind": "prose",
+          "text": "Most of this vault's OAuth notes are about a user delegating some of their access to a client. This grant is the exception: there is no user anywhere in it. A backend job, a cron task, or one service calling another calls the token endpoint directly, on its own behalf, and gets back a token.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "That's possible because of an inversion worth naming precisely. In every delegated flow, the party granting access and the party using it are different, and the flow exists to get the former's consent before the latter acts.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Here the client authenticates as the resource owner itself — there is no separate party to ask, so there is nothing to consent to.",
+          "clozes": [
+            {
+              "start": 33,
+              "end": 51,
+              "answer": "the resource owner",
+              "cardId": "card-3znw"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Because nobody needs to approve anything, the pieces that exist to carry that approval back to the client simply have no job here: no redirect, no browser in the loop at all. The client goes straight to the token endpoint with its own credentials and gets a token back in one request.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "What replaces the missing approval step is the client proving who it is. It does that the same way any confidential party would: presenting a shared secret to the token endpoint, or, in setups that need something stronger than a secret sitting in config, signing an assertion the token endpoint can verify instead. Either way the token endpoint is convinced by cryptographic proof of identity, not by a code handed back from a redirect.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-8op0",
+          "format": "mcq",
+          "prompt": "A nightly batch job needs to call an internal billing service with no human present to approve anything. Which grant fits, and why?",
+          "choices": [
+            {
+              "text": "Client credentials — the job is itself the party being authorized, so there's no separate owner whose consent the flow needs to collect",
+              "correct": true
+            },
+            {
+              "text": "An authorization code flow, since it's the most widely supported grant",
+              "correct": false
+            },
+            {
+              "text": "Whichever grant the billing service's frontend already uses",
+              "correct": false
+            },
+            {
+              "text": "None — server-to-server calls should never carry an OAuth token",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "The token that comes back is meaningful, but only about one thing.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-b74r",
+          "prompt": "What does an access token issued by the client credentials grant assert, and what can it never assert on its own?",
+          "answer": "It asserts that the specific service holding the client's credentials was authenticated by the authorization server, and it carries whatever scope was granted to that service. It never asserts anything about an end user, because no end user was ever party to the exchange — there is no identity in the token for any individual, only for the calling service itself."
+        },
+        {
+          "kind": "prose",
+          "text": "That limit is exactly what makes using this grant for anything user-facing a mirror-image mistake of using a delegated grant here. A request made with this token can be attributed only to the service, never to whichever user happened to trigger it — so it cannot be scoped down to one user's records, no matter how the calling code tries to pass a user id alongside it.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-kcwi",
+          "format": "mcq",
+          "prompt": "An internal API accepts a client-credentials token and, because the caller passes a `user_id` query parameter, returns that user's private records. What is the actual security consequence?",
+          "choices": [
+            {
+              "text": "Every caller holding a valid service token can read every user's data, since the token itself carries no restriction to any one user",
+              "correct": true
+            },
+            {
+              "text": "Nothing — the token still proves the request came from a trusted service",
+              "correct": false
+            },
+            {
+              "text": "The risk is limited to whichever user_id values are guessable",
+              "correct": false
+            },
+            {
+              "text": "This is safe as long as the service's client secret is kept private",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Scope hasn't disappeared just because there's no user to delegate it. A service should still be issued only the scope its job actually requires — a reporting job that reads one table has no business holding a token that can also write to it — for the same reason a delegated client shouldn't hold more than the user granted: whatever the token can do, anyone who steals it can do too.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-a0ch",
+          "prompt": "In this grant, why does scope still need to be kept narrow even though there's no user delegating anything?",
+          "answer": "The token carries the calling service's full authority for whatever scope it's issued, with no user boundary limiting it further. If the credentials or the token leak, the damage is bounded by that scope — a narrowly scoped service token limits what an attacker gains, while an overbroad one hands over everything the service could ever touch."
+        },
+        {
+          "kind": "prose",
+          "text": "One more piece falls away along with the missing consent step. A renewal mechanism exists in delegated flows to let a client get a new access token without re-running the original approval dance with the user each time one expires.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "This grant never runs that dance in the first place, so it has no refresh token — the client already holds its own long-lived credential, so when its access token expires it just calls the token endpoint again the same way it did the first time.",
+          "clozes": [
+            {
+              "start": 66,
+              "end": 79,
+              "answer": "refresh token",
+              "cardId": "card-tuvg"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-lvig",
+          "format": "recall",
+          "prompt": "A service integration is failing because its client-credentials token expired and the code was written expecting a refresh token to renew it. What should the code do instead, and why does this grant not issue one?",
+          "answer": "It should simply request a brand-new access token from the token endpoint using its client credentials again, exactly as it did the first time. A refresh token exists to avoid repeating a user's consent step; this grant never had one, since the client's own credential is reusable on demand, so there is nothing a refresh token would save it from repeating."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/oauth/front-channel-versus-back-channel.md",
+      "title": "Front channel versus back channel",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "OAuth 2.1 (draft)"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Front channel versus back channel"
+        },
+        {
+          "kind": "prose",
+          "text": "`the-authorization-code-flow.md` moves data over two different paths without naming them. This note names them, because almost every design decision in OAuth's flows — what a value is allowed to be, how long it can live, what has to verify it — traces back to which of these two channels that value travels over.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The front channel is the user's browser. Parameters sent this way ride along in URLs, as query strings on a redirect, which means they end up in the browser's address bar, in its local history, in the access logs of every server the browser talks to along the way, and potentially in a `Referer` header handed to the next site the browser visits afterward. Anything sent this way can be read, or even altered before it arrives, by whoever controls that browser or sits on the network path in between.",
+          "clozes": [
+            {
+              "start": 4,
+              "end": 17,
+              "answer": "front channel",
+              "cardId": "card-1fkb"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "The back channel is a different path: a direct call from the client's own server straight to the authorization server, with no browser in the middle at all. It is confidential, since no intermediate party reads the payload; mutually identified, since each side authenticates the other rather than trusting an anonymous caller; and invisible to the user agent, which never sees the call happen.",
+          "clozes": [
+            {
+              "start": 4,
+              "end": 16,
+              "answer": "back channel",
+              "cardId": "card-4k8u"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-5bvc",
+          "prompt": "What three properties does the back channel have that the front channel lacks, and what single change accounts for all three at once?",
+          "answer": "Confidentiality (no intermediate party reads the payload), mutual identification (each side authenticates the other), and invisibility to the user agent. All three trace back to one change: removing the browser from the path removes the one participant in the exchange that has no obligation to keep anything private or to verify who it's actually talking to."
+        },
+        {
+          "kind": "prose",
+          "text": "That difference has a direct consequence for what kind of value each channel can carry safely.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-v9og",
+          "prompt": "Why can a value whose entire safety depends on staying confidential never be sent over the front channel, no matter how briefly it's exposed there?",
+          "answer": "Because the front channel writes it into places that can't be un-exposed afterward — browser history, intermediate access logs, a Referer header on the next site visited. Once it lands in any of those, it is permanently out of the client's control, so a confidentiality requirement is violated the instant the value is used there, regardless of how short the exposure felt at the time."
+        },
+        {
+          "kind": "prose",
+          "text": "A value that does have to cross the front channel — because the whole point of a redirect-based flow is to get something back through the user's browser — can't lean on the front channel's privacy, since it has none. The mitigation is to make sure the value itself doesn't need that privacy: keep it single-use, so a copy read out of a history entry or a log after the real exchange has no remaining use, and have the receiving party independently verify it over the back channel rather than trusting it just because it arrived at the right endpoint.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-4i84",
+          "prompt": "Why must a value that is forced onto the front channel be both single-use and independently re-verified by the receiving party, rather than trusted at face value on arrival?",
+          "answer": "Because the front channel offers no confidentiality guarantee, so the value has to survive being read by someone other than the intended recipient. Making it single-use means a leaked copy has nothing left to redeem once the legitimate exchange has happened, and independent verification over the back channel means the receiving party never grants anything on the strength of the front-channel value alone — it has to be confirmed through a channel that actually offers confidentiality and mutual identification."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-otpm",
+          "format": "mcq",
+          "prompt": "A value must travel through the user's browser as part of a redirect, where browser history, intermediate logs, and Referer headers could all later expose a copy of it. Which property, on its own, most reduces the damage from that exposure even though the exposure itself still happens?",
+          "choices": [
+            {
+              "text": "The value can only ever be redeemed once, so a copy read out of history or logs later has no remaining use",
+              "correct": true
+            },
+            {
+              "text": "The value is sent over HTTPS, so no third party can see what it was",
+              "correct": false
+            },
+            {
+              "text": "The value is short enough that most log lines truncate it",
+              "correct": false
+            },
+            {
+              "text": "The value looks identical to a random session identifier",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-7jvf",
+          "format": "recall",
+          "prompt": "Explain why the same kind of information can be handled completely differently — safe in one case, dangerous in the other — purely depending on which of the two channels carries it. State the general rule for deciding which channel a given value belongs on.",
+          "answer": "Exposure risk isn't a fixed property of a value; it's a property of the channel that carries it. A single-use value that still requires independent verification at the far end is tolerable on the front channel, because a copy observed after the fact accomplishes nothing — redeeming it was already a one-time event tied to a further, separately verified step. A value whose safety depends purely on staying confidential cannot tolerate that same exposure, because the front channel turns confidentiality into a fiction the moment the value appears in a URL. The general rule: a value belongs on the back channel if exposure alone would be enough to compromise the flow, and can tolerate the front channel only if exposure alone accomplishes nothing without a further, independently verified step."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/oauth/grant-types-device-and-deprecated.md",
+      "title": "Choosing a Grant, and the Two That Were Removed",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "citations": [
+        "RFC 8628 (Device Authorization Grant)",
+        "OAuth 2.1 draft"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Choosing a Grant, and the Two That Were Removed"
+        },
+        {
+          "kind": "prose",
+          "text": "Different grants exist because different clients face different constraints. A server-side web app can hold a secret and redirect a real browser. A CLI tool or a smart TV usually can't do either — there may be no way to render a browser at all, and even if there were, typing a password on a remote control is not something to build a product around. The device authorization grant exists for exactly that shape of client.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The flow keeps credential entry off the constrained device entirely by splitting the interaction across two devices:",
+          "clozes": []
+        },
+        {
+          "kind": "code",
+          "lang": null,
+          "text": "1. The constrained device asks the authorization server for a\n   device code and a short user code, plus a verification URL.\n2. It displays the user code and the URL to the person in front of\n   it — on a TV screen, a terminal, whatever it has.\n3. The person opens that URL on a separate device with a real\n   keyboard and a real browser, logs in normally, and enters the\n   short code.\n4. Meanwhile, the constrained device repeatedly checks back with\n   the authorization server's token endpoint, asking whether that\n   approval has happened yet.\n5. Once the person finishes, the next check succeeds and returns\n   tokens to the constrained device."
+        },
+        {
+          "kind": "prose",
+          "text": "The constrained device never sees a password and never has to embed a browser — both properties fall directly out of moving the actual login onto a second, unconstrained device.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "That repeated checking in step 4 is the device grant's own term for itself: the constrained device polls the token endpoint at an interval the authorization server hands it, rather than being pushed a result.",
+          "clozes": [
+            {
+              "start": 99,
+              "end": 104,
+              "answer": "polls",
+              "cardId": "card-5hzy"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-a35t",
+          "format": "mcq",
+          "prompt": "A CLI tool run by developers who are fully trusted employees needs to obtain tokens on a machine with no browser installed. The team proposes just prompting for the corporate password directly in the terminal, since it's faster to build. What should it use instead, and why does trust in the developers not change the answer?",
+          "choices": [
+            {
+              "text": "The device authorization grant — the problem is the CLI's inability to open a browser, not whether the people running it are trusted, and collecting a password directly creates the same risks regardless of who's typing it",
+              "correct": true
+            },
+            {
+              "text": "The password grant, since a trusted internal team removes the usual objection to it",
+              "correct": false
+            },
+            {
+              "text": "The implicit grant, since it needs no client secret",
+              "correct": false
+            },
+            {
+              "text": "Whichever grant returns the longest-lived token, since developer time is expensive",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "The implicit grant was built for a different constraint: browser-based apps that, at the time, had no way to make a server-side call at all, so it returned the access token directly in the redirect back to the app instead of through a separate exchange.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Directly in the redirect meant appended after the \"#\" — the part of a URL called the fragment, which the browser keeps to itself and never transmits to a server as part of the request.",
+          "clozes": [
+            {
+              "start": 85,
+              "end": 93,
+              "answer": "fragment",
+              "cardId": "card-ru77"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "That property is exactly what killed the grant. A value that lives only in the browser still lands in browser history and gets written into logs by anything that captures the full URL a user visited, and unlike a value sent as part of a request, it arrives with no way to verify which application asked for it in the first place.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-m3ao",
+          "prompt": "Why specifically was the implicit grant removed, as distinct from other grants?",
+          "answer": "It returned the access token through the browser itself rather than through a direct exchange with the authorization server, so the token ended up sitting in browser history and in any log that records full URLs, with no mechanism to authenticate which application the token was meant for. That combination — front-channel exposure plus no client authentication — is unique to implicit; removing it left PKCE as the answer for browser-based apps that still need a comparable flow without a client secret."
+        },
+        {
+          "kind": "prose",
+          "text": "Resource owner password credentials looks superficially similar — it's also gone from OAuth 2.1 — but it fails for an entirely different reason. The client itself collects the user's actual password and exchanges it for tokens, which throws away the reason OAuth exists in the first place: keeping the password out of any hands but the authorization server's.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-jup7",
+          "prompt": "Why specifically was the resource owner password credentials grant removed, and how does that reason differ from why implicit was removed?",
+          "answer": "It requires the client to handle the user's real password directly, which reintroduces exactly the credential-sharing problem OAuth was designed to eliminate. A password typed into one client can't be scoped, can't require a second factor, and can't support logging in through a federated identity provider, and the pattern trains users to hand their password to whatever third-party interface asks for it. Implicit failed on where the token traveled after being issued; password credentials fails on requiring the password to exist inside the client at all."
+        },
+        {
+          "kind": "prose",
+          "text": "Three grants, but the questions that pick between them collapse to two. What kind of client is this — one that can keep a secret, one that can't, one with no user present at all? And can it open a browser, or is a browser simply not available to it?",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-7zkl",
+          "prompt": "Given a browser-based single-page app, a confidential server-side app, and a CLI tool with no display, which of the three needs the device authorization grant, and what single fact about it forces that choice?",
+          "answer": "The CLI tool with no display. The deciding fact isn't trust or how the app is deployed — it's that the client has no way to render a browser for the person using it, so the login has to happen on a second device while the first one polls for the result."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/oauth/id-tokens-and-oidc.md",
+      "title": "ID Tokens and OpenID Connect",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "citations": [
+        "OpenID Connect Core 1.0"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "ID Tokens and OpenID Connect"
+        },
+        {
+          "kind": "prose",
+          "text": "OAuth 2.0 only ever answers one kind of question: may this application perform some action on the resource owner's behalf. It has nothing to say about who that resource owner actually is, and for years people answered that second question anyway, by treating a successful authorization as if it were also a login. OpenID Connect (OIDC) is the fix — a thin authentication layer specified on top of OAuth, not a competing protocol.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The piece OIDC adds is the ID token: a signed set of claims describing a specific authentication event, minted for the application to read directly. It happens to be a signed JWT, but its structure as a token format belongs to a different note — what matters here is what it asserts and who it's addressed to.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Who it's addressed to is exactly where the confusion starts. An ID token names the application as its intended reader.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Handing an ID token to an API as though it authorizes anything is a mistake, because nothing about it grants permission to call that API — it happens to be a JWT that some poorly-written server will decode without checking, and decoding is not the same as being entitled to accept it.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-ap8q",
+          "format": "mcq",
+          "prompt": "A backend service receives a request with an ID token in the Authorization header, instead of an access token. The service can decode it and see a valid signature and a readable set of claims. What should it do?",
+          "choices": [
+            {
+              "text": "Reject the request — an ID token is minted for the application to consume, not as proof of authority to call an API",
+              "correct": true
+            },
+            {
+              "text": "Accept it, since the signature is valid and the claims are readable",
+              "correct": false
+            },
+            {
+              "text": "Accept it only if the claims name an existing account",
+              "correct": false
+            },
+            {
+              "text": "Accept it, because a valid JWT is sufficient identification for any service that trusts the issuer",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "The mirror-image mistake runs the other way. An application that wants to know who authenticated should never go looking inside an access token to find out.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-pdua",
+          "prompt": "Why is it a mistake to read a user's identity out of an access token, even when the token happens to contain a recognizable identifier?",
+          "answer": "An access token is addressed to a resource server, not to the application, and exists to authorize an API call rather than to assert who authenticated. Whatever fields it happens to carry are an implementation detail of that resource server, not a contract the application can rely on — the only identity-claims contract OIDC defines lives in the ID token."
+        },
+        {
+          "kind": "prose",
+          "text": "Both mistakes look harmless in the moment — the wrong artifact gets accepted, the call succeeds, nobody notices — right up until an authorization server changes an internal format and every workaround built on reading the \"wrong\" fields breaks at once.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Each ID token carries a fixed set of standard claims. `iss` names the issuer that authenticated the user. `sub` names the user themselves, with a stability guarantee worth its own paragraph below. `aud` names the application the token was minted for — the intended reader established above. `iat` and `exp` bound how long the token should be treated as fresh.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "`auth_time` is a fifth claim worth separating out: it records when the authentication event itself happened, which is not the same moment as `iat`. A long-lived session can reissue a token with a fresh `iat` while `auth_time` still points back to whenever the user actually entered credentials.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-sric",
+          "format": "recall",
+          "prompt": "Name the standard ID token claims that answer: who issued this, who is it for, when was it issued, when does it expire, and when did the user actually authenticate. Which pair looks redundant at first glance, and why isn't it?"
+        },
+        {
+          "kind": "prose",
+          "text": "One of those claims deserves special attention, because it's the field applications reach for as the durable handle on \"this is the same person as before.\"",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "That identifier is the subject claim — a value the issuer commits to keeping stable for a given account for as long as the issuer relationship exists.",
+          "clozes": [
+            {
+              "start": 23,
+              "end": 30,
+              "answer": "subject",
+              "cardId": "card-5d9e"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "An email address looks like it would work just as well for that purpose, and it fails in ways that only show up later.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-aq8j",
+          "prompt": "Why shouldn't an application key its user records on an email address instead of the identifier claim meant for that purpose?",
+          "answer": "Email addresses change hands — people update them, employers reassign them, providers let old ones lapse and get reissued to someone else — while the identifier claim is defined specifically to stay fixed to one account for the life of the issuer relationship. Keying storage on email means a legitimate change silently orphans a user's history, or worse, a reissued address inherits somebody else's account."
+        },
+        {
+          "kind": "prose",
+          "text": "The claims above cover what fits inside the token, but OIDC doesn't try to cram every fact about a person into it. A profile picture, a phone number, locale preferences — anything beyond the core claims — is fetched separately, on demand.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "An application does that by presenting its access token to the userinfo endpoint, which returns those additional claims as a plain response rather than folding them into the signed token.",
+          "clozes": [
+            {
+              "start": 63,
+              "end": 71,
+              "answer": "userinfo",
+              "cardId": "card-j31k"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-8aki",
+          "format": "recall",
+          "prompt": "Two artifacts exist after an OIDC flow finishes. One is addressed to the application and asserts who authenticated and when. The other is addressed to a resource server and authorizes calling it. Which is which, and what goes wrong if an application swaps their roles?",
+          "answer": "The ID token is addressed to the application; the access token is addressed to the resource server. Swapping them means either sending a non-credential to an API, which a correctly written API should reject, or trying to derive identity from an artifact that was never defined to carry a stable, contractual identity claim."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/oauth/oauth-roles-and-the-delegation-problem.md",
+      "title": "OAuth roles and the delegation problem",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "OAuth roles and the delegation problem"
+        },
+        {
+          "kind": "prose",
+          "text": "Before OAuth, an application that needed to act on a user's behalf against some other service had exactly one option: ask for the user's username and password directly, then log in as that user whenever it needed access. That arrangement has three problems that compound each other. The access it grants is unlimited — the application can do anything the user could do, not just the one thing it was built for. It's unrevocable on its own — the only way to cut the application off is to change the password, which locks out every other application sharing that same password too. And it's indistinguishable from the user — the resource server sees the exact same login as the human, with no way to tell which application is actually acting, or to hold it to a narrower standard.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-0g4f",
+          "prompt": "Why do the \"unlimited access,\" \"unrevocable,\" and \"indistinguishable from the user\" problems all trace back to the same root cause when an application is given the user's own password?",
+          "answer": "All three come from handing over a credential that was designed to prove identity, not to describe a bounded permission. It carries no scope, no separate identity of its own, and no way to invalidate it without invalidating everything else that credential unlocks — so every one of these failures is really the same failure seen from a different angle."
+        },
+        {
+          "kind": "prose",
+          "text": "OAuth replaces that shared secret with a delegated authorization grant.",
+          "clozes": [
+            {
+              "start": 41,
+              "end": 50,
+              "answer": "delegated",
+              "cardId": "card-rsup"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Instead of handing over the credential that proves who the resource owner is, the resource owner directs an authorization server to issue the requesting application a separate credential that proves only what it's allowed to do, and for how long. That grant is scoped, it can be revoked on its own without touching the resource owner's actual login, and every request made with it is identifiable as coming from that specific application rather than from the resource owner directly.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "To make that handoff work, OAuth names four roles. The resource owner is the party capable of granting access to a protected resource, because it's theirs — ordinarily a person.",
+          "clozes": [
+            {
+              "start": 55,
+              "end": 69,
+              "answer": "resource owner",
+              "cardId": "card-9oyx"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "The client is the application requesting access on the resource owner's behalf. The authorization server authenticates the resource owner, collects their consent, and issues tokens. The resource server holds the protected data and accepts those tokens as evidence of what the caller is allowed to do.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-1egv",
+          "prompt": "Why does OAuth define the authorization server and the resource server as two separate roles instead of merging them into one?",
+          "answer": "Because they solve different problems, on different schedules, and often for different operators. The authorization server's job — establishing who the resource owner is and what they've agreed to let the client do — happens once, up front. The resource server's job — deciding whether to honor a token on a given request — happens on every call afterward, without needing to know how consent was originally collected. Separating them lets one authorization server's tokens be honored by many resource servers, and lets a resource server enforce access purely from a token's face, with no involvement in how it was issued."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-p979",
+          "format": "mcq",
+          "prompt": "A photo-printing application asks to read a user's photos stored with a separate photo-hosting service. The user approves the request on the photo-hosting service's own login page, and the printing application is then given a token to fetch photos from the hosting service's API. Which role does the photo-hosting service's API itself play?",
+          "choices": [
+            {
+              "text": "Resource server",
+              "correct": true
+            },
+            {
+              "text": "Authorization server",
+              "correct": false
+            },
+            {
+              "text": "Client",
+              "correct": false
+            },
+            {
+              "text": "Resource owner",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-wze1",
+          "format": "mcq",
+          "prompt": "A resource owner granted a client access to their calendar through OAuth. They now want to cut off just that one client while leaving their own login, and every other connected application, untouched. What property of the grant makes that possible?",
+          "choices": [
+            {
+              "text": "The client holds a separate, scoped credential distinct from the resource owner's own login, so revoking it doesn't touch that login",
+              "correct": true
+            },
+            {
+              "text": "The resource owner changes their password, which happens to affect only that one client",
+              "correct": false
+            },
+            {
+              "text": "OAuth grants automatically expire the first time they're used",
+              "correct": false
+            },
+            {
+              "text": "The authorization server and resource server share one revocation list keyed by password",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "This whole structure is easy to mistake for something it isn't. OAuth 2.0 is a delegated *authorization* framework — it answers \"what is this application allowed to do\" — not an authentication protocol, which would answer \"who is this person.\"",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-w7xh",
+          "format": "recall",
+          "prompt": "OAuth 2.0 is often summarized as being \"not an authentication protocol.\" Explain the mistake that warning is aimed at, and name the standard built specifically to add authentication on top of OAuth.",
+          "answer": "The mistake is treating a successful token grant — the client obtaining an access token — as proof of the resource owner's identity, and logging the user in on that basis. A token only proves that some scope of access was authorized; it was never designed to carry a verified identity, which made this practice error-prone and inconsistent across implementations. OpenID Connect was built on top of OAuth 2.0 specifically to add a standardized authentication layer, so applications would no longer need to improvise identity out of an access grant."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/oauth/pkce-and-public-clients.md",
+      "title": "PKCE and Public Clients",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "citations": [
+        "RFC 7636 (PKCE)",
+        "RFC 6749 (OAuth 2.0 Authorization Framework)"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "PKCE and Public Clients"
+        },
+        {
+          "kind": "prose",
+          "text": "OAuth clients split into two categories based on where their code actually runs. A confidential client runs on infrastructure its operator controls — a backend server whose configuration nobody outside the operator can read — so it can hold a credential and present it when it talks to the authorization server.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "A mobile app or a single-origin browser application is a different animal: its code ships to, and executes on, a device the operator does not control.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "That second kind of client is what OAuth calls a public client.",
+          "clozes": [
+            {
+              "start": 49,
+              "end": 62,
+              "answer": "public client",
+              "cardId": "card-iyw3"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Anyone can decompile an installed app or open a browser's developer tools and read whatever was compiled or bundled into it. A credential embedded that way isn't a secret at all — it's a string every installation carries, sitting in the open for whoever looks.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-8xfc",
+          "prompt": "Why can a confidential client authenticate itself at the token endpoint while a public client cannot?",
+          "answer": "A confidential client's code never leaves infrastructure its operator controls, so it can hold a credential nobody outside the operator can read. A public client's code ships to and runs on the end user's device, so any credential embedded in it is readable by anyone who inspects that copy — it identifies the app's code, not a holder of a secret."
+        },
+        {
+          "kind": "prose",
+          "text": "That distinction opens a real hole in the authorization code flow. The flow's whole point is that whoever redeems the code for a token has to be the same party the authorization server issued it to, and a confidential client proves that by presenting its credential at the token endpoint. A client with no credential to present has no way to prove that — so without some other safeguard, whoever gets hold of the code, not only the party it was issued to, can walk up and redeem it.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Getting hold of it is not hypothetical. On a mobile platform, the authorization server redirects back to the app using a custom URL scheme rather than an HTTPS URL, and nothing in the platform stops a second, malicious app from registering that exact same scheme. The operating system has no way to arbitrate which installed app should own it, so it can just as easily deliver the redirect — and the authorization code riding on it — to the attacker's app instead of the legitimate one.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-95nz",
+          "format": "recall",
+          "prompt": "A user has both a legitimate app and a malicious app installed on their phone, and both apps have registered the same custom URL scheme. Explain how the malicious app can end up receiving an authorization code that was meant for the legitimate app."
+        },
+        {
+          "kind": "prose",
+          "text": "PKCE (Proof Key for Code Exchange) closes that hole without relying on any credential at all.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Before sending the authorization request, the client generates a random verifier, discarded once this one flow finishes.",
+          "clozes": [
+            {
+              "start": 72,
+              "end": 80,
+              "answer": "verifier",
+              "cardId": "card-mjd2"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "It derives a challenge from that value and sends only the challenge on the authorization request; the verifier itself never travels over that leg. Later, redeeming the code at the token endpoint, the client presents the original value, and the authorization server checks that running the same derivation over it reproduces the challenge already on file for that code.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Deriving the challenge takes a cryptographic hash, and the value being hashed has to be a high-entropy random pick — both are requirements PKCE leans on rather than anything it defines itself.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-6p99",
+          "format": "mcq",
+          "prompt": "An attacker intercepts an authorization code from a PKCE-protected exchange and immediately presents it at the token endpoint. What happens?",
+          "choices": [
+            {
+              "text": "The exchange is refused — the attacker never obtained the value needed to reproduce the challenge already on file for that code",
+              "correct": true
+            },
+            {
+              "text": "The exchange succeeds, since PKCE only protects the authorization request itself",
+              "correct": false
+            },
+            {
+              "text": "The exchange succeeds as long as the attacker also supplies the correct redirect URI",
+              "correct": false
+            },
+            {
+              "text": "The exchange is refused, but only when the intercepting party is itself a registered client",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-gn49",
+          "prompt": "Why does intercepting the redirect never expose what's needed to redeem the code it's carrying?",
+          "answer": "Only the challenge — a one-way derivation of the verifier — ever travels on the authorization request that gets redirected. The verifier itself is withheld until the separate exchange at the token endpoint, so capturing the redirect captures the code but not the one value that could still redeem it."
+        },
+        {
+          "kind": "prose",
+          "text": "PKCE was designed with public clients in mind, but current guidance recommends it for confidential clients as well, since a code can leak in ways that have nothing to do with whether a client can hold a credential — a stray log line, a referrer header, a misconfigured proxy — and a freshly generated, never-transmitted verifier defeats that leakage regardless of which kind of client it happens to. (The old implicit flow, which skipped the code exchange entirely, was retired for reasons of its own that go beyond this.)",
+          "clozes": [
+            {
+              "start": 86,
+              "end": 98,
+              "answer": "confidential",
+              "cardId": "card-6tm5"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/oauth/refresh-tokens-and-rotation.md",
+      "title": "Refresh tokens and rotation",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 9700 (Best Current Practice for OAuth 2.0 Security)"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Refresh tokens and rotation"
+        },
+        {
+          "kind": "prose",
+          "text": "A short-lived access token limits how much damage a leak does: it only works for a short window, then stops on its own. But forcing the user to re-authenticate every few minutes just to get a new one is unusable. A refresh token resolves that tension: a much longer-lived credential that lets the client obtain new access tokens without asking the user to sign in again.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-l3jx",
+          "prompt": "What tension does a refresh token resolve, and how?",
+          "answer": "A short access-token lifetime limits the damage of a leak but makes constantly re-authenticating the user unworkable; a longer-lived refresh token lets the client obtain new access tokens on its own, without the user's involvement, so the access token can stay short-lived without the usability cost."
+        },
+        {
+          "kind": "prose",
+          "text": "Because it lasts far longer and can mint fresh access tokens on demand, the refresh token is the more valuable of the two secrets — losing an access token costs an attacker a short window, losing a refresh token costs far more.",
+          "clozes": []
+        },
+        {
+          "kind": "heading",
+          "level": 2,
+          "text": "Where it's redeemed"
+        },
+        {
+          "kind": "prose",
+          "text": "A refresh token is redeemed only at the token endpoint — the client sends it directly to the authorization server in exchange for a new access token. It is never sent to a resource server; a resource server receiving what looks like a refresh token has no interface for accepting one.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-gzdi",
+          "prompt": "Where is a refresh token ever redeemed, and where does it never go?",
+          "answer": "It is redeemed only at the token endpoint, in a direct exchange with the authorization server for a new access token; it is never sent to a resource server, which has no interface built for accepting one."
+        },
+        {
+          "kind": "heading",
+          "level": 2,
+          "text": "Rotating the secret on every use"
+        },
+        {
+          "kind": "prose",
+          "text": "Reissuing the same refresh token indefinitely means one leaked copy stays useful forever. Rotation closes that: every time a refresh token is redeemed, the authorization server issues a brand new one alongside the new access token, and invalidates the token that was just spent.",
+          "clozes": [
+            {
+              "start": 90,
+              "end": 98,
+              "answer": "Rotation",
+              "cardId": "card-pwra"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "That invalidation is what makes reuse detection possible: if a token that has already been redeemed and replaced shows up again, the authorization server learns that two different parties must be holding what was supposed to be a single, moved-forward secret. A legitimate client always presents the latest token it was issued, so an already-spent one reappearing points to theft.",
+          "clozes": [
+            {
+              "start": 32,
+              "end": 47,
+              "answer": "reuse detection",
+              "cardId": "card-5ya4"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "The response isn't to invalidate just that one resurfaced token — the whole chain descending from the original grant gets revoked at once, on the assumption that if the chain was stolen, every token derived from it downstream may already be in the attacker's hands too.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-oq33",
+          "format": "mcq",
+          "prompt": "A stolen refresh token gets redeemed by an attacker, and the authorization server issues them a new one in its place. Later, the legitimate client — still holding what it thinks is its current refresh token — tries to redeem that same now-superseded token too. What should the authorization server do?",
+          "choices": [
+            {
+              "text": "Recognize that an already-redeemed token was presented again, and revoke the entire chain of tokens descending from that grant, not just the one just presented",
+              "correct": true
+            },
+            {
+              "text": "Silently issue a fresh token to the legitimate client and ignore the earlier redemption, since the client is the one behaving normally",
+              "correct": false
+            },
+            {
+              "text": "Accept the redemption from whichever party asks first each time, since only one holder can be legitimate at once",
+              "correct": false
+            },
+            {
+              "text": "Extend the lifetime of the original refresh token so both parties can keep using it",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-o388",
+          "prompt": "Why does rotating on every redemption matter far more for a client that cannot keep a secret than for one that can?",
+          "answer": "A client relying on one static, unrotated refresh token depends entirely on that single value never leaking, and a client that cannot keep a secret is far more likely to have exactly that happen; rotating limits how long any one leaked copy stays valid and lets theft surface on the very next redemption, which matters most for the clients least able to protect a long-lived static value in the first place."
+        },
+        {
+          "kind": "heading",
+          "level": 2,
+          "text": "Why this makes revocation practical"
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-gdk0",
+          "prompt": "Why do refresh tokens make revoking access practical, given how much less often they're redeemed than access tokens are used?",
+          "answer": "Revoking a session just means invalidating its refresh token (or chain) at the authorization server; the short-lived access token already in the client's hands keeps working only until its own brief expiry, so a short access-token lifetime bounds how long a revoked session can keep functioning, rather than a revoked credential remaining usable indefinitely."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-9b23",
+          "format": "recall",
+          "prompt": "Explain why a refresh token is considered the higher-value secret compared to the access token it's used to obtain, in terms of what each is worth to an attacker who steals it.",
+          "answer": "An access token is worth only as much damage as its short remaining lifetime allows before it expires on its own. A refresh token is worth far more: it lasts much longer and can be redeemed repeatedly to mint new access tokens, so stealing it gives an attacker sustained access rather than a brief window — which is exactly why rotating it on every use and detecting reuse exist specifically to protect it."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/oauth/state-nonce-and-redirect-uri-validation.md",
+      "title": "State, Nonce, and Redirect URI Validation",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 7636 (PKCE)"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "State, Nonce, and Redirect URI Validation"
+        },
+        {
+          "kind": "prose",
+          "text": "The authorization code flow appears to work fine without any of the three checks below, which is exactly why they're easy to skip. Each one only earns its keep the moment something is actively attacking the flow.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Before sending the authorization request, the client generates an unguessable state value, includes it on that request, and later checks that the exact same value comes back on the response — binding the response it receives to the request it actually initiated, rather than to any response that happens to arrive at its callback.",
+          "clozes": [
+            {
+              "start": 78,
+              "end": 83,
+              "answer": "state",
+              "cardId": "card-7mg2"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Without that check, an attacker can start the flow themselves, obtain a result tied to the attacker's own account, and hand it to a victim to complete — causing the victim's client session to end up bound to the attacker's account instead of the victim's own. This is the concrete shape a cross-site request forgery takes against the authorization response; the general category is a named concept this note leaves to the material on request forgery generally.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-zljp",
+          "format": "mcq",
+          "prompt": "An attacker starts the authorization flow themselves, obtains a result tied to the attacker's own account, and tricks a logged-in victim into completing it — leaving the victim's client session bound to the attacker's account. Which check would have stopped this?",
+          "choices": [
+            {
+              "text": "state — the client would find that the returned value does not match the one it sent for a request the victim never initiated",
+              "correct": true
+            },
+            {
+              "text": "nonce — nonce only binds a returned identity claim to its own request, not a whole session to an account",
+              "correct": false
+            },
+            {
+              "text": "exact redirect URI matching — the redirect went to the client's own genuine callback, so no mismatch there would trigger",
+              "correct": false
+            },
+            {
+              "text": "none of the three checks are relevant to this attack",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-8ceb",
+          "prompt": "A separate OpenID Connect parameter, nonce, is sent along with the authorization request and echoed back inside the identity claim the authorization server returns. What does nonce being echoed back inside that claim let the client check, and what attack does that check defeat?",
+          "answer": "The client checks that the value inside the returned claim matches the one it sent, binding that specific claim to that specific request. That defeats replay: presenting a previously captured, genuine identity claim again as if it were the answer to a fresh request."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-uj0b",
+          "format": "mcq",
+          "prompt": "An attacker previously captured a legitimate identity claim issued for another session, and now resubmits that exact same claim to the client, hoping the client accepts it as the answer to a request the client is making right now. Which check catches this?",
+          "choices": [
+            {
+              "text": "nonce — the value inside the replayed claim won't match the one the client sent for its current request",
+              "correct": true
+            },
+            {
+              "text": "state — state only governs which request an authorization response is bound to, not what a returned identity claim contains",
+              "correct": false
+            },
+            {
+              "text": "exact redirect URI matching — that constrains where a response can be delivered, not whether a claim is fresh",
+              "correct": false
+            },
+            {
+              "text": "none of the three checks apply to a replayed identity claim",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "The third check sits with the authorization server rather than the client. When it receives an authorization request, the server must compare the redirect URI supplied on that request against the URI registered for that client exactly, not by prefix or substring.",
+          "clozes": [
+            {
+              "start": 227,
+              "end": 234,
+              "answer": "exactly",
+              "cardId": "card-m022"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Loose matching turns the authorization endpoint into an open redirect: an attacker who can construct a URI that merely starts with, contains, or otherwise partially resembles the registered one can redirect the response — authorization code included — to a destination of their own choosing, one the client's operator never registered and never agreed to receive anything at.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-mu7o",
+          "format": "mcq",
+          "prompt": "A registered redirect URI is `https://app.example.com/callback`. The authorization server accepts any supplied URI that begins with that string. An attacker requests authorization using `https://app.example.com/callback.attacker.evil/`, which passes that check. What failure mode does this demonstrate?",
+          "choices": [
+            {
+              "text": "The authorization endpoint behaves as an open redirect, delivering the authorization code to a destination the client never registered",
+              "correct": true
+            },
+            {
+              "text": "A replay of a previously issued authorization code",
+              "correct": false
+            },
+            {
+              "text": "A forged authorization response bound to the wrong request",
+              "correct": false
+            },
+            {
+              "text": "A failure that only exact nonce matching could have caught",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-mp14",
+          "format": "recall",
+          "prompt": "State, nonce, and exact redirect URI matching protect three different things — the response, the identity claim, and the destination the code is delivered to. Explain the pattern common to all three: what each one binds a step of the flow to, and why that binding is exactly the kind of gap that stays invisible until an attacker specifically targets it."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/oauth/the-authorization-code-flow.md",
+      "title": "The authorization code flow",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "The authorization code flow"
+        },
+        {
+          "kind": "prose",
+          "text": "`oauth-roles-and-the-delegation-problem.md` sets up the roles; this note walks the canonical sequence that connects them — the flow every other OAuth grant type is a variation or simplification of.",
+          "clozes": []
+        },
+        {
+          "kind": "code",
+          "lang": null,
+          "text": "1. Client redirects the user's browser to the authorization\n   server, with its client id, requested scope, and redirect\n   URI attached\n2. User authenticates and consents at the authorization\n   server itself\n3. Authorization server redirects the browser back to the\n   registered redirect URI, carrying an authorization code\n4. Client sends that code to the token endpoint directly,\n   authenticating itself to the authorization server\n5. Authorization server returns tokens in that same response"
+        },
+        {
+          "kind": "prose",
+          "text": "Step 2 is the detail worth pausing on: the resource owner authenticates and consents at the authorization server, never at the client. The client redirects the browser away and never sees the credentials the resource owner enters.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-pzlb",
+          "prompt": "Why does the resource owner have to authenticate at the authorization server rather than at the client that is requesting access?",
+          "answer": "Because the whole point of the delegation model is that the client never learns the resource owner's login credentials at all. If the client collected them itself, it would be back to the pre-OAuth password anti-pattern — full, unscoped access to an unguarded credential — regardless of what the rest of the flow looked like."
+        },
+        {
+          "kind": "prose",
+          "text": "The authorization code that comes back in step 3 has two properties that do all the real work in this flow. It is short-lived, typically expiring within a minute or two of being issued, so a copy that leaks has only a narrow window in which it could even be attempted.",
+          "clozes": [
+            {
+              "start": 114,
+              "end": 125,
+              "answer": "short-lived",
+              "cardId": "card-8vuv"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "It is also single-use: the token endpoint will only ever redeem it once, so a copy read out of a browser history entry or a server log after the real exchange has already happened is worthless — there is nothing left to redeem.",
+          "clozes": [
+            {
+              "start": 11,
+              "end": 21,
+              "answer": "single-use",
+              "cardId": "card-s6bi"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Redeeming the code takes more than presenting it, though. At the token endpoint, the client must also authenticate itself before it receives anything back.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-rulp",
+          "prompt": "At the token endpoint, redeeming the authorization code also requires the client to authenticate itself. If the code by itself were enough to obtain tokens, what would that undermine?",
+          "answer": "It would mean that anyone who managed to observe the code as it passed through the browser — a channel outside the client's control — could redeem it directly, without ever being the registered client at all. Requiring the client to also prove its own identity at the exchange step ties the redemption to a specific, known client, so a bare intercepted code isn't sufficient on its own."
+        },
+        {
+          "kind": "prose",
+          "text": "That's the structural insight underneath the whole flow: the code and the resulting tokens deliberately travel by different routes. The code rides through the user's browser as part of a redirect — a channel that is convenient but not private. The tokens are handed over only inside a direct, server-to-server call the browser never sees. That split only works because the code is a single-use reference rather than a usable credential in its own right.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-4qom",
+          "prompt": "Why is it acceptable for the authorization code to travel through the user's browser, a channel the client doesn't fully control, when the tokens it eventually produces are kept off that same channel?",
+          "answer": "Because the code alone grants nothing — it has to be redeemed at the token endpoint by a client that authenticates itself, so someone who merely observes the code in transit gains nothing usable from it. The tokens, once issued, are what actually unlock access, so they're confined to the direct call between the client and the authorization server instead."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-zreb",
+          "format": "mcq",
+          "prompt": "Put these in the order they actually occur in the authorization code flow: (A) the client exchanges the code at the token endpoint, (B) the authorization server redirects the browser back with a code, (C) the resource owner consents at the authorization server, (D) the client redirects the browser to the authorization server.",
+          "choices": [
+            {
+              "text": "D, C, B, A",
+              "correct": true
+            },
+            {
+              "text": "D, B, C, A",
+              "correct": false
+            },
+            {
+              "text": "C, D, A, B",
+              "correct": false
+            },
+            {
+              "text": "D, C, A, B",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-lccp",
+          "format": "recall",
+          "prompt": "Walk through the authorization code flow from the initial redirect to the client having tokens in hand, naming which party performs each step and which channel — through the browser, or directly server-to-server — each step uses.",
+          "answer": "The client redirects the user's browser to the authorization server (browser channel), carrying its client id, scope, and redirect URI. The resource owner authenticates and consents at the authorization server itself (still browser channel, but the client is not a party to it). The authorization server redirects the browser back to the client's registered redirect URI carrying a short-lived, single-use authorization code (browser channel again). The client then sends that code to the token endpoint directly, authenticating itself (a direct call, no browser involved), and the authorization server returns tokens in that same response."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/oauth/token-validation-at-the-resource-server.md",
+      "title": "Token Validation at the Resource Server",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "citations": [
+        "RFC 6750 (Bearer Token Usage)",
+        "RFC 9700 (OAuth 2.0 Security Best Current Practice)"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Token Validation at the Resource Server"
+        },
+        {
+          "kind": "prose",
+          "text": "A resource server that receives a bearer token cannot just check that it parses. Each of the checks below exists because skipping it lets through a specific, concrete kind of forged or misused request — the checklist is really a list of failures being prevented.",
+          "clozes": []
+        },
+        {
+          "kind": "code",
+          "lang": null,
+          "text": "1. signature — was this minted by a trusted issuer?\n2. issuer    — trusted by whom I expect, specifically?\n3. audience  — minted for me, not for some other service?\n4. expiry    — still within its lifetime (+ small skew)?\n5. scope     — does it cover this exact operation?"
+        },
+        {
+          "kind": "prose",
+          "text": "Skip the first and anyone can hand the resource server a token they wrote themselves, with any claims they like — nothing past that point matters if the token wasn't produced by a key the resource server actually trusts. Verifying it is a signature-verification question this vault already covers separately; here it's step one of a longer list, not the whole job.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "A validly signed token doesn't finish the job on its own, though. It just means *some* issuer the resource server trusts produced it — not that it's the *right* one. In a system that trusts more than one issuer at once, a token correctly signed by issuer B is worthless at a resource server configured only for issuer A's users.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-khyb",
+          "format": "mcq",
+          "prompt": "A platform's resource server is configured to accept tokens from its production auth server only. A staging auth server, used for a separate low-trust environment, is (by mistake) included in the same trusted signing-key set, so its tokens verify cleanly. A staging token is presented to the production resource server. Which check, done correctly, would still reject it?",
+          "choices": [
+            {
+              "text": "The issuer check — the token's issuer claim names the staging server, not the one this resource server is meant to accept requests from",
+              "correct": true
+            },
+            {
+              "text": "The signature check — the token doesn't verify against any known key",
+              "correct": false
+            },
+            {
+              "text": "The expiry check — staging tokens are always short-lived",
+              "correct": false
+            },
+            {
+              "text": "No check catches this; trusting the signing key implies trusting the token",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "A separate claim answers a separate question: was this token minted *for this resource server specifically*, rather than for some other service that happens to trust the same issuer. Getting that claim right means comparing it against the resource server's own identifier — what the claim represents in general, and the cross-service replay that skipping it enables, belongs to the notes on access tokens, but running the comparison is this resource server's job on every request.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-gyrp",
+          "format": "mcq",
+          "prompt": "Two services, a reports API and a billing API, both accept tokens from the same issuer. A client obtains a token scoped for the reports API and sends it to the billing API instead. The token's signature is valid, it hasn't expired, and its issuer is the shared, trusted one. Which check is the billing API's last line of defense?",
+          "choices": [
+            {
+              "text": "Comparing the token's audience claim against its own identifier, and rejecting the token because it doesn't match",
+              "correct": true
+            },
+            {
+              "text": "Re-checking the signature a second time, more strictly",
+              "correct": false
+            },
+            {
+              "text": "Re-checking the issuer, since it's the same trusted issuer either way",
+              "correct": false
+            },
+            {
+              "text": "There is no defense once the issuer is trusted",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Expiry looks like the simplest check, but it has one deliberate softener: a resource server should allow a small clock skew rather than rejecting the instant the clock ticks past `exp`.",
+          "clozes": [
+            {
+              "start": 113,
+              "end": 123,
+              "answer": "clock skew",
+              "cardId": "card-2xdf"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-jxm9",
+          "prompt": "Why is a small allowance for clock skew correct when checking a token's expiry, while accepting a token well past its stated expiry is not?",
+          "answer": "Two independent clocks — the issuer's and the resource server's — are never perfectly synchronized, so a token that is only a few seconds past expiry by the resource server's own clock may not actually be expired at all; rejecting it would be a false positive caused by clock drift, not a real security problem. Accepting a token that is substantially expired is a different failure entirely: it erases the point of expiry by extending the token's usable life indefinitely, which the small allowance is never meant to do."
+        },
+        {
+          "kind": "prose",
+          "text": "Every check so far can pass and the request can still be wrong for the operation being attempted, because none of them says anything about what the token is actually allowed to do.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-8yi0",
+          "format": "mcq",
+          "prompt": "A token has a valid signature, the correct issuer, the correct audience, and has not expired. It was granted scope `reports:read`. The caller uses it to call an endpoint that deletes a report. The resource server processes the request because every other check passed. What went wrong?",
+          "choices": [
+            {
+              "text": "The scope check was skipped — a token being valid says nothing about which operations it authorizes; that has to be checked against the specific action being performed",
+              "correct": true
+            },
+            {
+              "text": "The audience check must have been skipped, since deletion requires a different audience",
+              "correct": false
+            },
+            {
+              "text": "Nothing went wrong; a valid token authorizes any action the caller requests",
+              "correct": false
+            },
+            {
+              "text": "The issuer should have refused to sign a token that could be misused this way",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Running the signature check at all requires having the issuer's current public keys on hand, and a resource server doesn't hold those permanently — it fetches them, published as a JWKS, from an endpoint the issuer exposes for exactly this purpose.",
+          "clozes": [
+            {
+              "start": 180,
+              "end": 184,
+              "answer": "JWKS",
+              "cardId": "card-bm3m"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "An issuer doesn't sign every token with one key forever, and a JWKS response can list several keys at once — the entry a given token was signed with is picked out by a key id carried in the token itself, so the resource server knows which of the published keys to check that specific signature against, including during the window where an old and a new key are both still valid.",
+          "clozes": [
+            {
+              "start": 168,
+              "end": 174,
+              "answer": "key id",
+              "cardId": "card-ugp3"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Fetching the JWKS on every single request would be wasteful, so resource servers cache it — but a cache that's never refreshed eventually stops working correctly rather than just going stale quietly.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-rx7s",
+          "format": "recall",
+          "prompt": "A resource server cached an issuer's JWKS response once, at startup, and never refetches it. Weeks later the issuer rotates its signing key. What happens to tokens signed under the new key when they arrive at this resource server, and why?",
+          "answer": "They fail signature verification and get rejected, even though they're entirely legitimate. The token names a key id the cached JWKS has never seen, so the resource server has no key to check the signature against — the failure isn't that an attacker gets through, it's that valid traffic starts breaking, because the cache was never given a chance to pick up the rotation."
+        },
+        {
+          "kind": "prose",
+          "text": "Not every token is a JWT the resource server can inspect on its own. An opaque token carries no claims at all — none of the checks above can be run locally, because there's nothing local to check. The resource server's only option is to call the issuer's introspection endpoint and ask it directly whether the token is still active and what scope it carries.",
+          "clozes": [
+            {
+              "start": 255,
+              "end": 268,
+              "answer": "introspection",
+              "cardId": "card-jlio"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Two ways of getting this wrong look, from the outside, exactly like a working system, which is what makes them the most dangerous: accepting any token that merely verifies without checking who it's for or whether it's expired, and checking everything except scope. Both let every request through looking completely normal, right up until the first request that should have been refused isn't.",
+          "clozes": []
         }
       ]
     },

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-20T18:35:21.581Z",
+  "generatedAt": "2026-09-20T22:24:47.972Z",
   "cards": [
     {
       "id": "card-hdu0",
@@ -31320,6 +31320,2111 @@
         "Petrov, Database Internals, Ch. 5"
       ],
       "answer": "LSN"
+    },
+    {
+      "id": "card-i6zf",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "access-token",
+        "scope",
+        "audience",
+        "opaque-token",
+        "token-security"
+      ],
+      "prompt": "One option is for the authorization server to hand out a token that is ___: a random string with no internal structure, meaningful only to the party that issued it. A resource server holding a token like that can't decide anything about it on its own — there are no fields to read — so it has to ask the authorization server what the token means before it can honor the request.",
+      "source": {
+        "path": "vault/identity/oauth/access-tokens-scopes-and-audience.md",
+        "block": "card-i6zf"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 6750 (Bearer Token Usage)"
+      ],
+      "answer": "opaque"
+    },
+    {
+      "id": "card-oomx",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "access-token",
+        "scope",
+        "audience",
+        "opaque-token",
+        "token-security"
+      ],
+      "prompt": "The other option is a token that is ___: it carries its own claims — who it was issued to, what it grants, when it expires — bundled and signed, so a resource server can check it locally without a round trip back to the issuer.",
+      "source": {
+        "path": "vault/identity/oauth/access-tokens-scopes-and-audience.md",
+        "block": "card-oomx"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 6750 (Bearer Token Usage)"
+      ],
+      "answer": "self-contained"
+    },
+    {
+      "id": "card-wad4",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "access-token",
+        "scope",
+        "audience",
+        "opaque-token",
+        "token-security"
+      ],
+      "prompt": "What does the choice between an opaque access token and a self-contained one trade off against each other?",
+      "source": {
+        "path": "vault/identity/oauth/access-tokens-scopes-and-audience.md",
+        "block": "card-wad4"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 6750 (Bearer Token Usage)"
+      ],
+      "answer": "Revocation immediacy against per-request latency — an opaque token can be invalidated instantly at the authorization server but costs a lookup on every request, while a signed, locally-checkable token needs no round trip but keeps working until it expires, since there's nowhere to revoke a claim that's already bundled and signed."
+    },
+    {
+      "id": "card-8341",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "access-token",
+        "scope",
+        "audience",
+        "opaque-token",
+        "token-security"
+      ],
+      "prompt": "A client requests the scope `read write delete` when it starts an authorization flow. What must it assume about the access token it ultimately receives?",
+      "source": {
+        "path": "vault/identity/oauth/access-tokens-scopes-and-audience.md",
+        "block": "card-8341"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 6750 (Bearer Token Usage)"
+      ],
+      "choices": [
+        {
+          "text": "The granted scope may be narrower than what was requested, so the client must check the token's actual scope rather than assume it got everything it asked for",
+          "correct": true
+        },
+        {
+          "text": "The granted scope always exactly matches what was requested, or the authorization server would have rejected the request outright",
+          "correct": false
+        },
+        {
+          "text": "Scope is negotiated once and then fixed for the lifetime of the client, regardless of what any single token grants",
+          "correct": false
+        },
+        {
+          "text": "A narrower grant only happens when the resource owner is a different person than the client",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-0rfn",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "access-token",
+        "scope",
+        "audience",
+        "opaque-token",
+        "token-security"
+      ],
+      "prompt": "Why must a client read the scope it actually got back rather than assume it received everything it requested?",
+      "source": {
+        "path": "vault/identity/oauth/access-tokens-scopes-and-audience.md",
+        "block": "card-0rfn"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 6750 (Bearer Token Usage)"
+      ],
+      "answer": "Because an authorization server is free to grant a narrower scope than was requested — for example if the resource owner only approves part of it — so a client that assumes the full grant and calls an action outside the actual scope will simply have that call rejected by the resource server."
+    },
+    {
+      "id": "card-6sgf",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "access-token",
+        "scope",
+        "audience",
+        "opaque-token",
+        "token-security"
+      ],
+      "prompt": "A token carries an intended ___ — the specific resource server it's meant to be presented to — and that binding is what a resource server is supposed to check before honoring the token at all.",
+      "source": {
+        "path": "vault/identity/oauth/access-tokens-scopes-and-audience.md",
+        "block": "card-6sgf"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 6750 (Bearer Token Usage)"
+      ],
+      "answer": "audience"
+    },
+    {
+      "id": "card-pbf0",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "access-token",
+        "scope",
+        "audience",
+        "opaque-token",
+        "token-security"
+      ],
+      "prompt": "What goes wrong if a resource server accepts a token without checking that the token's intended destination is itself?",
+      "source": {
+        "path": "vault/identity/oauth/access-tokens-scopes-and-audience.md",
+        "block": "card-pbf0"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 6750 (Bearer Token Usage)"
+      ],
+      "answer": "A token minted for one service can be replayed against a different service that trusts the same authorization server, letting whatever the token grants at its intended target apply somewhere it was never meant to reach — a privilege escalation across service boundaries, not a mere technicality."
+    },
+    {
+      "id": "card-pfgq",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "access-token",
+        "scope",
+        "audience",
+        "opaque-token",
+        "token-security"
+      ],
+      "prompt": "Scope and audience each answer a different question about the same token — which question does each one answer?",
+      "source": {
+        "path": "vault/identity/oauth/access-tokens-scopes-and-audience.md",
+        "block": "card-pfgq"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 6750 (Bearer Token Usage)"
+      ],
+      "answer": "Scope answers what the token permits doing; audience answers where the token is allowed to be presented at all. A token can carry exactly the right scope and still be misused if presented to the wrong destination, and the reverse holds too."
+    },
+    {
+      "id": "card-3znw",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "client-credentials",
+        "machine-to-machine",
+        "service-authentication",
+        "scope",
+        "token-endpoint"
+      ],
+      "prompt": "Here the client authenticates as ___ itself — there is no separate party to ask, so there is nothing to consent to.",
+      "source": {
+        "path": "vault/identity/oauth/client-credentials-and-machine-to-machine.md",
+        "block": "card-3znw"
+      },
+      "citations": [
+        "RFC 6750 (Bearer Token Usage)",
+        "RFC 9700 (OAuth 2.0 Security Best Current Practice)"
+      ],
+      "answer": "the resource owner"
+    },
+    {
+      "id": "card-8op0",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "client-credentials",
+        "machine-to-machine",
+        "service-authentication",
+        "scope",
+        "token-endpoint"
+      ],
+      "prompt": "A nightly batch job needs to call an internal billing service with no human present to approve anything. Which grant fits, and why?",
+      "source": {
+        "path": "vault/identity/oauth/client-credentials-and-machine-to-machine.md",
+        "block": "card-8op0"
+      },
+      "citations": [
+        "RFC 6750 (Bearer Token Usage)",
+        "RFC 9700 (OAuth 2.0 Security Best Current Practice)"
+      ],
+      "choices": [
+        {
+          "text": "Client credentials — the job is itself the party being authorized, so there's no separate owner whose consent the flow needs to collect",
+          "correct": true
+        },
+        {
+          "text": "An authorization code flow, since it's the most widely supported grant",
+          "correct": false
+        },
+        {
+          "text": "Whichever grant the billing service's frontend already uses",
+          "correct": false
+        },
+        {
+          "text": "None — server-to-server calls should never carry an OAuth token",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-b74r",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "client-credentials",
+        "machine-to-machine",
+        "service-authentication",
+        "scope",
+        "token-endpoint"
+      ],
+      "prompt": "What does an access token issued by the client credentials grant assert, and what can it never assert on its own?",
+      "source": {
+        "path": "vault/identity/oauth/client-credentials-and-machine-to-machine.md",
+        "block": "card-b74r"
+      },
+      "citations": [
+        "RFC 6750 (Bearer Token Usage)",
+        "RFC 9700 (OAuth 2.0 Security Best Current Practice)"
+      ],
+      "answer": "It asserts that the specific service holding the client's credentials was authenticated by the authorization server, and it carries whatever scope was granted to that service. It never asserts anything about an end user, because no end user was ever party to the exchange — there is no identity in the token for any individual, only for the calling service itself."
+    },
+    {
+      "id": "card-kcwi",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "client-credentials",
+        "machine-to-machine",
+        "service-authentication",
+        "scope",
+        "token-endpoint"
+      ],
+      "prompt": "An internal API accepts a client-credentials token and, because the caller passes a `user_id` query parameter, returns that user's private records. What is the actual security consequence?",
+      "source": {
+        "path": "vault/identity/oauth/client-credentials-and-machine-to-machine.md",
+        "block": "card-kcwi"
+      },
+      "citations": [
+        "RFC 6750 (Bearer Token Usage)",
+        "RFC 9700 (OAuth 2.0 Security Best Current Practice)"
+      ],
+      "choices": [
+        {
+          "text": "Every caller holding a valid service token can read every user's data, since the token itself carries no restriction to any one user",
+          "correct": true
+        },
+        {
+          "text": "Nothing — the token still proves the request came from a trusted service",
+          "correct": false
+        },
+        {
+          "text": "The risk is limited to whichever user_id values are guessable",
+          "correct": false
+        },
+        {
+          "text": "This is safe as long as the service's client secret is kept private",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-a0ch",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "client-credentials",
+        "machine-to-machine",
+        "service-authentication",
+        "scope",
+        "token-endpoint"
+      ],
+      "prompt": "In this grant, why does scope still need to be kept narrow even though there's no user delegating anything?",
+      "source": {
+        "path": "vault/identity/oauth/client-credentials-and-machine-to-machine.md",
+        "block": "card-a0ch"
+      },
+      "citations": [
+        "RFC 6750 (Bearer Token Usage)",
+        "RFC 9700 (OAuth 2.0 Security Best Current Practice)"
+      ],
+      "answer": "The token carries the calling service's full authority for whatever scope it's issued, with no user boundary limiting it further. If the credentials or the token leak, the damage is bounded by that scope — a narrowly scoped service token limits what an attacker gains, while an overbroad one hands over everything the service could ever touch."
+    },
+    {
+      "id": "card-tuvg",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "client-credentials",
+        "machine-to-machine",
+        "service-authentication",
+        "scope",
+        "token-endpoint"
+      ],
+      "prompt": "This grant never runs that dance in the first place, so it has no ___ — the client already holds its own long-lived credential, so when its access token expires it just calls the token endpoint again the same way it did the first time.",
+      "source": {
+        "path": "vault/identity/oauth/client-credentials-and-machine-to-machine.md",
+        "block": "card-tuvg"
+      },
+      "citations": [
+        "RFC 6750 (Bearer Token Usage)",
+        "RFC 9700 (OAuth 2.0 Security Best Current Practice)"
+      ],
+      "answer": "refresh token"
+    },
+    {
+      "id": "card-lvig",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "client-credentials",
+        "machine-to-machine",
+        "service-authentication",
+        "scope",
+        "token-endpoint"
+      ],
+      "prompt": "A service integration is failing because its client-credentials token expired and the code was written expecting a refresh token to renew it. What should the code do instead, and why does this grant not issue one?",
+      "source": {
+        "path": "vault/identity/oauth/client-credentials-and-machine-to-machine.md",
+        "block": "card-lvig"
+      },
+      "citations": [
+        "RFC 6750 (Bearer Token Usage)",
+        "RFC 9700 (OAuth 2.0 Security Best Current Practice)"
+      ],
+      "answer": "It should simply request a brand-new access token from the token endpoint using its client credentials again, exactly as it did the first time. A refresh token exists to avoid repeating a user's consent step; this grant never had one, since the client's own credential is reusable on demand, so there is nothing a refresh token would save it from repeating."
+    },
+    {
+      "id": "card-1fkb",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "front-channel",
+        "back-channel",
+        "browser",
+        "exposure"
+      ],
+      "prompt": "The ___ is the user's browser. Parameters sent this way ride along in URLs, as query strings on a redirect, which means they end up in the browser's address bar, in its local history, in the access logs of every server the browser talks to along the way, and potentially in a `Referer` header handed to the next site the browser visits afterward. Anything sent this way can be read, or even altered before it arrives, by whoever controls that browser or sits on the network path in between.",
+      "source": {
+        "path": "vault/identity/oauth/front-channel-versus-back-channel.md",
+        "block": "card-1fkb"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "OAuth 2.1 (draft)"
+      ],
+      "answer": "front channel"
+    },
+    {
+      "id": "card-4k8u",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "front-channel",
+        "back-channel",
+        "browser",
+        "exposure"
+      ],
+      "prompt": "The ___ is a different path: a direct call from the client's own server straight to the authorization server, with no browser in the middle at all. It is confidential, since no intermediate party reads the payload; mutually identified, since each side authenticates the other rather than trusting an anonymous caller; and invisible to the user agent, which never sees the call happen.",
+      "source": {
+        "path": "vault/identity/oauth/front-channel-versus-back-channel.md",
+        "block": "card-4k8u"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "OAuth 2.1 (draft)"
+      ],
+      "answer": "back channel"
+    },
+    {
+      "id": "card-5bvc",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "front-channel",
+        "back-channel",
+        "browser",
+        "exposure"
+      ],
+      "prompt": "What three properties does the back channel have that the front channel lacks, and what single change accounts for all three at once?",
+      "source": {
+        "path": "vault/identity/oauth/front-channel-versus-back-channel.md",
+        "block": "card-5bvc"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "OAuth 2.1 (draft)"
+      ],
+      "answer": "Confidentiality (no intermediate party reads the payload), mutual identification (each side authenticates the other), and invisibility to the user agent. All three trace back to one change: removing the browser from the path removes the one participant in the exchange that has no obligation to keep anything private or to verify who it's actually talking to."
+    },
+    {
+      "id": "card-v9og",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "front-channel",
+        "back-channel",
+        "browser",
+        "exposure"
+      ],
+      "prompt": "Why can a value whose entire safety depends on staying confidential never be sent over the front channel, no matter how briefly it's exposed there?",
+      "source": {
+        "path": "vault/identity/oauth/front-channel-versus-back-channel.md",
+        "block": "card-v9og"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "OAuth 2.1 (draft)"
+      ],
+      "answer": "Because the front channel writes it into places that can't be un-exposed afterward — browser history, intermediate access logs, a Referer header on the next site visited. Once it lands in any of those, it is permanently out of the client's control, so a confidentiality requirement is violated the instant the value is used there, regardless of how short the exposure felt at the time."
+    },
+    {
+      "id": "card-4i84",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "front-channel",
+        "back-channel",
+        "browser",
+        "exposure"
+      ],
+      "prompt": "Why must a value that is forced onto the front channel be both single-use and independently re-verified by the receiving party, rather than trusted at face value on arrival?",
+      "source": {
+        "path": "vault/identity/oauth/front-channel-versus-back-channel.md",
+        "block": "card-4i84"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "OAuth 2.1 (draft)"
+      ],
+      "answer": "Because the front channel offers no confidentiality guarantee, so the value has to survive being read by someone other than the intended recipient. Making it single-use means a leaked copy has nothing left to redeem once the legitimate exchange has happened, and independent verification over the back channel means the receiving party never grants anything on the strength of the front-channel value alone — it has to be confirmed through a channel that actually offers confidentiality and mutual identification."
+    },
+    {
+      "id": "card-otpm",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "front-channel",
+        "back-channel",
+        "browser",
+        "exposure"
+      ],
+      "prompt": "A value must travel through the user's browser as part of a redirect, where browser history, intermediate logs, and Referer headers could all later expose a copy of it. Which property, on its own, most reduces the damage from that exposure even though the exposure itself still happens?",
+      "source": {
+        "path": "vault/identity/oauth/front-channel-versus-back-channel.md",
+        "block": "card-otpm"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "OAuth 2.1 (draft)"
+      ],
+      "choices": [
+        {
+          "text": "The value can only ever be redeemed once, so a copy read out of history or logs later has no remaining use",
+          "correct": true
+        },
+        {
+          "text": "The value is sent over HTTPS, so no third party can see what it was",
+          "correct": false
+        },
+        {
+          "text": "The value is short enough that most log lines truncate it",
+          "correct": false
+        },
+        {
+          "text": "The value looks identical to a random session identifier",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-7jvf",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "front-channel",
+        "back-channel",
+        "browser",
+        "exposure"
+      ],
+      "prompt": "Explain why the same kind of information can be handled completely differently — safe in one case, dangerous in the other — purely depending on which of the two channels carries it. State the general rule for deciding which channel a given value belongs on.",
+      "source": {
+        "path": "vault/identity/oauth/front-channel-versus-back-channel.md",
+        "block": "card-7jvf"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "OAuth 2.1 (draft)"
+      ],
+      "answer": "Exposure risk isn't a fixed property of a value; it's a property of the channel that carries it. A single-use value that still requires independent verification at the far end is tolerable on the front channel, because a copy observed after the fact accomplishes nothing — redeeming it was already a one-time event tied to a further, separately verified step. A value whose safety depends purely on staying confidential cannot tolerate that same exposure, because the front channel turns confidentiality into a fiction the moment the value appears in a URL. The general rule: a value belongs on the back channel if exposure alone would be enough to compromise the flow, and can tolerate the front channel only if exposure alone accomplishes nothing without a further, independently verified step."
+    },
+    {
+      "id": "card-5hzy",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "device-grant",
+        "implicit-flow",
+        "password-grant",
+        "grant-selection"
+      ],
+      "prompt": "That repeated checking in step 4 is the device grant's own term for itself: the constrained device ___ the token endpoint at an interval the authorization server hands it, rather than being pushed a result.",
+      "source": {
+        "path": "vault/identity/oauth/grant-types-device-and-deprecated.md",
+        "block": "card-5hzy"
+      },
+      "citations": [
+        "RFC 8628 (Device Authorization Grant)",
+        "OAuth 2.1 draft"
+      ],
+      "answer": "polls"
+    },
+    {
+      "id": "card-a35t",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "device-grant",
+        "implicit-flow",
+        "password-grant",
+        "grant-selection"
+      ],
+      "prompt": "A CLI tool run by developers who are fully trusted employees needs to obtain tokens on a machine with no browser installed. The team proposes just prompting for the corporate password directly in the terminal, since it's faster to build. What should it use instead, and why does trust in the developers not change the answer?",
+      "source": {
+        "path": "vault/identity/oauth/grant-types-device-and-deprecated.md",
+        "block": "card-a35t"
+      },
+      "citations": [
+        "RFC 8628 (Device Authorization Grant)",
+        "OAuth 2.1 draft"
+      ],
+      "choices": [
+        {
+          "text": "The device authorization grant — the problem is the CLI's inability to open a browser, not whether the people running it are trusted, and collecting a password directly creates the same risks regardless of who's typing it",
+          "correct": true
+        },
+        {
+          "text": "The password grant, since a trusted internal team removes the usual objection to it",
+          "correct": false
+        },
+        {
+          "text": "The implicit grant, since it needs no client secret",
+          "correct": false
+        },
+        {
+          "text": "Whichever grant returns the longest-lived token, since developer time is expensive",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-ru77",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "device-grant",
+        "implicit-flow",
+        "password-grant",
+        "grant-selection"
+      ],
+      "prompt": "Directly in the redirect meant appended after the \"#\" — the part of a URL called the ___, which the browser keeps to itself and never transmits to a server as part of the request.",
+      "source": {
+        "path": "vault/identity/oauth/grant-types-device-and-deprecated.md",
+        "block": "card-ru77"
+      },
+      "citations": [
+        "RFC 8628 (Device Authorization Grant)",
+        "OAuth 2.1 draft"
+      ],
+      "answer": "fragment"
+    },
+    {
+      "id": "card-m3ao",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "device-grant",
+        "implicit-flow",
+        "password-grant",
+        "grant-selection"
+      ],
+      "prompt": "Why specifically was the implicit grant removed, as distinct from other grants?",
+      "source": {
+        "path": "vault/identity/oauth/grant-types-device-and-deprecated.md",
+        "block": "card-m3ao"
+      },
+      "citations": [
+        "RFC 8628 (Device Authorization Grant)",
+        "OAuth 2.1 draft"
+      ],
+      "answer": "It returned the access token through the browser itself rather than through a direct exchange with the authorization server, so the token ended up sitting in browser history and in any log that records full URLs, with no mechanism to authenticate which application the token was meant for. That combination — front-channel exposure plus no client authentication — is unique to implicit; removing it left PKCE as the answer for browser-based apps that still need a comparable flow without a client secret."
+    },
+    {
+      "id": "card-jup7",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "device-grant",
+        "implicit-flow",
+        "password-grant",
+        "grant-selection"
+      ],
+      "prompt": "Why specifically was the resource owner password credentials grant removed, and how does that reason differ from why implicit was removed?",
+      "source": {
+        "path": "vault/identity/oauth/grant-types-device-and-deprecated.md",
+        "block": "card-jup7"
+      },
+      "citations": [
+        "RFC 8628 (Device Authorization Grant)",
+        "OAuth 2.1 draft"
+      ],
+      "answer": "It requires the client to handle the user's real password directly, which reintroduces exactly the credential-sharing problem OAuth was designed to eliminate. A password typed into one client can't be scoped, can't require a second factor, and can't support logging in through a federated identity provider, and the pattern trains users to hand their password to whatever third-party interface asks for it. Implicit failed on where the token traveled after being issued; password credentials fails on requiring the password to exist inside the client at all."
+    },
+    {
+      "id": "card-7zkl",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "device-grant",
+        "implicit-flow",
+        "password-grant",
+        "grant-selection"
+      ],
+      "prompt": "Given a browser-based single-page app, a confidential server-side app, and a CLI tool with no display, which of the three needs the device authorization grant, and what single fact about it forces that choice?",
+      "source": {
+        "path": "vault/identity/oauth/grant-types-device-and-deprecated.md",
+        "block": "card-7zkl"
+      },
+      "citations": [
+        "RFC 8628 (Device Authorization Grant)",
+        "OAuth 2.1 draft"
+      ],
+      "answer": "The CLI tool with no display. The deciding fact isn't trust or how the app is deployed — it's that the client has no way to render a browser for the person using it, so the login has to happen on a second device while the first one polls for the result."
+    },
+    {
+      "id": "card-ap8q",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oidc",
+        "id-token",
+        "authentication",
+        "claims",
+        "jwt"
+      ],
+      "prompt": "A backend service receives a request with an ID token in the Authorization header, instead of an access token. The service can decode it and see a valid signature and a readable set of claims. What should it do?",
+      "source": {
+        "path": "vault/identity/oauth/id-tokens-and-oidc.md",
+        "block": "card-ap8q"
+      },
+      "citations": [
+        "OpenID Connect Core 1.0"
+      ],
+      "choices": [
+        {
+          "text": "Reject the request — an ID token is minted for the application to consume, not as proof of authority to call an API",
+          "correct": true
+        },
+        {
+          "text": "Accept it, since the signature is valid and the claims are readable",
+          "correct": false
+        },
+        {
+          "text": "Accept it only if the claims name an existing account",
+          "correct": false
+        },
+        {
+          "text": "Accept it, because a valid JWT is sufficient identification for any service that trusts the issuer",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-pdua",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oidc",
+        "id-token",
+        "authentication",
+        "claims",
+        "jwt"
+      ],
+      "prompt": "Why is it a mistake to read a user's identity out of an access token, even when the token happens to contain a recognizable identifier?",
+      "source": {
+        "path": "vault/identity/oauth/id-tokens-and-oidc.md",
+        "block": "card-pdua"
+      },
+      "citations": [
+        "OpenID Connect Core 1.0"
+      ],
+      "answer": "An access token is addressed to a resource server, not to the application, and exists to authorize an API call rather than to assert who authenticated. Whatever fields it happens to carry are an implementation detail of that resource server, not a contract the application can rely on — the only identity-claims contract OIDC defines lives in the ID token."
+    },
+    {
+      "id": "card-sric",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oidc",
+        "id-token",
+        "authentication",
+        "claims",
+        "jwt"
+      ],
+      "prompt": "Name the standard ID token claims that answer: who issued this, who is it for, when was it issued, when does it expire, and when did the user actually authenticate. Which pair looks redundant at first glance, and why isn't it?",
+      "source": {
+        "path": "vault/identity/oauth/id-tokens-and-oidc.md",
+        "block": "card-sric"
+      },
+      "citations": [
+        "OpenID Connect Core 1.0"
+      ]
+    },
+    {
+      "id": "card-5d9e",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oidc",
+        "id-token",
+        "authentication",
+        "claims",
+        "jwt"
+      ],
+      "prompt": "That identifier is the ___ claim — a value the issuer commits to keeping stable for a given account for as long as the issuer relationship exists.",
+      "source": {
+        "path": "vault/identity/oauth/id-tokens-and-oidc.md",
+        "block": "card-5d9e"
+      },
+      "citations": [
+        "OpenID Connect Core 1.0"
+      ],
+      "answer": "subject"
+    },
+    {
+      "id": "card-aq8j",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oidc",
+        "id-token",
+        "authentication",
+        "claims",
+        "jwt"
+      ],
+      "prompt": "Why shouldn't an application key its user records on an email address instead of the identifier claim meant for that purpose?",
+      "source": {
+        "path": "vault/identity/oauth/id-tokens-and-oidc.md",
+        "block": "card-aq8j"
+      },
+      "citations": [
+        "OpenID Connect Core 1.0"
+      ],
+      "answer": "Email addresses change hands — people update them, employers reassign them, providers let old ones lapse and get reissued to someone else — while the identifier claim is defined specifically to stay fixed to one account for the life of the issuer relationship. Keying storage on email means a legitimate change silently orphans a user's history, or worse, a reissued address inherits somebody else's account."
+    },
+    {
+      "id": "card-j31k",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oidc",
+        "id-token",
+        "authentication",
+        "claims",
+        "jwt"
+      ],
+      "prompt": "An application does that by presenting its access token to the ___ endpoint, which returns those additional claims as a plain response rather than folding them into the signed token.",
+      "source": {
+        "path": "vault/identity/oauth/id-tokens-and-oidc.md",
+        "block": "card-j31k"
+      },
+      "citations": [
+        "OpenID Connect Core 1.0"
+      ],
+      "answer": "userinfo"
+    },
+    {
+      "id": "card-8aki",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oidc",
+        "id-token",
+        "authentication",
+        "claims",
+        "jwt"
+      ],
+      "prompt": "Two artifacts exist after an OIDC flow finishes. One is addressed to the application and asserts who authenticated and when. The other is addressed to a resource server and authorizes calling it. Which is which, and what goes wrong if an application swaps their roles?",
+      "source": {
+        "path": "vault/identity/oauth/id-tokens-and-oidc.md",
+        "block": "card-8aki"
+      },
+      "citations": [
+        "OpenID Connect Core 1.0"
+      ],
+      "answer": "The ID token is addressed to the application; the access token is addressed to the resource server. Swapping them means either sending a non-credential to an API, which a correctly written API should reject, or trying to derive identity from an artifact that was never defined to carry a stable, contractual identity claim."
+    },
+    {
+      "id": "card-0g4f",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "delegation",
+        "authorization",
+        "roles",
+        "authentication"
+      ],
+      "prompt": "Why do the \"unlimited access,\" \"unrevocable,\" and \"indistinguishable from the user\" problems all trace back to the same root cause when an application is given the user's own password?",
+      "source": {
+        "path": "vault/identity/oauth/oauth-roles-and-the-delegation-problem.md",
+        "block": "card-0g4f"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)"
+      ],
+      "answer": "All three come from handing over a credential that was designed to prove identity, not to describe a bounded permission. It carries no scope, no separate identity of its own, and no way to invalidate it without invalidating everything else that credential unlocks — so every one of these failures is really the same failure seen from a different angle."
+    },
+    {
+      "id": "card-rsup",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "delegation",
+        "authorization",
+        "roles",
+        "authentication"
+      ],
+      "prompt": "OAuth replaces that shared secret with a ___ authorization grant.",
+      "source": {
+        "path": "vault/identity/oauth/oauth-roles-and-the-delegation-problem.md",
+        "block": "card-rsup"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)"
+      ],
+      "answer": "delegated"
+    },
+    {
+      "id": "card-9oyx",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "delegation",
+        "authorization",
+        "roles",
+        "authentication"
+      ],
+      "prompt": "To make that handoff work, OAuth names four roles. The ___ is the party capable of granting access to a protected resource, because it's theirs — ordinarily a person.",
+      "source": {
+        "path": "vault/identity/oauth/oauth-roles-and-the-delegation-problem.md",
+        "block": "card-9oyx"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)"
+      ],
+      "answer": "resource owner"
+    },
+    {
+      "id": "card-1egv",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "delegation",
+        "authorization",
+        "roles",
+        "authentication"
+      ],
+      "prompt": "Why does OAuth define the authorization server and the resource server as two separate roles instead of merging them into one?",
+      "source": {
+        "path": "vault/identity/oauth/oauth-roles-and-the-delegation-problem.md",
+        "block": "card-1egv"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)"
+      ],
+      "answer": "Because they solve different problems, on different schedules, and often for different operators. The authorization server's job — establishing who the resource owner is and what they've agreed to let the client do — happens once, up front. The resource server's job — deciding whether to honor a token on a given request — happens on every call afterward, without needing to know how consent was originally collected. Separating them lets one authorization server's tokens be honored by many resource servers, and lets a resource server enforce access purely from a token's face, with no involvement in how it was issued."
+    },
+    {
+      "id": "card-p979",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "delegation",
+        "authorization",
+        "roles",
+        "authentication"
+      ],
+      "prompt": "A photo-printing application asks to read a user's photos stored with a separate photo-hosting service. The user approves the request on the photo-hosting service's own login page, and the printing application is then given a token to fetch photos from the hosting service's API. Which role does the photo-hosting service's API itself play?",
+      "source": {
+        "path": "vault/identity/oauth/oauth-roles-and-the-delegation-problem.md",
+        "block": "card-p979"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)"
+      ],
+      "choices": [
+        {
+          "text": "Resource server",
+          "correct": true
+        },
+        {
+          "text": "Authorization server",
+          "correct": false
+        },
+        {
+          "text": "Client",
+          "correct": false
+        },
+        {
+          "text": "Resource owner",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-wze1",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "delegation",
+        "authorization",
+        "roles",
+        "authentication"
+      ],
+      "prompt": "A resource owner granted a client access to their calendar through OAuth. They now want to cut off just that one client while leaving their own login, and every other connected application, untouched. What property of the grant makes that possible?",
+      "source": {
+        "path": "vault/identity/oauth/oauth-roles-and-the-delegation-problem.md",
+        "block": "card-wze1"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)"
+      ],
+      "choices": [
+        {
+          "text": "The client holds a separate, scoped credential distinct from the resource owner's own login, so revoking it doesn't touch that login",
+          "correct": true
+        },
+        {
+          "text": "The resource owner changes their password, which happens to affect only that one client",
+          "correct": false
+        },
+        {
+          "text": "OAuth grants automatically expire the first time they're used",
+          "correct": false
+        },
+        {
+          "text": "The authorization server and resource server share one revocation list keyed by password",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-w7xh",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "delegation",
+        "authorization",
+        "roles",
+        "authentication"
+      ],
+      "prompt": "OAuth 2.0 is often summarized as being \"not an authentication protocol.\" Explain the mistake that warning is aimed at, and name the standard built specifically to add authentication on top of OAuth.",
+      "source": {
+        "path": "vault/identity/oauth/oauth-roles-and-the-delegation-problem.md",
+        "block": "card-w7xh"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)"
+      ],
+      "answer": "The mistake is treating a successful token grant — the client obtaining an access token — as proof of the resource owner's identity, and logging the user in on that basis. A token only proves that some scope of access was authorized; it was never designed to carry a verified identity, which made this practice error-prone and inconsistent across implementations. OpenID Connect was built on top of OAuth 2.0 specifically to add a standardized authentication layer, so applications would no longer need to improvise identity out of an access grant."
+    },
+    {
+      "id": "card-iyw3",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "pkce",
+        "public-client",
+        "mobile-security",
+        "authorization-code"
+      ],
+      "prompt": "That second kind of client is what OAuth calls a ___.",
+      "source": {
+        "path": "vault/identity/oauth/pkce-and-public-clients.md",
+        "block": "card-iyw3"
+      },
+      "citations": [
+        "RFC 7636 (PKCE)",
+        "RFC 6749 (OAuth 2.0 Authorization Framework)"
+      ],
+      "answer": "public client"
+    },
+    {
+      "id": "card-8xfc",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "pkce",
+        "public-client",
+        "mobile-security",
+        "authorization-code"
+      ],
+      "prompt": "Why can a confidential client authenticate itself at the token endpoint while a public client cannot?",
+      "source": {
+        "path": "vault/identity/oauth/pkce-and-public-clients.md",
+        "block": "card-8xfc"
+      },
+      "citations": [
+        "RFC 7636 (PKCE)",
+        "RFC 6749 (OAuth 2.0 Authorization Framework)"
+      ],
+      "answer": "A confidential client's code never leaves infrastructure its operator controls, so it can hold a credential nobody outside the operator can read. A public client's code ships to and runs on the end user's device, so any credential embedded in it is readable by anyone who inspects that copy — it identifies the app's code, not a holder of a secret."
+    },
+    {
+      "id": "card-95nz",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "pkce",
+        "public-client",
+        "mobile-security",
+        "authorization-code"
+      ],
+      "prompt": "A user has both a legitimate app and a malicious app installed on their phone, and both apps have registered the same custom URL scheme. Explain how the malicious app can end up receiving an authorization code that was meant for the legitimate app.",
+      "source": {
+        "path": "vault/identity/oauth/pkce-and-public-clients.md",
+        "block": "card-95nz"
+      },
+      "citations": [
+        "RFC 7636 (PKCE)",
+        "RFC 6749 (OAuth 2.0 Authorization Framework)"
+      ]
+    },
+    {
+      "id": "card-mjd2",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "pkce",
+        "public-client",
+        "mobile-security",
+        "authorization-code"
+      ],
+      "prompt": "Before sending the authorization request, the client generates a random ___, discarded once this one flow finishes.",
+      "source": {
+        "path": "vault/identity/oauth/pkce-and-public-clients.md",
+        "block": "card-mjd2"
+      },
+      "citations": [
+        "RFC 7636 (PKCE)",
+        "RFC 6749 (OAuth 2.0 Authorization Framework)"
+      ],
+      "answer": "verifier"
+    },
+    {
+      "id": "card-6p99",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "pkce",
+        "public-client",
+        "mobile-security",
+        "authorization-code"
+      ],
+      "prompt": "An attacker intercepts an authorization code from a PKCE-protected exchange and immediately presents it at the token endpoint. What happens?",
+      "source": {
+        "path": "vault/identity/oauth/pkce-and-public-clients.md",
+        "block": "card-6p99"
+      },
+      "citations": [
+        "RFC 7636 (PKCE)",
+        "RFC 6749 (OAuth 2.0 Authorization Framework)"
+      ],
+      "choices": [
+        {
+          "text": "The exchange is refused — the attacker never obtained the value needed to reproduce the challenge already on file for that code",
+          "correct": true
+        },
+        {
+          "text": "The exchange succeeds, since PKCE only protects the authorization request itself",
+          "correct": false
+        },
+        {
+          "text": "The exchange succeeds as long as the attacker also supplies the correct redirect URI",
+          "correct": false
+        },
+        {
+          "text": "The exchange is refused, but only when the intercepting party is itself a registered client",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-gn49",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "pkce",
+        "public-client",
+        "mobile-security",
+        "authorization-code"
+      ],
+      "prompt": "Why does intercepting the redirect never expose what's needed to redeem the code it's carrying?",
+      "source": {
+        "path": "vault/identity/oauth/pkce-and-public-clients.md",
+        "block": "card-gn49"
+      },
+      "citations": [
+        "RFC 7636 (PKCE)",
+        "RFC 6749 (OAuth 2.0 Authorization Framework)"
+      ],
+      "answer": "Only the challenge — a one-way derivation of the verifier — ever travels on the authorization request that gets redirected. The verifier itself is withheld until the separate exchange at the token endpoint, so capturing the redirect captures the code but not the one value that could still redeem it."
+    },
+    {
+      "id": "card-6tm5",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "pkce",
+        "public-client",
+        "mobile-security",
+        "authorization-code"
+      ],
+      "prompt": "PKCE was designed with public clients in mind, but current guidance recommends it for ___ clients as well, since a code can leak in ways that have nothing to do with whether a client can hold a credential — a stray log line, a referrer header, a misconfigured proxy — and a freshly generated, never-transmitted verifier defeats that leakage regardless of which kind of client it happens to. (The old implicit flow, which skipped the code exchange entirely, was retired for reasons of its own that go beyond this.)",
+      "source": {
+        "path": "vault/identity/oauth/pkce-and-public-clients.md",
+        "block": "card-6tm5"
+      },
+      "citations": [
+        "RFC 7636 (PKCE)",
+        "RFC 6749 (OAuth 2.0 Authorization Framework)"
+      ],
+      "answer": "confidential"
+    },
+    {
+      "id": "card-l3jx",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "refresh-token",
+        "rotation",
+        "reuse-detection",
+        "revocation",
+        "token-security"
+      ],
+      "prompt": "What tension does a refresh token resolve, and how?",
+      "source": {
+        "path": "vault/identity/oauth/refresh-tokens-and-rotation.md",
+        "block": "card-l3jx"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 9700 (Best Current Practice for OAuth 2.0 Security)"
+      ],
+      "answer": "A short access-token lifetime limits the damage of a leak but makes constantly re-authenticating the user unworkable; a longer-lived refresh token lets the client obtain new access tokens on its own, without the user's involvement, so the access token can stay short-lived without the usability cost."
+    },
+    {
+      "id": "card-gzdi",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "refresh-token",
+        "rotation",
+        "reuse-detection",
+        "revocation",
+        "token-security"
+      ],
+      "prompt": "Where is a refresh token ever redeemed, and where does it never go?",
+      "source": {
+        "path": "vault/identity/oauth/refresh-tokens-and-rotation.md",
+        "block": "card-gzdi"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 9700 (Best Current Practice for OAuth 2.0 Security)"
+      ],
+      "answer": "It is redeemed only at the token endpoint, in a direct exchange with the authorization server for a new access token; it is never sent to a resource server, which has no interface built for accepting one."
+    },
+    {
+      "id": "card-pwra",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "refresh-token",
+        "rotation",
+        "reuse-detection",
+        "revocation",
+        "token-security"
+      ],
+      "prompt": "Reissuing the same refresh token indefinitely means one leaked copy stays useful forever. ___ closes that: every time a refresh token is redeemed, the authorization server issues a brand new one alongside the new access token, and invalidates the token that was just spent.",
+      "source": {
+        "path": "vault/identity/oauth/refresh-tokens-and-rotation.md",
+        "block": "card-pwra"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 9700 (Best Current Practice for OAuth 2.0 Security)"
+      ],
+      "answer": "Rotation"
+    },
+    {
+      "id": "card-5ya4",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "refresh-token",
+        "rotation",
+        "reuse-detection",
+        "revocation",
+        "token-security"
+      ],
+      "prompt": "That invalidation is what makes ___ possible: if a token that has already been redeemed and replaced shows up again, the authorization server learns that two different parties must be holding what was supposed to be a single, moved-forward secret. A legitimate client always presents the latest token it was issued, so an already-spent one reappearing points to theft.",
+      "source": {
+        "path": "vault/identity/oauth/refresh-tokens-and-rotation.md",
+        "block": "card-5ya4"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 9700 (Best Current Practice for OAuth 2.0 Security)"
+      ],
+      "answer": "reuse detection"
+    },
+    {
+      "id": "card-oq33",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "refresh-token",
+        "rotation",
+        "reuse-detection",
+        "revocation",
+        "token-security"
+      ],
+      "prompt": "A stolen refresh token gets redeemed by an attacker, and the authorization server issues them a new one in its place. Later, the legitimate client — still holding what it thinks is its current refresh token — tries to redeem that same now-superseded token too. What should the authorization server do?",
+      "source": {
+        "path": "vault/identity/oauth/refresh-tokens-and-rotation.md",
+        "block": "card-oq33"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 9700 (Best Current Practice for OAuth 2.0 Security)"
+      ],
+      "choices": [
+        {
+          "text": "Recognize that an already-redeemed token was presented again, and revoke the entire chain of tokens descending from that grant, not just the one just presented",
+          "correct": true
+        },
+        {
+          "text": "Silently issue a fresh token to the legitimate client and ignore the earlier redemption, since the client is the one behaving normally",
+          "correct": false
+        },
+        {
+          "text": "Accept the redemption from whichever party asks first each time, since only one holder can be legitimate at once",
+          "correct": false
+        },
+        {
+          "text": "Extend the lifetime of the original refresh token so both parties can keep using it",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-o388",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "refresh-token",
+        "rotation",
+        "reuse-detection",
+        "revocation",
+        "token-security"
+      ],
+      "prompt": "Why does rotating on every redemption matter far more for a client that cannot keep a secret than for one that can?",
+      "source": {
+        "path": "vault/identity/oauth/refresh-tokens-and-rotation.md",
+        "block": "card-o388"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 9700 (Best Current Practice for OAuth 2.0 Security)"
+      ],
+      "answer": "A client relying on one static, unrotated refresh token depends entirely on that single value never leaking, and a client that cannot keep a secret is far more likely to have exactly that happen; rotating limits how long any one leaked copy stays valid and lets theft surface on the very next redemption, which matters most for the clients least able to protect a long-lived static value in the first place."
+    },
+    {
+      "id": "card-gdk0",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "refresh-token",
+        "rotation",
+        "reuse-detection",
+        "revocation",
+        "token-security"
+      ],
+      "prompt": "Why do refresh tokens make revoking access practical, given how much less often they're redeemed than access tokens are used?",
+      "source": {
+        "path": "vault/identity/oauth/refresh-tokens-and-rotation.md",
+        "block": "card-gdk0"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 9700 (Best Current Practice for OAuth 2.0 Security)"
+      ],
+      "answer": "Revoking a session just means invalidating its refresh token (or chain) at the authorization server; the short-lived access token already in the client's hands keeps working only until its own brief expiry, so a short access-token lifetime bounds how long a revoked session can keep functioning, rather than a revoked credential remaining usable indefinitely."
+    },
+    {
+      "id": "card-9b23",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "refresh-token",
+        "rotation",
+        "reuse-detection",
+        "revocation",
+        "token-security"
+      ],
+      "prompt": "Explain why a refresh token is considered the higher-value secret compared to the access token it's used to obtain, in terms of what each is worth to an attacker who steals it.",
+      "source": {
+        "path": "vault/identity/oauth/refresh-tokens-and-rotation.md",
+        "block": "card-9b23"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 9700 (Best Current Practice for OAuth 2.0 Security)"
+      ],
+      "answer": "An access token is worth only as much damage as its short remaining lifetime allows before it expires on its own. A refresh token is worth far more: it lasts much longer and can be redeemed repeatedly to mint new access tokens, so stealing it gives an attacker sustained access rather than a brief window — which is exactly why rotating it on every use and detecting reuse exist specifically to protect it."
+    },
+    {
+      "id": "card-7mg2",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "state",
+        "nonce",
+        "redirect-uri",
+        "openid-connect"
+      ],
+      "prompt": "Before sending the authorization request, the client generates an unguessable ___ value, includes it on that request, and later checks that the exact same value comes back on the response — binding the response it receives to the request it actually initiated, rather than to any response that happens to arrive at its callback.",
+      "source": {
+        "path": "vault/identity/oauth/state-nonce-and-redirect-uri-validation.md",
+        "block": "card-7mg2"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 7636 (PKCE)"
+      ],
+      "answer": "state"
+    },
+    {
+      "id": "card-zljp",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "state",
+        "nonce",
+        "redirect-uri",
+        "openid-connect"
+      ],
+      "prompt": "An attacker starts the authorization flow themselves, obtains a result tied to the attacker's own account, and tricks a logged-in victim into completing it — leaving the victim's client session bound to the attacker's account. Which check would have stopped this?",
+      "source": {
+        "path": "vault/identity/oauth/state-nonce-and-redirect-uri-validation.md",
+        "block": "card-zljp"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 7636 (PKCE)"
+      ],
+      "choices": [
+        {
+          "text": "state — the client would find that the returned value does not match the one it sent for a request the victim never initiated",
+          "correct": true
+        },
+        {
+          "text": "nonce — nonce only binds a returned identity claim to its own request, not a whole session to an account",
+          "correct": false
+        },
+        {
+          "text": "exact redirect URI matching — the redirect went to the client's own genuine callback, so no mismatch there would trigger",
+          "correct": false
+        },
+        {
+          "text": "none of the three checks are relevant to this attack",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-8ceb",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "state",
+        "nonce",
+        "redirect-uri",
+        "openid-connect"
+      ],
+      "prompt": "A separate OpenID Connect parameter, nonce, is sent along with the authorization request and echoed back inside the identity claim the authorization server returns. What does nonce being echoed back inside that claim let the client check, and what attack does that check defeat?",
+      "source": {
+        "path": "vault/identity/oauth/state-nonce-and-redirect-uri-validation.md",
+        "block": "card-8ceb"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 7636 (PKCE)"
+      ],
+      "answer": "The client checks that the value inside the returned claim matches the one it sent, binding that specific claim to that specific request. That defeats replay: presenting a previously captured, genuine identity claim again as if it were the answer to a fresh request."
+    },
+    {
+      "id": "card-uj0b",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "state",
+        "nonce",
+        "redirect-uri",
+        "openid-connect"
+      ],
+      "prompt": "An attacker previously captured a legitimate identity claim issued for another session, and now resubmits that exact same claim to the client, hoping the client accepts it as the answer to a request the client is making right now. Which check catches this?",
+      "source": {
+        "path": "vault/identity/oauth/state-nonce-and-redirect-uri-validation.md",
+        "block": "card-uj0b"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 7636 (PKCE)"
+      ],
+      "choices": [
+        {
+          "text": "nonce — the value inside the replayed claim won't match the one the client sent for its current request",
+          "correct": true
+        },
+        {
+          "text": "state — state only governs which request an authorization response is bound to, not what a returned identity claim contains",
+          "correct": false
+        },
+        {
+          "text": "exact redirect URI matching — that constrains where a response can be delivered, not whether a claim is fresh",
+          "correct": false
+        },
+        {
+          "text": "none of the three checks apply to a replayed identity claim",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-m022",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "state",
+        "nonce",
+        "redirect-uri",
+        "openid-connect"
+      ],
+      "prompt": "The third check sits with the authorization server rather than the client. When it receives an authorization request, the server must compare the redirect URI supplied on that request against the URI registered for that client ___, not by prefix or substring.",
+      "source": {
+        "path": "vault/identity/oauth/state-nonce-and-redirect-uri-validation.md",
+        "block": "card-m022"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 7636 (PKCE)"
+      ],
+      "answer": "exactly"
+    },
+    {
+      "id": "card-mu7o",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "state",
+        "nonce",
+        "redirect-uri",
+        "openid-connect"
+      ],
+      "prompt": "A registered redirect URI is `https://app.example.com/callback`. The authorization server accepts any supplied URI that begins with that string. An attacker requests authorization using `https://app.example.com/callback.attacker.evil/`, which passes that check. What failure mode does this demonstrate?",
+      "source": {
+        "path": "vault/identity/oauth/state-nonce-and-redirect-uri-validation.md",
+        "block": "card-mu7o"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 7636 (PKCE)"
+      ],
+      "choices": [
+        {
+          "text": "The authorization endpoint behaves as an open redirect, delivering the authorization code to a destination the client never registered",
+          "correct": true
+        },
+        {
+          "text": "A replay of a previously issued authorization code",
+          "correct": false
+        },
+        {
+          "text": "A forged authorization response bound to the wrong request",
+          "correct": false
+        },
+        {
+          "text": "A failure that only exact nonce matching could have caught",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-mp14",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "state",
+        "nonce",
+        "redirect-uri",
+        "openid-connect"
+      ],
+      "prompt": "State, nonce, and exact redirect URI matching protect three different things — the response, the identity claim, and the destination the code is delivered to. Explain the pattern common to all three: what each one binds a step of the flow to, and why that binding is exactly the kind of gap that stays invisible until an attacker specifically targets it.",
+      "source": {
+        "path": "vault/identity/oauth/state-nonce-and-redirect-uri-validation.md",
+        "block": "card-mp14"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)",
+        "RFC 7636 (PKCE)"
+      ]
+    },
+    {
+      "id": "card-pzlb",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "authorization-code",
+        "redirect",
+        "token-exchange",
+        "delegation"
+      ],
+      "prompt": "Why does the resource owner have to authenticate at the authorization server rather than at the client that is requesting access?",
+      "source": {
+        "path": "vault/identity/oauth/the-authorization-code-flow.md",
+        "block": "card-pzlb"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)"
+      ],
+      "answer": "Because the whole point of the delegation model is that the client never learns the resource owner's login credentials at all. If the client collected them itself, it would be back to the pre-OAuth password anti-pattern — full, unscoped access to an unguarded credential — regardless of what the rest of the flow looked like."
+    },
+    {
+      "id": "card-8vuv",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "authorization-code",
+        "redirect",
+        "token-exchange",
+        "delegation"
+      ],
+      "prompt": "The authorization code that comes back in step 3 has two properties that do all the real work in this flow. It is ___, typically expiring within a minute or two of being issued, so a copy that leaks has only a narrow window in which it could even be attempted.",
+      "source": {
+        "path": "vault/identity/oauth/the-authorization-code-flow.md",
+        "block": "card-8vuv"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)"
+      ],
+      "answer": "short-lived"
+    },
+    {
+      "id": "card-s6bi",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "authorization-code",
+        "redirect",
+        "token-exchange",
+        "delegation"
+      ],
+      "prompt": "It is also ___: the token endpoint will only ever redeem it once, so a copy read out of a browser history entry or a server log after the real exchange has already happened is worthless — there is nothing left to redeem.",
+      "source": {
+        "path": "vault/identity/oauth/the-authorization-code-flow.md",
+        "block": "card-s6bi"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)"
+      ],
+      "answer": "single-use"
+    },
+    {
+      "id": "card-rulp",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "authorization-code",
+        "redirect",
+        "token-exchange",
+        "delegation"
+      ],
+      "prompt": "At the token endpoint, redeeming the authorization code also requires the client to authenticate itself. If the code by itself were enough to obtain tokens, what would that undermine?",
+      "source": {
+        "path": "vault/identity/oauth/the-authorization-code-flow.md",
+        "block": "card-rulp"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)"
+      ],
+      "answer": "It would mean that anyone who managed to observe the code as it passed through the browser — a channel outside the client's control — could redeem it directly, without ever being the registered client at all. Requiring the client to also prove its own identity at the exchange step ties the redemption to a specific, known client, so a bare intercepted code isn't sufficient on its own."
+    },
+    {
+      "id": "card-4qom",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "authorization-code",
+        "redirect",
+        "token-exchange",
+        "delegation"
+      ],
+      "prompt": "Why is it acceptable for the authorization code to travel through the user's browser, a channel the client doesn't fully control, when the tokens it eventually produces are kept off that same channel?",
+      "source": {
+        "path": "vault/identity/oauth/the-authorization-code-flow.md",
+        "block": "card-4qom"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)"
+      ],
+      "answer": "Because the code alone grants nothing — it has to be redeemed at the token endpoint by a client that authenticates itself, so someone who merely observes the code in transit gains nothing usable from it. The tokens, once issued, are what actually unlock access, so they're confined to the direct call between the client and the authorization server instead."
+    },
+    {
+      "id": "card-zreb",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "authorization-code",
+        "redirect",
+        "token-exchange",
+        "delegation"
+      ],
+      "prompt": "Put these in the order they actually occur in the authorization code flow: (A) the client exchanges the code at the token endpoint, (B) the authorization server redirects the browser back with a code, (C) the resource owner consents at the authorization server, (D) the client redirects the browser to the authorization server.",
+      "source": {
+        "path": "vault/identity/oauth/the-authorization-code-flow.md",
+        "block": "card-zreb"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)"
+      ],
+      "choices": [
+        {
+          "text": "D, C, B, A",
+          "correct": true
+        },
+        {
+          "text": "D, B, C, A",
+          "correct": false
+        },
+        {
+          "text": "C, D, A, B",
+          "correct": false
+        },
+        {
+          "text": "D, C, A, B",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-lccp",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "authorization-code",
+        "redirect",
+        "token-exchange",
+        "delegation"
+      ],
+      "prompt": "Walk through the authorization code flow from the initial redirect to the client having tokens in hand, naming which party performs each step and which channel — through the browser, or directly server-to-server — each step uses.",
+      "source": {
+        "path": "vault/identity/oauth/the-authorization-code-flow.md",
+        "block": "card-lccp"
+      },
+      "citations": [
+        "RFC 6749 (OAuth 2.0 Authorization Framework)"
+      ],
+      "answer": "The client redirects the user's browser to the authorization server (browser channel), carrying its client id, scope, and redirect URI. The resource owner authenticates and consents at the authorization server itself (still browser channel, but the client is not a party to it). The authorization server redirects the browser back to the client's registered redirect URI carrying a short-lived, single-use authorization code (browser channel again). The client then sends that code to the token endpoint directly, authenticating itself (a direct call, no browser involved), and the authorization server returns tokens in that same response."
+    },
+    {
+      "id": "card-khyb",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "token-validation",
+        "jwks",
+        "resource-server",
+        "key-id",
+        "clock-skew"
+      ],
+      "prompt": "A platform's resource server is configured to accept tokens from its production auth server only. A staging auth server, used for a separate low-trust environment, is (by mistake) included in the same trusted signing-key set, so its tokens verify cleanly. A staging token is presented to the production resource server. Which check, done correctly, would still reject it?",
+      "source": {
+        "path": "vault/identity/oauth/token-validation-at-the-resource-server.md",
+        "block": "card-khyb"
+      },
+      "citations": [
+        "RFC 6750 (Bearer Token Usage)",
+        "RFC 9700 (OAuth 2.0 Security Best Current Practice)"
+      ],
+      "choices": [
+        {
+          "text": "The issuer check — the token's issuer claim names the staging server, not the one this resource server is meant to accept requests from",
+          "correct": true
+        },
+        {
+          "text": "The signature check — the token doesn't verify against any known key",
+          "correct": false
+        },
+        {
+          "text": "The expiry check — staging tokens are always short-lived",
+          "correct": false
+        },
+        {
+          "text": "No check catches this; trusting the signing key implies trusting the token",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-gyrp",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "token-validation",
+        "jwks",
+        "resource-server",
+        "key-id",
+        "clock-skew"
+      ],
+      "prompt": "Two services, a reports API and a billing API, both accept tokens from the same issuer. A client obtains a token scoped for the reports API and sends it to the billing API instead. The token's signature is valid, it hasn't expired, and its issuer is the shared, trusted one. Which check is the billing API's last line of defense?",
+      "source": {
+        "path": "vault/identity/oauth/token-validation-at-the-resource-server.md",
+        "block": "card-gyrp"
+      },
+      "citations": [
+        "RFC 6750 (Bearer Token Usage)",
+        "RFC 9700 (OAuth 2.0 Security Best Current Practice)"
+      ],
+      "choices": [
+        {
+          "text": "Comparing the token's audience claim against its own identifier, and rejecting the token because it doesn't match",
+          "correct": true
+        },
+        {
+          "text": "Re-checking the signature a second time, more strictly",
+          "correct": false
+        },
+        {
+          "text": "Re-checking the issuer, since it's the same trusted issuer either way",
+          "correct": false
+        },
+        {
+          "text": "There is no defense once the issuer is trusted",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-2xdf",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "token-validation",
+        "jwks",
+        "resource-server",
+        "key-id",
+        "clock-skew"
+      ],
+      "prompt": "Expiry looks like the simplest check, but it has one deliberate softener: a resource server should allow a small ___ rather than rejecting the instant the clock ticks past `exp`.",
+      "source": {
+        "path": "vault/identity/oauth/token-validation-at-the-resource-server.md",
+        "block": "card-2xdf"
+      },
+      "citations": [
+        "RFC 6750 (Bearer Token Usage)",
+        "RFC 9700 (OAuth 2.0 Security Best Current Practice)"
+      ],
+      "answer": "clock skew"
+    },
+    {
+      "id": "card-jxm9",
+      "format": "qa",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "token-validation",
+        "jwks",
+        "resource-server",
+        "key-id",
+        "clock-skew"
+      ],
+      "prompt": "Why is a small allowance for clock skew correct when checking a token's expiry, while accepting a token well past its stated expiry is not?",
+      "source": {
+        "path": "vault/identity/oauth/token-validation-at-the-resource-server.md",
+        "block": "card-jxm9"
+      },
+      "citations": [
+        "RFC 6750 (Bearer Token Usage)",
+        "RFC 9700 (OAuth 2.0 Security Best Current Practice)"
+      ],
+      "answer": "Two independent clocks — the issuer's and the resource server's — are never perfectly synchronized, so a token that is only a few seconds past expiry by the resource server's own clock may not actually be expired at all; rejecting it would be a false positive caused by clock drift, not a real security problem. Accepting a token that is substantially expired is a different failure entirely: it erases the point of expiry by extending the token's usable life indefinitely, which the small allowance is never meant to do."
+    },
+    {
+      "id": "card-8yi0",
+      "format": "mcq",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "token-validation",
+        "jwks",
+        "resource-server",
+        "key-id",
+        "clock-skew"
+      ],
+      "prompt": "A token has a valid signature, the correct issuer, the correct audience, and has not expired. It was granted scope `reports:read`. The caller uses it to call an endpoint that deletes a report. The resource server processes the request because every other check passed. What went wrong?",
+      "source": {
+        "path": "vault/identity/oauth/token-validation-at-the-resource-server.md",
+        "block": "card-8yi0"
+      },
+      "citations": [
+        "RFC 6750 (Bearer Token Usage)",
+        "RFC 9700 (OAuth 2.0 Security Best Current Practice)"
+      ],
+      "choices": [
+        {
+          "text": "The scope check was skipped — a token being valid says nothing about which operations it authorizes; that has to be checked against the specific action being performed",
+          "correct": true
+        },
+        {
+          "text": "The audience check must have been skipped, since deletion requires a different audience",
+          "correct": false
+        },
+        {
+          "text": "Nothing went wrong; a valid token authorizes any action the caller requests",
+          "correct": false
+        },
+        {
+          "text": "The issuer should have refused to sign a token that could be misused this way",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-bm3m",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "token-validation",
+        "jwks",
+        "resource-server",
+        "key-id",
+        "clock-skew"
+      ],
+      "prompt": "Running the signature check at all requires having the issuer's current public keys on hand, and a resource server doesn't hold those permanently — it fetches them, published as a ___, from an endpoint the issuer exposes for exactly this purpose.",
+      "source": {
+        "path": "vault/identity/oauth/token-validation-at-the-resource-server.md",
+        "block": "card-bm3m"
+      },
+      "citations": [
+        "RFC 6750 (Bearer Token Usage)",
+        "RFC 9700 (OAuth 2.0 Security Best Current Practice)"
+      ],
+      "answer": "JWKS"
+    },
+    {
+      "id": "card-ugp3",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "token-validation",
+        "jwks",
+        "resource-server",
+        "key-id",
+        "clock-skew"
+      ],
+      "prompt": "An issuer doesn't sign every token with one key forever, and a JWKS response can list several keys at once — the entry a given token was signed with is picked out by a ___ carried in the token itself, so the resource server knows which of the published keys to check that specific signature against, including during the window where an old and a new key are both still valid.",
+      "source": {
+        "path": "vault/identity/oauth/token-validation-at-the-resource-server.md",
+        "block": "card-ugp3"
+      },
+      "citations": [
+        "RFC 6750 (Bearer Token Usage)",
+        "RFC 9700 (OAuth 2.0 Security Best Current Practice)"
+      ],
+      "answer": "key id"
+    },
+    {
+      "id": "card-rx7s",
+      "format": "recall",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "token-validation",
+        "jwks",
+        "resource-server",
+        "key-id",
+        "clock-skew"
+      ],
+      "prompt": "A resource server cached an issuer's JWKS response once, at startup, and never refetches it. Weeks later the issuer rotates its signing key. What happens to tokens signed under the new key when they arrive at this resource server, and why?",
+      "source": {
+        "path": "vault/identity/oauth/token-validation-at-the-resource-server.md",
+        "block": "card-rx7s"
+      },
+      "citations": [
+        "RFC 6750 (Bearer Token Usage)",
+        "RFC 9700 (OAuth 2.0 Security Best Current Practice)"
+      ],
+      "answer": "They fail signature verification and get rejected, even though they're entirely legitimate. The token names a key id the cached JWKS has never seen, so the resource server has no key to check the signature against — the failure isn't that an attacker gets through, it's that valid traffic starts breaking, because the cache was never given a chance to pick up the rotation."
+    },
+    {
+      "id": "card-jlio",
+      "format": "cloze",
+      "topic": "identity",
+      "category": "identity-oauth",
+      "tags": [
+        "token-validation",
+        "jwks",
+        "resource-server",
+        "key-id",
+        "clock-skew"
+      ],
+      "prompt": "Not every token is a JWT the resource server can inspect on its own. An opaque token carries no claims at all — none of the checks above can be run locally, because there's nothing local to check. The resource server's only option is to call the issuer's ___ endpoint and ask it directly whether the token is still active and what scope it carries.",
+      "source": {
+        "path": "vault/identity/oauth/token-validation-at-the-resource-server.md",
+        "block": "card-jlio"
+      },
+      "citations": [
+        "RFC 6750 (Bearer Token Usage)",
+        "RFC 9700 (OAuth 2.0 Security Best Current Practice)"
+      ],
+      "answer": "introspection"
     },
     {
       "id": "card-h8m6",
