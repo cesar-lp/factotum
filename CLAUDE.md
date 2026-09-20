@@ -46,6 +46,28 @@ That last command must print nothing. `build:deck` both regenerates
 `deck/deck.json` and mints `^card-xxxx` anchors into vault notes, so either
 can go stale on its own and fail the PR.
 
+**Check for stray untracked notes before running `build:deck`.** The build
+walks every note under `vault/`, not the git index — it neither knows nor
+cares what is staged, tracked, or committed. So an in-progress note sitting
+untracked in the working tree gets its cards minted into `deck/deck.json`
+like any other, and committing that deck carries half-written cards into an
+unrelated PR. This has already happened once: a `build:deck` run during a
+docs-only change swept up twelve untracked drafts and wrote 1381 cards from
+189 notes instead of the 178 that were committed. It was caught before the
+push, but by luck rather than by process.
+
+So before building for a PR:
+
+```bash
+git status --porcelain | grep '^?? vault/'
+```
+
+Anything that turns up and does not belong to the current change must be
+committed on its own branch or moved out of the tree first. If a
+contaminated deck was already generated but not yet committed,
+`git checkout -- deck/deck.json` throws it away; rebuild once the tree is
+clean.
+
 ## Worktrees
 
 Work often happens in a git worktree under `.claude/worktrees/`. Each one is
@@ -76,6 +98,32 @@ otherwise linger in `git worktree list` as `prunable`.
 Run `git worktree list` periodically — a merged branch's worktree is pure
 overhead, and the tooling that creates them does not clean up after itself.
 
+## Branch freshness
+
+**Branch from an up-to-date `main`, and re-sync before opening a PR.**
+Fetch first — the local `main` is itself a cached copy and goes stale
+the moment someone merges:
+
+```bash
+git fetch origin && git rebase origin/main
+```
+
+This matters more here than in most repos, for two reasons. Worktrees
+are long-lived: one created days ago starts from whatever `main` was
+then, and nothing about working inside it ever advances that base. And
+`deck/deck.json` is a single generated file that every content PR
+rewrites, so two branches cut from different bases conflict there
+almost by construction — rebasing late means resolving a machine-
+generated diff instead of never creating one.
+
+Rebase rather than merge, so the branch stays a readable stack of
+commits over current `main`. Regenerate the deck after any rebase that
+pulled in vault changes, since `deck.json` is downstream of both sides:
+
+```bash
+npm run build:deck && git status --porcelain
+```
+
 ## Vault content
 
 Authoring conventions — the `topic`/`category` split, card syntax, and the
@@ -90,3 +138,21 @@ violating them is silent rather than loud:
   paragraph — a term defined by a cloze and then repeated later in that same
   paragraph produces a card that shows you the answer.
   `pipeline/tests/cloze-self-answer.test.ts` enforces this.
+
+A third rule governs how much a note should carry. `README.md` sizes
+categories — roughly 8–12 notes each; this sizes the notes themselves:
+
+- **A note should carry at least 6 cards, typically 7–9.** Measured across
+  the 178 notes in the vault when this was written, the minimum was 6, the
+  median 7 and the maximum 11 — a standard the repo has followed
+  consistently and never stated, which means anyone writing a new note has
+  had no way to discover it. Four notes written without knowing it came in
+  at 3, 3, 4 and 5 cards.
+
+  A note that yields fewer than 6 cards is usually telling you the subject
+  is too thin to stand on its own, and belongs merged into a neighbouring
+  note rather than kept as a stub. **Do not pad to reach the number.**
+  Restating a card the note already has produces two cards that test one
+  piece of knowledge, which quietly corrupts scheduling: FSRS treats them as
+  independent, so the material gets reviewed twice as often as its difficulty
+  warrants. Merging is the fix; padding is not.
