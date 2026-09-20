@@ -19,13 +19,13 @@
     "@types/node": "^22.10.0",
     "fake-indexeddb": "^6.2.5",
     "tsx": "^4.16.0",
-    "typescript": "^5.5.0",
+    "typescript": "^7.0.2",
     "vite": "^8.3.0",
     "vitest": "^5.0.1"
   },
   "dependencies": {
     "gray-matter": "^4.0.3",
     "idb": "^8.0.0",
-    "ts-fsrs": "^4.0.0"
+    "ts-fsrs": "^5.4.2"
   }
 }
