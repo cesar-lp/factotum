@@ -59,6 +59,24 @@ with everything else in evaluation — they never supply the Allow that
 `policy-evaluation-logic.md` looks for, they only shrink the ==space== of ^card-mji5
 actions an identity policy's Allow is even permitted to reach.
 
+One scope exception matters: an SCP attached at the organization root or
+at an OU never constrains the **management account** (formerly called
+the "master account") of that organization. SCPs apply only to member
+accounts — the management account's own users and roles are unaffected
+by any SCP, even one attached to the organization root that every member
+account is subject to. This is why AWS's own guidance is to avoid
+running workloads directly in the management account: it's the one part
+of the org that SCP-based guardrails structurally can't reach.
+
+> [!card] mcq
+> An SCP attached to the organization root denies `iam:CreateUser` for
+> every account in the org. Does this SCP block a user in the
+> **management account** from calling `iam:CreateUser`?
+> - [x] No — SCPs never apply to the management account, regardless of where in the org hierarchy they're attached
+> - [ ] Yes, because an SCP on the organization root applies to every account without exception
+> - [ ] Only if the management account is also placed inside an OU
+> - [ ] It depends on whether the management account has its own identity policy allowing the action ^card-o89j
+
 Why would an organization use SCPs to deny `iam:CreateUser` account-wide, rather than trusting every team's individual identity policies to simply never grant it? :: Because identity policies are written and changed by many different people over time, and any single overly broad grant — even a temporary or accidental one — would create the access; an SCP set at the OU or organization level provides a ceiling that holds even if some individual identity policy is wrong, without requiring every policy author to get it right. ^card-wr2c
 
 What single sentence captures the relationship between an identity policy's Allow and a permission boundary or SCP that also applies? :: An identity's effective permissions are the intersection of what its identity policies grant and what every applicable boundary and SCP permits — never the union, and never something the boundary or SCP contributes on its own. ^card-ulyc

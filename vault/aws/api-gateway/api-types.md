@@ -15,18 +15,23 @@ do something you need.
 A **REST API** is the original, full-featured product: request/response
 over HTTP, with the complete surface of API Gateway's capabilities —
 request validation, usage plans and API keys, response caching, resource
-policies, private (VPC-only) endpoints, and fine-grained request/response
-transformation via mapping templates. Everything this category covers
-elsewhere assumes a REST API unless stated otherwise, because several of
-those features simply don't exist on the other two types.
+policies, AWS WAF integration, private (VPC-only) endpoints, and
+fine-grained request/response transformation via mapping templates.
+Everything this category covers elsewhere assumes a REST API unless
+stated otherwise, because several of those features simply don't exist
+on the other two types.
 
 An **HTTP API** is a newer, deliberately narrower product for the common
 case: proxying HTTP requests to a backend (usually Lambda or an HTTP
-endpoint) with minimal configuration. It supports JWT authorizers and
-Lambda authorizers, CORS configuration, and simple parameter mapping, but
-it does **not** support usage plans, API keys, response caching, or
-request validation the way REST APIs do — these are not "coming later,"
-they are out of scope for what the product is.
+endpoint) with minimal configuration. It supports JWT authorizers, Lambda
+authorizers, and IAM authorization, plus CORS configuration and simple
+parameter mapping, but it does **not** support usage plans, API keys,
+response caching, request validation, resource policies, direct WAF
+association, or private VPC endpoints the way REST APIs do — these are
+not "coming later," they are out of scope for what the product is. (A
+CloudFront distribution in front of an HTTP API can still have WAF
+attached, since the WAF integration point there is CloudFront, not API
+Gateway itself.)
 
 > [!card] mcq
 > A team needs to meter individual customers with per-key request quotas

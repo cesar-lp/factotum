@@ -62,6 +62,35 @@ have nothing to do with which action or resource is named, and
 > why that removal is a meaningful move toward least privilege even
 > though the Action and Resource elements are identical in both. ^card-ex7m
 
+**How multiple conditions and multiple values combine** is easy to state
+backwards, so it's worth isolating from everything else: within a single
+`Condition` element, multiple condition operators (or multiple distinct
+context keys attached to different operators) are combined with a
+logical **AND** — every one of them has to match for the statement to
+apply. But within a *single* condition operator that lists multiple
+values for the *same* key, those values are combined with a logical
+**OR** — matching any one of them is enough.
+
+> [!card] mcq
+> A statement's Condition block has two separate operators: one requiring
+> `aws:PrincipalOrgID` to equal `o-example`, and another requiring
+> `aws:MultiFactorAuthPresent` to equal `true`. A request satisfies the
+> org-ID check but was made without MFA. Does the condition match?
+> - [x] No — multiple condition operators in the same block are combined with AND, so every one of them must match, and this request fails the MFA check
+> - [ ] Yes, because matching either operator is enough to satisfy the block
+> - [ ] Yes, but only the org-ID check is actually enforced
+> - [ ] The block errors out because it isn't allowed to contain two operators
+>
+> A different statement uses `StringEquals` on `aws:RequestedRegion` with
+> three values: `us-east-1`, `us-west-2`, `eu-west-1`. A request comes
+> from `us-west-2`. Does that single operator match?
+> - [x] Yes — multiple values listed for the same key under one operator are combined with OR, so matching any one value is enough
+> - [ ] No, because all three listed values would have to match simultaneously
+> - [ ] No, because a single operator can only ever compare against one value
+> - [ ] It depends on the order the values are listed in ^card-v7xs
+
+Why is it "AND across operators, OR within a single key's value list" rather than the reverse? :: Each distinct operator (or distinct key) expresses a separate requirement the request has to satisfy, so a statement with several of them is only as permissive as its strictest requirement — that's AND. A single key, though, can only ever hold one actual value on a given request, so listing several candidate values for it is really asking "does the request's one value match any of these" — that's OR, because the request could never match more than one of them at once anyway. ^card-qujy
+
 A condition can appear in an Allow statement (narrowing what's granted)
 or a Deny statement (narrowing what's blocked) — the two produce very
 different postures. A conditional Allow only grants access under the

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-20T11:25:58.093Z",
+  "generatedAt": "2026-09-20T11:30:45.994Z",
   "cards": [
     {
       "id": "card-6fmp",
@@ -4688,6 +4688,81 @@
       ]
     },
     {
+      "id": "card-v7xs",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "conditions",
+        "context-keys",
+        "least-privilege"
+      ],
+      "prompt": "A statement's Condition block has two separate operators: one requiring `aws:PrincipalOrgID` to equal `o-example`, and another requiring `aws:MultiFactorAuthPresent` to equal `true`. A request satisfies the org-ID check but was made without MFA. Does the condition match? A different statement uses `StringEquals` on `aws:RequestedRegion` with three values: `us-east-1`, `us-west-2`, `eu-west-1`. A request comes from `us-west-2`. Does that single operator match?",
+      "source": {
+        "path": "vault/aws/iam/conditions-and-context-keys.md",
+        "block": "card-v7xs"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM JSON policy elements: Condition'"
+      ],
+      "choices": [
+        {
+          "text": "No — multiple condition operators in the same block are combined with AND, so every one of them must match, and this request fails the MFA check",
+          "correct": true
+        },
+        {
+          "text": "Yes, because matching either operator is enough to satisfy the block",
+          "correct": false
+        },
+        {
+          "text": "Yes, but only the org-ID check is actually enforced",
+          "correct": false
+        },
+        {
+          "text": "The block errors out because it isn't allowed to contain two operators",
+          "correct": false
+        },
+        {
+          "text": "Yes — multiple values listed for the same key under one operator are combined with OR, so matching any one value is enough",
+          "correct": true
+        },
+        {
+          "text": "No, because all three listed values would have to match simultaneously",
+          "correct": false
+        },
+        {
+          "text": "No, because a single operator can only ever compare against one value",
+          "correct": false
+        },
+        {
+          "text": "It depends on the order the values are listed in",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-qujy",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "conditions",
+        "context-keys",
+        "least-privilege"
+      ],
+      "prompt": "Why is it \"AND across operators, OR within a single key's value list\" rather than the reverse?",
+      "source": {
+        "path": "vault/aws/iam/conditions-and-context-keys.md",
+        "block": "card-qujy"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM JSON policy elements: Condition'"
+      ],
+      "answer": "Each distinct operator (or distinct key) expresses a separate requirement the request has to satisfy, so a statement with several of them is only as permissive as its strictest requirement — that's AND. A single key, though, can only ever hold one actual value on a given request, so listing several candidate values for it is really asking \"does the request's one value match any of these\" — that's OR, because the request could never match more than one of them at once anyway."
+    },
+    {
       "id": "card-30ax",
       "format": "qa",
       "topic": "aws",
@@ -5143,6 +5218,46 @@
         "AWS Organizations User Guide — 'Service control policies (SCPs)'"
       ],
       "answer": "space"
+    },
+    {
+      "id": "card-o89j",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "permission-boundaries",
+        "scp",
+        "organizations",
+        "ceilings"
+      ],
+      "prompt": "An SCP attached to the organization root denies `iam:CreateUser` for every account in the org. Does this SCP block a user in the **management account** from calling `iam:CreateUser`?",
+      "source": {
+        "path": "vault/aws/iam/permission-boundaries-and-scps.md",
+        "block": "card-o89j"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Permissions boundaries for IAM identities'",
+        "AWS Organizations User Guide — 'Service control policies (SCPs)'"
+      ],
+      "choices": [
+        {
+          "text": "No — SCPs never apply to the management account, regardless of where in the org hierarchy they're attached",
+          "correct": true
+        },
+        {
+          "text": "Yes, because an SCP on the organization root applies to every account without exception",
+          "correct": false
+        },
+        {
+          "text": "Only if the management account is also placed inside an OU",
+          "correct": false
+        },
+        {
+          "text": "It depends on whether the management account has its own identity policy allowing the action",
+          "correct": false
+        }
+      ]
     },
     {
       "id": "card-wr2c",

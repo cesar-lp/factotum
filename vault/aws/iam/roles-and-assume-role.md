@@ -48,11 +48,21 @@ secret access key, and a session token, all tied to a short expiration
 existing indefinitely.
 
 Those temporary credentials carry the permissions defined by the role's
-permissions policy (intersected with anything the caller's own identity
-already had, if a permission boundary applies) for exactly as long as
-the session lasts; once the session expires, the credentials stop
-working outright — there's no revocation step needed, because expiry is
-built into the credential itself.
+permissions policy — intersected with the *role's own* permission
+boundary, if one is attached, and with any optional session policy
+passed to the `AssumeRole` call — for exactly as long as the session
+lasts; once the session expires, the credentials stop working outright —
+there's no revocation step needed, because expiry is built into the
+credential itself.
+
+The caller's *original* identity policies play no part in that
+calculation at all: AWS does not evaluate the policies attached to the
+credentials that made the `AssumeRole` call when authorizing what the
+resulting session can do. The caller temporarily gives up its own
+permissions entirely in favor of whatever the assumed role (and its
+boundary or session policy, if any) grants — which is exactly why the
+next card's "broad user, narrow role" scenario ends up narrowly scoped
+rather than a mix of the two.
 
 > [!card] recall
 > A developer's IAM user has broad permissions and assumes a narrowly
