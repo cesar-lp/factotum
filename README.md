@@ -266,6 +266,22 @@ runs on `workflow_run`, and never checks out PR code. Merging them — or
 switching to `pull_request_target` — would hand repository write access to
 anyone who opens a PR.
 
+**`auto-merge.yml`** turns on GitHub's native auto-merge for PRs the
+maintainer opens from a branch in this repo, so they land by themselves
+once every required check is green. It needs a repo secret
+`AUTO_MERGE_TOKEN` — a fine-grained PAT with `Pull requests: Read and
+write` — and does nothing when that secret is absent.
+
+It does **not** fall back to `GITHUB_TOKEN`, and the reason matters.
+Auto-merge performs the merge as whoever enabled it, and pushes by
+`GITHUB_TOKEN` don't trigger workflow runs. Enabling it with
+`GITHUB_TOKEN` would therefore land every merge on `main` as
+`github-actions[bot]`, `build-deck.yml` would never fire, and the deck
+and the deployed site would silently stop updating — the failure this
+repo's CI layout exists to prevent, caused by the automation meant to
+save a click. Without the secret the workflow stays quiet and you press
+the button yourself, which is only tedious.
+
 ## One-time setup
 
 1. **Enable GitHub Pages**: repo Settings → Pages → Source: **GitHub
