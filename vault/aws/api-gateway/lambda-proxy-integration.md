@@ -64,9 +64,7 @@ way out — the ==raw request== becomes the event, and the function's ^card-b3ku
 literal return value becomes the response (per the contract above). A
 non-proxy integration instead runs the request through a mapping template
 before it reaches the function, and runs the function's raw output
-through a separate mapping template before it reaches the client — see
-`request-validation-and-mapping-templates.md` for what that buys you and
-what it costs.
+through a separate mapping template before it reaches the client.
 
 > [!card] recall
 > A function currently used behind a proxy integration is returning a raw

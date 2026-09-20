@@ -173,3 +173,42 @@ describe('lintNote — mcq-multiple-correct', () => {
     expect(lintNote(note(['> [!card] recall', '> Explain a thing.', '> ---', '> Because of reasons.']))).toEqual([]);
   });
 });
+
+describe('lintNote — note-filename-reference', () => {
+  it('flags a backticked filename inside a qa card', () => {
+    const problems = lintNote(note(['What is X? :: See `caching-and-observability.md` for more.']));
+    expect(problems).toHaveLength(1);
+    expect(problems[0]?.rule).toBe('note-filename-reference');
+    expect(problems[0]?.message).toContain('caching-and-observability.md');
+  });
+
+  // Several of the real ones had no backticks, which is why a grep for
+  // '`*.md`' would have missed them.
+  it('flags an unbackticked filename', () => {
+    expect(lintNote(note(['Why? :: As described in execution-model-and-lifecycle.md.']))[0]?.rule)
+      .toBe('note-filename-reference');
+  });
+
+  it('flags a path-qualified reference inside a cloze', () => {
+    expect(lintNote(note(['The ==quorum== reasoning from `database-internals/consensus.md` applies.']))[0]?.rule)
+      .toBe('note-filename-reference');
+  });
+
+  it('flags one inside an mcq choice', () => {
+    const problems = lintNote(note(['> [!card] mcq', '> Q?', '> - [x] see `policy-documents.md`', '> - [ ] no']));
+    expect(problems[0]?.rule).toBe('note-filename-reference');
+  });
+
+  // THE distinction this rule exists to make. Note prose that produces no
+  // card is where cross-references belong — they are live links in Obsidian.
+  // A first cut of this rule flagged these and reported 24 false positives
+  // against the real vault.
+  it('does NOT flag a cross-reference in prose that produces no card', () => {
+    expect(lintNote(note(['`queries-scans-and-access-patterns.md` establishes that modeling',
+                          'starts from access patterns, not entities.']))).toEqual([]);
+  });
+
+  it('does not flag prose containing md or a dotted term', () => {
+    expect(lintNote(note(['The ==MD5== digest and the .mdx format are unrelated.']))).toEqual([]);
+  });
+});

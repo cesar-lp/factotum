@@ -25,8 +25,8 @@ The four integration types are:
 
 - **Lambda** — invokes a Lambda function, either as a full proxy (the raw
   request is handed to the function, and the function's response shape is
-  used directly) or as a custom integration (see
-  `lambda-proxy-integration.md` for exactly what that contract requires).
+  used directly) or as a custom integration bound by a stricter
+  request/response contract.
 - **HTTP** — proxies the request to an existing HTTP endpoint (an ALB, a
   service running on EC2, a third-party API), with API Gateway acting as a
   pass-through or transforming layer in front of it.
@@ -49,9 +49,8 @@ The four integration types are:
 Because API Gateway is ==synchronous== from the caller's perspective for a ^card-t8yn
 REST/HTTP API request — the client is blocked waiting on a response
 either way — a Lambda integration behind it is always invoked
-synchronously (see `../lambda/event-sources-and-invocation-modes.md`);
-there is no async or poll-based mode available to an API Gateway-fronted
-function, regardless of integration type.
+synchronously; there is no async or poll-based mode available to an API
+Gateway-fronted function, regardless of integration type.
 
 Why can't you infer whether a given API Gateway method's backend is Lambda, an HTTP service, or another AWS service just by looking at the resource path? :: The resource/method pair only defines the route; the integration attached to that method is a separate, independently configured layer that determines the actual backend behavior, so identical-looking paths (`/orders/{id}` in two different APIs) could be backed by a Lambda function, a raw HTTP proxy, or a direct DynamoDB call with nothing about the path itself indicating which. ^card-w5rq
 

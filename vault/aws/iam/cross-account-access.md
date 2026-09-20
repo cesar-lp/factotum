@@ -7,12 +7,11 @@ citations: ["AWS Identity and Access Management User Guide — 'Providing access
 
 # Cross-Account Access
 
-`policy-evaluation-logic.md` establishes the rule this note is built on:
-within a single account, a grant from either the identity policy or the
-resource policy is enough, but once a request crosses an account
-boundary, both sides have to allow it. This note covers the two distinct
-mechanisms AWS gives you for actually doing cross-account access under
-that rule.
+This note is built on a rule established elsewhere: within a single
+account, a grant from either the identity policy or the resource policy
+is enough, but once a request crosses an account boundary, both sides
+have to allow it. This note covers the two distinct mechanisms AWS
+gives you for actually doing cross-account access under that rule.
 
 **Mechanism one: role assumption.** The resource account creates a role
 whose trust policy names the other account (or a specific principal in
@@ -20,9 +19,9 @@ it) as allowed to call `sts:AssumeRole`. Once assumed, the caller is
 acting entirely inside the resource account, as a session of that role —
 there's no "their identity policy" to separately satisfy anymore,
 because for the duration of the session, the ==role's own permissions ^card-pc7e
-policy== is the only identity policy in play. `roles-and-assume-role.md`
-covers the trust-policy/permissions-policy split this mechanism relies
-on.
+policy== is the only identity policy in play. The trust-policy/
+permissions-policy split this mechanism relies on is covered
+separately.
 
 **Mechanism two: resource-based policies.** Instead of the caller
 switching identity, the resource account's resource-based policy (an S3
@@ -64,8 +63,7 @@ either account's applicable policies contain a Deny matching the
 request — an SCP in Account B, a permission boundary on the role, an
 explicit deny in the bucket policy — the request is denied regardless of
 which cross-account mechanism was used or how permissively the other
-side was configured. `permission-boundaries-and-scps.md` and
-`policy-evaluation-logic.md` cover why an explicit deny can never be
-outvoted by an allow, from any side, in any account.
+side was configured — an explicit deny can never be outvoted by an
+allow, from any side, in any account.
 
 What's the practical reason teams tend to prefer role assumption over resource-based policies for cross-account access that involves broad or evolving permissions? :: Role assumption produces an auditable, time-limited session with its own CloudTrail identity and an expiration built in, and the permissions granted live in one place (the role's permissions policy) rather than being split across a resource policy and a separate identity policy in another account that both have to be kept in sync. ^card-ws0z

@@ -7,12 +7,11 @@ citations: ["AWS Developer Guide — Amazon DynamoDB, 'Partitions and data distr
 
 # Partitioning and Hot Keys
 
-`data-systems/partitioning.md` describes hash partitioning in the
-abstract: apply a hash function to the key, use it to pick a partition,
-and trade away range-query locality for even load distribution.
-DynamoDB is a concrete instance of exactly that tradeoff, built into a
-managed service where the partition key is the one modeling decision an
-application team controls.
+Hash partitioning, in the abstract, applies a hash function to the key,
+uses it to pick a partition, and trades away range-query locality for
+even load distribution. DynamoDB is a concrete instance of exactly that
+tradeoff, built into a managed service where the partition key is the
+one modeling decision an application team controls.
 
 DynamoDB hashes an item's partition key value to determine which
 physical partition stores it, then spreads a table's partitions across
@@ -36,11 +35,11 @@ Why does hashing the partition key not, by itself, prevent a hot partition? :: H
 > - [ ] A composite key combining a high-cardinality user ID with a timestamp sort key
 > - [ ] A partition key value that includes a random numeric suffix ^card-u1f1
 
-This is the same failure mode `data-systems/partitioning.md` names for
-key-range partitioning under a monotonically increasing key — sequential
-IDs or timestamps concentrating writes on one range — except DynamoDB's
-hash partitioning trades that particular failure away only to reintroduce
-a version of it whenever the key values themselves have ==low ^card-n1k5
+This is the same failure mode key-range partitioning suffers under a
+monotonically increasing key — sequential IDs or timestamps
+concentrating writes on one range — except DynamoDB's hash partitioning
+trades that particular failure away only to reintroduce a version of it
+whenever the key values themselves have ==low ^card-n1k5
 cardinality== or skewed access frequency.
 
 The standard fix is to design the partition key around a high-cardinality
@@ -62,9 +61,8 @@ concentrates hard enough on one key value still throttles. Treat it as
 headroom that buys time, not as a fix.
 
 > [!card] recall
-> `data-systems/partitioning.md` notes that key-range partitioning risks
-> hot spots from sequential keys while hash partitioning avoids that
-> specific problem. Explain why DynamoDB's hash-based partitioning is not
-> immune to hot partitions in general, and connect the failure mode back
-> to the "access pattern concentrates" framing that note uses for
-> key-range partitioning. ^card-z8t6
+> Key-range partitioning risks hot spots from sequential keys, while
+> hash partitioning avoids that specific problem. Explain why DynamoDB's
+> hash-based partitioning is not immune to hot partitions in general, and
+> connect the failure mode back to the "access pattern concentrates"
+> framing used for key-range partitioning. ^card-z8t6

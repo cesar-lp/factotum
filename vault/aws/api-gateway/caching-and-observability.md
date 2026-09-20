@@ -48,9 +48,7 @@ edge of the gateway, independent of what happened inside the integration.
 API Gateway itself, including ==authorizer invocation, mapping template ^card-l6xr
 evaluation, and the integration request/response==, which is what you'd
 actually read to debug a mapping-template failure or an authorizer
-returning an unexpected result (see
-`request-validation-and-mapping-templates.md` and
-`authorizers-and-access-control.md`).
+returning an unexpected result.
 
 **Metrics** (CloudWatch) give you the aggregate numbers — call counts,
 latency and integration latency, and 4XX/5XX error counts — at the API,
@@ -60,10 +58,10 @@ without yet knowing why.
 **Tracing** (AWS X-Ray) is what stitches a single request into one
 timeline across service boundaries — API Gateway, the Lambda function it
 invoked, and whatever that function called downstream — the same
-distributed-tracing need described from the Lambda side in
-`../lambda/observability-and-cost-model.md`. Metrics and logs each show
-one service's view of a request; tracing is the only one of the four that
-shows the whole path a single request actually took.
+distributed-tracing need that shows up on Lambda's own side of that
+boundary. Metrics and logs each show one service's view of a request;
+tracing is the only one of the four that shows the whole path a single
+request actually took.
 
 > [!card] recall
 > A request is slow. Metrics show elevated latency at the API Gateway
