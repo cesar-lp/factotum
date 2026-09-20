@@ -11,6 +11,10 @@ import { renderDashboard } from './ui/dashboard.js';
 import { renderTopics } from './ui/topics.js';
 import { startReview } from './ui/review.js';
 import { renderSettings } from './ui/settings.js';
+import { renderNote } from './ui/note.js';
+import { loadNotes, findNote, prefetchNotes } from './db/notes.js';
+import { maskedCardIds } from './ui/note-mask.js';
+import { obsidianUrl } from './ui/obsidian.js';
 import { decideRoute, focusHash, type DashboardState } from './route.js';
 import type { Deck } from '../../pipeline/src/types.js';
 
@@ -102,6 +106,28 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
     return;
   }
 
+  if (decision.kind === 'note') {
+    const [notes, reviews, settings] = await Promise.all([
+      loadNotes(), loadReviews(db), getSettings(db)
+    ]);
+    const note = notes ? findNote(notes, decision.path) : null;
+    const card = note
+      ? (await db.getAll('cards')).find((c) => c.source.path === decision.path) ?? null
+      : null;
+
+    renderNote(appRoot, {
+      note,
+      available: notes !== null,
+      masked: note ? maskedCardIds(note, reviews, now, decision.cardId) : new Set<string>(),
+      arrivedFrom: decision.cardId,
+      // Obsidian is demoted, not deleted: on a Mac it is still the better
+      // tool for EDITING a note, which this viewer will never do.
+      obsidianHref: card ? obsidianUrl(card, settings.obsidianVault) : null,
+      onBack: () => { window.history.back(); }
+    });
+    return;
+  }
+
   if (decision.kind === 'topics') {
     const settings = await getSettings(db);
     const disabled = new Set(settings.disabledCategories);
@@ -164,6 +190,10 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
     onTopics: () => { window.location.hash = '#topics'; },
     onSettings: () => { window.location.hash = '#settings'; }
   });
+
+  // Warms notes.json once the common case (the dashboard) is up, so a note
+  // opened later — offline or not — usually finds it already cached.
+  prefetchNotes();
 }
 
 async function boot(appRoot: HTMLElement): Promise<void> {
