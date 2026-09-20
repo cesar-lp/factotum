@@ -2,3 +2,4 @@
 node_modules/
 dist/
 app/public/deck.json
+app/public/notes.json
