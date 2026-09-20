@@ -67,6 +67,8 @@ function toFsrsCard(state: ReviewState): FsrsCard {
     scheduled_days: state.scheduledDays,
     reps: state.reps,
     lapses: state.lapses,
+    // ts-fsrs 5.x added learning_steps; we don't persist it, so 0 is the safe default
+    learning_steps: 0,
     state: state.state as State,
     last_review: state.lastReview !== null ? new Date(state.lastReview) : undefined
   };
