@@ -1,0 +1,27 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!--
+    Factotum mark: a fanned stack of three flashcards, cream (on-accent
+    token) on ochre (accent token), replacing the flat "F" placeholder.
+
+    All three card rectangles sit inside the centre 80% safe zone
+    (x/y in [51.2, 460.8] of this 512x512 canvas) so this single source
+    works unmodified for the maskable icon as well as the plain ones,
+    only the export step differs.
+
+    Regenerate the PNGs from this file after any edit, for example:
+      sips -s format png -z 512 512 icon-mark.svg -o icon-512.png
+  -->
+  <rect width="512" height="512" fill="#a66c14" />
+
+  <!-- back card -->
+  <rect x="156" y="196" width="260" height="180" rx="28"
+        fill="#fff8ec" stroke="#a66c14" stroke-width="4" />
+
+  <!-- middle card -->
+  <rect x="136" y="166" width="260" height="180" rx="28"
+        fill="#fff8ec" stroke="#a66c14" stroke-width="4" />
+
+  <!-- front card -->
+  <rect x="116" y="136" width="260" height="180" rx="28"
+        fill="#fff8ec" stroke="#a66c14" stroke-width="4" />
+</svg>

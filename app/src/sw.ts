@@ -9,7 +9,15 @@ declare const self: ServiceWorkerGlobalScope;
 // the shell is network-first now, so a new build reaches the client without
 // the service worker itself having to change.
 const CACHE = 'factotum-v2';
-const SHELL = ['./', './index.html', './manifest.webmanifest'];
+const SHELL = [
+  './',
+  './index.html',
+  './manifest.webmanifest',
+  './icon-192.png',
+  './icon-512.png',
+  './icon-maskable-512.png',
+  './apple-touch-icon.png',
+];
 
 // A raw fetch() has no platform timeout worth relying on (60s+ on mobile
 // Safari), so on a slow-but-alive connection the user would wait that out
