@@ -25,7 +25,29 @@
    content size), which would otherwise make .screen itself the thing that
    scrolls (via <body>/#app), leaving .review-actions pushed off-screen
    below the fold on a long prompt instead of staying put. */
-.review { justify-content: flex-start; min-height: 0; }
+/* max-height, not just min-height:0, and this is the load-bearing half.
+   #app is `min-height: calc(100dvh - insets)` -- a FLOOR with no ceiling --
+   so the flex column is free to grow to its content. Without a bound here,
+   .review-body's `overflow-y: auto` can never engage: on a long prompt the
+   body simply grew (measured 923px against an 812px viewport), .review-
+   actions was pushed below the fold, and the DOCUMENT became scrollable
+   instead. Focusing the cloze input then made the browser scroll the page
+   to reveal it -- a jump of 441px that reads as the screen leaping to a
+   random position mid-answer.
+
+   Bounding .review to the viewport is what makes the body the thing that
+   scrolls. Viewport-relative rather than a percentage, so it does not
+   depend on #app ever gaining a ceiling of its own; the other screens keep
+   scrolling the document, which is correct for them (topics is 20
+   categories tall on purpose).
+
+   Measured after this change: body overflow 442px, document overflow 0,
+   actions bottom at 780 of 812, and focus moves nothing. */
+.review {
+  justify-content: flex-start;
+  min-height: 0;
+  max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+}
 
 .review-header { flex: 0 0 auto; }
 
