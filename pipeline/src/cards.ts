@@ -2,9 +2,12 @@ import type { Choice, ParsedCard } from './types.js';
 
 const ANCHOR = /\s*\^(card-[a-z0-9]{4})\s*$/;
 const BARE_ANCHOR = /^\s*\^(card-[a-z0-9]{4})\s*$/;
-const HIGHLIGHT = /==(\S[^=]*?\S|\S)==/g;
-const QA = /^(.+?)\s+::\s+(.+)$/;
-const FENCE = /^\s*(```|~~~)/;
+// Exported so pipeline/src/lint.ts can check note text against the exact
+// same patterns the parser uses, instead of a hand-copied lookalike that can
+// silently drift from this file.
+export const HIGHLIGHT = /==(\S[^=]*?\S|\S)==/g;
+export const QA = /^(.+?)\s+::\s+(.+)$/;
+export const FENCE = /^\s*(```|~~~)/;
 const CALLOUT_OPEN = /^>\s*\[!card\]\s*(mcq|recall)\s*$/i;
 const CALLOUT_LINE = /^>\s?(.*)$/;
 const CHOICE = /^-\s*\[( |x)\]\s*(.+)$/i;
