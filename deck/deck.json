@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-20T15:16:45.364Z",
+  "generatedAt": "2026-09-20T16:44:10.516Z",
   "cards": [
     {
       "id": "card-6fmp",
@@ -34041,6 +34041,2287 @@
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 7 (Scheduling: Introduction)"
       ]
+    },
+    {
+      "id": "card-d4o8",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "aead",
+        "authenticated-encryption",
+        "aes-gcm",
+        "chacha20-poly1305",
+        "nonce-reuse"
+      ],
+      "prompt": "The previous note showed that encryption alone (in modes like CBC or CTR) provides no integrity — ciphertexts are malleable. What does AEAD add on top of encryption to close that gap?",
+      "source": {
+        "path": "vault/security/crypto/authenticated-encryption-and-aead.md",
+        "block": "card-d4o8"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 8"
+      ],
+      "answer": "AEAD bundles encryption with an authenticity check in a single construction, producing a ciphertext plus an authentication tag. Decryption verifies the tag first and only releases plaintext if it matches, so a tampered or forged ciphertext is rejected outright rather than silently decrypting into attacker-influenced data."
+    },
+    {
+      "id": "card-kqeg",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "aead",
+        "authenticated-encryption",
+        "aes-gcm",
+        "chacha20-poly1305",
+        "nonce-reuse"
+      ],
+      "prompt": "What is \"associated data\" in an AEAD scheme, and why would a protocol want to authenticate a field that it deliberately leaves unencrypted?",
+      "source": {
+        "path": "vault/security/crypto/authenticated-encryption-and-aead.md",
+        "block": "card-kqeg"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 8"
+      ],
+      "answer": "Associated data is input the AEAD scheme covers with the authenticity check but never encrypts — it's folded into the tag computation but transmitted as plain data. It's used for fields a receiver must read before or without decrypting, like a header or sequence number, while still detecting whether that field was altered in transit."
+    },
+    {
+      "id": "card-gfme",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "aead",
+        "authenticated-encryption",
+        "aes-gcm",
+        "chacha20-poly1305",
+        "nonce-reuse"
+      ],
+      "prompt": "**AES-GCM** is the most widely deployed AEAD construction. It pairs AES, run in a counter-style mode for encryption, with a separate authentication step (built on a polynomial-based universal hash) that covers both the ciphertext and the associated data to produce the tag. **ChaCha20-Poly1305** is the leading alternative: it pairs the ChaCha20 stream cipher with the Poly1305 authenticator, and its main practical advantage is that it runs fast in ___ without needing dedicated AES hardware instructions, which matters on lower-end mobile and embedded processors where AES-GCM performs noticeably worse without that hardware support.",
+      "source": {
+        "path": "vault/security/crypto/authenticated-encryption-and-aead.md",
+        "block": "card-gfme"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 8"
+      ],
+      "answer": "software"
+    },
+    {
+      "id": "card-9mvl",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "aead",
+        "authenticated-encryption",
+        "aes-gcm",
+        "chacha20-poly1305",
+        "nonce-reuse"
+      ],
+      "prompt": "Which pairing correctly describes the two leading AEAD constructions in wide use today?",
+      "source": {
+        "path": "vault/security/crypto/authenticated-encryption-and-aead.md",
+        "block": "card-9mvl"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 8"
+      ],
+      "choices": [
+        {
+          "text": "AES-GCM pairs AES (in a counter-style mode) with a universal-hash-based authentication step; ChaCha20-Poly1305 pairs the ChaCha20 stream cipher with the Poly1305 authenticator",
+          "correct": true
+        },
+        {
+          "text": "Both constructions are built entirely from AES, differing only in key length",
+          "correct": false
+        },
+        {
+          "text": "AES-GCM adds authentication by encrypting the message twice under two different keys",
+          "correct": false
+        },
+        {
+          "text": "ChaCha20-Poly1305 requires dedicated AES hardware instructions to run efficiently",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-m1fa",
+      "format": "recall",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "aead",
+        "authenticated-encryption",
+        "aes-gcm",
+        "chacha20-poly1305",
+        "nonce-reuse"
+      ],
+      "prompt": "Why is nonce reuse under AES-GCM considered catastrophically worse than IV reuse under a chaining mode like CBC, rather than just \"another instance of the same mistake\"?",
+      "source": {
+        "path": "vault/security/crypto/authenticated-encryption-and-aead.md",
+        "block": "card-m1fa"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 8"
+      ],
+      "answer": "A reused CBC IV leaks a bounded amount of information — the relationship (shared-prefix pattern) between the two colliding messages, and nothing beyond those two ciphertexts. GCM's authentication tag depends on an internal hash key derived once from the encryption key; two ciphertexts produced under a reused nonce give an attacker enough algebraic information to recover that hash key directly. Once recovered, the attacker can forge valid authentication tags for arbitrary future ciphertexts under that key — a total, ongoing break of integrity, not a one-time leak limited to the colliding messages."
+    },
+    {
+      "id": "card-6s4b",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "aead",
+        "authenticated-encryption",
+        "aes-gcm",
+        "chacha20-poly1305",
+        "nonce-reuse"
+      ],
+      "prompt": "In GCM, does an attacker need many messages encrypted under the same reused nonce to recover that internal hash key, or is a single collision enough?",
+      "source": {
+        "path": "vault/security/crypto/authenticated-encryption-and-aead.md",
+        "block": "card-6s4b"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 8"
+      ],
+      "answer": "A single collision is enough — comparing just one pair of ciphertext-and-tag values produced under the same key and the same reused nonce already gives the attacker enough algebraic information to solve for the internal hash key."
+    },
+    {
+      "id": "card-6kzj",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "aead",
+        "authenticated-encryption",
+        "aes-gcm",
+        "chacha20-poly1305",
+        "nonce-reuse"
+      ],
+      "prompt": "Why does a well-designed AEAD decryption API return either the verified plaintext or an error, rather than the decrypted bytes plus a separate \"tag invalid\" flag the caller is expected to check?",
+      "source": {
+        "path": "vault/security/crypto/authenticated-encryption-and-aead.md",
+        "block": "card-6kzj"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 8"
+      ],
+      "answer": "Handing back unauthenticated plaintext creates a real chance it gets used before any caller checks the flag, which defeats the entire purpose of authenticating it. AEAD implementations verify the tag first and release plaintext only if it matches, collapsing \"decrypt\" and \"check integrity\" into one atomic, fail-closed operation with no unverified data ever exposed."
+    },
+    {
+      "id": "card-9com",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "aead",
+        "authenticated-encryption",
+        "aes-gcm",
+        "chacha20-poly1305",
+        "nonce-reuse"
+      ],
+      "prompt": "A designer needs to combine an existing cipher and an existing MAC by hand (rather than using an AEAD construction) to get both confidentiality and integrity. Which generic composition order has been proven secure for any secure cipher paired with any secure MAC?",
+      "source": {
+        "path": "vault/security/crypto/authenticated-encryption-and-aead.md",
+        "block": "card-9com"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 8"
+      ],
+      "choices": [
+        {
+          "text": "Encrypt the plaintext, then compute the MAC over the resulting ciphertext",
+          "correct": true
+        },
+        {
+          "text": "Compute the MAC over the plaintext, then encrypt the plaintext together with that MAC",
+          "correct": false
+        },
+        {
+          "text": "Compute the MAC over the plaintext and encrypt the plaintext independently, then send both",
+          "correct": false
+        },
+        {
+          "text": "All three orderings are equally secure as long as the underlying cipher and MAC are each individually secure",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-igny",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "hash-functions",
+        "sha-2",
+        "sha-3",
+        "merkle-damgard",
+        "collision-resistance"
+      ],
+      "prompt": "**Preimage resistance**: given only a digest h, it should be infeasible to find any input x such that hash(x) = h. **Second-preimage resistance**: given a specific input x1, it should be infeasible to find a *different* input x2 with the same digest. **Collision resistance**: it should be infeasible to find *any* two distinct inputs x1 and x2 — neither one fixed in advance — that hash to the same digest. These are ___, not three names for the same thing, and breaking one does not automatically break the others.",
+      "source": {
+        "path": "vault/security/crypto/cryptographic-hash-functions.md",
+        "block": "card-igny"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 6"
+      ],
+      "answer": "three separate properties"
+    },
+    {
+      "id": "card-x2yt",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "hash-functions",
+        "sha-2",
+        "sha-3",
+        "merkle-damgard",
+        "collision-resistance"
+      ],
+      "prompt": "Why does breaking second-preimage resistance not automatically mean collision resistance is broken too, even though both involve two inputs hashing to the same output?",
+      "source": {
+        "path": "vault/security/crypto/cryptographic-hash-functions.md",
+        "block": "card-x2yt"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 6"
+      ],
+      "answer": "Second-preimage resistance is a much narrower target: the attacker is handed a specific input x1 in advance and must find a second one matching x1's exact digest. Collision resistance lets the attacker pick BOTH inputs freely, searching the entire space of pairs for any match at all — a vastly larger search than being pinned to one fixed starting point — so a construction can remain second-preimage resistant while a birthday-style search still finds it a collision."
+    },
+    {
+      "id": "card-ghb7",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "hash-functions",
+        "sha-2",
+        "sha-3",
+        "merkle-damgard",
+        "collision-resistance"
+      ],
+      "prompt": "An attacker is given a specific file F and asked to produce a different file that hashes to the same digest as F. Which property is this attacker trying to break?",
+      "source": {
+        "path": "vault/security/crypto/cryptographic-hash-functions.md",
+        "block": "card-ghb7"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 6"
+      ],
+      "choices": [
+        {
+          "text": "Second-preimage resistance",
+          "correct": true
+        },
+        {
+          "text": "Preimage resistance",
+          "correct": false
+        },
+        {
+          "text": "Collision resistance",
+          "correct": false
+        },
+        {
+          "text": "Non-repudiation",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-39x2",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "hash-functions",
+        "sha-2",
+        "sha-3",
+        "merkle-damgard",
+        "collision-resistance"
+      ],
+      "prompt": "Which resistance property is broken if an attacker can only produce two DIFFERENT, previously-unspecified inputs that happen to share a digest, without being able to target any particular existing input?",
+      "source": {
+        "path": "vault/security/crypto/cryptographic-hash-functions.md",
+        "block": "card-39x2"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 6"
+      ],
+      "answer": "Collision resistance. The attacker never had to match a digest chosen by someone else, or match a specific pre-existing input — they just had to find some colliding pair anywhere in the space of possible inputs, which is exactly what a birthday-style search hunts for."
+    },
+    {
+      "id": "card-s8ma",
+      "format": "recall",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "hash-functions",
+        "sha-2",
+        "sha-3",
+        "merkle-damgard",
+        "collision-resistance"
+      ],
+      "prompt": "Explain why the Merkle-Damgard construction makes length-extension attacks possible, and name one practical consequence for how Merkle-Damgard hashes must NOT be used.",
+      "source": {
+        "path": "vault/security/crypto/cryptographic-hash-functions.md",
+        "block": "card-s8ma"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 6"
+      ],
+      "answer": "The final digest of a Merkle-Damgard hash is exactly the compression function's last internal state, with nothing extra mixed in afterward. An attacker who knows that digest and the original message's length therefore has everything needed to resume the chain — they can compute the hash of the original message with attacker-chosen data appended, without ever seeing the original message. The consequence: naively checking authenticity as hash(secret || message) is unsafe, because an attacker can extend it without knowing the secret; a proper MAC construction is needed instead."
+    },
+    {
+      "id": "card-1bgn",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "hash-functions",
+        "sha-2",
+        "sha-3",
+        "merkle-damgard",
+        "collision-resistance"
+      ],
+      "prompt": "**SHA-3**, standardized specifically because of concerns like length-extension, is built differently: a *sponge construction* that absorbs input into a large internal state and then squeezes output back out, with no exposed intermediate chaining value the way Merkle-Damgard exposes its running state as the digest. SHA-3 is not vulnerable to length-extension attacks for exactly that structural reason, while ___, despite being far newer and stronger than MD5, still is, because it is still built on Merkle-Damgard.",
+      "source": {
+        "path": "vault/security/crypto/cryptographic-hash-functions.md",
+        "block": "card-1bgn"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 6"
+      ],
+      "answer": "SHA-2"
+    },
+    {
+      "id": "card-js01",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "hash-functions",
+        "sha-2",
+        "sha-3",
+        "merkle-damgard",
+        "collision-resistance"
+      ],
+      "prompt": "Why is SHA-2 vulnerable to length-extension attacks despite having no known practical collision or preimage weaknesses, while SHA-3 is not?",
+      "source": {
+        "path": "vault/security/crypto/cryptographic-hash-functions.md",
+        "block": "card-js01"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 6"
+      ],
+      "answer": "Vulnerability to length extension is a property of the CONSTRUCTION, not the strength of the compression function. SHA-2 uses Merkle-Damgard, where the digest equals the internal chaining state directly, so an attacker can resume computation from a known digest. SHA-3 uses a sponge construction where the digest is squeezed from a larger internal state that is never fully exposed, so there's no chaining value an attacker can resume from, regardless of how strong either function's core is against brute-force search."
+    },
+    {
+      "id": "card-01fs",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "hash-functions",
+        "sha-2",
+        "sha-3",
+        "merkle-damgard",
+        "collision-resistance"
+      ],
+      "prompt": "Roughly how many bits of collision resistance does an n-bit cryptographic hash function provide, and why does that number matter for retiring a hash function like SHA-1?",
+      "source": {
+        "path": "vault/security/crypto/cryptographic-hash-functions.md",
+        "block": "card-01fs"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 6"
+      ],
+      "choices": [
+        {
+          "text": "About n/2 bits — a birthday-style collision search is far cheaper than an exhaustive preimage search, so a hash gets retired once n/2 bits becomes reachable, well before n bits does",
+          "correct": true
+        },
+        {
+          "text": "Exactly n bits — collision resistance and preimage resistance scale identically",
+          "correct": false
+        },
+        {
+          "text": "About log(n) bits — collisions are found almost immediately regardless of digest size",
+          "correct": false
+        },
+        {
+          "text": "n bits for SHA-1 specifically, since it predates the birthday attack being known",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-wuaj",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "hash-functions",
+        "sha-2",
+        "sha-3",
+        "merkle-damgard",
+        "collision-resistance"
+      ],
+      "prompt": "Finally: a hash function on its own provides no authenticity guarantee. Given hash(message), anyone — not just the legitimate sender — can recompute hash(message) themselves, or compute hash(anything), because the function takes no secret input. This is the core reason a cryptographic hash is ___: a MAC's whole point is that only someone holding a secret key can produce a valid tag, and a bare hash has no key to hold.",
+      "source": {
+        "path": "vault/security/crypto/cryptographic-hash-functions.md",
+        "block": "card-wuaj"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 6"
+      ],
+      "answer": "not a MAC"
+    },
+    {
+      "id": "card-h4kx",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "hash-functions",
+        "sha-2",
+        "sha-3",
+        "merkle-damgard",
+        "collision-resistance"
+      ],
+      "prompt": "Why does publishing hash(message) alongside a message give a receiver no way to verify the message came from a specific sender?",
+      "source": {
+        "path": "vault/security/crypto/cryptographic-hash-functions.md",
+        "block": "card-h4kx"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 6"
+      ],
+      "answer": "Because a hash function has no key — anyone who intercepts the message can recompute its hash, and anyone who wants to forge a different message can compute that message's hash too. The digest proves the message wasn't accidentally corrupted in a way that happens to change the hash, but it proves nothing about who produced either the message or the matching digest, since no secret was involved in producing it."
+    },
+    {
+      "id": "card-9jhe",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "digital-signatures",
+        "rsa-pss",
+        "ecdsa",
+        "ed25519",
+        "non-repudiation"
+      ],
+      "prompt": "Why can a digital signature provide non-repudiation while a MAC cannot, even though both let a recipient verify integrity and origin?",
+      "source": {
+        "path": "vault/security/crypto/digital-signatures.md",
+        "block": "card-9jhe"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 10, 12"
+      ],
+      "answer": "A MAC is built from a key both parties share, so either one of them could have produced any given tag — the recipient can verify it, but can't prove to a third party which side made it. A signature is produced with a private key that only the signer holds; verification uses a separate public key, so anyone can confirm the signature is valid, but only the private key's holder could have produced it. That asymmetry is what lets a third party accept the signature as proof the signer, specifically, produced it."
+    },
+    {
+      "id": "card-70wp",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "digital-signatures",
+        "rsa-pss",
+        "ecdsa",
+        "ed25519",
+        "non-repudiation"
+      ],
+      "prompt": "Why does every practical signature scheme sign a hash of the message rather than the message itself?",
+      "source": {
+        "path": "vault/security/crypto/digital-signatures.md",
+        "block": "card-70wp"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 10, 12"
+      ],
+      "choices": [
+        {
+          "text": "Signing is a slow, size-limited operation, so it needs a small, fixed-size input regardless of how long the actual message is",
+          "correct": true
+        },
+        {
+          "text": "Hashing the message first makes the signature shorter than the message, which is required by definition",
+          "correct": false
+        },
+        {
+          "text": "Signing algorithms cannot process binary data, only fixed-size digests",
+          "correct": false
+        },
+        {
+          "text": "It's purely a legacy convention with no remaining technical reason",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-27vt",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "digital-signatures",
+        "rsa-pss",
+        "ecdsa",
+        "ed25519",
+        "non-repudiation"
+      ],
+      "prompt": "Which of the three schemes below produces a *different* signature every time it signs the exact same message under the exact same key?",
+      "source": {
+        "path": "vault/security/crypto/digital-signatures.md",
+        "block": "card-27vt"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 10, 12"
+      ],
+      "choices": [
+        {
+          "text": "ECDSA, because it draws a fresh secret value independently for every signature",
+          "correct": true
+        },
+        {
+          "text": "Ed25519, because it derives its per-signature value deterministically from the message",
+          "correct": false
+        },
+        {
+          "text": "Both ECDSA and Ed25519 behave identically here",
+          "correct": false
+        },
+        {
+          "text": "Neither — determinism is a universal requirement for elliptic-curve signing",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-cy7j",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "digital-signatures",
+        "rsa-pss",
+        "ecdsa",
+        "ed25519",
+        "non-repudiation"
+      ],
+      "prompt": "What two conditions must ECDSA's per-signature secret value satisfy for every signature, and what class of failure results if either is dropped?",
+      "source": {
+        "path": "vault/security/crypto/digital-signatures.md",
+        "block": "card-cy7j"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 10, 12"
+      ],
+      "answer": "It must be unique across every signature made with that key, and unpredictable to anyone else. Reusing the same value across two different messages, or using a value an attacker can guess or bias, both count as violations — and either one moves straight from \"somewhat weaker\" to \"catastrophically broken,\" not a gradual loss of margin."
+    },
+    {
+      "id": "card-rwyx",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "digital-signatures",
+        "rsa-pss",
+        "ecdsa",
+        "ed25519",
+        "non-repudiation"
+      ],
+      "prompt": "If the same ECDSA per-signature secret value is reused to sign two different messages under the same key, what can an attacker recover?",
+      "source": {
+        "path": "vault/security/crypto/digital-signatures.md",
+        "block": "card-rwyx"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 10, 12"
+      ],
+      "answer": "The signer's private key itself, computed directly from the two signatures and messages by solving a small system of equations — not just information about that one session's signature."
+    },
+    {
+      "id": "card-2ocq",
+      "format": "recall",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "digital-signatures",
+        "rsa-pss",
+        "ecdsa",
+        "ed25519",
+        "non-repudiation"
+      ],
+      "prompt": "Explain, in terms of the underlying algebra, why the PS3 hack was able to recover Sony's actual signing key rather than just forge one extra signature. What single implementation mistake made this possible?",
+      "source": {
+        "path": "vault/security/crypto/digital-signatures.md",
+        "block": "card-2ocq"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 10, 12"
+      ],
+      "answer": "Sony's ECDSA implementation reused the same per-signature secret value for every signature instead of generating a fresh one each time. Two signatures made with the same key and the same reused value share one unknown in their signing equations; with two such equations in hand, that shared unknown — and from it, the private signing key itself — can be solved for directly with basic algebra. The mistake wasn't in any single signature; it was using a fixed value where the scheme requires a fresh, unpredictable one every time."
+    },
+    {
+      "id": "card-l3hl",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "digital-signatures",
+        "rsa-pss",
+        "ecdsa",
+        "ed25519",
+        "non-repudiation"
+      ],
+      "prompt": "A contract needs to be sent such that a court could later confirm, without trusting either party's word, that a specific individual agreed to it. Which primitive alone is fit for that job?",
+      "source": {
+        "path": "vault/security/crypto/digital-signatures.md",
+        "block": "card-l3hl"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 10, 12"
+      ],
+      "choices": [
+        {
+          "text": "A signature, because verification uses a public key while production requires a private key only one party holds",
+          "correct": true
+        },
+        {
+          "text": "A MAC, because it also proves message integrity and origin",
+          "correct": false
+        },
+        {
+          "text": "Encryption, because it hides the contract from anyone but the intended reader",
+          "correct": false
+        },
+        {
+          "text": "Any of the three, since all three bind a key to the message",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-25n7",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "key-management",
+        "envelope-encryption",
+        "key-rotation",
+        "key-hierarchy"
+      ],
+      "prompt": "Why does key management, rather than algorithm strength, dominate the list of causes behind real-world cryptographic breaches?",
+      "source": {
+        "path": "vault/security/crypto/key-management-and-rotation.md",
+        "block": "card-25n7"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "answer": "Algorithm security is a mathematical property that, once established, holds regardless of who uses the cipher. A key, by contrast, is an operational artifact — it has to be generated, distributed, stored, used, and eventually retired, and every one of those steps is a chance for a human or a system to expose it. A mathematically perfect cipher with a leaked key protects nothing at all."
+    },
+    {
+      "id": "card-7cnv",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "key-management",
+        "envelope-encryption",
+        "key-rotation",
+        "key-hierarchy"
+      ],
+      "prompt": "That gap between \"prove the algorithm\" and \"manage the key\" is why systems build an explicit key hierarchy rather than encrypting everything directly under one key. At the top sits a single ___, also called a master key, whose only job is protecting other keys — never data directly. Below it sit data keys, each scoped to a narrower job: one dataset, one service, one time window.",
+      "source": {
+        "path": "vault/security/crypto/key-management-and-rotation.md",
+        "block": "card-7cnv"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "answer": "root key"
+    },
+    {
+      "id": "card-262d",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "key-management",
+        "envelope-encryption",
+        "key-rotation",
+        "key-hierarchy"
+      ],
+      "prompt": "A system uses envelope encryption: data is encrypted under a data key, and the data key is encrypted under a master key and stored next to the ciphertext. What is the main operational benefit this buys, compared to encrypting every record directly under the master key?",
+      "source": {
+        "path": "vault/security/crypto/key-management-and-rotation.md",
+        "block": "card-262d"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "choices": [
+        {
+          "text": "The master key can be rotated by re-wrapping the (small) data keys, without touching or re-encrypting the (large) bulk data",
+          "correct": true
+        },
+        {
+          "text": "It makes the data key unnecessary once the master key exists",
+          "correct": false
+        },
+        {
+          "text": "It removes the need to ever rotate any key at all",
+          "correct": false
+        },
+        {
+          "text": "It lets the master key be stored in the same place as the data it protects",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-bzpy",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "key-management",
+        "envelope-encryption",
+        "key-rotation",
+        "key-hierarchy"
+      ],
+      "prompt": "Encrypting a key with another key — rather than encrypting data with it — has its own name: ___. It's the operation that makes the second layer of envelope encryption possible, and it's why a wrapped copy of a data key can sit in the clear next to its ciphertext without exposing anything: without the master key, that wrapped copy is just more ciphertext.",
+      "source": {
+        "path": "vault/security/crypto/key-management-and-rotation.md",
+        "block": "card-bzpy"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "answer": "key wrapping"
+    },
+    {
+      "id": "card-sv3e",
+      "format": "recall",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "key-management",
+        "envelope-encryption",
+        "key-rotation",
+        "key-hierarchy"
+      ],
+      "prompt": "A team just rotated its master key after learning an old copy of it may have leaked months ago. Explain precisely what that rotation does and does not accomplish for data that was already encrypted before the leak.",
+      "source": {
+        "path": "vault/security/crypto/key-management-and-rotation.md",
+        "block": "card-sv3e"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "answer": "It does not accomplish much for that specific incident: any ciphertext or wrapped data key produced under the old key is exactly as readable to an attacker holding that old key as it was the day before rotation — rotation changes what gets protected from now on, not what already exists. What it does accomplish, in general, is limiting future exposure: it caps how much data (or how many wrapped keys) ever ends up under a single key, and it bounds how long any one key stays worth stealing."
+    },
+    {
+      "id": "card-lrhk",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "key-management",
+        "envelope-encryption",
+        "key-rotation",
+        "key-hierarchy"
+      ],
+      "prompt": "Rotation and a second, sharper control solve different problems and are easy to conflate. Rotation is proactive and routine — swap keys on a schedule before anything is known to be wrong. ___ declares a specific key untrustworthy right now, typically because it is known or suspected to be compromised, and it forces every consumer to stop honoring that key immediately instead of waiting for its next scheduled replacement.",
+      "source": {
+        "path": "vault/security/crypto/key-management-and-rotation.md",
+        "block": "card-lrhk"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "answer": "Revocation"
+    },
+    {
+      "id": "card-6z04",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "key-management",
+        "envelope-encryption",
+        "key-rotation",
+        "key-hierarchy"
+      ],
+      "prompt": "Why does giving a key a short, bounded lifetime accomplish something that scheduled rotation alone does not?",
+      "source": {
+        "path": "vault/security/crypto/key-management-and-rotation.md",
+        "block": "card-6z04"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "answer": "A bounded lifetime is enforced automatically by expiry — the key simply stops being valid at a fixed time, with no dependency on anyone noticing a problem or carrying out a rotation. Scheduled rotation is still an operational process that can slip or be skipped; an expiry date fails safe even if that process breaks down, which is why short-lived keys reduce risk even in a system that also rotates on a schedule."
+    },
+    {
+      "id": "card-gay1",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "key-management",
+        "envelope-encryption",
+        "key-rotation",
+        "key-hierarchy"
+      ],
+      "prompt": "What distinguishes where a key is used from where it is stored, and why does that distinction matter most for a master key specifically?",
+      "source": {
+        "path": "vault/security/crypto/key-management-and-rotation.md",
+        "block": "card-gay1"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "answer": "Where a key is used is the boundary it operates inside — a hardware module, enclave, or restricted process — and ideally never has to leave that boundary in plaintext. Where it is stored is wherever its protected (wrapped, or access-controlled) form lives, which can be far more widely reachable. It matters most for a master key because that single key can decrypt everything beneath it: if it only ever operates inside one tightly controlled boundary and is never exported unencrypted, compromising a broader system — backups, config, logs — exposes only wrapped material that is useless without it."
+    },
+    {
+      "id": "card-iyzp",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "mac",
+        "hmac",
+        "integrity",
+        "authenticity",
+        "constant-time"
+      ],
+      "prompt": "What does a MAC provide that an unkeyed hash of the same message cannot, and where does that extra guarantee come from?",
+      "source": {
+        "path": "vault/security/crypto/message-authentication-codes.md",
+        "block": "card-iyzp"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 7"
+      ],
+      "answer": "Authenticity — proof the message came from a holder of the secret key, not just anyone. An unkeyed hash only proves the message wasn't altered; producing or checking a MAC tag requires the same secret key the legitimate sender used, and that requirement is exactly what an attacker without the key can't satisfy."
+    },
+    {
+      "id": "card-5c74",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "mac",
+        "hmac",
+        "integrity",
+        "authenticity",
+        "constant-time"
+      ],
+      "prompt": "A MAC scheme is a pair of operations built around one shared secret: the sender runs a tagging function over the message and the key to produce a tag, and the receiver runs the same function over the message they received and their copy of the key, then checks the result against the tag that arrived. Only someone holding that ___ can produce a tag the receiver will accept, and no amount of watching valid message/tag pairs go by lets an outsider forge one for a new message.",
+      "source": {
+        "path": "vault/security/crypto/message-authentication-codes.md",
+        "block": "card-5c74"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 7"
+      ],
+      "answer": "same secret key"
+    },
+    {
+      "id": "card-qzn6",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "mac",
+        "hmac",
+        "integrity",
+        "authenticity",
+        "constant-time"
+      ],
+      "prompt": "The most common way to build a MAC is to wrap it around an existing hash function, and **HMAC** is the standard way to do that safely. Rather than hashing the key and message together in one pass, HMAC applies the underlying hash function ___: once over an inner block that mixes the key with one padding constant, and again over an outer block that mixes the key with a different padding constant and feeds in the first result.",
+      "source": {
+        "path": "vault/security/crypto/message-authentication-codes.md",
+        "block": "card-qzn6"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 7"
+      ],
+      "answer": "twice"
+    },
+    {
+      "id": "card-0gff",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "mac",
+        "hmac",
+        "integrity",
+        "authenticity",
+        "constant-time"
+      ],
+      "prompt": "Which statement correctly describes how HMAC is structured?",
+      "source": {
+        "path": "vault/security/crypto/message-authentication-codes.md",
+        "block": "card-0gff"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 7"
+      ],
+      "choices": [
+        {
+          "text": "It applies the hash function in a nested, two-pass structure, hashing an inner key-and-message block and then hashing that result together with an outer key block",
+          "correct": true
+        },
+        {
+          "text": "It hashes the key and message together in a single pass, the same as any other keyed hash",
+          "correct": false
+        },
+        {
+          "text": "It encrypts the message with the key first and then hashes the ciphertext",
+          "correct": false
+        },
+        {
+          "text": "It only hashes the key, using the message solely to select which hash function to run",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-0va0",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "mac",
+        "hmac",
+        "integrity",
+        "authenticity",
+        "constant-time"
+      ],
+      "prompt": "Why does HMAC hash the message through a nested, two-call structure instead of computing H(key || message) directly?",
+      "source": {
+        "path": "vault/security/crypto/message-authentication-codes.md",
+        "block": "card-0va0"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 7"
+      ],
+      "answer": "Because H(key || message) is vulnerable to length-extension attacks on Merkle-Damgard hash functions, letting an attacker forge a tag for an extended message without knowing the key. HMAC's nested construction — hashing an inner key-and-message block, then hashing that result together with an outer key block — is built specifically to close off that attack."
+    },
+    {
+      "id": "card-1h18",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "mac",
+        "hmac",
+        "integrity",
+        "authenticity",
+        "constant-time"
+      ],
+      "prompt": "HMAC builds a MAC out of a hash function. Name a different family of MAC construction and the kind of primitive it's built from instead.",
+      "source": {
+        "path": "vault/security/crypto/message-authentication-codes.md",
+        "block": "card-1h18"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 7"
+      ],
+      "answer": "CMAC, which builds a MAC out of a block cipher (such as AES) rather than a hash function, chaining the cipher over the message under the shared secret key."
+    },
+    {
+      "id": "card-rows",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "mac",
+        "hmac",
+        "integrity",
+        "authenticity",
+        "constant-time"
+      ],
+      "prompt": "Why must comparing a computed MAC tag against the received tag use a constant-time comparison rather than an ordinary early-exit string compare?",
+      "source": {
+        "path": "vault/security/crypto/message-authentication-codes.md",
+        "block": "card-rows"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 7"
+      ],
+      "answer": "An early-exit compare's running time depends on how many leading bytes matched, leaking that count through a timing side channel. An attacker who can measure the timing can recover a valid tag byte by byte instead of needing to guess it all at once, turning an otherwise-infeasible brute force into a fast, incremental one. Constant-time comparison always inspects every byte and reveals only equal-or-not."
+    },
+    {
+      "id": "card-t9st",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "mac",
+        "hmac",
+        "integrity",
+        "authenticity",
+        "constant-time"
+      ],
+      "prompt": "Finally, a MAC is not a substitute for a digital signature, even though both attach an authenticating tag to a message. A signature is built on a key pair, so only the holder of the private key could have produced it, and anyone with the public key can check that fact — including a third party who never held any secret. A MAC has no such asymmetry: the sender and receiver hold the identical key, so a valid tag proves the message came from one of the two of them, but never proves *which* one, which is why a MAC alone gives no ___.",
+      "source": {
+        "path": "vault/security/crypto/message-authentication-codes.md",
+        "block": "card-t9st"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 7"
+      ],
+      "answer": "non-repudiation"
+    },
+    {
+      "id": "card-ipx6",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "password-hashing",
+        "kdf",
+        "bcrypt",
+        "argon2",
+        "salt"
+      ],
+      "prompt": "Why is running passwords through an ordinary fast hash function (like the kind used for checksums) the wrong way to store them?",
+      "source": {
+        "path": "vault/security/crypto/password-hashing-and-kdfs.md",
+        "block": "card-ipx6"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 7"
+      ],
+      "answer": "Because a fast hash lets an attacker who steals the password database try billions of candidate passwords per second, offline, with no rate limiting possible. Most human passwords come from a small, guessable space, so an attacker doesn't need to invert the hash mathematically — cheap brute force over likely candidates is enough once the hash is fast to compute."
+    },
+    {
+      "id": "card-0j73",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "password-hashing",
+        "kdf",
+        "bcrypt",
+        "argon2",
+        "salt"
+      ],
+      "prompt": "The fix is to use a function built to be deliberately ___, so that trying one guess costs a meaningful amount of computation and trying billions of guesses becomes correspondingly expensive, even though a single legitimate login only ever pays that cost once. Raising that cost doesn't weaken correctness — the real password still produces the right output — it only weakens the attacker's guess-per-second rate.",
+      "source": {
+        "path": "vault/security/crypto/password-hashing-and-kdfs.md",
+        "block": "card-0j73"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 7"
+      ],
+      "answer": "slow"
+    },
+    {
+      "id": "card-jbq8",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "password-hashing",
+        "kdf",
+        "bcrypt",
+        "argon2",
+        "salt"
+      ],
+      "prompt": "A defender is worried specifically about attackers building custom ASICs to brute-force stolen password hashes. Which property should the chosen password-hashing function have to blunt that threat?",
+      "source": {
+        "path": "vault/security/crypto/password-hashing-and-kdfs.md",
+        "block": "card-jbq8"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 7"
+      ],
+      "choices": [
+        {
+          "text": "Memory-hardness — forcing every guess to use a large amount of memory, which custom hardware can't scale up as cheaply as raw compute",
+          "correct": true
+        },
+        {
+          "text": "A shorter output length, so each hash takes less storage",
+          "correct": false
+        },
+        {
+          "text": "Using the same general-purpose hash function the attacker's ASIC already accelerates, just called more times",
+          "correct": false
+        },
+        {
+          "text": "Removing the salt, so identical passwords always hash identically",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-kmab",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "password-hashing",
+        "kdf",
+        "bcrypt",
+        "argon2",
+        "salt"
+      ],
+      "prompt": "Which resource does bcrypt's design make expensive for an attacker, and what specific attack does that leave it exposed to?",
+      "source": {
+        "path": "vault/security/crypto/password-hashing-and-kdfs.md",
+        "block": "card-kmab"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 7"
+      ],
+      "answer": "bcrypt makes CPU time expensive but leaves memory cheap, which leaves it exposed to attackers running custom hardware (GPUs, FPGAs, ASICs) that parallelizes CPU-bound work far more cost-effectively than general-purpose CPUs can. scrypt and Argon2 close that gap by also demanding memory."
+    },
+    {
+      "id": "card-l2gu",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "password-hashing",
+        "kdf",
+        "bcrypt",
+        "argon2",
+        "salt"
+      ],
+      "prompt": "Why can't a system pick one work factor for its password-hashing function and leave it fixed forever?",
+      "source": {
+        "path": "vault/security/crypto/password-hashing-and-kdfs.md",
+        "block": "card-l2gu"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 7"
+      ],
+      "answer": "Because hardware keeps getting faster and cheaper, so a work factor that was expensive enough when it was chosen becomes progressively cheaper for an attacker to brute-force over time. The work factor has to be raised periodically to keep the cost of a guess roughly constant in real terms, typically by re-hashing each user's password at the higher setting the next time they log in."
+    },
+    {
+      "id": "card-tflc",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "password-hashing",
+        "kdf",
+        "bcrypt",
+        "argon2",
+        "salt"
+      ],
+      "prompt": "Why doesn't a salt need to be kept secret in order to do its job?",
+      "source": {
+        "path": "vault/security/crypto/password-hashing-and-kdfs.md",
+        "block": "card-tflc"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 7"
+      ],
+      "answer": "A salt's job is to make sure identical passwords produce different hashes and to defeat precomputed lookup tables built against a fixed password without a salt — both of those hold even if the attacker can read the salt, since it only stops precomputation done *before* the attacker has that specific salt. It doesn't add guessing cost, so it provides no protection against an attacker who already has the salt and is brute-forcing that one entry directly; the work factor is what supplies that cost."
+    },
+    {
+      "id": "card-8l1g",
+      "format": "recall",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "password-hashing",
+        "kdf",
+        "bcrypt",
+        "argon2",
+        "salt"
+      ],
+      "prompt": "A team stores per-user salts in the same database table as the password hashes, and also adds a single application-wide secret value mixed into every hash, kept only in a separate secrets manager. Explain why leaking the password table alone is not enough to attack the hashes, and what would have to also leak for that protection to fail.",
+      "source": {
+        "path": "vault/security/crypto/password-hashing-and-kdfs.md",
+        "block": "card-8l1g"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 7"
+      ],
+      "answer": "The per-user values (salts) being public is fine — they only stop precomputed tables and cross-user comparison, not a direct attack once you have them. The secret, application-wide value (the pepper) is what actually blocks the attacker: it's a required input to every hash computation that never sits in the database, so a database-only leak leaves the attacker unable to compute or check guesses at all. The protection fails only if the pepper itself also leaks — for example, if the secrets manager is compromised too, or the same breach that took the database also exposed application config."
+    },
+    {
+      "id": "card-dp5b",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "password-hashing",
+        "kdf",
+        "bcrypt",
+        "argon2",
+        "salt"
+      ],
+      "prompt": "A protocol needs to turn a Diffie-Hellman shared secret into an AES key and a MAC key, and separately needs to turn a user's typed password into something safe to store. Why is it wrong to reach for the same kind of KDF for both jobs?",
+      "source": {
+        "path": "vault/security/crypto/password-hashing-and-kdfs.md",
+        "block": "card-dp5b"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 7"
+      ],
+      "answer": "The Diffie-Hellman secret is already high-entropy and unguessable, so that job calls for a fast KDF (like HKDF) that just expands/reshapes it into the right number of keys of the right sizes. The typed password is low-entropy and guessable, so that job calls for a deliberately slow, CPU-and-memory-hard function (bcrypt, scrypt, or Argon2) that makes each guess expensive. Using the fast kind for passwords would leave them brute-forceable; using the slow kind for an already-strong key would only waste time for no security benefit."
+    },
+    {
+      "id": "card-94pa",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "public-key-crypto",
+        "rsa",
+        "elliptic-curves",
+        "diffie-hellman",
+        "forward-secrecy"
+      ],
+      "prompt": "What single design idea distinguishes public-key cryptography from symmetric cryptography, and what problem does it remove?",
+      "source": {
+        "path": "vault/security/crypto/public-key-encryption-and-key-exchange.md",
+        "block": "card-94pa"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 10-12"
+      ],
+      "answer": "A keypair in which one half can be published openly while the other half never leaves its owner. It removes the need to pre-share a secret between the two parties before they communicate."
+    },
+    {
+      "id": "card-ps7l",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "public-key-crypto",
+        "rsa",
+        "elliptic-curves",
+        "diffie-hellman",
+        "forward-secrecy"
+      ],
+      "prompt": "The asymmetry between the two halves isn't a matter of policy — one being \"kept secret\" by choice — it's mathematically enforced. The math that makes this possible is a ___: a function that anyone can compute easily in the forward direction, but that is computationally infeasible to invert unless you hold a specific piece of extra information that makes inversion easy again.",
+      "source": {
+        "path": "vault/security/crypto/public-key-encryption-and-key-exchange.md",
+        "block": "card-ps7l"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 10-12"
+      ],
+      "answer": "trapdoor function"
+    },
+    {
+      "id": "card-2l6c",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "public-key-crypto",
+        "rsa",
+        "elliptic-curves",
+        "diffie-hellman",
+        "forward-secrecy"
+      ],
+      "prompt": "RSA and elliptic-curve cryptography both rely on a problem believed to be computationally hard. Which pairing is correct?",
+      "source": {
+        "path": "vault/security/crypto/public-key-encryption-and-key-exchange.md",
+        "block": "card-2l6c"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 10-12"
+      ],
+      "choices": [
+        {
+          "text": "RSA rests on integer factoring; elliptic-curve schemes rest on the discrete logarithm problem over a curve's point group",
+          "correct": true
+        },
+        {
+          "text": "RSA rests on the discrete logarithm problem; elliptic-curve schemes rest on integer factoring",
+          "correct": false
+        },
+        {
+          "text": "Both rest on integer factoring, just over different number fields",
+          "correct": false
+        },
+        {
+          "text": "Both rest on the same discrete logarithm problem, just phrased with different notation",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-lw6z",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "public-key-crypto",
+        "rsa",
+        "elliptic-curves",
+        "diffie-hellman",
+        "forward-secrecy"
+      ],
+      "prompt": "Why does elliptic-curve cryptography reach the same practical security level as RSA using dramatically smaller keys?",
+      "source": {
+        "path": "vault/security/crypto/public-key-encryption-and-key-exchange.md",
+        "block": "card-lw6z"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 10-12"
+      ],
+      "answer": "Because the best known algorithm for breaking the elliptic-curve discrete log problem is fully exponential in the key size, whereas the best known algorithms for factoring (which RSA relies on) run in subexponential time — so RSA needs a much larger key to buy back the security that subexponential attacks chip away at."
+    },
+    {
+      "id": "card-0llx",
+      "format": "recall",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "public-key-crypto",
+        "rsa",
+        "elliptic-curves",
+        "diffie-hellman",
+        "forward-secrecy"
+      ],
+      "prompt": "In a Diffie-Hellman exchange, what does each side transmit, and what does each side compute afterward to arrive at the shared secret? Why is this called \"key agreement\" rather than \"key exchange\" in the strict sense, or encryption?",
+      "source": {
+        "path": "vault/security/crypto/public-key-encryption-and-key-exchange.md",
+        "block": "card-0llx"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 10-12"
+      ],
+      "answer": "Each side transmits only its own public value (g raised to its private exponent, mod p) — never the shared secret itself. Each side then raises the *other* party's public value to its *own* private exponent, and both computations land on the same number because exponentiation mod p commutes: (g^a)^b = (g^b)^a. Nothing that travels over the wire is the secret, and nothing is decrypted — both parties compute it independently, which is why \"agreement\" is the more accurate word than \"exchange\" or \"encryption.\""
+    },
+    {
+      "id": "card-2kzi",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "public-key-crypto",
+        "rsa",
+        "elliptic-curves",
+        "diffie-hellman",
+        "forward-secrecy"
+      ],
+      "prompt": "A keypair used for agreement doesn't have to be reused across sessions, and whether it is reused matters a great deal. An **ephemeral** keypair is generated fresh for one session and discarded immediately afterward — never written to disk, never reused for the next conversation. Using a fresh keypair per session gives ___ as a property of the agreement itself: even if an attacker later steals whatever long-term signing or identity key was used to authenticate the exchange, that theft does not let them recompute session values that were never derived from — and never dependent on — the long-term secret in the first place. Each session's shared value depended only on that session's own throwaway numbers, which no longer exist anywhere to be recovered.",
+      "source": {
+        "path": "vault/security/crypto/public-key-encryption-and-key-exchange.md",
+        "block": "card-2kzi"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 10-12"
+      ],
+      "answer": "forward secrecy"
+    },
+    {
+      "id": "card-oor9",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "public-key-crypto",
+        "rsa",
+        "elliptic-curves",
+        "diffie-hellman",
+        "forward-secrecy"
+      ],
+      "prompt": "An application needs to send a 500 MB file confidentially to a recipient who has published an RSA public key. What's the correct approach?",
+      "source": {
+        "path": "vault/security/crypto/public-key-encryption-and-key-exchange.md",
+        "block": "card-oor9"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 10-12"
+      ],
+      "choices": [
+        {
+          "text": "Generate a random symmetric key, encrypt the file under it with a symmetric cipher, and encrypt only that symmetric key with RSA",
+          "correct": true
+        },
+        {
+          "text": "RSA-encrypt the file in 200-byte chunks and concatenate the results",
+          "correct": false
+        },
+        {
+          "text": "Use a larger RSA modulus so the whole file fits in one encryption operation",
+          "correct": false
+        },
+        {
+          "text": "Skip RSA and send the file over Diffie-Hellman directly, since DH has no size limit",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-0ro9",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "public-key-crypto",
+        "rsa",
+        "elliptic-curves",
+        "diffie-hellman",
+        "forward-secrecy"
+      ],
+      "prompt": "Why is bulk data essentially never encrypted directly with RSA, even when the data fits under the size limit?",
+      "source": {
+        "path": "vault/security/crypto/public-key-encryption-and-key-exchange.md",
+        "block": "card-0ro9"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 10-12"
+      ],
+      "answer": "Public-key operations are computationally far more expensive per byte than symmetric encryption, and RSA's size ceiling (tied to its modulus) makes it unsuitable for anything beyond a small fixed-size value in the first place — so RSA is used to protect a symmetric key instead, and that key does the actual bulk encryption."
+    },
+    {
+      "id": "card-4k1m",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "randomness",
+        "csprng",
+        "entropy",
+        "nonce",
+        "iv",
+        "salt"
+      ],
+      "prompt": "Why can a long, complex-looking value still have very little actual entropy?",
+      "source": {
+        "path": "vault/security/crypto/randomness-and-csprngs.md",
+        "block": "card-4k1m"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 2"
+      ],
+      "answer": "Entropy measures the attacker's uncertainty about the value, not its length or apparent complexity. If the value is derived deterministically from something narrow and guessable — a timestamp, a process ID, a counter — an attacker who searches that narrow space can reconstruct it, regardless of how random the final string looks after hashing or encoding it."
+    },
+    {
+      "id": "card-xfr3",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "randomness",
+        "csprng",
+        "entropy",
+        "nonce",
+        "iv",
+        "salt"
+      ],
+      "prompt": "A stronger generator adds exactly the guarantee a plain PRNG lacks: given any prefix of its output, an attacker with realistic computing power cannot predict the next output, nor recover earlier outputs by working backward. That forward- and backward-unpredictability is the entire difference between an ordinary PRNG and a ___ (short for cryptographically secure PRNG) — statistical randomness is necessary for both but sufficient for neither, on its own, to justify using the output as a cryptographic key.",
+      "source": {
+        "path": "vault/security/crypto/randomness-and-csprngs.md",
+        "block": "card-xfr3"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 2"
+      ],
+      "answer": "CSPRNG"
+    },
+    {
+      "id": "card-eem3",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "randomness",
+        "csprng",
+        "entropy",
+        "nonce",
+        "iv",
+        "salt"
+      ],
+      "prompt": "Why is a language's default `random()` function unsafe for generating a cryptographic key, even though it produces statistically well-distributed output?",
+      "source": {
+        "path": "vault/security/crypto/randomness-and-csprngs.md",
+        "block": "card-eem3"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 2"
+      ],
+      "answer": "Because the default generator is typically a plain PRNG optimized for speed and statistical quality, not for resisting prediction. Its internal state is small enough, and its output sequence structured enough, that observing a handful of outputs lets an attacker reconstruct the internal state and predict every future (and often past) output — which for a key means the attacker can derive it directly instead of brute-forcing it."
+    },
+    {
+      "id": "card-jiam",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "randomness",
+        "csprng",
+        "entropy",
+        "nonce",
+        "iv",
+        "salt"
+      ],
+      "prompt": "On modern Linux, once the kernel's entropy pool has been properly seeded at boot, which statement about `/dev/urandom` vs `/dev/random` is accurate?",
+      "source": {
+        "path": "vault/security/crypto/randomness-and-csprngs.md",
+        "block": "card-jiam"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 2"
+      ],
+      "choices": [
+        {
+          "text": "`/dev/urandom` is safe for cryptographic use and never blocks; `/dev/random`'s blocking behavior addresses a theoretical concern that doesn't apply once the pool is seeded",
+          "correct": true
+        },
+        {
+          "text": "`/dev/random` is always safe for keys and `/dev/urandom` never is",
+          "correct": false
+        },
+        {
+          "text": "They draw from unrelated entropy sources, so only `/dev/random` is cryptographically strong",
+          "correct": false
+        },
+        {
+          "text": "Both block indefinitely until new hardware entropy arrives",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-nbxn",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "randomness",
+        "csprng",
+        "entropy",
+        "nonce",
+        "iv",
+        "salt"
+      ],
+      "prompt": "What goes wrong if a CSPRNG is seeded before the system has gathered enough real entropy, for instance immediately at boot on a device with no hardware entropy source yet?",
+      "source": {
+        "path": "vault/security/crypto/randomness-and-csprngs.md",
+        "block": "card-nbxn"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 2"
+      ],
+      "answer": "The generator's internal state ends up drawn from a small, possibly guessable space, so an attacker can brute-force or predict the seed itself. Every output the CSPRNG ever produces from that seed — keys, nonces, session tokens — inherits that weakness, no matter how cryptographically sound the stretching algorithm is, because the algorithm's strength assumes a high-entropy seed to begin with."
+    },
+    {
+      "id": "card-qyu6",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "randomness",
+        "csprng",
+        "entropy",
+        "nonce",
+        "iv",
+        "salt"
+      ],
+      "prompt": "A **nonce** (\"number used once\") must be ___ per key — it must never repeat under the same key, but it does not need to be unpredictable, and in some schemes it's just a counter.",
+      "source": {
+        "path": "vault/security/crypto/randomness-and-csprngs.md",
+        "block": "card-qyu6"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 2"
+      ],
+      "answer": "unique"
+    },
+    {
+      "id": "card-adkd",
+      "format": "recall",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "randomness",
+        "csprng",
+        "entropy",
+        "nonce",
+        "iv",
+        "salt"
+      ],
+      "prompt": "Nonce, IV, and salt are all \"extra input\" alongside a key or password, but each has a different minimum requirement. State the requirement for each, from weakest to strongest.",
+      "source": {
+        "path": "vault/security/crypto/randomness-and-csprngs.md",
+        "block": "card-adkd"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 2"
+      ],
+      "answer": "Salt: merely distinct across uses (public, no secrecy or unpredictability needed). Nonce: unique — must never repeat under the same key, but doesn't need to be hard to guess. IV (for modes like CBC): unique AND unpredictable to an attacker ahead of time — reusing the uniqueness requirement of a nonce isn't enough, since a predictable IV lets an attacker mount a chosen-plaintext distinguishing attack before the ciphertext is even produced."
+    },
+    {
+      "id": "card-1u51",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "security-goals",
+        "threat-models",
+        "kerckhoffs",
+        "cryptanalysis"
+      ],
+      "prompt": "**Confidentiality** means an attacker who intercepts the data learns nothing about its content. **Integrity** means any modification to the data in transit or storage is detectable. **Authenticity** means the receiver can verify who produced the data. **Non-repudiation** means the producer cannot later deny having produced it. These four sound like a package deal, but they are ___, and a primitive built for one routinely fails at the others.",
+      "source": {
+        "path": "vault/security/crypto/security-goals-and-threat-models.md",
+        "block": "card-1u51"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 1"
+      ],
+      "answer": "four separate properties"
+    },
+    {
+      "id": "card-ezqo",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "security-goals",
+        "threat-models",
+        "kerckhoffs",
+        "cryptanalysis"
+      ],
+      "prompt": "Why is it wrong to say \"the data is encrypted, so it's secure\"?",
+      "source": {
+        "path": "vault/security/crypto/security-goals-and-threat-models.md",
+        "block": "card-ezqo"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 1"
+      ],
+      "answer": "Encryption alone gives confidentiality — an eavesdropper can't read the data. It gives no guarantee that the data wasn't tampered with (integrity) or that it really came from the claimed sender (authenticity). An attacker can flip bits in a ciphertext, or replace it with a different valid-looking ciphertext, without the decrypting party ever knowing, unless a separate mechanism checks integrity and authenticity."
+    },
+    {
+      "id": "card-hwr8",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "security-goals",
+        "threat-models",
+        "kerckhoffs",
+        "cryptanalysis"
+      ],
+      "prompt": "A message is protected with a MAC built from a secret key shared by Alice and Bob. Bob receives the message and verifies the MAC. What can Bob conclude, and what can he NOT prove to a judge later?",
+      "source": {
+        "path": "vault/security/crypto/security-goals-and-threat-models.md",
+        "block": "card-hwr8"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 1"
+      ],
+      "choices": [
+        {
+          "text": "He can conclude the message came from someone holding the shared key (Alice, most likely); he cannot prove to a judge it was Alice specifically, since he could have forged it himself",
+          "correct": true
+        },
+        {
+          "text": "He can prove to a judge that Alice sent it, since only she has the key",
+          "correct": false
+        },
+        {
+          "text": "He can conclude nothing at all about the message's origin",
+          "correct": false
+        },
+        {
+          "text": "The MAC proves both authenticity and non-repudiation equally",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-cnn0",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "security-goals",
+        "threat-models",
+        "kerckhoffs",
+        "cryptanalysis"
+      ],
+      "prompt": "**Kerckhoffs's principle** says a cryptosystem's security must not depend on keeping the *algorithm* secret — only the key. Assume the attacker has your full source code, your protocol spec, and everything except the key itself, and design so that this attacker still learns nothing. A scheme that only works because the attacker doesn't know how it's built is called ___, and it collapses the moment the design leaks — which, for any widely deployed system, is a matter of when, not if.",
+      "source": {
+        "path": "vault/security/crypto/security-goals-and-threat-models.md",
+        "block": "card-cnn0"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 1"
+      ],
+      "answer": "security through obscurity"
+    },
+    {
+      "id": "card-t5mk",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "security-goals",
+        "threat-models",
+        "kerckhoffs",
+        "cryptanalysis"
+      ],
+      "prompt": "Why does treating the algorithm as public actually make a cryptosystem stronger in practice, rather than weaker?",
+      "source": {
+        "path": "vault/security/crypto/security-goals-and-threat-models.md",
+        "block": "card-t5mk"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 1"
+      ],
+      "answer": "A published algorithm gets scrutinized by the entire cryptographic community, so weaknesses tend to surface before deployment rather than after. A secret algorithm gets reviewed by nobody but its designer, so its flaws are discovered by attackers first, and once it inevitably leaks — through reverse engineering, an insider, or a leaked spec — there is no fallback, since the design was the only thing standing between the attacker and the data."
+    },
+    {
+      "id": "card-p3lx",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "security-goals",
+        "threat-models",
+        "kerckhoffs",
+        "cryptanalysis"
+      ],
+      "prompt": "Beyond what a scheme protects, cryptanalysis also classifies *how much access* an attacker is assumed to have, from weakest to strongest. In a ___ attack, the attacker has some plaintext-ciphertext pairs produced under the target key but cannot choose them. In a chosen-plaintext attack (CPA), the attacker can submit arbitrary plaintexts and observe their ciphertexts. In a chosen-ciphertext attack (CCA), the attacker can additionally submit arbitrary ciphertexts and observe their decryptions.",
+      "source": {
+        "path": "vault/security/crypto/security-goals-and-threat-models.md",
+        "block": "card-p3lx"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 1"
+      ],
+      "answer": "known-plaintext"
+    },
+    {
+      "id": "card-wytz",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "security-goals",
+        "threat-models",
+        "kerckhoffs",
+        "cryptanalysis"
+      ],
+      "prompt": "Ranking known-plaintext (KPA), chosen-plaintext (CPA), and chosen-ciphertext (CCA) attacks by how much power they hand the attacker, which ordering is correct from weakest to strongest?",
+      "source": {
+        "path": "vault/security/crypto/security-goals-and-threat-models.md",
+        "block": "card-wytz"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 1"
+      ],
+      "choices": [
+        {
+          "text": "KPA < CPA < CCA",
+          "correct": true
+        },
+        {
+          "text": "CPA < KPA < CCA",
+          "correct": false
+        },
+        {
+          "text": "CCA < CPA < KPA",
+          "correct": false
+        },
+        {
+          "text": "All three grant the attacker equivalent power, differing only in setup",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-dals",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "security-goals",
+        "threat-models",
+        "kerckhoffs",
+        "cryptanalysis"
+      ],
+      "prompt": "What capability distinguishes a chosen-ciphertext attacker from a chosen-plaintext attacker?",
+      "source": {
+        "path": "vault/security/crypto/security-goals-and-threat-models.md",
+        "block": "card-dals"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 1"
+      ],
+      "answer": "A chosen-plaintext attacker can only submit plaintexts and see the resulting ciphertexts. A chosen-ciphertext attacker can additionally submit arbitrary ciphertexts of their own choosing and observe what they decrypt to — an oracle a real system can accidentally provide via error messages or padding behavior, which is exactly what padding-oracle attacks exploit."
+    },
+    {
+      "id": "card-2skt",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "security-goals",
+        "threat-models",
+        "kerckhoffs",
+        "cryptanalysis"
+      ],
+      "prompt": "Why do cryptographers speak of a cipher as \"128-bit secure\" rather than simply \"unbreakable\"?",
+      "source": {
+        "path": "vault/security/crypto/security-goals-and-threat-models.md",
+        "block": "card-2skt"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 1"
+      ],
+      "answer": "Because almost no cryptographic security is an absolute, information-theoretic guarantee — it's a claim that the best known attack requires on the order of 2^128 operations, which is computationally infeasible with current and foreseeable technology. That claim can change: a new cryptanalytic technique can lower the attack cost without the key length changing at all, which is exactly how algorithms once considered secure (like MD5 or single DES) stopped being so."
+    },
+    {
+      "id": "card-zkd7",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "side-channels",
+        "timing-attacks",
+        "constant-time",
+        "padding-oracle",
+        "implementation-security"
+      ],
+      "prompt": "What does a mathematical security proof for an algorithm actually cover, and why doesn't it rule out attacks against a real implementation of that algorithm?",
+      "source": {
+        "path": "vault/security/crypto/side-channels-and-implementation-pitfalls.md",
+        "block": "card-zkd7"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "answer": "It covers the algorithm as an abstract object — that the underlying math can't be broken within the proof's assumptions. It says nothing about a specific implementation running on real hardware, which can leak information through channels the proof never modeled at all: timing, power draw, cache behavior, and more. A side channel is any such observable effect of running the code that carries information the algorithm's description doesn't account for."
+    },
+    {
+      "id": "card-odhz",
+      "format": "recall",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "side-channels",
+        "timing-attacks",
+        "constant-time",
+        "padding-oracle",
+        "implementation-security"
+      ],
+      "prompt": "A server compares an incoming API token against the correct value byte by byte and returns \"invalid\" as soon as it finds the first mismatching byte. An attacker can't see that comparison, but can send many requests and measure response time precisely. Explain how that early-exit comparison could let the attacker recover the correct token through timing alone, with no cryptographic weakness in play.",
+      "source": {
+        "path": "vault/security/crypto/side-channels-and-implementation-pitfalls.md",
+        "block": "card-odhz"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "answer": "A guess whose leading bytes happen to match the real token takes measurably longer to reject, because the comparison runs further before hitting a mismatch. By trying every possible value for one byte position and keeping whichever guess took longest to reject, then moving on to the next position, the attacker reconstructs the token one byte at a time — using nothing but response time, since the comparison logic itself has no bug and no weak algorithm behind it."
+    },
+    {
+      "id": "card-173c",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "side-channels",
+        "timing-attacks",
+        "constant-time",
+        "padding-oracle",
+        "implementation-security"
+      ],
+      "prompt": "Code that runs in constant time regardless of secret values is the general defense against timing side channels. The first discipline it requires is being ___ on secret data: no `if` statement, loop bound, or early return whose path depends on a secret's value, since a CPU's timing and branch prediction both vary by which path executes.",
+      "source": {
+        "path": "vault/security/crypto/side-channels-and-implementation-pitfalls.md",
+        "block": "card-173c"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "answer": "branch-free"
+    },
+    {
+      "id": "card-ke7h",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "side-channels",
+        "timing-attacks",
+        "constant-time",
+        "padding-oracle",
+        "implementation-security"
+      ],
+      "prompt": "The second discipline is being ___ on secret data: no array or table index computed from a secret value, because which cache line gets touched is itself observable. Code with no secret-dependent branch at all can still leak everything through its memory access pattern alone.",
+      "source": {
+        "path": "vault/security/crypto/side-channels-and-implementation-pitfalls.md",
+        "block": "card-ke7h"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "answer": "lookup-free"
+    },
+    {
+      "id": "card-aeg8",
+      "format": "recall",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "side-channels",
+        "timing-attacks",
+        "constant-time",
+        "padding-oracle",
+        "implementation-security"
+      ],
+      "prompt": "A server decrypts an incoming ciphertext and returns one distinct error when the padding is invalid, and a different error when the padding is valid but something else about the request fails. Explain how an attacker who can submit arbitrary ciphertexts and observe only which error comes back could use that alone to recover the plaintext, without ever learning the decryption key.",
+      "source": {
+        "path": "vault/security/crypto/side-channels-and-implementation-pitfalls.md",
+        "block": "card-aeg8"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "answer": "The two distinguishable errors turn the server into an oracle that answers one yes/no question per query: \"was the padding valid for this ciphertext?\" By systematically modifying ciphertext bytes and resubmitting, the attacker uses that single bit of feedback to work out the underlying plaintext one byte at a time — because whether a given modification happens to produce valid padding depends entirely on the real plaintext byte at that position. Repeating this across every byte and block recovers the full plaintext through the error signal alone, with no need to break the cipher or recover the key."
+    },
+    {
+      "id": "card-wa86",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "side-channels",
+        "timing-attacks",
+        "constant-time",
+        "padding-oracle",
+        "implementation-security"
+      ],
+      "prompt": "Why is returning the same generic error for every failure case a stronger default in security-sensitive code than returning a more specific, helpful message for each failure?",
+      "source": {
+        "path": "vault/security/crypto/side-channels-and-implementation-pitfalls.md",
+        "block": "card-wa86"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "answer": "Any distinguishable difference between failure modes — a different message, a different status code, a different response time — can become a side channel an attacker queries repeatedly to learn something the code was never meant to reveal, exactly as a padding oracle does with a decryption error. A uniform, generic failure response leaks nothing beyond \"it failed,\" which is usually all the caller needs."
+    },
+    {
+      "id": "card-weij",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "side-channels",
+        "timing-attacks",
+        "constant-time",
+        "padding-oracle",
+        "implementation-security"
+      ],
+      "prompt": "Not every implementation pitfall depends on measuring anything. A ___ gets two parties who both support a strong option to negotiate a weaker one instead, by interfering with whatever step decides which option gets used, and then attacks the weaker option neither side actually preferred. A related pitfall, algorithm confusion, works differently: a system accepts input that names which algorithm or key type to use, and an attacker supplies a value naming a different, weaker, or simply wrong one than its author intended — and the system honors it instead of rejecting it.",
+      "source": {
+        "path": "vault/security/crypto/side-channels-and-implementation-pitfalls.md",
+        "block": "card-weij"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "answer": "downgrade attack"
+    },
+    {
+      "id": "card-vxpb",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "side-channels",
+        "timing-attacks",
+        "constant-time",
+        "padding-oracle",
+        "implementation-security"
+      ],
+      "prompt": "Why do downgrade attacks and algorithm-confusion attacks share the same underlying fix, even though one manipulates a negotiation and the other manipulates a labeled input field?",
+      "source": {
+        "path": "vault/security/crypto/side-channels-and-implementation-pitfalls.md",
+        "block": "card-vxpb"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "answer": "Both let something outside the system's control decide which cryptographic algorithm gets used — a manipulated negotiation in one case, an attacker-supplied field in the other. The fix in both cases is to remove that decision from anything untrusted: pin the algorithm in code the attacker cannot influence, rather than letting a negotiated or input-specified value determine it."
+    },
+    {
+      "id": "card-8mog",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "side-channels",
+        "timing-attacks",
+        "constant-time",
+        "padding-oracle",
+        "implementation-security"
+      ],
+      "prompt": "A team implements a well-known, published encryption algorithm from scratch and writes tests confirming it produces the correct ciphertext for every test vector. What does passing those tests establish about the implementation's resistance to the pitfalls covered in this note?",
+      "source": {
+        "path": "vault/security/crypto/side-channels-and-implementation-pitfalls.md",
+        "block": "card-8mog"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "choices": [
+        {
+          "text": "Almost nothing — correctness on known inputs never exercises timing behavior, error-message behavior, or algorithm-selection logic",
+          "correct": true
+        },
+        {
+          "text": "That the implementation is now safe against timing attacks, since the underlying math is correct",
+          "correct": false
+        },
+        {
+          "text": "That padding-oracle-style errors are no longer possible, since decryption works on valid input",
+          "correct": false
+        },
+        {
+          "text": "That the implementation is as safe as a widely deployed, audited library",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-dvaa",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "symmetric-encryption",
+        "block-ciphers",
+        "aes",
+        "modes-of-operation",
+        "malleability"
+      ],
+      "prompt": "What is the core structural difference between a block cipher and a stream cipher?",
+      "source": {
+        "path": "vault/security/crypto/symmetric-encryption-and-block-ciphers.md",
+        "block": "card-dvaa"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "answer": "A block cipher transforms fixed-size chunks of plaintext (blocks) all at once under the key. A stream cipher generates a pseudorandom keystream from the key and combines it with the plaintext one bit or byte at a time, with no block boundary at all."
+    },
+    {
+      "id": "card-upd4",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "symmetric-encryption",
+        "block-ciphers",
+        "aes",
+        "modes-of-operation",
+        "malleability"
+      ],
+      "prompt": "AES is the dominant block cipher in use today, and whatever the key length — 128, 192, or 256 bits — it always operates on the same fixed 128-bit block; a longer key buys more security margin, never a bigger block. Structurally, AES is best understood as a **keyed permutation**: fix the key, and encryption becomes a ___ — a perfectly reversible, one-to-one mapping — from the space of all possible input blocks onto the space of all possible output blocks. No two distinct plaintext blocks under one key can ever land on the same ciphertext block, which is exactly what lets decryption undo encryption uniquely.",
+      "source": {
+        "path": "vault/security/crypto/symmetric-encryption-and-block-ciphers.md",
+        "block": "card-upd4"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "answer": "bijection"
+    },
+    {
+      "id": "card-91js",
+      "format": "mcq",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "symmetric-encryption",
+        "block-ciphers",
+        "aes",
+        "modes-of-operation",
+        "malleability"
+      ],
+      "prompt": "An image is encrypted block-by-block with ECB mode, and the ciphertext bytes are then rendered back as an image (the famous \"encrypted penguin\" example: a cartoon penguin's flat, solid-colored background stays clearly visible as flat, uniform regions in the \"encrypted\" picture). Why does the shape survive?",
+      "source": {
+        "path": "vault/security/crypto/symmetric-encryption-and-block-ciphers.md",
+        "block": "card-91js"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "choices": [
+        {
+          "text": "Identical plaintext blocks always encrypt to identical ciphertext blocks under ECB, so any repeated pattern in the plaintext survives as a repeated pattern in the ciphertext",
+          "correct": true
+        },
+        {
+          "text": "ECB fails to change the file format, so image viewers just decode the original data unmodified",
+          "correct": false
+        },
+        {
+          "text": "ECB only encrypts pixel color values and leaves pixel positions untouched",
+          "correct": false
+        },
+        {
+          "text": "The encryption key was too short to fully randomize the pixel data",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-8w4g",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "symmetric-encryption",
+        "block-ciphers",
+        "aes",
+        "modes-of-operation",
+        "malleability"
+      ],
+      "prompt": "In this chaining mode, what gets XORed with a plaintext block before it's encrypted, and why does that fix the pattern-leakage problem seen when blocks are encrypted independently with no chaining at all?",
+      "source": {
+        "path": "vault/security/crypto/symmetric-encryption-and-block-ciphers.md",
+        "block": "card-8w4g"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "answer": "The previous block's ciphertext (or the IV, for the first block) is XORed in before encryption. Because that input differs depending on everything encrypted so far in the message, two identical plaintext blocks no longer produce identical ciphertext blocks."
+    },
+    {
+      "id": "card-0qfr",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "symmetric-encryption",
+        "block-ciphers",
+        "aes",
+        "modes-of-operation",
+        "malleability"
+      ],
+      "prompt": "Counter mode takes a completely different approach: it encrypts a counter (combined with a nonce) to produce a keystream block, then XORs that keystream with the plaintext block — the block cipher is never applied to the plaintext or ciphertext directly. That trick turns a block cipher into something that behaves like a ___: blocks can be processed in any order or in parallel, decryption is the identical operation as encryption, and the ciphertext comes out exactly as long as the plaintext, with no padding needed anywhere.",
+      "source": {
+        "path": "vault/security/crypto/symmetric-encryption-and-block-ciphers.md",
+        "block": "card-0qfr"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "answer": "stream cipher"
+    },
+    {
+      "id": "card-00d6",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "symmetric-encryption",
+        "block-ciphers",
+        "aes",
+        "modes-of-operation",
+        "malleability"
+      ],
+      "prompt": "Why do chaining modes that encrypt the plaintext directly in whole blocks require padding, while a counter-based, keystream-driven mode does not?",
+      "source": {
+        "path": "vault/security/crypto/symmetric-encryption-and-block-ciphers.md",
+        "block": "card-00d6"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "answer": "Modes that encrypt the plaintext directly need it to be an exact multiple of the block size, so a shorter final chunk must be padded out to a full block before encryption. A keystream-driven mode never encrypts the plaintext itself — it encrypts a counter to build a keystream and XORs that with the plaintext — so the ciphertext can match the plaintext's exact length with no padding at all."
+    },
+    {
+      "id": "card-bojh",
+      "format": "recall",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "symmetric-encryption",
+        "block-ciphers",
+        "aes",
+        "modes-of-operation",
+        "malleability"
+      ],
+      "prompt": "Reusing the IV or nonce under the same key is dangerous in both a chaining-style mode (like CBC) and a counter-style mode (like CTR), but the mechanism and severity differ. Explain what goes wrong in each.",
+      "source": {
+        "path": "vault/security/crypto/symmetric-encryption-and-block-ciphers.md",
+        "block": "card-bojh"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "answer": "Chaining mode (CBC): a reused IV leaks the XOR relationship between the first blocks of the two messages, revealing shared-prefix information and letting an attacker compare ciphertexts for equality patterns. Counter mode (CTR): a reused nonce/counter regenerates the identical keystream, so XORing the two ciphertexts cancels the keystream out and directly exposes the XOR of the two plaintexts — often enough to recover both plaintexts outright, a more direct and severe break than the chaining mode's leak."
+    },
+    {
+      "id": "card-8zka",
+      "format": "cloze",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "symmetric-encryption",
+        "block-ciphers",
+        "aes",
+        "modes-of-operation",
+        "malleability"
+      ],
+      "prompt": "Everything above only protects **confidentiality** — none of these constructions, on their own, protect **integrity**. Encryption alone gives no guarantee that a ciphertext hasn't been tampered with, and an attacker who doesn't know the key can often still change the corresponding plaintext in a predictable way. A cipher with this property is called ___: flipping a bit in a counter-mode ciphertext flips the corresponding bit of the decrypted plaintext directly, because the combination is a plain XOR; flipping a bit in a chaining-mode ciphertext block corrupts that block unpredictably but flips the same bit position in the *following* block's plaintext, because of how the XOR chains forward. Either way, the attacker never needs the key, and nothing about the decryption process itself detects that anything happened.",
+      "source": {
+        "path": "vault/security/crypto/symmetric-encryption-and-block-ciphers.md",
+        "block": "card-8zka"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "answer": "malleable"
+    },
+    {
+      "id": "card-fdjh",
+      "format": "qa",
+      "topic": "security",
+      "category": "security-crypto",
+      "tags": [
+        "symmetric-encryption",
+        "block-ciphers",
+        "aes",
+        "modes-of-operation",
+        "malleability"
+      ],
+      "prompt": "Why doesn't a ciphertext successfully decrypting — producing some plaintext at all — mean it wasn't tampered with along the way?",
+      "source": {
+        "path": "vault/security/crypto/symmetric-encryption-and-block-ciphers.md",
+        "block": "card-fdjh"
+      },
+      "citations": [
+        "Aumasson, Serious Cryptography, Ch. 3"
+      ],
+      "answer": "These constructions provide no integrity check whatsoever; decryption always produces some plaintext for any ciphertext, valid or attacker-modified, since there's nothing to reject it against. Malleability means an attacker without the key can flip bits in the ciphertext to make predictable, controlled changes in the decrypted plaintext, and nothing in the cipher or mode itself notices or signals that the ciphertext changed."
     }
   ]
 }
