@@ -1,7 +1,14 @@
 import type { ReviewState, StoredCard } from '../db/schema.js';
 import { isDue } from './fsrs.js';
 
-const DAY_START_HOUR = 4;
+/**
+ * The hour a review day rolls over. A review logged at 01:00 belongs to the
+ * previous day: the alternative punishes a late-night session by splitting it
+ * across two day buckets. Exported because `db/stats.ts` derives the real-time
+ * window a `dayKey` bucket spans and must use the SAME cutoff -- a second copy
+ * would let the streak and the new-card counter disagree about what "today" is.
+ */
+export const DAY_START_HOUR = 4;
 
 export function dayKey(at: Date): string {
   const shifted = new Date(at.getTime());

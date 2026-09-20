@@ -1,5 +1,6 @@
 import type { StoredCard } from './db/schema.js';
 import { hasFocusableCards, type TopicSummary } from './topics.js';
+import type { DayCount } from './db/stats.js';
 
 export interface DashboardState {
   /** Due cards plus new cards up to the day's remaining allowance. */
@@ -11,6 +12,10 @@ export interface DashboardState {
   extension: StoredCard[];
   /** Today's new-card count so far (includes cards taken via `extension`). */
   newCardsSeenToday: number;
+  /** Consecutive days with at least one review, counted back from today. */
+  streak: number;
+  /** Review counts for the last seven day buckets, oldest first. */
+  lastSevenDays: DayCount[];
   /**
    * The whole deck grouped topic → category, INCLUDING categories the user
    * has disabled — this drives the picker (which must show what is muted)

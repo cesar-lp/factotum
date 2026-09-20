@@ -4,6 +4,7 @@ import { openDb, type FactotumDb, type StoredCard } from './db/schema.js';
 import { getSettings, saveSettings } from './db/settings.js';
 import { mergeDeck } from './db/deck.js';
 import { loadReviews, newCardsSeenToday } from './db/reviews.js';
+import { getLastSevenDays, getStreak } from './db/stats.js';
 import { buildExtension, buildFocusSession, buildSession, selectEnabled } from './scheduler/queue.js';
 import { summarizeTopics } from './topics.js';
 import { renderDashboard } from './ui/dashboard.js';
@@ -36,11 +37,16 @@ async function syncDeck(db: FactotumDb): Promise<boolean> {
 }
 
 export async function loadDashboardState(db: FactotumDb, now: Date): Promise<DashboardState> {
-  const [cards, reviews, settings, seen] = await Promise.all([
+  const [cards, reviews, settings, seen, streak, lastSevenDays] = await Promise.all([
     db.getAll('cards'),
     loadReviews(db),
     getSettings(db),
-    newCardsSeenToday(db, now)
+    newCardsSeenToday(db, now),
+    // Both read reviewLog over its `ts` index and take the SAME `now` as the
+    // queue below, so the streak's notion of "today" cannot drift from the
+    // one the daily new-card allowance is counted against.
+    getStreak(db, now),
+    getLastSevenDays(db, now)
   ]);
 
   // The daily queue respects the user's mutes; the topics summary does not
@@ -58,7 +64,7 @@ export async function loadDashboardState(db: FactotumDb, now: Date): Promise<Das
   const extension = buildExtension({ cards: enabled, reviews });
   const topics = summarizeTopics(cards, reviews, now);
 
-  return { session, extension, newCardsSeenToday: seen, topics };
+  return { session, extension, newCardsSeenToday: seen, streak, lastSevenDays, topics };
 }
 
 async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: boolean): Promise<void> {
@@ -150,6 +156,8 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
     dueCount: state.session.length,
     newCardsRemaining: state.extension.length,
     newCardsSeenToday: state.newCardsSeenToday,
+    streak: state.streak,
+    lastSevenDays: state.lastSevenDays,
     deckUnavailable,
     onStart: () => { window.location.hash = '#review'; },
     onKeepGoing: () => { window.location.hash = '#review-extend'; },
