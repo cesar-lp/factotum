@@ -14,7 +14,25 @@
   .is-masked { transition: none; }
 }
 
-.note-screen { padding: var(--s4); max-width: 42rem; margin: 0 auto; }
+/*
+ * .screen (base.css) already supplies this section's flex sizing and
+ * vertical padding, matching every other screen -- the side gutter comes
+ * from body's own padding, and #app is the one place max-width is set
+ * (480px). This class used to duplicate and contradict all three (its own
+ * padding stacked a second gutter atop body's, its 42rem max-width
+ * overrode #app's 480px, and its margin:auto was a no-op inside a flex
+ * column), which is what pushed the page past the viewport on a phone. Now
+ * it adds only what .screen doesn't already cover.
+ *
+ * min-width: 0 undoes the flex item's default automatic-minimum-size,
+ * which otherwise refuses to let this section shrink below the min-content
+ * width of whatever's inside it. There's no wide content in THIS note, but
+ * .note-code's overflow-x:auto (below) depends on some ancestor being
+ * willing to shrink to the viewport instead of growing to fit a long code
+ * line -- without this, the first note with a wide fence reopens the same
+ * horizontal-scroll bug from a different block kind.
+ */
+.note-screen { min-width: 0; }
 .note-head { display: flex; align-items: center; gap: var(--s3); margin-bottom: var(--s4); }
 .note-title { font-size: var(--text-prompt); margin: 0; flex: 1; }
 .note-masked-bar {
@@ -22,7 +40,11 @@
   gap: var(--s3); padding: var(--s3); margin-bottom: var(--s4);
   border-radius: var(--r-md); font-size: var(--text-label);
 }
-.note-body { font-size: var(--text-body); line-height: 1.6; }
+/* Same automatic-minimum-size issue as .note-screen above, one level
+   closer to .note-code: .note-body is itself a flex item (of .screen's
+   column layout) and sits directly between the screen and the code block
+   whose overflow-x needs somewhere to actually take effect. */
+.note-body { font-size: var(--text-body); line-height: 1.6; min-width: 0; }
 .note-prose { margin: 0 0 var(--s4); }
 .note-code { overflow-x: auto; padding: var(--s3); border-radius: var(--r-md); }
 .note-card { padding: var(--s4); border-radius: var(--r-md); margin: 0 0 var(--s4); }

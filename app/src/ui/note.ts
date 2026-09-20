@@ -1,4 +1,4 @@
-import type { NoteDoc } from '../../../pipeline/src/types.js';
+import type { NoteBlock, NoteDoc } from '../../../pipeline/src/types.js';
 import { renderNoteBlocks } from './note-render.js';
 import { escapeHtml } from './renderers.js';
 
@@ -33,6 +33,36 @@ export function effectiveMasked(masked: ReadonlySet<string>, revealed: ReadonlyS
 }
 
 /**
+ * How many of `masked`'s cards actually hide something visible. Being in
+ * `masked` only means a card is due; it does not mean the note has any
+ * surface to blur for it. An answerless `recall` card (no `> ---` model
+ * answer -- 177/177 recall cards in this vault) renders no answer <p> at
+ * all, so it can be masked with nothing tappable and nothing blurred. The
+ * "N answers hidden" bar has to count only cards a reader could plausibly
+ * reveal, or it promises more than "Show all" can deliver -- in the
+ * degenerate case where every due card is an answerless recall, it would
+ * read "N answers hidden" while zero elements carry `is-masked` and "Show
+ * all" visibly does nothing.
+ */
+export function maskedCount(blocks: NoteBlock[], masked: ReadonlySet<string>): number {
+  let count = 0;
+  for (const block of blocks) {
+    if (block.kind === 'prose') {
+      for (const cloze of block.clozes) {
+        if (masked.has(cloze.cardId)) count++;
+      }
+    } else if (block.kind === 'qa') {
+      if (masked.has(block.cardId)) count++;
+    } else if (block.kind === 'card' && masked.has(block.cardId)) {
+      // mcq always has something to blur (the whole choice list); recall
+      // only does when it actually carries a model answer.
+      if (block.format === 'mcq' || block.answer !== undefined) count++;
+    }
+  }
+  return count;
+}
+
+/**
  * The note viewer. A dumb renderer, mirroring renderTopics: every decision
  * (which cards are masked, whether notes loaded at all) arrives as a prop,
  * so the logic stays in main.ts where a node test can reach it.
@@ -40,7 +70,7 @@ export function effectiveMasked(masked: ReadonlySet<string>, revealed: ReadonlyS
 export function renderNote(root: HTMLElement, props: NoteProps): void {
   if (!props.available) {
     root.innerHTML = `
-      <section class="note-screen">
+      <section class="screen note-screen">
         <header class="note-head"><button class="btn-secondary" data-role="back">Back</button></header>
         <p class="note-empty">Notes aren't downloaded yet. Connect to the internet once and reopen this note.</p>
       </section>`;
@@ -51,7 +81,7 @@ export function renderNote(root: HTMLElement, props: NoteProps): void {
   const maybeNote = props.note;
   if (!maybeNote) {
     root.innerHTML = `
-      <section class="note-screen">
+      <section class="screen note-screen">
         <header class="note-head"><button class="btn-secondary" data-role="back">Back</button></header>
         <p class="note-empty">That note is no longer in the vault.</p>
       </section>`;
@@ -66,13 +96,13 @@ export function renderNote(root: HTMLElement, props: NoteProps): void {
     : '';
 
   root.innerHTML = `
-    <section class="note-screen">
+    <section class="screen note-screen">
       <header class="note-head">
         <button class="btn-secondary" data-role="back">Back</button>
         <h1 class="note-title">${escapeHtml(note.title)}</h1>
         ${obsidian}
       </header>
-      ${maskedSummary(props.masked.size)
+      ${maskedSummary(maskedCount(note.blocks, props.masked))
         ? `<div class="note-masked-bar"><span></span><button class="btn-secondary" data-role="reveal-all">Show all</button></div>`
         : ''}
       <article class="note-body"></article>
@@ -133,7 +163,7 @@ export function renderNote(root: HTMLElement, props: NoteProps): void {
 
   function updateBar(): void {
     const bar = root.querySelector<HTMLElement>('.note-masked-bar');
-    const summary = maskedSummary(effectiveMasked(props.masked, revealed).size);
+    const summary = maskedSummary(maskedCount(note.blocks, effectiveMasked(props.masked, revealed)));
     if (!summary) {
       bar?.remove();
       return;
