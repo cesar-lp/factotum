@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-19T21:18:32.600Z",
+  "generatedAt": "2026-09-20T11:25:58.093Z",
   "cards": [
     {
       "id": "card-6fmp",
@@ -1845,6 +1845,1219 @@
       ]
     },
     {
+      "id": "card-58fo",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "rest-api",
+        "http-api",
+        "websocket-api",
+        "api-types"
+      ],
+      "prompt": "A team needs to meter individual customers with per-key request quotas and throttling tiers. Which API type can do this?",
+      "source": {
+        "path": "vault/aws/api-gateway/api-types.md",
+        "block": "card-58fo"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Choose between REST APIs and HTTP APIs', 'About WebSocket APIs in API Gateway'"
+      ],
+      "choices": [
+        {
+          "text": "REST API — usage plans and API keys are a REST API feature; HTTP APIs have no equivalent",
+          "correct": true
+        },
+        {
+          "text": "HTTP API — it supports usage plans with a simplified configuration model",
+          "correct": false
+        },
+        {
+          "text": "Either type — usage plans are a account-level feature independent of API type",
+          "correct": false
+        },
+        {
+          "text": "WebSocket API — persistent connections make per-connection metering straightforward",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-h4qk",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "rest-api",
+        "http-api",
+        "websocket-api",
+        "api-types"
+      ],
+      "prompt": "The real choice between REST and HTTP APIs is **feature surface versus simplicity and latency**, not price. If you need caching, usage plans, request validation, or mapping-template transformations, a REST API is the only option regardless of what it costs; if your backend is a single ___ integration with no gateway-side transformation needs, an HTTP API gets you there with less configuration and lower added latency, because it has less machinery in the request path to begin with.",
+      "source": {
+        "path": "vault/aws/api-gateway/api-types.md",
+        "block": "card-h4qk"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Choose between REST APIs and HTTP APIs', 'About WebSocket APIs in API Gateway'"
+      ],
+      "answer": "Lambda proxy"
+    },
+    {
+      "id": "card-9j3m",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "rest-api",
+        "http-api",
+        "websocket-api",
+        "api-types"
+      ],
+      "prompt": "Why does an HTTP API typically add less latency to a request than a REST API serving the same route?",
+      "source": {
+        "path": "vault/aws/api-gateway/api-types.md",
+        "block": "card-9j3m"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Choose between REST APIs and HTTP APIs', 'About WebSocket APIs in API Gateway'"
+      ],
+      "answer": "An HTTP API has a narrower feature set by design — no mapping-template evaluation, no usage-plan lookup, no cache check — so there is less processing API Gateway must do per request; the latency difference is a direct consequence of the reduced feature surface, not an independent tuning knob."
+    },
+    {
+      "id": "card-k7pl",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "rest-api",
+        "http-api",
+        "websocket-api",
+        "api-types"
+      ],
+      "prompt": "A **WebSocket API** is a different shape of problem entirely: it manages persistent, bidirectional connections rather than discrete request/response cycles. Instead of resources and HTTP methods, routing is driven by a ___ evaluated against the content of each inbound message, with reserved routes (`$connect`, `$disconnect`, `$default`) for connection lifecycle events that have no message body to route on.",
+      "source": {
+        "path": "vault/aws/api-gateway/api-types.md",
+        "block": "card-k7pl"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Choose between REST APIs and HTTP APIs', 'About WebSocket APIs in API Gateway'"
+      ],
+      "answer": "route selection expression"
+    },
+    {
+      "id": "card-q2vd",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "rest-api",
+        "http-api",
+        "websocket-api",
+        "api-types"
+      ],
+      "prompt": "Explain why \"REST API vs. HTTP API\" is a meaningful either/or decision that can force a redesign later, rather than a setting you can safely change after launch if you guessed wrong.",
+      "source": {
+        "path": "vault/aws/api-gateway/api-types.md",
+        "block": "card-q2vd"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Choose between REST APIs and HTTP APIs', 'About WebSocket APIs in API Gateway'"
+      ]
+    },
+    {
+      "id": "card-3fbz",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "rest-api",
+        "http-api",
+        "websocket-api",
+        "api-types"
+      ],
+      "prompt": "A team building a chat feature that needs the server to push messages to clients without the client polling would need which API type, and why would a REST or HTTP API not fit?",
+      "source": {
+        "path": "vault/aws/api-gateway/api-types.md",
+        "block": "card-3fbz"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Choose between REST APIs and HTTP APIs', 'About WebSocket APIs in API Gateway'"
+      ],
+      "answer": "A WebSocket API, because REST and HTTP APIs are both request/response — the client always initiates — with no mechanism for the server to send data over a connection the client isn't actively requesting on; only a WebSocket API keeps a connection open that either side can push through."
+    },
+    {
+      "id": "card-yq1n",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "authorizers",
+        "iam",
+        "cognito",
+        "lambda-authorizer",
+        "resource-policy"
+      ],
+      "prompt": "A **Cognito user pool authorizer** validates a JWT issued by a specific, configured Cognito user pool — the client authenticates against Cognito separately and attaches the resulting token to each request. API Gateway ___; no custom code runs for this path, which is what distinguishes it from a Lambda authorizer even though both consume a token from the caller.",
+      "source": {
+        "path": "vault/aws/api-gateway/authorizers-and-access-control.md",
+        "block": "card-yq1n"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Control access to a REST API using Amazon Cognito user pools', 'Use API Gateway Lambda authorizers', 'Control access to an API with API Gateway resource policies'"
+      ],
+      "answer": "validates the token's signature and claims directly"
+    },
+    {
+      "id": "card-df7w",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "authorizers",
+        "iam",
+        "cognito",
+        "lambda-authorizer",
+        "resource-policy"
+      ],
+      "prompt": "A **Lambda (custom) authorizer** is a Lambda function you write that receives the incoming request (token-based, reading a bearer token; or request-based, reading arbitrary headers/query params) and returns an IAM ___ — an Allow or Deny for the specific method ARN — plus an optional context object of arbitrary key-value data that gets passed through to the backend integration if the call is allowed.",
+      "source": {
+        "path": "vault/aws/api-gateway/authorizers-and-access-control.md",
+        "block": "card-df7w"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Control access to a REST API using Amazon Cognito user pools', 'Use API Gateway Lambda authorizers', 'Control access to an API with API Gateway resource policies'"
+      ],
+      "answer": "policy document"
+    },
+    {
+      "id": "card-o1j0",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "authorizers",
+        "iam",
+        "cognito",
+        "lambda-authorizer",
+        "resource-policy"
+      ],
+      "prompt": "What does a Lambda authorizer function return to API Gateway on a successful authorization?",
+      "source": {
+        "path": "vault/aws/api-gateway/authorizers-and-access-control.md",
+        "block": "card-o1j0"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Control access to a REST API using Amazon Cognito user pools', 'Use API Gateway Lambda authorizers', 'Control access to an API with API Gateway resource policies'"
+      ],
+      "choices": [
+        {
+          "text": "An IAM policy document (Allow/Deny for the method ARN) and an optional context object",
+          "correct": true
+        },
+        {
+          "text": "A boolean true/false indicating whether to allow the request",
+          "correct": false
+        },
+        {
+          "text": "The HTTP response to send directly to the client",
+          "correct": false
+        },
+        {
+          "text": "A signed JWT that API Gateway then validates itself",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-e5tm",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "authorizers",
+        "iam",
+        "cognito",
+        "lambda-authorizer",
+        "resource-policy"
+      ],
+      "prompt": "The authorizer's returned policy is ___ by API Gateway for a configurable TTL, keyed on the caller's identity source (the token or header value used). This matters because a Lambda authorizer function is itself just another Lambda invocation, subject to the same cold-start and execution-latency realities as any other function (see `../lambda/execution-model-and-lifecycle.md`); caching the resulting policy means most requests from the same caller within the TTL skip invoking the authorizer function at all, rather than paying that latency and cost on every single request.",
+      "source": {
+        "path": "vault/aws/api-gateway/authorizers-and-access-control.md",
+        "block": "card-e5tm"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Control access to a REST API using Amazon Cognito user pools', 'Use API Gateway Lambda authorizers', 'Control access to an API with API Gateway resource policies'"
+      ],
+      "answer": "cacheable"
+    },
+    {
+      "id": "card-h3ov",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "authorizers",
+        "iam",
+        "cognito",
+        "lambda-authorizer",
+        "resource-policy"
+      ],
+      "prompt": "Why is a Lambda authorizer's output specifically cacheable, in a way that would make no sense for, say, a mapping template's output?",
+      "source": {
+        "path": "vault/aws/api-gateway/authorizers-and-access-control.md",
+        "block": "card-h3ov"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Control access to a REST API using Amazon Cognito user pools', 'Use API Gateway Lambda authorizers', 'Control access to an API with API Gateway resource policies'"
+      ],
+      "answer": "Because the authorizer's decision (allow/deny plus context) depends only on the caller's identity source, which is stable for a given caller across many requests within a short window — caching it by that identity source correctly reuses the same decision for the same caller, whereas a mapping template's output depends on the full, generally-unique contents of each individual request and has no comparable stable cache key."
+    },
+    {
+      "id": "card-j8bz",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "authorizers",
+        "iam",
+        "cognito",
+        "lambda-authorizer",
+        "resource-policy"
+      ],
+      "prompt": "Why can a resource policy deny a request even when the caller passes a Cognito authorizer's token check cleanly?",
+      "source": {
+        "path": "vault/aws/api-gateway/authorizers-and-access-control.md",
+        "block": "card-j8bz"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Control access to a REST API using Amazon Cognito user pools', 'Use API Gateway Lambda authorizers', 'Control access to an API with API Gateway resource policies'"
+      ],
+      "answer": "A resource policy is a separate, resource-side gate evaluated on top of whatever the method's own authorizer decides — analogous to an S3 bucket policy sitting alongside IAM identity policies (see `../s3/access-control-and-presigned-urls.md`) — so a caller can satisfy the authorizer entirely and still be denied by the resource policy if it excludes their source VPC, IP range, or principal."
+    },
+    {
+      "id": "card-a4wm",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "authorizers",
+        "iam",
+        "cognito",
+        "lambda-authorizer",
+        "resource-policy"
+      ],
+      "prompt": "A caller successfully obtains a valid Cognito token and the user pool authorizer accepts it, but the request is still denied. List the other access-control layer that could be responsible, and explain why passing the authorizer doesn't guarantee passing it.",
+      "source": {
+        "path": "vault/aws/api-gateway/authorizers-and-access-control.md",
+        "block": "card-a4wm"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Control access to a REST API using Amazon Cognito user pools', 'Use API Gateway Lambda authorizers', 'Control access to an API with API Gateway resource policies'"
+      ]
+    },
+    {
+      "id": "card-9dpl",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "caching",
+        "invalidation",
+        "logging",
+        "metrics",
+        "x-ray"
+      ],
+      "prompt": "**Response caching** (REST APIs only) stores a method's response for a configurable TTL, keyed by the request parameters that make up the cache key, so identical subsequent requests are served straight from the cache without invoking the integration at all. This reduces backend load and latency for repeated reads, at the cost of a problem caching always creates: ___.",
+      "source": {
+        "path": "vault/aws/api-gateway/caching-and-observability.md",
+        "block": "card-9dpl"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Enable API caching to enhance responsiveness', 'Setting up CloudWatch API logging and metrics', 'Trace requests with X-Ray'"
+      ],
+      "answer": "staleness"
+    },
+    {
+      "id": "card-2wnu",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "caching",
+        "invalidation",
+        "logging",
+        "metrics",
+        "x-ray"
+      ],
+      "prompt": "The backend data behind a cached API Gateway response changes. What happens to the cached response?",
+      "source": {
+        "path": "vault/aws/api-gateway/caching-and-observability.md",
+        "block": "card-2wnu"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Enable API caching to enhance responsiveness', 'Setting up CloudWatch API logging and metrics', 'Trace requests with X-Ray'"
+      ],
+      "choices": [
+        {
+          "text": "Nothing automatically — it remains cached until its TTL expires or a caller explicitly bypasses/invalidates it",
+          "correct": true
+        },
+        {
+          "text": "API Gateway detects the backend change and invalidates the entry immediately",
+          "correct": false
+        },
+        {
+          "text": "The next request always gets fresh data regardless of TTL, since caching only applies to identical repeated requests within one second",
+          "correct": false
+        },
+        {
+          "text": "The cache is cleared automatically on the next deployment",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-3nkq",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "caching",
+        "invalidation",
+        "logging",
+        "metrics",
+        "x-ray"
+      ],
+      "prompt": "Why can't a Lambda function \"tell\" API Gateway to invalidate a cache entry it knows is now stale?",
+      "source": {
+        "path": "vault/aws/api-gateway/caching-and-observability.md",
+        "block": "card-3nkq"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Enable API caching to enhance responsiveness', 'Setting up CloudWatch API logging and metrics', 'Trace requests with X-Ray'"
+      ],
+      "answer": "There is no API for the backend side of an integration to push an invalidation signal into API Gateway's cache; invalidation is only reachable from the caller side, via an explicit header on a request with the right permission, so a backend that knows its own data changed has no direct way to act on the cache holding a now-stale response for it."
+    },
+    {
+      "id": "card-l6xr",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "caching",
+        "invalidation",
+        "logging",
+        "metrics",
+        "x-ray"
+      ],
+      "prompt": "Observability is where you find out what caching (or anything else) is actually doing. **Access logs** record who called what — caller identity, method, path, response status, and whatever fields you configure — at the edge of the gateway, independent of what happened inside the integration. **Execution logs** go further: a full trace of the request's path through API Gateway itself, including ___, which is what you'd actually read to debug a mapping-template failure or an authorizer returning an unexpected result (see `request-validation-and-mapping-templates.md` and `authorizers-and-access-control.md`).",
+      "source": {
+        "path": "vault/aws/api-gateway/caching-and-observability.md",
+        "block": "card-l6xr"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Enable API caching to enhance responsiveness', 'Setting up CloudWatch API logging and metrics', 'Trace requests with X-Ray'"
+      ],
+      "answer": "authorizer invocation, mapping template evaluation, and the integration request/response"
+    },
+    {
+      "id": "card-p3yv",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "caching",
+        "invalidation",
+        "logging",
+        "metrics",
+        "x-ray"
+      ],
+      "prompt": "A request is slow. Metrics show elevated latency at the API Gateway stage level, but the Lambda function's own duration metric looks normal. Explain which observability tool actually answers where the extra time went, and why metrics alone — from either service — can't answer it.",
+      "source": {
+        "path": "vault/aws/api-gateway/caching-and-observability.md",
+        "block": "card-p3yv"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Enable API caching to enhance responsiveness', 'Setting up CloudWatch API logging and metrics', 'Trace requests with X-Ray'"
+      ]
+    },
+    {
+      "id": "card-g8vn",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "caching",
+        "invalidation",
+        "logging",
+        "metrics",
+        "x-ray"
+      ],
+      "prompt": "Why would you reach for execution logs rather than access logs to debug a request that returns the wrong data because a mapping template applied the wrong transformation?",
+      "source": {
+        "path": "vault/aws/api-gateway/caching-and-observability.md",
+        "block": "card-g8vn"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Enable API caching to enhance responsiveness', 'Setting up CloudWatch API logging and metrics', 'Trace requests with X-Ray'"
+      ],
+      "answer": "Access logs only record request/response metadata at the edge — caller, path, status — with no visibility into what happened during template evaluation; execution logs specifically trace the internal pipeline stages, including the mapping template's input and output, which is the only place that failure would actually be visible."
+    },
+    {
+      "id": "card-vh2r",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "lambda",
+        "proxy-integration",
+        "event-shape"
+      ],
+      "prompt": "On the way in, the event object contains the HTTP method, resource path, path parameters, query string parameters, headers, the request body (as a string, base64-encoded if binary), and a request context (identity, authorizer output if one ran, stage variables). The function receives ___ about the request — there is no separate mapping step deciding what parts of the request the function is allowed to see, unlike a non-proxy integration.",
+      "source": {
+        "path": "vault/aws/api-gateway/lambda-proxy-integration.md",
+        "block": "card-vh2r"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Set up Lambda proxy integrations', 'Working with AWS Lambda proxy integrations'"
+      ],
+      "answer": "everything"
+    },
+    {
+      "id": "card-t406",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "lambda",
+        "proxy-integration",
+        "event-shape"
+      ],
+      "prompt": "A Lambda function behind a proxy integration returns `{\"message\": \"success\"}` — a plain object with no `statusCode` or `body` field. What does the client receive?",
+      "source": {
+        "path": "vault/aws/api-gateway/lambda-proxy-integration.md",
+        "block": "card-t406"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Set up Lambda proxy integrations', 'Working with AWS Lambda proxy integrations'"
+      ],
+      "choices": [
+        {
+          "text": "A 502 Bad Gateway — API Gateway cannot map a response missing the required proxy-integration fields",
+          "correct": true
+        },
+        {
+          "text": "A 200 with the object serialized directly as the response body",
+          "correct": false
+        },
+        {
+          "text": "A 500 Internal Server Error, since the function itself technically ran without throwing",
+          "correct": false
+        },
+        {
+          "text": "API Gateway infers `statusCode: 200` and uses the whole object as `body`",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-y7cn",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "lambda",
+        "proxy-integration",
+        "event-shape"
+      ],
+      "prompt": "Why can a Lambda function \"succeed\" (run to completion, throw nothing) and still produce a 502 for the caller?",
+      "source": {
+        "path": "vault/aws/api-gateway/lambda-proxy-integration.md",
+        "block": "card-y7cn"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Set up Lambda proxy integrations', 'Working with AWS Lambda proxy integrations'"
+      ],
+      "answer": "Because success at the function-execution level and validity at the proxy-integration-contract level are separate questions; if the returned object doesn't match the required shape (string body, present statusCode), API Gateway can't construct an HTTP response from it and reports a 502, regardless of whether the function's own logic completed without error."
+    },
+    {
+      "id": "card-b3ku",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "lambda",
+        "proxy-integration",
+        "event-shape"
+      ],
+      "prompt": "This is what distinguishes proxy from **non-proxy (custom) integration**: with proxy integration, there is no mapping template on the way in or the way out — the ___ becomes the event, and the function's literal return value becomes the response (per the contract above). A non-proxy integration instead runs the request through a mapping template before it reaches the function, and runs the function's raw output through a separate mapping template before it reaches the client — see `request-validation-and-mapping-templates.md` for what that buys you and what it costs.",
+      "source": {
+        "path": "vault/aws/api-gateway/lambda-proxy-integration.md",
+        "block": "card-b3ku"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Set up Lambda proxy integrations', 'Working with AWS Lambda proxy integrations'"
+      ],
+      "answer": "raw request"
+    },
+    {
+      "id": "card-8mtd",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "lambda",
+        "proxy-integration",
+        "event-shape"
+      ],
+      "prompt": "A function currently used behind a proxy integration is returning a raw data object instead of the `{statusCode, headers, body}` shape, and requests are failing with 502s. Explain what specifically needs to change, and why simply \"fixing the data being returned\" without also fixing the shape won't resolve it.",
+      "source": {
+        "path": "vault/aws/api-gateway/lambda-proxy-integration.md",
+        "block": "card-8mtd"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Set up Lambda proxy integrations', 'Working with AWS Lambda proxy integrations'"
+      ]
+    },
+    {
+      "id": "card-r4wp",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "lambda",
+        "proxy-integration",
+        "event-shape"
+      ],
+      "prompt": "What single body-type requirement, if violated, causes a proxy-integration Lambda response to fail even though every other field is present and correct?",
+      "source": {
+        "path": "vault/aws/api-gateway/lambda-proxy-integration.md",
+        "block": "card-r4wp"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Set up Lambda proxy integrations', 'Working with AWS Lambda proxy integrations'"
+      ],
+      "answer": "The `body` field must be a string; returning a JSON object or array directly (unserialized) as `body` breaks the contract even with a valid `statusCode` and headers present, because API Gateway expects a literal string it can pass straight through as the HTTP response body, not a structure it needs to serialize on the function's behalf."
+    },
+    {
+      "id": "card-n2xj",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "request-validation",
+        "mapping-templates",
+        "vtl",
+        "non-proxy"
+      ],
+      "prompt": "**Request validation** checks an incoming request against a JSON Schema model (or a simpler required-parameters check) at the gateway itself, ___ the request is passed to any integration. A request that fails validation never reaches the backend at all — API Gateway returns a 400 directly. This works the same whether the integration behind it is proxy or non-proxy, because it happens earlier, at the method level.",
+      "source": {
+        "path": "vault/aws/api-gateway/request-validation-and-mapping-templates.md",
+        "block": "card-n2xj"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Set up basic request validation', 'Set up data transformations for a REST API'"
+      ],
+      "answer": "before"
+    },
+    {
+      "id": "card-o061",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "request-validation",
+        "mapping-templates",
+        "vtl",
+        "non-proxy"
+      ],
+      "prompt": "A method has request validation configured to require a `body` field matching a schema, and a request arrives missing that field entirely. What happens?",
+      "source": {
+        "path": "vault/aws/api-gateway/request-validation-and-mapping-templates.md",
+        "block": "card-o061"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Set up basic request validation', 'Set up data transformations for a REST API'"
+      ],
+      "choices": [
+        {
+          "text": "API Gateway returns a 400 without ever invoking the integration or backend",
+          "correct": true
+        },
+        {
+          "text": "The request reaches the Lambda function, which is expected to check for the missing field itself",
+          "correct": false
+        },
+        {
+          "text": "The request is queued until a valid retry arrives",
+          "correct": false
+        },
+        {
+          "text": "Request validation only warns in logs; the request proceeds regardless",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-x8pv",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "request-validation",
+        "mapping-templates",
+        "vtl",
+        "non-proxy"
+      ],
+      "prompt": "Why does it make no sense to configure a request mapping template on a Lambda proxy integration?",
+      "source": {
+        "path": "vault/aws/api-gateway/request-validation-and-mapping-templates.md",
+        "block": "card-x8pv"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Set up basic request validation', 'Set up data transformations for a REST API'"
+      ],
+      "answer": "Proxy integration's whole contract is that the raw request becomes the event untouched, so there is no transformation stage in that path for a template to run in; mapping templates only exist as a step in the non-proxy request/response pipeline, which proxy integration bypasses entirely."
+    },
+    {
+      "id": "card-m1qf",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "request-validation",
+        "mapping-templates",
+        "vtl",
+        "non-proxy"
+      ],
+      "prompt": "The tradeoff of doing transformation in the gateway rather than the backend is real in both directions. Putting reshaping logic in a ___ keeps the backend decoupled from the exact shape of the HTTP request — the same Lambda function or service call can serve multiple differently-shaped frontends without knowing about any of them — and it can reject or reshape malformed input before backend code ever runs. The cost is that VTL is a separate, gateway-specific templating language: it's harder to unit test, harder to version alongside application code, and debugging a transformation failure often means reading API Gateway execution logs (see `caching-and-observability.md`) rather than stepping through code in an IDE.",
+      "source": {
+        "path": "vault/aws/api-gateway/request-validation-and-mapping-templates.md",
+        "block": "card-m1qf"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Set up basic request validation', 'Set up data transformations for a REST API'"
+      ],
+      "answer": "mapping template"
+    },
+    {
+      "id": "card-p6ln",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "request-validation",
+        "mapping-templates",
+        "vtl",
+        "non-proxy"
+      ],
+      "prompt": "A team is deciding whether to reshape an inconsistent legacy backend response into a clean client-facing shape using a mapping template, or to fix the reshaping in the Lambda function itself. Explain the actual tradeoff — what does each option buy, and what does each cost in maintainability?",
+      "source": {
+        "path": "vault/aws/api-gateway/request-validation-and-mapping-templates.md",
+        "block": "card-p6ln"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Set up basic request validation', 'Set up data transformations for a REST API'"
+      ]
+    },
+    {
+      "id": "card-c9zt",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "request-validation",
+        "mapping-templates",
+        "vtl",
+        "non-proxy"
+      ],
+      "prompt": "Why can request validation reject a malformed request even for an integration type that has no mapping template step of its own?",
+      "source": {
+        "path": "vault/aws/api-gateway/request-validation-and-mapping-templates.md",
+        "block": "card-c9zt"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Set up basic request validation', 'Set up data transformations for a REST API'"
+      ],
+      "answer": "Request validation happens at the method level, before any integration is invoked at all — proxy or non-proxy — so it isn't part of the integration's transformation pipeline; it's a gate in front of every integration type, which is exactly why it applies uniformly regardless of which integration sits behind the method."
+    },
+    {
+      "id": "card-8c1p",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "resources",
+        "methods",
+        "integrations",
+        "routing"
+      ],
+      "prompt": "What is the difference between a resource that exists in an API's tree and one that is actually callable?",
+      "source": {
+        "path": "vault/aws/api-gateway/resources-methods-and-integrations.md",
+        "block": "card-8c1p"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Set up API integrations for REST API', 'Set up a REST API method'"
+      ],
+      "answer": "A resource is only a path segment. It becomes callable when an HTTP verb is attached to it as a method, and a resource carrying no method is not an endpoint at all — a request to that path fails at routing, before any integration is consulted."
+    },
+    {
+      "id": "card-rp5x",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "resources",
+        "methods",
+        "integrations",
+        "routing"
+      ],
+      "prompt": "A `PUT /items/{id}` method is configured with an AWS service integration targeting DynamoDB's `PutItem` action. What role does Lambda play in serving this request?",
+      "source": {
+        "path": "vault/aws/api-gateway/resources-methods-and-integrations.md",
+        "block": "card-rp5x"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Set up API integrations for REST API', 'Set up a REST API method'"
+      ],
+      "choices": [
+        {
+          "text": "None — the AWS service integration calls DynamoDB's API directly, with no compute layer involved",
+          "correct": true
+        },
+        {
+          "text": "Lambda still runs, but only to format the DynamoDB request",
+          "correct": false
+        },
+        {
+          "text": "API Gateway always invokes a Lambda function internally regardless of integration type",
+          "correct": false
+        },
+        {
+          "text": "This configuration is invalid; AWS service integrations require a Lambda integration in front of them",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-t8yn",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "resources",
+        "methods",
+        "integrations",
+        "routing"
+      ],
+      "prompt": "Because API Gateway is ___ from the caller's perspective for a REST/HTTP API request — the client is blocked waiting on a response either way — a Lambda integration behind it is always invoked synchronously (see `../lambda/event-sources-and-invocation-modes.md`); there is no async or poll-based mode available to an API Gateway-fronted function, regardless of integration type.",
+      "source": {
+        "path": "vault/aws/api-gateway/resources-methods-and-integrations.md",
+        "block": "card-t8yn"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Set up API integrations for REST API', 'Set up a REST API method'"
+      ],
+      "answer": "synchronous"
+    },
+    {
+      "id": "card-w5rq",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "resources",
+        "methods",
+        "integrations",
+        "routing"
+      ],
+      "prompt": "Why can't you infer whether a given API Gateway method's backend is Lambda, an HTTP service, or another AWS service just by looking at the resource path?",
+      "source": {
+        "path": "vault/aws/api-gateway/resources-methods-and-integrations.md",
+        "block": "card-w5rq"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Set up API integrations for REST API', 'Set up a REST API method'"
+      ],
+      "answer": "The resource/method pair only defines the route; the integration attached to that method is a separate, independently configured layer that determines the actual backend behavior, so identical-looking paths (`/orders/{id}` in two different APIs) could be backed by a Lambda function, a raw HTTP proxy, or a direct DynamoDB call with nothing about the path itself indicating which."
+    },
+    {
+      "id": "card-l91d",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "resources",
+        "methods",
+        "integrations",
+        "routing"
+      ],
+      "prompt": "A **mock integration** returns a response with no backend at all — which real use does this serve, beyond testing?",
+      "source": {
+        "path": "vault/aws/api-gateway/resources-methods-and-integrations.md",
+        "block": "card-l91d"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Set up API integrations for REST API', 'Set up a REST API method'"
+      ],
+      "answer": "Serving CORS preflight (`OPTIONS`) requests, which need only a fixed set of response headers and no actual resource lookup; a mock integration lets API Gateway answer these directly without invoking any backend, which would otherwise have to implement OPTIONS handling itself for no functional reason."
+    },
+    {
+      "id": "card-fz6a",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "resources",
+        "methods",
+        "integrations",
+        "routing"
+      ],
+      "prompt": "Explain why \"what integration type is this method using\" is the first question to ask when debugging unexpected behavior on a route, before looking at the resource path, the method's request settings, or the backend service's own logs.",
+      "source": {
+        "path": "vault/aws/api-gateway/resources-methods-and-integrations.md",
+        "block": "card-fz6a"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Set up API integrations for REST API', 'Set up a REST API method'"
+      ]
+    },
+    {
+      "id": "card-s6qp",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "stages",
+        "deployments",
+        "stage-variables",
+        "canary"
+      ],
+      "prompt": "A **stage** is a named reference (`prod`, `dev`, `v1`) that points at exactly one deployment at a time, and it's the stage — not the deployment — that has an invokable URL. ___ a change to production means pointing the `prod` stage at a new deployment snapshot; rolling back means pointing it back at the previous one. Both are metadata operations, not re-deploys of the underlying configuration.",
+      "source": {
+        "path": "vault/aws/api-gateway/stages-deployments-and-canary.md",
+        "block": "card-s6qp"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Deploy a REST API in Amazon API Gateway', 'Canary release deployments for REST APIs'"
+      ],
+      "answer": "Promoting"
+    },
+    {
+      "id": "card-xjf5",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "stages",
+        "deployments",
+        "stage-variables",
+        "canary"
+      ],
+      "prompt": "A team edits a method's integration in the console, tests it, and is satisfied. Their production stage's URL still returns the old behavior. What's missing?",
+      "source": {
+        "path": "vault/aws/api-gateway/stages-deployments-and-canary.md",
+        "block": "card-xjf5"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Deploy a REST API in Amazon API Gateway', 'Canary release deployments for REST APIs'"
+      ],
+      "choices": [
+        {
+          "text": "The edit exists only in the draft configuration; it hasn't been captured as a deployment or pointed to by the production stage",
+          "correct": true
+        },
+        {
+          "text": "The edit needs to propagate through DNS, which can take time",
+          "correct": false
+        },
+        {
+          "text": "Console edits require a redeploy of the underlying Lambda function, not the API",
+          "correct": false
+        },
+        {
+          "text": "The production stage has caching enabled, which is masking the change",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-n5pt",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "stages",
+        "deployments",
+        "stage-variables",
+        "canary"
+      ],
+      "prompt": "Why is deployment kept as a separate act from editing the API, instead of every save going live immediately?",
+      "source": {
+        "path": "vault/aws/api-gateway/stages-deployments-and-canary.md",
+        "block": "card-n5pt"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Deploy a REST API in Amazon API Gateway', 'Canary release deployments for REST APIs'"
+      ],
+      "answer": "Separating them lets a change be tested against a non-production stage (or a canary slice of production traffic) using the exact deployment snapshot that would go live, and lets a bad change be rolled back instantly by re-pointing the stage at the prior deployment — neither would be possible if editing and going live were the same action, since there would be no earlier, known-good snapshot left to roll back to."
+    },
+    {
+      "id": "card-r8mf",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "stages",
+        "deployments",
+        "stage-variables",
+        "canary"
+      ],
+      "prompt": "**Stage variables** are key-value pairs scoped to one stage, referenceable inside integration URIs, Lambda function ARNs, and mapping templates. They let the ___ point at different backend resources per stage — a `dev` stage's Lambda alias versus a `prod` stage's — without maintaining separate API configurations for each environment.",
+      "source": {
+        "path": "vault/aws/api-gateway/stages-deployments-and-canary.md",
+        "block": "card-r8mf"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Deploy a REST API in Amazon API Gateway', 'Canary release deployments for REST APIs'"
+      ],
+      "answer": "same API definition"
+    },
+    {
+      "id": "card-c1wy",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "stages",
+        "deployments",
+        "stage-variables",
+        "canary"
+      ],
+      "prompt": "Explain how stage variables let one deployment snapshot serve as the basis for both a `dev` and a `prod` stage that invoke entirely different backend Lambda aliases, without the underlying API configuration itself differing between the two stages.",
+      "source": {
+        "path": "vault/aws/api-gateway/stages-deployments-and-canary.md",
+        "block": "card-c1wy"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Deploy a REST API in Amazon API Gateway', 'Canary release deployments for REST APIs'"
+      ]
+    },
+    {
+      "id": "card-v4xj",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "stages",
+        "deployments",
+        "stage-variables",
+        "canary"
+      ],
+      "prompt": "What would be lost if a canary release forced 100% of a stage's traffic onto the canary deployment the moment it's created, instead of a configurable percentage?",
+      "source": {
+        "path": "vault/aws/api-gateway/stages-deployments-and-canary.md",
+        "block": "card-v4xj"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Deploy a REST API in Amazon API Gateway', 'Canary release deployments for REST APIs'"
+      ],
+      "answer": "The entire point of a controlled blast radius — a bad canary deployment would immediately affect all traffic rather than a limited, bounded slice, eliminating the safety margin that lets a team catch a problem on live traffic before it's fully promoted; canary release without a percentage split is just an ordinary full deployment with an extra naming step."
+    },
+    {
+      "id": "card-roea",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "throttling",
+        "token-bucket",
+        "api-keys",
+        "usage-plans"
+      ],
+      "prompt": "A client sends a short spike of requests well above the steady-state rate limit, and none of them are throttled. What does this tell you about the token bucket at that moment?",
+      "source": {
+        "path": "vault/aws/api-gateway/throttling-and-usage-plans.md",
+        "block": "card-roea"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Throttle API requests for better throughput', 'Create and use usage plans with API keys'"
+      ],
+      "choices": [
+        {
+          "text": "The bucket had enough saved-up tokens (unused burst capacity) to absorb the spike",
+          "correct": true
+        },
+        {
+          "text": "The rate limit was temporarily disabled during the spike",
+          "correct": false
+        },
+        {
+          "text": "Throttling only applies to sustained traffic, never to short spikes",
+          "correct": false
+        },
+        {
+          "text": "The client's requests were exempted because they arrived faster than the bucket could measure",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-t4gv",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "throttling",
+        "token-bucket",
+        "api-keys",
+        "usage-plans"
+      ],
+      "prompt": "Rate and burst are ___, not one setting: a low rate with a large burst tolerates occasional spikes but not sustained high throughput, while a high rate with a small burst handles sustained load but has little slack for sudden bursts — tuning one without the other addresses a different failure mode entirely.",
+      "source": {
+        "path": "vault/aws/api-gateway/throttling-and-usage-plans.md",
+        "block": "card-t4gv"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Throttle API requests for better throughput', 'Create and use usage plans with API keys'"
+      ],
+      "answer": "two independent numbers"
+    },
+    {
+      "id": "card-b9zh",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "throttling",
+        "token-bucket",
+        "api-keys",
+        "usage-plans"
+      ],
+      "prompt": "Token-bucket throttling exists at more than one scope simultaneously. Account-level and API/stage-level throttling settings exist to ___ from being overwhelmed by aggregate traffic, regardless of who's sending it — this is the same protective purpose throttling serves in DynamoDB (see `../dynamodb/capacity-and-throttling.md`), even though the mechanism there is per-partition capacity rather than a token bucket.",
+      "source": {
+        "path": "vault/aws/api-gateway/throttling-and-usage-plans.md",
+        "block": "card-b9zh"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Throttle API requests for better throughput', 'Create and use usage plans with API keys'"
+      ],
+      "answer": "protect the backend itself"
+    },
+    {
+      "id": "card-w2ln",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "throttling",
+        "token-bucket",
+        "api-keys",
+        "usage-plans"
+      ],
+      "prompt": "A **usage plan** associates one or more API keys with their own rate, burst, and **quota** (a request-count ceiling over a longer window, like a day or month) — layered on top of, not instead of, the account/API-level throttling. This is the second scope: ___ usage against a commercial tier, as distinct from protecting the backend from aggregate load.",
+      "source": {
+        "path": "vault/aws/api-gateway/throttling-and-usage-plans.md",
+        "block": "card-w2ln"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Throttle API requests for better throughput', 'Create and use usage plans with API keys'"
+      ],
+      "answer": "metering a specific customer's"
+    },
+    {
+      "id": "card-f7qk",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "throttling",
+        "token-bucket",
+        "api-keys",
+        "usage-plans"
+      ],
+      "prompt": "Why does an API need both account/stage-level throttling and per-key usage-plan throttling, rather than just one or the other?",
+      "source": {
+        "path": "vault/aws/api-gateway/throttling-and-usage-plans.md",
+        "block": "card-f7qk"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Throttle API requests for better throughput', 'Create and use usage plans with API keys'"
+      ],
+      "answer": "They answer different questions — account/stage throttling protects the backend from total traffic regardless of source, while a usage plan's per-key limits meter and cap one specific customer's consumption independent of how much headroom the backend has overall; a customer could be well within the backend's total capacity and still need throttling to enforce their commercial tier, and the backend could need protecting from aggregate load even if every individual customer is within their own quota."
+    },
+    {
+      "id": "card-k3dz",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "throttling",
+        "token-bucket",
+        "api-keys",
+        "usage-plans"
+      ],
+      "prompt": "Explain why an API key by itself provides no security guarantee, and what would actually happen if a caller sent requests with no API key at all on an API where usage plans are configured.",
+      "source": {
+        "path": "vault/aws/api-gateway/throttling-and-usage-plans.md",
+        "block": "card-k3dz"
+      },
+      "citations": [
+        "AWS Developer Guide — Amazon API Gateway, 'Throttle API requests for better throughput', 'Create and use usage plans with API keys'"
+      ]
+    },
+    {
       "id": "card-b1l3",
       "format": "mcq",
       "topic": "aws",
@@ -3352,6 +4565,1461 @@
       "citations": [
         "AWS Developer Guide — Amazon DynamoDB, 'Managing complex workflows with transactions'"
       ]
+    },
+    {
+      "id": "card-chq8",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "conditions",
+        "context-keys",
+        "least-privilege"
+      ],
+      "prompt": "A statement's condition uses `IpAddress` to compare `aws:SourceIp` against an allowed CIDR range. The request in question comes from a source IP not in that range. What happens to the statement?",
+      "source": {
+        "path": "vault/aws/iam/conditions-and-context-keys.md",
+        "block": "card-chq8"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM JSON policy elements: Condition'"
+      ],
+      "choices": [
+        {
+          "text": "The condition doesn't match, so the statement's Effect (Allow or Deny) doesn't apply to this request at all — as though the statement weren't there",
+          "correct": true
+        },
+        {
+          "text": "The statement is treated as a Deny automatically, regardless of what its Effect actually says",
+          "correct": false
+        },
+        {
+          "text": "The request is rejected before IAM evaluation even begins",
+          "correct": false
+        },
+        {
+          "text": "The condition is ignored and the Effect applies anyway",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-ngjc",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "conditions",
+        "context-keys",
+        "least-privilege"
+      ],
+      "prompt": "Why can't a policy author add an arbitrary new condition key of their own choosing?",
+      "source": {
+        "path": "vault/aws/iam/conditions-and-context-keys.md",
+        "block": "card-ngjc"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM JSON policy elements: Condition'"
+      ],
+      "answer": "Context keys are populated by AWS itself from the details of the actual request — a condition can only compare against information the platform already knows and exposes, not information a policy author wishes were available; inventing a key that AWS doesn't populate simply never matches anything."
+    },
+    {
+      "id": "card-rmpn",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "conditions",
+        "context-keys",
+        "least-privilege"
+      ],
+      "prompt": "What does the `IfExists` suffix on a condition operator (as in `StringEqualsIfExists`) change about how it evaluates a request where the named context key is missing?",
+      "source": {
+        "path": "vault/aws/iam/conditions-and-context-keys.md",
+        "block": "card-rmpn"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM JSON policy elements: Condition'"
+      ],
+      "answer": "Without the suffix, a missing key causes the comparison to fail as a mismatch; with the suffix, the operator simply skips evaluating that key instead of treating its absence as a mismatch, so the rest of the statement isn't blocked purely because that particular request never populated the key."
+    },
+    {
+      "id": "card-byd9",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "conditions",
+        "context-keys",
+        "least-privilege"
+      ],
+      "prompt": "Conditions are where **least privilege actually gets expressed**, in a way Action and Resource alone can't reach. An Action/Resource pair says \"this identity can call `s3:PutObject` on this bucket\" — full stop. A condition can narrow that same grant to \"only from our corporate VPN's IP range,\" \"only if the object is being uploaded with server-side encryption,\" \"only if MFA was present on this session,\" or \"only before this policy's planned expiration date\" — constraints that have nothing to do with which action or resource is named, and ___ to do with the circumstances under which it's acceptable.",
+      "source": {
+        "path": "vault/aws/iam/conditions-and-context-keys.md",
+        "block": "card-byd9"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM JSON policy elements: Condition'"
+      ],
+      "answer": "everything"
+    },
+    {
+      "id": "card-ex7m",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "conditions",
+        "context-keys",
+        "least-privilege"
+      ],
+      "prompt": "A policy grants `s3:DeleteObject` with no condition at all, versus a second version of the same policy that adds a condition requiring `aws:MultiFactorAuthPresent` to equal `true`. Explain concretely what capability the second version removes that the first version had, and why that removal is a meaningful move toward least privilege even though the Action and Resource elements are identical in both.",
+      "source": {
+        "path": "vault/aws/iam/conditions-and-context-keys.md",
+        "block": "card-ex7m"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM JSON policy elements: Condition'"
+      ]
+    },
+    {
+      "id": "card-30ax",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "conditions",
+        "context-keys",
+        "least-privilege"
+      ],
+      "prompt": "Why does a Deny statement with a condition of `\"aws:MultiFactorAuthPresent\": \"false\"` behave very differently from an Allow statement with the same condition written as `\"true\"`, even though they sound like opposites?",
+      "source": {
+        "path": "vault/aws/iam/conditions-and-context-keys.md",
+        "block": "card-30ax"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM JSON policy elements: Condition'"
+      ],
+      "answer": "The Deny version blocks requests specifically when MFA was absent, leaving every MFA-authenticated request to be decided by whatever else applies; the Allow version only grants access when MFA was present and contributes nothing when it wasn't, meaning by itself it grants nothing to a non-MFA session rather than actively blocking it — the two are not mirror images once other policies are in the picture, because one actively denies and the other simply doesn't allow."
+    },
+    {
+      "id": "card-pc7e",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "cross-account",
+        "resource-policy",
+        "assume-role"
+      ],
+      "prompt": "**Mechanism one: role assumption.** The resource account creates a role whose trust policy names the other account (or a specific principal in it) as allowed to call `sts:AssumeRole`. Once assumed, the caller is acting entirely inside the resource account, as a session of that role — there's no \"their identity policy\" to separately satisfy anymore, because for the duration of the session, the ___ is the only identity policy in play. `roles-and-assume-role.md` covers the trust-policy/permissions-policy split this mechanism relies on.",
+      "source": {
+        "path": "vault/aws/iam/cross-account-access.md",
+        "block": "card-pc7e"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Providing access to AWS accounts owned by third parties'"
+      ],
+      "answer": "role's own permissions policy"
+    },
+    {
+      "id": "card-9uqr",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "cross-account",
+        "resource-policy",
+        "assume-role"
+      ],
+      "prompt": "Which of these best distinguishes the two cross-account mechanisms?",
+      "source": {
+        "path": "vault/aws/iam/cross-account-access.md",
+        "block": "card-9uqr"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Providing access to AWS accounts owned by third parties'"
+      ],
+      "choices": [
+        {
+          "text": "Role assumption changes who the caller is acting as (inside the resource account); a resource-based policy lets the caller keep acting as themselves while the resource account grants them access directly",
+          "correct": true
+        },
+        {
+          "text": "Role assumption is for humans, resource-based policies are only for services",
+          "correct": false
+        },
+        {
+          "text": "They differ only in which services support each one, with no structural difference otherwise",
+          "correct": false
+        },
+        {
+          "text": "Resource-based policies always require the caller to also assume a role first",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-0lf9",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "cross-account",
+        "resource-policy",
+        "assume-role"
+      ],
+      "prompt": "Both mechanisms still have to satisfy \"both sides must allow\" — they just satisfy it in different places. With role assumption, the trust policy is the resource-account side's allow (it decides who may even become the role), and the role's own permissions policy stands in for the identity-policy side, since the session has no other identity policy to consult. With a resource-based policy, the resource account's policy is the resource-side allow, and the caller's ___ in their home account must independently allow the action too — exactly the rule that makes naming an external account in a bucket policy necessary but not sufficient.",
+      "source": {
+        "path": "vault/aws/iam/cross-account-access.md",
+        "block": "card-0lf9"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Providing access to AWS accounts owned by third parties'"
+      ],
+      "answer": "own, unchanged identity policy"
+    },
+    {
+      "id": "card-sm4q",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "cross-account",
+        "resource-policy",
+        "assume-role"
+      ],
+      "prompt": "Why does an external account, once its principal is named in a bucket policy, still fail to read the object if that account never granted the action in its own identity policies?",
+      "source": {
+        "path": "vault/aws/iam/cross-account-access.md",
+        "block": "card-sm4q"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Providing access to AWS accounts owned by third parties'"
+      ],
+      "answer": "Naming the account in the bucket policy only satisfies the resource-account side of a cross-account request; the \"both sides must allow\" rule means the calling account's own identity policy still has to grant the action independently, and a bucket policy has no way to reach into another account and supply that."
+    },
+    {
+      "id": "card-xfy0",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "cross-account",
+        "resource-policy",
+        "assume-role"
+      ],
+      "prompt": "A team wants Account B's Lambda function to write to Account A's S3 bucket. Explain the two different ways this could be wired up (role assumption vs. a bucket policy naming Account B), and what has to exist on Account B's side either way — because \"both sides must allow\" applies to both mechanisms, not just one of them.",
+      "source": {
+        "path": "vault/aws/iam/cross-account-access.md",
+        "block": "card-xfy0"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Providing access to AWS accounts owned by third parties'"
+      ]
+    },
+    {
+      "id": "card-ws0z",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "cross-account",
+        "resource-policy",
+        "assume-role"
+      ],
+      "prompt": "What's the practical reason teams tend to prefer role assumption over resource-based policies for cross-account access that involves broad or evolving permissions?",
+      "source": {
+        "path": "vault/aws/iam/cross-account-access.md",
+        "block": "card-ws0z"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Providing access to AWS accounts owned by third parties'"
+      ],
+      "answer": "Role assumption produces an auditable, time-limited session with its own CloudTrail identity and an expiration built in, and the permissions granted live in one place (the role's permissions policy) rather than being split across a resource policy and a separate identity policy in another account that both have to be kept in sync."
+    },
+    {
+      "id": "card-vraf",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "least-privilege",
+        "wildcards",
+        "access-analyzer"
+      ],
+      "prompt": "**Wildcards accumulate.** `s3:*` on `Resource: \"*\"` is the fastest way to unblock a developer who's hit an Access Denied, and it works every time — which is exactly the problem. Each individual wildcard grant is a rational response to an immediate blocker, but nothing about IAM prompts anyone to come back later and narrow it once the blocker is gone; the ___ of a policy under normal development pressure is to only ever get broader, never narrower, unless something deliberately intervenes.",
+      "source": {
+        "path": "vault/aws/iam/least-privilege-in-practice.md",
+        "block": "card-vraf"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Grant least privilege'"
+      ],
+      "answer": "default trajectory"
+    },
+    {
+      "id": "card-jrpv",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "least-privilege",
+        "wildcards",
+        "access-analyzer"
+      ],
+      "prompt": "Why do overly broad IAM policies tend to accumulate over a project's lifetime rather than staying narrow from the start?",
+      "source": {
+        "path": "vault/aws/iam/least-privilege-in-practice.md",
+        "block": "card-jrpv"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Grant least privilege'"
+      ],
+      "choices": [
+        {
+          "text": "Widening a policy immediately unblocks whoever hit the denial, while narrowing one requires someone to notice the excess and deliberately do the (riskier, lower-urgency) work of tightening it",
+          "correct": true
+        },
+        {
+          "text": "IAM policies automatically widen their own scope over time as a platform behavior",
+          "correct": false
+        },
+        {
+          "text": "Least privilege is a theoretical ideal that AWS's own tooling actively discourages",
+          "correct": false
+        },
+        {
+          "text": "Wildcards are required for any policy attached to a role, unlike one attached to a user",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-aciq",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "least-privilege",
+        "wildcards",
+        "access-analyzer"
+      ],
+      "prompt": "Why is \"grant broad access now, narrow it later\" a much easier habit to fall into than to reverse?",
+      "source": {
+        "path": "vault/aws/iam/least-privilege-in-practice.md",
+        "block": "card-aciq"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Grant least privilege'"
+      ],
+      "answer": "Granting broad access resolves an immediate, visible problem (a blocked developer, a failing deploy) with a one-line change; narrowing it later requires someone to first notice the excess exists, then verify narrowing it won't break something that quietly depends on it — work that's invisible until it's skipped, and easy to keep deferring because nothing forces it to happen."
+    },
+    {
+      "id": "card-7tzw",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "least-privilege",
+        "wildcards",
+        "access-analyzer"
+      ],
+      "prompt": "**IAM Access Analyzer** attacks this from the other direction: instead of guessing at the narrowest policy a role could need, it observes the role's actual CloudTrail activity over a chosen window and generates a policy scoped to the ___ — turning \"what does this role need\" from a manual audit of application code into an evidence-based question the platform can answer for you. Access Analyzer's policy generation is a starting point to review, not something to accept unmodified — activity logs only capture what happened to run during the observation window, not every legitimate path through the code.",
+      "source": {
+        "path": "vault/aws/iam/least-privilege-in-practice.md",
+        "block": "card-7tzw"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Grant least privilege'"
+      ],
+      "answer": "actions and resources that were genuinely used"
+    },
+    {
+      "id": "card-qpu8",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "least-privilege",
+        "wildcards",
+        "access-analyzer"
+      ],
+      "prompt": "Explain why a policy generated by Access Analyzer from 30 days of observed activity might be *too* narrow for a role that runs infrequent, but legitimate, code paths — a monthly batch job, an error-handling branch that's never actually been triggered. What risk does blindly adopting the generated policy carry that a more conservative \"review and adjust\" approach avoids?",
+      "source": {
+        "path": "vault/aws/iam/least-privilege-in-practice.md",
+        "block": "card-qpu8"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Grant least privilege'"
+      ]
+    },
+    {
+      "id": "card-qftr",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "least-privilege",
+        "wildcards",
+        "access-analyzer"
+      ],
+      "prompt": "What makes \"just tighten the policy\" a genuinely harder recommendation to follow than it sounds, rather than simple negligence on a team's part?",
+      "source": {
+        "path": "vault/aws/iam/least-privilege-in-practice.md",
+        "block": "card-qftr"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Grant least privilege'"
+      ],
+      "answer": "Tightening requires confidence that nothing still legitimately depends on the permissions being removed, and that confidence is expensive to obtain — it needs either thorough monitoring over enough time to see rare code paths exercise their permissions, or enough test coverage to exercise them deliberately; without that confidence, narrowing a policy is a bet that something currently working keeps working, made under exactly the same time pressure that produced the wildcard in the first place."
+    },
+    {
+      "id": "card-5k0o",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "least-privilege",
+        "wildcards",
+        "access-analyzer"
+      ],
+      "prompt": "Why is \"least privilege\" better understood as a continuous process than a one-time policy-writing exercise?",
+      "source": {
+        "path": "vault/aws/iam/least-privilege-in-practice.md",
+        "block": "card-5k0o"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Grant least privilege'"
+      ],
+      "answer": "Because the forces that widen a policy (an urgent unblock) recur constantly while the forces that narrow one (a deliberate audit) don't happen on their own — treating least privilege as something achieved once at policy-authoring time ignores that the same accumulation pressure keeps acting on the policy for as long as the role exists, so only a recurring review process actually counteracts it."
+    },
+    {
+      "id": "card-cqiq",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "permission-boundaries",
+        "scp",
+        "organizations",
+        "ceilings"
+      ],
+      "prompt": "A **permission boundary** is an IAM policy attached to a specific user or role that sets the maximum permissions that identity's own identity policies are allowed to grant. It is evaluated as a ___, never as a source of Allow: an action is only usable if the identity policy grants it **and** the boundary also allows it. If the boundary is silent on an action (no matching Allow), that action is off-limits no matter how generously the identity policy grants it.",
+      "source": {
+        "path": "vault/aws/iam/permission-boundaries-and-scps.md",
+        "block": "card-cqiq"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Permissions boundaries for IAM identities'",
+        "AWS Organizations User Guide — 'Service control policies (SCPs)'"
+      ],
+      "answer": "ceiling"
+    },
+    {
+      "id": "card-y99l",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "permission-boundaries",
+        "scp",
+        "organizations",
+        "ceilings"
+      ],
+      "prompt": "A role's identity policy grants `s3:*` on all resources. Its permission boundary allows only `s3:GetObject`. What can the role actually do?",
+      "source": {
+        "path": "vault/aws/iam/permission-boundaries-and-scps.md",
+        "block": "card-y99l"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Permissions boundaries for IAM identities'",
+        "AWS Organizations User Guide — 'Service control policies (SCPs)'"
+      ],
+      "choices": [
+        {
+          "text": "Only `s3:GetObject` — the boundary caps the identity policy's grant down to their intersection, and it never adds anything the identity policy didn't already grant",
+          "correct": true
+        },
+        {
+          "text": "Everything the identity policy grants, since the boundary only matters when it's more permissive",
+          "correct": false
+        },
+        {
+          "text": "Nothing, because a boundary and an identity policy can never coexist",
+          "correct": false
+        },
+        {
+          "text": "`s3:*`, because permission boundaries only apply to resource-based policies",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-x6mg",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "permission-boundaries",
+        "scp",
+        "organizations",
+        "ceilings"
+      ],
+      "prompt": "Why is it wrong to describe a permission boundary as \"another policy that grants permissions, evaluated alongside the identity policy\"?",
+      "source": {
+        "path": "vault/aws/iam/permission-boundaries-and-scps.md",
+        "block": "card-x6mg"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Permissions boundaries for IAM identities'",
+        "AWS Organizations User Guide — 'Service control policies (SCPs)'"
+      ],
+      "answer": "Because a boundary never contributes an Allow of its own — the identity's actual permissions are the intersection of what the identity policy grants and what the boundary permits, so a boundary can only remove reachable actions from what the identity policy already grants, never add any."
+    },
+    {
+      "id": "card-cw4u",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "permission-boundaries",
+        "scp",
+        "organizations",
+        "ceilings"
+      ],
+      "prompt": "An SCP attached to an OU denies `iam:CreateAccessKey` for every account in that OU. An account in the OU has an IAM user whose identity policy explicitly allows `iam:CreateAccessKey`. Explain what happens when that user tries to create an access key, and why the identity policy's Allow doesn't matter here at all.",
+      "source": {
+        "path": "vault/aws/iam/permission-boundaries-and-scps.md",
+        "block": "card-cw4u"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Permissions boundaries for IAM identities'",
+        "AWS Organizations User Guide — 'Service control policies (SCPs)'"
+      ]
+    },
+    {
+      "id": "card-mji5",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "permission-boundaries",
+        "scp",
+        "organizations",
+        "ceilings"
+      ],
+      "prompt": "Permission boundaries and SCPs intersect with identity policies the same way, but at different scopes: a boundary caps one identity; an SCP caps every identity in an entire account or OU. Both compose the same way with everything else in evaluation — they never supply the Allow that `policy-evaluation-logic.md` looks for, they only shrink the ___ of actions an identity policy's Allow is even permitted to reach.",
+      "source": {
+        "path": "vault/aws/iam/permission-boundaries-and-scps.md",
+        "block": "card-mji5"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Permissions boundaries for IAM identities'",
+        "AWS Organizations User Guide — 'Service control policies (SCPs)'"
+      ],
+      "answer": "space"
+    },
+    {
+      "id": "card-wr2c",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "permission-boundaries",
+        "scp",
+        "organizations",
+        "ceilings"
+      ],
+      "prompt": "Why would an organization use SCPs to deny `iam:CreateUser` account-wide, rather than trusting every team's individual identity policies to simply never grant it?",
+      "source": {
+        "path": "vault/aws/iam/permission-boundaries-and-scps.md",
+        "block": "card-wr2c"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Permissions boundaries for IAM identities'",
+        "AWS Organizations User Guide — 'Service control policies (SCPs)'"
+      ],
+      "answer": "Because identity policies are written and changed by many different people over time, and any single overly broad grant — even a temporary or accidental one — would create the access; an SCP set at the OU or organization level provides a ceiling that holds even if some individual identity policy is wrong, without requiring every policy author to get it right."
+    },
+    {
+      "id": "card-ulyc",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "permission-boundaries",
+        "scp",
+        "organizations",
+        "ceilings"
+      ],
+      "prompt": "What single sentence captures the relationship between an identity policy's Allow and a permission boundary or SCP that also applies?",
+      "source": {
+        "path": "vault/aws/iam/permission-boundaries-and-scps.md",
+        "block": "card-ulyc"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Permissions boundaries for IAM identities'",
+        "AWS Organizations User Guide — 'Service control policies (SCPs)'"
+      ],
+      "answer": "An identity's effective permissions are the intersection of what its identity policies grant and what every applicable boundary and SCP permits — never the union, and never something the boundary or SCP contributes on its own."
+    },
+    {
+      "id": "card-2jaa",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "policy-documents",
+        "json",
+        "policy-elements"
+      ],
+      "prompt": "The **Version** element identifies the policy language version being used (almost always the literal string `\"2012-10-17\"` today, since it's the version that introduced ___ support) and exists purely for AWS's own backward compatibility — it has nothing to do with your policy's revision history.",
+      "source": {
+        "path": "vault/aws/iam/policy-documents.md",
+        "block": "card-2jaa"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Policies and permissions in IAM'"
+      ],
+      "answer": "Condition"
+    },
+    {
+      "id": "card-9w6i",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "policy-documents",
+        "json",
+        "policy-elements"
+      ],
+      "prompt": "A policy document has two statements: one with `\"Effect\": \"Allow\"` for `s3:GetObject`, and one with `\"Effect\": \"Deny\"` for `s3:DeleteObject`. What determines whether a `s3:PutObject` request is allowed?",
+      "source": {
+        "path": "vault/aws/iam/policy-documents.md",
+        "block": "card-9w6i"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Policies and permissions in IAM'"
+      ],
+      "choices": [
+        {
+          "text": "Neither statement mentions it, so it falls to whatever the rest of policy evaluation decides — by default, implicit deny",
+          "correct": true
+        },
+        {
+          "text": "The Allow statement, because it appears first",
+          "correct": false
+        },
+        {
+          "text": "The Deny statement, because Deny statements take priority regardless of the action named",
+          "correct": false
+        },
+        {
+          "text": "Both statements average out to a deny",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-utk8",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "policy-documents",
+        "json",
+        "policy-elements"
+      ],
+      "prompt": "How many valid values can a statement's `Effect` element take, and what happens if it's left out entirely?",
+      "source": {
+        "path": "vault/aws/iam/policy-documents.md",
+        "block": "card-utk8"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Policies and permissions in IAM'"
+      ],
+      "answer": "Exactly two — `Allow` or `Deny`, with no third option; a statement without an explicit Effect isn't a valid statement, since every grant or restriction in IAM has to trace back to one of those two literal values."
+    },
+    {
+      "id": "card-rxct",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "policy-documents",
+        "json",
+        "policy-elements"
+      ],
+      "prompt": "**Resource** identifies which specific AWS resource(s), by ARN, the statement covers. Some elements are conditionally required: an ___ policy (attached to a user, group, or role) never includes a `Principal` element, because the identity it's attached to already implies who the policy applies to; a resource-based policy (like an S3 bucket policy or an IAM role's trust policy) must include one, because it's attached to a resource rather than an identity and needs to say who it's granting access to.",
+      "source": {
+        "path": "vault/aws/iam/policy-documents.md",
+        "block": "card-rxct"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Policies and permissions in IAM'"
+      ],
+      "answer": "identity-based"
+    },
+    {
+      "id": "card-62mk",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "policy-documents",
+        "json",
+        "policy-elements"
+      ],
+      "prompt": "Why does an identity-based policy never contain a `Principal` element, while a resource-based policy always does?",
+      "source": {
+        "path": "vault/aws/iam/policy-documents.md",
+        "block": "card-62mk"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Policies and permissions in IAM'"
+      ],
+      "answer": "An identity-based policy is attached directly to a user, group, or role, so the \"who\" is already fixed by what the policy is attached to; a resource-based policy is attached to a resource instead, which has no inherent identity of its own, so it must explicitly name the principal(s) it's granting or denying access to."
+    },
+    {
+      "id": "card-b2tm",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "policy-documents",
+        "json",
+        "policy-elements"
+      ],
+      "prompt": "A statement has `\"Effect\": \"Deny\"`, `\"Action\": \"*\"`, `\"Resource\": \"*\"`, and a `Condition` requiring `aws:MultiFactorAuthPresent` to be `false`. Explain in plain language what this statement actually denies, and why writing the condition this way (rather than requiring it to be `true`) is the correct way to express \"block everything unless MFA was used.\"",
+      "source": {
+        "path": "vault/aws/iam/policy-documents.md",
+        "block": "card-b2tm"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Policies and permissions in IAM'"
+      ]
+    },
+    {
+      "id": "card-cp50",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "policy-evaluation",
+        "explicit-deny",
+        "cross-account"
+      ],
+      "prompt": "The order is: an ___ anywhere always wins, full stop. If any applicable policy contains a Deny statement matching the request, the request is denied, regardless of how many other policies grant it. No Allow, from any policy, in any account, can override it.",
+      "source": {
+        "path": "vault/aws/iam/policy-evaluation-logic.md",
+        "block": "card-cp50"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Policy evaluation logic'"
+      ],
+      "answer": "explicit deny"
+    },
+    {
+      "id": "card-s8pj",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "policy-evaluation",
+        "explicit-deny",
+        "cross-account"
+      ],
+      "prompt": "A request matches no Deny statement in any applicable policy, and no Allow statement either. What is the result?",
+      "source": {
+        "path": "vault/aws/iam/policy-evaluation-logic.md",
+        "block": "card-s8pj"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Policy evaluation logic'"
+      ],
+      "choices": [
+        {
+          "text": "Denied, by implicit deny — no policy being silent on the request ever means \"allow\"",
+          "correct": true
+        },
+        {
+          "text": "Allowed, because nothing explicitly denied it",
+          "correct": false
+        },
+        {
+          "text": "The request errors out rather than resolving either way",
+          "correct": false
+        },
+        {
+          "text": "It depends on which account issued the request",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-peha",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "policy-evaluation",
+        "explicit-deny",
+        "cross-account"
+      ],
+      "prompt": "Why does an explicit Deny in a resource-based policy override an Allow that appears in the requester's own identity-based policy, given that both policies are \"applicable\" to the request?",
+      "source": {
+        "path": "vault/aws/iam/policy-evaluation-logic.md",
+        "block": "card-peha"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Policy evaluation logic'"
+      ],
+      "answer": "The evaluation order isn't about which policy is attached to what — it's a fixed sequence checked across every applicable policy at once: any explicit Deny anywhere is checked first and wins outright, before IAM ever looks for an Allow, so it doesn't matter which policy the Deny lives in or how permissive the identity policy is."
+    },
+    {
+      "id": "card-a8r4",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "policy-evaluation",
+        "explicit-deny",
+        "cross-account"
+      ],
+      "prompt": "For a **same-account** request — the caller and the resource belong to the same AWS account — a grant from ___ the identity policy or the resource-based policy is sufficient to allow the request, as long as neither side contains an explicit deny. The two policies are evaluated as alternatives that can each independently satisfy the \"is there an allow\" step; neither one is required to also grant the action on its own.",
+      "source": {
+        "path": "vault/aws/iam/policy-evaluation-logic.md",
+        "block": "card-a8r4"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Policy evaluation logic'"
+      ],
+      "answer": "either"
+    },
+    {
+      "id": "card-89io",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "policy-evaluation",
+        "explicit-deny",
+        "cross-account"
+      ],
+      "prompt": "Within a single account, an S3 bucket policy grants `s3:GetObject` to IAM role `Reader`. That role's own identity policy grants no S3 permissions at all, and neither policy contains a deny. Can `Reader` read the object?",
+      "source": {
+        "path": "vault/aws/iam/policy-evaluation-logic.md",
+        "block": "card-89io"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Policy evaluation logic'"
+      ],
+      "choices": [
+        {
+          "text": "Yes — for a same-account request, a grant from either the identity policy or the resource policy is enough, absent an explicit deny",
+          "correct": true
+        },
+        {
+          "text": "No, because the identity policy must independently grant the action too",
+          "correct": false
+        },
+        {
+          "text": "No, bucket policies can only grant access to principals outside the account",
+          "correct": false
+        },
+        {
+          "text": "Yes, but only because IAM roles are exempt from needing bucket-policy grants",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-huul",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "policy-evaluation",
+        "explicit-deny",
+        "cross-account"
+      ],
+      "prompt": "For a **cross-account** request — the caller's account differs from the account that owns the resource — that \"either side\" shortcut disappears. The resource's account must grant access via its resource-based policy (naming the external account or principal), **and** the caller's own account must independently grant that action via the caller's identity policy. ___ have to allow the request; a resource-based grant alone is necessary but never sufficient once the request crosses an account boundary. `s3/access-control-and-presigned-urls.md` and `cross-account-access.md` both rely on this exact rule.",
+      "source": {
+        "path": "vault/aws/iam/policy-evaluation-logic.md",
+        "block": "card-huul"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Policy evaluation logic'"
+      ],
+      "answer": "Both sides"
+    },
+    {
+      "id": "card-mub1",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "policy-evaluation",
+        "explicit-deny",
+        "cross-account"
+      ],
+      "prompt": "Why does a bucket policy that names an external account as principal, on its own, never let that account's users actually read the object?",
+      "source": {
+        "path": "vault/aws/iam/policy-evaluation-logic.md",
+        "block": "card-mub1"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Policy evaluation logic'"
+      ],
+      "answer": "A resource-based grant to an external account satisfies only the resource-account side of a cross-account request; the request still needs the external account's own identity policy to independently allow the same action, because \"either side suffices\" only holds within a single account — across accounts both sides must allow, or the implicit deny still applies."
+    },
+    {
+      "id": "card-zozi",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "policy-evaluation",
+        "explicit-deny",
+        "cross-account"
+      ],
+      "prompt": "Explain, in terms of the evaluation order above, exactly what changes between a same-account and a cross-account request — not the order itself, but which set of policies has to agree before the \"is there an allow\" step can be satisfied. Why does adding an account boundary turn an \"either side\" rule into a \"both sides\" rule?",
+      "source": {
+        "path": "vault/aws/iam/policy-evaluation-logic.md",
+        "block": "card-zozi"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'Policy evaluation logic'"
+      ]
+    },
+    {
+      "id": "card-lf0w",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "principals",
+        "users",
+        "roles",
+        "root-user"
+      ],
+      "prompt": "An **IAM user** is a persistent identity, usually representing a person or a long-running application, with its own name and, optionally, its own long-lived credentials (a password, access keys). A user's ___ come entirely from the policies attached to it directly or through group membership — a user holds none of its own outside those policies.",
+      "source": {
+        "path": "vault/aws/iam/principals-and-identities.md",
+        "block": "card-lf0w"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM identities'"
+      ],
+      "answer": "permissions"
+    },
+    {
+      "id": "card-nwvz",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "principals",
+        "users",
+        "roles",
+        "root-user"
+      ],
+      "prompt": "**Groups** are not identities and cannot be a principal in a policy or an API call; a group is only a way to give the same permissions to many users at once, which is why you can add or remove a user from a group without touching the ___ attached to the group itself.",
+      "source": {
+        "path": "vault/aws/iam/principals-and-identities.md",
+        "block": "card-nwvz"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM identities'"
+      ],
+      "answer": "policies"
+    },
+    {
+      "id": "card-qo5e",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "principals",
+        "users",
+        "roles",
+        "root-user"
+      ],
+      "prompt": "Which of these can be named as the `Principal` in a resource-based policy?",
+      "source": {
+        "path": "vault/aws/iam/principals-and-identities.md",
+        "block": "card-qo5e"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM identities'"
+      ],
+      "choices": [
+        {
+          "text": "An IAM user, an IAM role, a service principal, or an account",
+          "correct": true
+        },
+        {
+          "text": "An IAM group",
+          "correct": false
+        },
+        {
+          "text": "Only IAM users, never roles or services",
+          "correct": false
+        },
+        {
+          "text": "Only the account root user",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-7eqx",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "principals",
+        "users",
+        "roles",
+        "root-user"
+      ],
+      "prompt": "Why can an IAM group never appear as a `Principal` in a policy, even though it can be granted permissions?",
+      "source": {
+        "path": "vault/aws/iam/principals-and-identities.md",
+        "block": "card-7eqx"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM identities'"
+      ],
+      "answer": "A group is a container for attaching policies to users in bulk, not an identity that makes requests — at request time AWS always resolves the caller down to a user, a role session, a service, or the root user, and a group was never in that list of things that can act."
+    },
+    {
+      "id": "card-z3hz",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "principals",
+        "users",
+        "roles",
+        "root-user"
+      ],
+      "prompt": "It represents the ___ acting on your behalf — for example, Lambda assuming an execution role to run your function — rather than any human or application credential.",
+      "source": {
+        "path": "vault/aws/iam/principals-and-identities.md",
+        "block": "card-z3hz"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM identities'"
+      ],
+      "answer": "service"
+    },
+    {
+      "id": "card-k4y8",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "principals",
+        "users",
+        "roles",
+        "root-user"
+      ],
+      "prompt": "Explain why a service principal like `ec2.amazonaws.com` appearing in a role's trust policy does not, by itself, grant EC2 instances launched in your account any permissions at all. What second piece has to exist before that role actually does anything?",
+      "source": {
+        "path": "vault/aws/iam/principals-and-identities.md",
+        "block": "card-k4y8"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM identities'"
+      ]
+    },
+    {
+      "id": "card-9jnd",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "principals",
+        "users",
+        "roles",
+        "root-user"
+      ],
+      "prompt": "The **root user** is the identity created when the AWS account itself was created, identified by the account's email address, and it is the one principal that can never be fully restricted by an IAM policy — some account-level actions (closing the account, changing the support plan) can ___ be performed by root, no matter what policies exist, because IAM policies attach to identities and root's authority derives from account ownership rather than from any policy at all.",
+      "source": {
+        "path": "vault/aws/iam/principals-and-identities.md",
+        "block": "card-9jnd"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM identities'"
+      ],
+      "answer": "only"
+    },
+    {
+      "id": "card-xisv",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "principals",
+        "users",
+        "roles",
+        "root-user"
+      ],
+      "prompt": "What is the practical difference between \"an IAM user with full administrator permissions\" and \"the root user,\" given that both can technically do almost everything?",
+      "source": {
+        "path": "vault/aws/iam/principals-and-identities.md",
+        "block": "card-xisv"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM identities'"
+      ],
+      "answer": "An administrator's permissions are still expressed as an attached policy and can be revoked, boundaried, or denied by another policy at any time; root's authority for account-level actions doesn't come from a policy at all, so there's no IAM mechanism that can take it away — which is exactly why root should be used as rarely as possible."
+    },
+    {
+      "id": "card-c1sv",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "roles",
+        "sts",
+        "assume-role",
+        "trust-policy"
+      ],
+      "prompt": "The **permissions policy** answers a completely different question: \"once someone has become this role, what can they do?\" It's an identity-based policy attached to the role, exactly like one attached to a user, and it has ___ influence over who is allowed to assume the role — that's the trust policy's job alone.",
+      "source": {
+        "path": "vault/aws/iam/roles-and-assume-role.md",
+        "block": "card-c1sv"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM roles'"
+      ],
+      "answer": "no"
+    },
+    {
+      "id": "card-qye6",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "roles",
+        "sts",
+        "assume-role",
+        "trust-policy"
+      ],
+      "prompt": "A role's trust policy allows account `111122223333` to assume it. Its permissions policy grants no S3 access at all. Someone in that account assumes the role and calls `s3:GetObject`. What happens?",
+      "source": {
+        "path": "vault/aws/iam/roles-and-assume-role.md",
+        "block": "card-qye6"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM roles'"
+      ],
+      "choices": [
+        {
+          "text": "Denied — the trust policy only controls who can assume the role, not what the resulting session can do; the permissions policy still has to grant the action",
+          "correct": true
+        },
+        {
+          "text": "Allowed, since the trust policy already vouches for that account",
+          "correct": false
+        },
+        {
+          "text": "Denied, and the assumption itself would have failed too",
+          "correct": false
+        },
+        {
+          "text": "Allowed, because trust policies and permissions policies are merged into one set of grants",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-kjw4",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "roles",
+        "sts",
+        "assume-role",
+        "trust-policy"
+      ],
+      "prompt": "Why can a role's trust policy be completely permissive (say, trusting an entire external account) while the role itself remains harmless?",
+      "source": {
+        "path": "vault/aws/iam/roles-and-assume-role.md",
+        "block": "card-kjw4"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM roles'"
+      ],
+      "answer": "The trust policy only decides who is allowed to call AssumeRole and obtain a session; it grants zero API permissions on its own. Whatever that session can actually do is governed entirely by the role's separate permissions policy, so a wide-open trust policy paired with a narrow or empty permissions policy still leaves the role doing nothing."
+    },
+    {
+      "id": "card-9vxa",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "roles",
+        "sts",
+        "assume-role",
+        "trust-policy"
+      ],
+      "prompt": "Calling `sts:AssumeRole` (or one of its variants, like `AssumeRoleWithSAML` or `AssumeRoleWithWebIdentity`) doesn't hand back a copy of the role's own credentials — there are none. Instead, AWS **Security Token Service** issues a fresh set of ___ credentials: an access key ID, a secret access key, and a session token, all tied to a short expiration (minutes to a few hours, depending on how the call was made) rather than existing indefinitely.",
+      "source": {
+        "path": "vault/aws/iam/roles-and-assume-role.md",
+        "block": "card-9vxa"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM roles'"
+      ],
+      "answer": "temporary"
+    },
+    {
+      "id": "card-r3i8",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "roles",
+        "sts",
+        "assume-role",
+        "trust-policy"
+      ],
+      "prompt": "A developer's IAM user has broad permissions and assumes a narrowly scoped role to perform a specific task. Explain why the resulting session's permissions are the role's permissions policy, not some combination of the user's original permissions and the role's. What would go wrong operationally if assumed sessions instead kept the caller's original permissions layered on top?",
+      "source": {
+        "path": "vault/aws/iam/roles-and-assume-role.md",
+        "block": "card-r3i8"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM roles'"
+      ]
+    },
+    {
+      "id": "card-kp3k",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "roles",
+        "sts",
+        "assume-role",
+        "trust-policy"
+      ],
+      "prompt": "What does it mean that a trust policy and a permissions policy are \"two distinct documents answering two distinct questions,\" rather than one merged access-control list on the role?",
+      "source": {
+        "path": "vault/aws/iam/roles-and-assume-role.md",
+        "block": "card-kp3k"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM roles'"
+      ],
+      "answer": "It means the two are evaluated at different moments and for different purposes — the trust policy is consulted once, at AssumeRole time, to decide whether the call is even allowed to happen; the permissions policy is consulted afterward, on every subsequent API call the resulting session makes, to decide what that session can do. Changing one never implicitly changes the other."
+    },
+    {
+      "id": "card-kwi1",
+      "format": "mcq",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "service-roles",
+        "instance-profiles",
+        "ec2",
+        "credentials"
+      ],
+      "prompt": "Why does EC2 need an instance profile, when Lambda simply lets you attach an execution role directly to a function?",
+      "source": {
+        "path": "vault/aws/iam/service-roles-and-instance-profiles.md",
+        "block": "card-kwi1"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM roles for Amazon EC2'"
+      ],
+      "choices": [
+        {
+          "text": "An EC2 instance isn't itself capable of assuming a role directly; the instance profile is the container that bridges the instance to a role so its credentials can be delivered to it",
+          "correct": true
+        },
+        {
+          "text": "Instance profiles are an older, deprecated concept EC2 keeps only for backward compatibility",
+          "correct": false
+        },
+        {
+          "text": "Because EC2 instances can hold more than one role at a time, unlike Lambda",
+          "correct": false
+        },
+        {
+          "text": "There's no real difference — \"instance profile\" is just EC2's name for an execution role",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "card-ddzo",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "service-roles",
+        "instance-profiles",
+        "ec2",
+        "credentials"
+      ],
+      "prompt": "Why does credential retrieval through the instance metadata service happen from an endpoint that's only reachable from inside the instance itself?",
+      "source": {
+        "path": "vault/aws/iam/service-roles-and-instance-profiles.md",
+        "block": "card-ddzo"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM roles for Amazon EC2'"
+      ],
+      "answer": "Restricting it to a local, non-internet-routable address means the credentials can only be fetched by code actually running on that instance, rather than by an arbitrary external caller who merely knows the instance exists — the network boundary is doing part of the access-control work that would otherwise fall entirely on IAM."
+    },
+    {
+      "id": "card-ywio",
+      "format": "cloze",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "service-roles",
+        "instance-profiles",
+        "ec2",
+        "credentials"
+      ],
+      "prompt": "This beats a ___ embedded in an environment variable, a config file, or (worse) committed to source control, on every axis that matters: the credentials the instance receives are temporary and automatically rotated by AWS well before they expire, so there's no key sitting around indefinitely for an attacker to find, copy, and reuse long after the fact; there's no manual rotation process to forget to run; and revoking access means changing the role's permissions policy or detaching the instance profile, rather than hunting down every place a static key might have been copied to.",
+      "source": {
+        "path": "vault/aws/iam/service-roles-and-instance-profiles.md",
+        "block": "card-ywio"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM roles for Amazon EC2'"
+      ],
+      "answer": "long-lived access key"
+    },
+    {
+      "id": "card-8u9q",
+      "format": "recall",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "service-roles",
+        "instance-profiles",
+        "ec2",
+        "credentials"
+      ],
+      "prompt": "A team currently deploys application credentials to EC2 instances by baking an IAM user's static access key into an AMI. Explain the concrete operational risks this creates that an instance profile removes, and specifically why \"temporary and auto-rotated\" matters more than just \"shorter\" credentials would.",
+      "source": {
+        "path": "vault/aws/iam/service-roles-and-instance-profiles.md",
+        "block": "card-8u9q"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM roles for Amazon EC2'"
+      ]
+    },
+    {
+      "id": "card-9d2j",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "service-roles",
+        "instance-profiles",
+        "ec2",
+        "credentials"
+      ],
+      "prompt": "How does a Lambda function's execution environment obtain credentials for its execution role, compared to how an EC2 instance obtains them via the instance metadata service?",
+      "source": {
+        "path": "vault/aws/iam/service-roles-and-instance-profiles.md",
+        "block": "card-9d2j"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM roles for Amazon EC2'"
+      ],
+      "answer": "Lambda has AWS inject the execution role's temporary credentials directly into the execution environment at init time; an EC2 instance instead has to actively fetch its role's credentials from the local instance metadata service after an instance profile has been attached — the same underlying pattern of temporary, non-static credentials, delivered through a different mechanism."
+    },
+    {
+      "id": "card-1t9s",
+      "format": "qa",
+      "topic": "aws",
+      "category": "aws-iam",
+      "tags": [
+        "iam",
+        "service-roles",
+        "instance-profiles",
+        "ec2",
+        "credentials"
+      ],
+      "prompt": "What would go wrong, from a security standpoint, if an organization decided instance profiles were unnecessary friction and instead distributed one shared long-lived IAM user's access key to every EC2 instance that needed S3 access?",
+      "source": {
+        "path": "vault/aws/iam/service-roles-and-instance-profiles.md",
+        "block": "card-1t9s"
+      },
+      "citations": [
+        "AWS Identity and Access Management User Guide — 'IAM roles for Amazon EC2'"
+      ],
+      "answer": "A single compromised instance (or a single leaked key, from a log, a snapshot, or a public repo) would expose credentials usable from anywhere, for as long as that key remains active — with no automatic expiration, no way to scope revocation to just the affected instance, and no way to tell from the credential alone which instance was using it, unlike a role session, which is scoped, temporary, and attributable in CloudTrail to the specific instance profile that requested it."
     },
     {
       "id": "card-nw0f",
