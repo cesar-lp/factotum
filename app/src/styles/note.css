@@ -33,8 +33,16 @@
  * horizontal-scroll bug from a different block kind.
  */
 .note-screen { min-width: 0; }
-.note-head { display: flex; align-items: center; gap: var(--s3); margin-bottom: var(--s4); }
-.note-title { font-size: var(--text-prompt); margin: 0; flex: 1; }
+/* Back and (when present) Open in Obsidian used to sit on the same flex
+   row as the title, which only gave the title `flex: 1`'s leftover space
+   after both buttons took their full content width -- on a 480px phone
+   layout that squeezed a normal-length title down to four wrapped lines.
+   Now the actions share their own row (see .note-head-actions) and the
+   title gets a full-width line to itself below. */
+.note-head { display: flex; flex-direction: column; gap: var(--s3); margin-bottom: var(--s4); }
+.note-head-actions { display: flex; align-items: center; gap: var(--s3); }
+.note-head-actions [data-role="obsidian"] { margin-left: auto; }
+.note-title { font-size: var(--text-prompt); margin: 0; }
 .note-masked-bar {
   display: flex; align-items: center; justify-content: space-between;
   gap: var(--s3); padding: var(--s3); margin-bottom: var(--s4);
