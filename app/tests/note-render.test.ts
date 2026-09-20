@@ -1,13 +1,48 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
+import { fileURLToPath } from 'node:url';
+import { dirname, resolve } from 'node:path';
+import { readFileSync } from 'node:fs';
 import { renderNoteBlocks } from '../src/ui/note-render.js';
-import type { NoteBlock } from '../../pipeline/src/types.js';
+import type { NoteBlock, Notes } from '../../pipeline/src/types.js';
 
-const render = (blocks: NoteBlock[], masked: string[] = []) =>
-  renderNoteBlocks(blocks, new Set(masked));
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+const render = (blocks: NoteBlock[], masked: string[] = [], title?: string) =>
+  renderNoteBlocks(blocks, new Set(masked), title);
 
 describe('renderNoteBlocks', () => {
+  // level: 1 because that's the only heading level anywhere in this vault
+  // (185 headings, all H1) -- a test pinned to level: 2 would never have
+  // caught a bug that only manifests on real level-1 headings, such as the
+  // H1-duplicates-the-title defect this file also guards against below.
   it('renders a heading at its level', () => {
-    expect(render([{ kind: 'heading', level: 2, text: 'Raft' }])).toContain('<h2');
+    expect(render([{ kind: 'heading', level: 1, text: 'Raft' }])).toContain('<h1');
+  });
+
+  it('does not suppress a heading when no title is given', () => {
+    expect(render([{ kind: 'heading', level: 1, text: 'Raft' }])).toContain('Raft');
+  });
+
+  it('suppresses only the first heading matching the title, keeping later ones', () => {
+    const html = render([
+      { kind: 'heading', level: 1, text: 'Consensus' },
+      { kind: 'prose', text: 'intro', clozes: [] },
+      { kind: 'heading', level: 1, text: 'Consensus' }
+    ], [], 'Consensus');
+    expect(html.match(/<h1/g)).toHaveLength(1);
+    expect(html).toContain('intro');
+  });
+
+  it('renders the H1 normally when it differs from the title', () => {
+    const html = render([{ kind: 'heading', level: 1, text: 'Different heading' }], [], 'The Title');
+    expect(html).toContain('<h1');
+    expect(html).toContain('Different heading');
+  });
+
+  it('renders correctly when the note has no heading at all', () => {
+    const html = render([{ kind: 'prose', text: 'just prose', clozes: [] }], [], 'A Title');
+    expect(html).not.toContain('<h1');
+    expect(html).toContain('just prose');
   });
 
   it('renders an unmasked cloze visibly, without the masked class', () => {
@@ -75,6 +110,21 @@ describe('renderNoteBlocks', () => {
     expect(open).toContain('is-correct');
   });
 
+  it('blurs only the choice list on a masked mcq, never the question', () => {
+    // The prompt must stay readable while due -- correctness is already
+    // absent from the DOM, so blurring the question protects nothing and
+    // only costs the reader the ability to read what they're studying.
+    const block: NoteBlock = {
+      kind: 'card', cardId: 'c1', format: 'mcq', prompt: 'Which layer?',
+      choices: [{ text: 'Transport', correct: true }, { text: 'Network', correct: false }]
+    };
+    const html = render([block], ['c1']);
+    expect(html).toMatch(/<p class="note-card-prompt">Which layer\?<\/p>/);
+    expect(html).toMatch(/<ul class="note-choices is-masked">/);
+    // is-masked must not land on the outer card div itself.
+    expect(html).not.toMatch(/<div class="note-card note-mcq is-masked"/);
+  });
+
   it('masks a qa answer but never its prompt', () => {
     const block: NoteBlock = { kind: 'qa', cardId: 'c1', prompt: 'What is X?', answer: 'It is Y.' };
     const html = render([block], ['c1']);
@@ -129,5 +179,38 @@ describe('renderNoteBlocks', () => {
     const html = render([{ kind: 'prose', text: 'a `code` and **bold**', clozes: [] }]);
     expect(html).toContain('<code>code</code>');
     expect(html).toContain('<strong>bold</strong>');
+  });
+});
+
+// The real, built notes.json -- not a fixture. 477 hand-written tests missed
+// a defect (every note's H1 rendered a second time, duplicating the screen
+// title) that affected 201/201 notes, because nothing actually rendered a
+// real note body and inspected the result. This closes that gap.
+const NOTES_PATH = resolve(__dirname, '../../deck/notes.json');
+
+describe('renderNoteBlocks over the real notes corpus', () => {
+  let notes: Notes;
+
+  beforeAll(() => {
+    notes = JSON.parse(readFileSync(NOTES_PATH, 'utf8')) as Notes;
+  });
+
+  it('loaded a real, substantial notes.json (sanity guard against a broken path)', () => {
+    expect(notes.notes.length).toBeGreaterThan(100);
+  });
+
+  it("never repeats a note's own title as a rendered heading", () => {
+    const violations: string[] = [];
+    for (const note of notes.notes) {
+      const html = renderNoteBlocks(note.blocks, new Set(), note.title);
+      const headingRe = /<h[1-6][^>]*>([\s\S]*?)<\/h[1-6]>/g;
+      let match: RegExpExecArray | null;
+      while ((match = headingRe.exec(html))) {
+        if (match[1] === note.title) {
+          violations.push(`${note.path}: heading repeats title "${note.title}"`);
+        }
+      }
+    }
+    expect(violations, violations.join('\n')).toEqual([]);
   });
 });

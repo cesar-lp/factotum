@@ -45,6 +45,13 @@
    column layout) and sits directly between the screen and the code block
    whose overflow-x needs somewhere to actually take effect. */
 .note-body { font-size: var(--text-body); line-height: 1.6; min-width: 0; }
+/* Subordinate to the screen's own <h1> (.note-title, --text-prompt) --
+   a body heading is a section break within the note, not a second title,
+   so it sits at or below --text-body rather than the UA-default 2em. */
+.note-heading { font-size: var(--text-body); font-weight: 600; margin: var(--s5) 0 var(--s3); }
+.note-heading:first-child { margin-top: 0; }
+.note-list { margin: 0 0 var(--s4); padding-left: var(--s5); }
+.note-list li { margin: 0 0 var(--s2); }
 .note-prose { margin: 0 0 var(--s4); }
 .note-code { overflow-x: auto; padding: var(--s3); border-radius: var(--r-md); }
 .note-card { padding: var(--s4); border-radius: var(--r-md); margin: 0 0 var(--s4); }

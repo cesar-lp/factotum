@@ -48,9 +48,26 @@ function renderProse(block: Extract<NoteBlock, { kind: 'prose' }>, masked: Reado
   return `<p class="note-prose">${html}</p>`;
 }
 
-export function renderNoteBlocks(blocks: NoteBlock[], masked: ReadonlySet<string>): string {
+/**
+ * `title` is the note's own `NoteDoc.title` (first `# H1`, else the
+ * filename stem -- see `noteTitle` in build.ts). The screen header already
+ * renders it (`note.ts`'s `.note-title`), so the block stream's own copy of
+ * that same heading would repeat it as the first thing in `.note-body` --
+ * 201/201 notes in this vault have exactly that: an H1 byte-identical to
+ * `title`. Suppressing it here, rather than at build time, keeps
+ * `notes.json` a faithful block-for-block representation of the note; only
+ * the *first* heading block that is both level 1 and text-identical to
+ * `title` is dropped, so a note with no H1, or one whose H1 differs from
+ * `title` (falls back to the filename stem), still renders every heading.
+ */
+export function renderNoteBlocks(blocks: NoteBlock[], masked: ReadonlySet<string>, title?: string): string {
+  let skippedTitleHeading = false;
   return blocks.map((block) => {
     if (block.kind === 'heading') {
+      if (!skippedTitleHeading && title !== undefined && block.level === 1 && block.text === title) {
+        skippedTitleHeading = true;
+        return '';
+      }
       const level = Math.min(Math.max(block.level, 1), 6);
       return `<h${level} class="note-heading">${text(block.text)}</h${level}>`;
     }
@@ -91,15 +108,18 @@ export function renderNoteBlocks(blocks: NoteBlock[], masked: ReadonlySet<string
     if (block.choices) {
       // While masked, correctness is not rendered AT ALL -- not rendered and
       // hidden with CSS, which a view-source or a copied selection defeats.
-      // mcq has no separate "answer" element to blur -- the whole card is
-      // the masked unit -- so `is-masked` lives on the same outer div as
-      // `data-card`, folded into one `class` attribute.
+      // `is-masked` goes on the <ul> of choices, not the outer div: the
+      // prompt paragraph must stay readable while due, same as qa/recall --
+      // the spec's masked-mcq row is "question and choices, no correctness
+      // marking", not "the whole card blurred". Blurring the question
+      // protects nothing (correctness is already absent from the DOM) and
+      // only cost the reader the ability to read what they're studying.
       const items = block.choices.map((choice) => {
         const correct = !hidden && choice.correct ? ' is-correct' : '';
         return `<li class="note-choice${correct}">${text(choice.text)}</li>`;
       }).join('');
-      return `<div class="note-card note-mcq${hidden ? ' is-masked' : ''}" ${cardAttr}>`
-        + `${head}<ul class="note-choices">${items}</ul></div>`;
+      return `<div class="note-card note-mcq" ${cardAttr}>`
+        + `${head}<ul class="note-choices${hidden ? ' is-masked' : ''}">${items}</ul></div>`;
     }
 
     // recall: the `> ---` separator that introduces a model answer is

@@ -70,12 +70,15 @@ describe('notes.json over the real vault', () => {
 
   it('never leaks a ^card-xxxx anchor into rendered text', () => {
     // Anchors are build metadata. One reaching the viewer is a rendering bug.
-    // Covers every text field a `card` block can carry -- prompt, answer,
-    // and each mcq choice -- not just prompt, since all of them render.
+    // Covers every text field renderNoteBlocks displays to the reader --
+    // prompt, answer, and each mcq choice, but also a list block's items
+    // and a code block's text, both of which render just as visibly.
     for (const note of notes.notes) {
       for (const block of note.blocks) {
         const texts = block.kind === 'prose' ? [block.text]
           : block.kind === 'heading' ? [block.text]
+          : block.kind === 'code' ? [block.text]
+          : block.kind === 'list' ? block.items
           : block.kind === 'qa' ? [block.prompt, block.answer]
           : block.kind === 'card' ? [
               block.prompt,

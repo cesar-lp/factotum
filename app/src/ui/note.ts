@@ -131,7 +131,7 @@ export function renderNote(root: HTMLElement, props: NoteProps): void {
     const article = root.querySelector<HTMLElement>('.note-body');
     if (!article) return;
     const masked = effectiveMasked(props.masked, revealed);
-    article.innerHTML = renderNoteBlocks(note.blocks, masked);
+    article.innerHTML = renderNoteBlocks(note.blocks, masked, note.title);
 
     article.querySelectorAll<HTMLElement>('.is-masked').forEach((element) => {
       element.addEventListener('click', () => {

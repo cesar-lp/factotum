@@ -59,6 +59,13 @@ multiplying it, and the largest single note is 7.8 KB. Whole-note viewing
 is therefore decided on reading-experience grounds, not budget. Section 3
 keeps that payload off the review path regardless.
 
+(This table is a design-time measurement, taken before this branch was
+rebased onto a vault that had grown in the meantime. The README's
+[Scripts](../../../README.md) section has the current, larger numbers —
+241/302 KB gzipped for `deck.json`/`notes.json` — which supersede these
+without changing any conclusion above: the payload still roughly doubles,
+not multiplies.)
+
 **Renderer scope.** The vault is 185 headings, 42 code fences, and **4**
 list lines outside callouts. It is prose and card callouts, almost
 entirely. `app/src/ui/renderers.ts` already supplies the inline layer
