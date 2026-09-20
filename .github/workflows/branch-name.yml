@@ -32,7 +32,20 @@ jobs:
     # is pure friction. A job skipped by `if:` reports as skipped, which
     # GitHub counts as passing for a required status check, so this stays
     # safe to mark as required.
-    if: github.event.pull_request.head.repo.full_name == github.repository
+    #
+    # Dependabot is exempt for the same reason, arrived at from the other
+    # direction: its branches ARE in this repo, so the fork check above does
+    # not cover them, and they look like
+    # `dependabot/npm_and_yarn/vite-8.3.0` -- wrong prefix, underscores,
+    # dots. Dependabot lets you configure the separator and nothing else, so
+    # no setting makes that match the convention. Without this clause every
+    # dependency PR carries a permanent red X that no one can clear, and the
+    # automation gets muted within a month. The convention is aimed at
+    # branches a person names; this one is named by a bot that cannot read
+    # it.
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.user.login != 'dependabot[bot]'
     steps:
       - name: Check branch name
         env:
