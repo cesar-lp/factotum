@@ -103,7 +103,7 @@ Two riders:
 - **Masking is per-construct and tappable.** Any single decision is one tap
   to override, and nothing is ever truly hidden.
 
-Due-ness is read from `isDue` in `app/src/scheduler/queue.ts`. It is reused,
+Due-ness is read from `isDue` in `app/src/scheduler/fsrs.ts:132`. It is reused,
 never reimplemented — there must not be a second notion of "due" in the app.
 
 ### 2. Pipeline output: `notes.json`
@@ -156,12 +156,35 @@ deck-drift check (`git status --porcelain` must print nothing) flaps on
 every unrelated PR. Output is stable-sorted by path via the existing
 `stableStringify`.
 
-**Implementation: `parseNote()` is a sibling of `parseCards()` in
+**Implementation: `parseBlocks()` is a sibling of `parseCards()` in
 `cards.ts`, sharing the exported regexes** (`HIGHLIGHT`, `QA`, `FENCE`,
 `CALLOUT_OPEN`, `CALLOUT_LINE`, `CHOICE`). `parseCards` is not refactored to
 emit both. That function is the most delicate in the pipeline — its bugs
 orphan card ids, which `CLAUDE.md` flags as silent rather than loud — and
 restructuring it for a reading feature is a bad trade.
+
+(The name `parseNote` is already taken by `build.ts`'s per-file entry point,
+which is a different thing — it wraps frontmatter parsing, `parseCards`, and
+`writeBackIds`.)
+
+**Card ids are resolved by ordinal, not re-derived.** `parseCards` returns
+cards with `id: string | null`; `assignIds` fills the nulls afterwards, in
+`build.ts`'s `parseNote`. So `parseBlocks` cannot know final ids and must
+not try. It emits `cardIndex` — an ordinal into the card array
+`parseCards` produced from the same body — and `build.ts` zips ids in after
+`assignIds` has run.
+
+This works because both functions walk the same structure in the same order,
+including multiple clozes within one joined prose block, which
+`blockClozeCards` emits in match order. The ordinal is therefore the *only*
+correlation needed, and the zip is total: every card must be consumed and
+every `cardIndex` must resolve, or the build throws. That turns the
+correlation from an assumption into an assertion on every build of every
+note, which is a stronger guard than the corpus test alone.
+
+So the `NoteBlock` types above carry `cardIndex: number` as emitted by
+`parseBlocks`, and `cardId: string` after `build.ts` resolves them. Only the
+resolved form is serialized to `notes.json`.
 
 The drift risk this accepts is real, and this repo already has a position
 on it: the regexes are exported precisely so `lint.ts` avoids "a hand-copied
@@ -289,13 +312,13 @@ vitest's `node` environment without a DOM — the reason `route.ts`,
 
 **Pipeline**
 
-- `parseNote` per construct: heading, code fence, plain prose, cloze offsets
+- `parseBlocks` per construct: heading, code fence, plain prose, cloze offsets
   within joined wrapped prose, qa, mcq, recall with and without the `> ---`
   separator.
 - **Corpus cross-check (load-bearing).** Over the real vault: every card
   `parseCards` emits has exactly one block carrying its `cardId`, and no
   block carries an id absent from the deck. This is what makes
-  `parseNote`/`parseCards` drift a loud CI failure instead of a silently
+  `parseBlocks`/`parseCards` drift a loud CI failure instead of a silently
   wrong answer key. `deck-corpus.test.ts` is the precedent.
 - Determinism: two consecutive builds produce identical bytes, including
   `generatedAt` preservation when no note changed.
