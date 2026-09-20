@@ -6,7 +6,7 @@ import { mergeDeck } from './db/deck.js';
 import { loadReviews, newCardsSeenToday } from './db/reviews.js';
 import { getLastSevenDays, getStreak } from './db/stats.js';
 import { buildExtension, buildFocusSession, buildSession, selectEnabled } from './scheduler/queue.js';
-import { summarizeTopics } from './topics.js';
+import { summarizeTopics, notesByCategory } from './topics.js';
 import { renderDashboard } from './ui/dashboard.js';
 import { renderTopics } from './ui/topics.js';
 import { startReview } from './ui/review.js';
@@ -15,7 +15,7 @@ import { renderNote } from './ui/note.js';
 import { loadNotes, findNote, prefetchNotes } from './db/notes.js';
 import { maskedCardIds } from './ui/note-mask.js';
 import { obsidianUrl } from './ui/obsidian.js';
-import { decideRoute, focusHash, type DashboardState } from './route.js';
+import { decideRoute, focusHash, noteHash, type DashboardState } from './route.js';
 import type { Deck } from '../../pipeline/src/types.js';
 
 const REPO = 'cesar-lp/factotum';
@@ -131,6 +131,7 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
   if (decision.kind === 'topics') {
     const settings = await getSettings(db);
     const disabled = new Set(settings.disabledCategories);
+    const notes = await loadNotes();
 
     const save = async (next: Set<string>): Promise<void> => {
       // Re-read so this write carries whatever the settings form may have
@@ -159,7 +160,9 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
         void save(next);
       },
       onLearn: (category) => { window.location.hash = focusHash(category); },
-      onBack: () => { window.location.hash = ''; }
+      onBack: () => { window.location.hash = ''; },
+      notes: notes ? notesByCategory(notes) : new Map(),
+      onOpenNote: (path) => { window.location.hash = noteHash(path); }
     });
     return;
   }
