@@ -235,9 +235,9 @@ Run with `npm run <script>` from the repo root.
   the rest of the app needs `DOM`).
 - `build:deck` — runs the pipeline over `vault/`, writing `deck/deck.json`
   and `deck/notes.json`, and rewriting vault notes in place with any newly
-  assigned `^card-xxxx` anchors. `notes.json` (~302 KB gzipped) carries every
+  assigned `^card-xxxx` anchors. `notes.json` (~794 KB gzipped) carries every
   note's body as pre-parsed renderable blocks, for the note viewer below —
-  kept out of `deck.json` (241 KB gzipped) because that file is fetched
+  kept out of `deck.json` (~572 KB gzipped) because that file is fetched
   network-first with a 2.5s service-worker timeout at the start of every
   review, including sessions that never open a note.
 - `predev` — copies `deck/deck.json` and `deck/notes.json` into
@@ -295,7 +295,7 @@ names live in someone else's repo and never land here.
 **`deck-diff.yml`** and **`deck-diff-comment.yml`** post a comment on every
 PR saying how many cards it adds or removes and to which notes, and warn
 about any touched note left under the 6-card minimum. `deck/deck.json` is
-one 1.2MB generated file that every content PR rewrites, so GitHub's diff
+one 3.1 MB generated file that every content PR rewrites, so GitHub's diff
 view tells a reviewer nothing; this makes the number visible instead. They
 are split in two on purpose: posting a comment needs `pull-requests:
 write`, which must never be held by a workflow that touches PR-authored

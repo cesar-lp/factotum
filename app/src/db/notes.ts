@@ -25,7 +25,7 @@ export function resetNotesCache(): void {
 export async function loadNotes(): Promise<Notes | null> {
   if (cached) return cached;
   // Collapse concurrent callers (a note open racing the idle prefetch)
-  // onto one request rather than fetching ~1MB twice.
+  // onto one request rather than fetching the whole note corpus twice.
   if (inFlight) return inFlight;
 
   inFlight = (async () => {

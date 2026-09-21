@@ -34,10 +34,10 @@ const REPO = 'cesar-lp/factotum';
 // "back on #topics via a different route() call in the meantime".
 let topicsRenderId = 0;
 
-// Same guard as topicsRenderId above, for the same reason: loadNotes() is a
-// ~1MB fetch, and a reader who navigated away during that await must not
-// have the search screen painted back over wherever they went once it
-// resolves.
+// Same guard as topicsRenderId above, for the same reason: loadNotes()
+// pulls the whole note corpus (3.2 MB, ~790 KB gzipped), and a reader who
+// navigated away during that await must not have the search screen painted
+// back over wherever they went once it resolves.
 let searchRenderId = 0;
 
 /**
@@ -289,11 +289,12 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
       });
     };
 
-    // Render immediately with no note lists -- notes.json is ~1MB and
-    // lazily fetched, and nothing else on this screen (mute toggles, shelf
-    // toggles, "learn" buttons) has anything to do with it. This is the
-    // same graceful-degradation markup as a permanently-offline notes.json;
-    // it is just the FIRST state here rather than a fallback.
+    // Render immediately with no note lists -- notes.json is 3.2 MB
+    // (~790 KB gzipped) and lazily fetched, and nothing else on this screen
+    // (mute toggles, shelf toggles, "learn" buttons) has anything to do with
+    // it. This is the same graceful-degradation markup as a
+    // permanently-offline notes.json; it is just the FIRST state here rather
+    // than a fallback.
     renderWithNotes(new Map());
 
     void loadNotes().then((notes) => {

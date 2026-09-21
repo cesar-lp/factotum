@@ -169,8 +169,9 @@ a device with Obsidian installed and the vault synced — not the iPhone PWA
 this app is actually used on).
 
 The pipeline gained a second build output, `deck/notes.json` — every note's
-body as pre-parsed renderable blocks, ~302 KB gzipped against `deck.json`'s
-241 KB. It is deliberately not a field on `deck.json`: that file is fetched
+body as pre-parsed renderable blocks, ~794 KB gzipped against `deck.json`'s
+~572 KB (3.2 MB and 3.1 MB raw). It is deliberately not a field on
+`deck.json`: that file is fetched
 network-first with a 2.5s service-worker timeout at the start of every
 review, so folding note bodies into it would slow review start in every
 session, including the many that never open a note. `notes.json` gets its
