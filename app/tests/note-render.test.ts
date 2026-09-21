@@ -7,8 +7,8 @@ import type { NoteBlock, Notes } from '../../pipeline/src/types.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const render = (blocks: NoteBlock[], masked: string[] = [], title?: string) =>
-  renderNoteBlocks(blocks, new Set(masked), title);
+const render = (blocks: NoteBlock[], title?: string) =>
+  renderNoteBlocks(blocks, title);
 
 describe('renderNoteBlocks', () => {
   // level: 1 because that's the only heading level anywhere in this vault
@@ -28,40 +28,29 @@ describe('renderNoteBlocks', () => {
       { kind: 'heading', level: 1, text: 'Consensus' },
       { kind: 'prose', text: 'intro', clozes: [] },
       { kind: 'heading', level: 1, text: 'Consensus' }
-    ], [], 'Consensus');
+    ], 'Consensus');
     expect(html.match(/<h1/g)).toHaveLength(1);
     expect(html).toContain('intro');
   });
 
   it('renders the H1 normally when it differs from the title', () => {
-    const html = render([{ kind: 'heading', level: 1, text: 'Different heading' }], [], 'The Title');
+    const html = render([{ kind: 'heading', level: 1, text: 'Different heading' }], 'The Title');
     expect(html).toContain('<h1');
     expect(html).toContain('Different heading');
   });
 
   it('renders correctly when the note has no heading at all', () => {
-    const html = render([{ kind: 'prose', text: 'just prose', clozes: [] }], [], 'A Title');
+    const html = render([{ kind: 'prose', text: 'just prose', clozes: [] }], 'A Title');
     expect(html).not.toContain('<h1');
     expect(html).toContain('just prose');
   });
 
-  it('renders an unmasked cloze visibly, without the masked class', () => {
+  it('renders a cloze span with its data-card attribute', () => {
     const html = render([
       { kind: 'prose', text: 'MTU is 1500 bytes.', clozes: [{ start: 7, end: 17, cardId: 'c1', answer: '1500 bytes' }] }
     ]);
     expect(html).toContain('1500 bytes');
-    expect(html).not.toContain('is-masked');
-  });
-
-  it('marks a masked cloze and keeps its text in the document', () => {
-    // Blur rather than blank: the span keeps its width, so revealing it
-    // reflows nothing and reading flow survives the tap.
-    const html = render([
-      { kind: 'prose', text: 'MTU is 1500 bytes.', clozes: [{ start: 7, end: 17, cardId: 'c1', answer: '1500 bytes' }] }
-    ], ['c1']);
-    expect(html).toContain('is-masked');
     expect(html).toContain('data-card="c1"');
-    expect(html).toContain('1500 bytes');
   });
 
   it('renders multiple clozes in one block without corrupting offsets', () => {
@@ -70,73 +59,27 @@ describe('renderNoteBlocks', () => {
         { start: 2, end: 5, cardId: 'c1', answer: 'one' },
         { start: 10, end: 13, cardId: 'c2', answer: 'two' }
       ] }
-    ], ['c2']);
-    // Assert the exact output: this pins down offset placement, which
-    // cloze got the is-masked class, and that the connective text between
-    // the two clozes survived untouched, all in one check.
+    ]);
+    // Assert the exact output: this pins down offset placement and that the
+    // connective text between the two clozes survived untouched.
     expect(html).toContain(
-      '<p class="note-prose">A <span data-card="c1">one</span> and <span data-card="c2" class="is-masked">two</span> here.</p>'
+      '<p class="note-prose">A <span data-card="c1">one</span> and <span data-card="c2">two</span> here.</p>'
     );
   });
 
   it('keeps cloze offsets correct when preceding text needs escaping', () => {
     // The dangerous regression: escaping before slicing shifts every
-    // offset past the first `<` or `&`, silently misplacing the mask.
+    // offset past the first `<` or `&`, silently misplacing the cloze span.
     // Offsets below are computed against the RAW string, as the pipeline
     // does, with both an unescaped `<` and `&` sitting before the cloze.
     const raw = 'a < b & c: answer is 42.';
     expect(raw.slice(21, 23)).toBe('42');
     const html = render([
       { kind: 'prose', text: raw, clozes: [{ start: 21, end: 23, cardId: 'c1', answer: '42' }] }
-    ], ['c1']);
+    ]);
     expect(html).toContain(
-      '<p class="note-prose">a &lt; b &amp; c: answer is <span data-card="c1" class="is-masked">42</span>.</p>'
+      '<p class="note-prose">a &lt; b &amp; c: answer is <span data-card="c1">42</span>.</p>'
     );
-  });
-
-  it('hides the correct-choice marking on a masked mcq', () => {
-    // THE spoiler case. Obsidian renders the raw `- [x]`, so the answer key
-    // is visible there today; this must not reproduce that.
-    const block: NoteBlock = {
-      kind: 'card', cardId: 'c1', format: 'mcq', prompt: 'Which layer?',
-      choices: [{ text: 'Transport', correct: true }, { text: 'Network', correct: false }]
-    };
-    const masked = render([block], ['c1']);
-    expect(masked).toContain('Which layer?');
-    expect(masked).toContain('Transport');
-    expect(masked).not.toContain('is-correct');
-
-    const open = render([block]);
-    expect(open).toContain('is-correct');
-  });
-
-  it('blurs only the choice list on a masked mcq, never the question', () => {
-    // The prompt must stay readable while due -- correctness is already
-    // absent from the DOM, so blurring the question protects nothing and
-    // only costs the reader the ability to read what they're studying.
-    const block: NoteBlock = {
-      kind: 'card', cardId: 'c1', format: 'mcq', prompt: 'Which layer?',
-      choices: [{ text: 'Transport', correct: true }, { text: 'Network', correct: false }]
-    };
-    const html = render([block], ['c1']);
-    expect(html).toMatch(/<p class="note-card-prompt">Which layer\?<\/p>/);
-    expect(html).toMatch(/<ul class="note-choices is-masked">/);
-    // is-masked must not land on the outer card div itself.
-    expect(html).not.toMatch(/<div class="note-card note-mcq is-masked"/);
-  });
-
-  it('masks a qa answer but never its prompt', () => {
-    const block: NoteBlock = { kind: 'qa', cardId: 'c1', prompt: 'What is X?', answer: 'It is Y.' };
-    const html = render([block], ['c1']);
-    expect(html).toContain('What is X?');
-    expect(html).toContain('is-masked');
-  });
-
-  it('masks a recall model answer but never its prompt', () => {
-    const block: NoteBlock = { kind: 'card', cardId: 'c1', format: 'recall', prompt: 'Explain X.', answer: 'Because Y.' };
-    const html = render([block], ['c1']);
-    expect(html).toContain('Explain X.');
-    expect(html).toContain('is-masked');
   });
 
   it('emits data-card for an answerless recall card', () => {
@@ -180,6 +123,15 @@ describe('renderNoteBlocks', () => {
     expect(html).toContain('<code>code</code>');
     expect(html).toContain('<strong>bold</strong>');
   });
+
+  it('always marks the correct mcq choice now that masking is gone', () => {
+    const html = renderNoteBlocks([{
+      kind: 'card', cardId: 'card-aaaa', format: 'mcq', prompt: 'Which?',
+      choices: [{ text: 'right', correct: true }, { text: 'wrong', correct: false }]
+    }]);
+    expect(html).toContain('is-correct');
+    expect(html).not.toContain('is-masked');
+  });
 });
 
 // The real, built notes.json -- not a fixture. 477 hand-written tests missed
@@ -202,7 +154,7 @@ describe('renderNoteBlocks over the real notes corpus', () => {
   it("never repeats a note's own title as a rendered heading", () => {
     const violations: string[] = [];
     for (const note of notes.notes) {
-      const html = renderNoteBlocks(note.blocks, new Set(), note.title);
+      const html = renderNoteBlocks(note.blocks, note.title);
       const headingRe = /<h[1-6][^>]*>([\s\S]*?)<\/h[1-6]>/g;
       let match: RegExpExecArray | null;
       while ((match = headingRe.exec(html))) {

@@ -16,7 +16,6 @@ import { renderSettings } from './ui/settings.js';
 import { renderNote } from './ui/note.js';
 import { loadNotes, findNote, prefetchNotes } from './db/notes.js';
 import { loadNoteReads, recordNoteRead } from './db/note-reads.js';
-import { maskedCardIds } from './ui/note-mask.js';
 import { obsidianUrl } from './ui/obsidian.js';
 import {
   decideRoute, focusHash, noteHash, resumesSuspendedSession, retainsSuspendedSession,
@@ -214,8 +213,8 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
   }
 
   if (decision.kind === 'note') {
-    const [notes, reviews, settings] = await Promise.all([
-      loadNotes(), loadReviews(db), getSettings(db)
+    const [notes, settings] = await Promise.all([
+      loadNotes(), getSettings(db)
     ]);
     const note = notes ? findNote(notes, decision.path) : null;
     // Recorded on OPEN, not on dwell time or scroll depth. Opening and
@@ -234,7 +233,6 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
     renderNote(appRoot, {
       note,
       available: notes !== null,
-      masked: note ? maskedCardIds(note, reviews, now, decision.cardId) : new Set<string>(),
       arrivedFrom: decision.cardId,
       // Obsidian is demoted, not deleted: on a Mac it is still the better
       // tool for EDITING a note, which this viewer will never do.
