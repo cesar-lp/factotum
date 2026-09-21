@@ -1,7 +1,7 @@
 # Factotum — Reference and Search
 
 **Date:** 2026-09-20
-**Status:** Proposed
+**Status:** Shipped 2026-09-20 (PR #61)
 **Supersedes:** nothing. Amends `2026-09-20-in-app-note-viewer-design.md`, whose
 answer-masking mechanic this design removes and replaces (§5).
 
