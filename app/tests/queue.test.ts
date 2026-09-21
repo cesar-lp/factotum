@@ -1,5 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { buildExtension, buildFocusSession, buildSession, dayKey, selectEnabled } from '../src/scheduler/queue.js';
+import {
+  buildExtension,
+  buildFocusSession,
+  buildSession,
+  countSuppressed,
+  dayKey,
+  selectEnabled,
+  selectNotRecentlyRead
+} from '../src/scheduler/queue.js';
 import { initialState } from '../src/scheduler/fsrs.js';
 import type { StoredCard, ReviewState } from '../src/db/schema.js';
 
@@ -197,5 +205,62 @@ describe('buildFocusSession', () => {
   it('returns nothing for a category that does not exist', () => {
     const cards = [card('card-algo', 'algo')];
     expect(buildFocusSession({ cards, reviews: new Map(), now, category: 'gone' })).toEqual([]);
+  });
+});
+
+describe('selectNotRecentlyRead', () => {
+  const read = (hoursAgo: number) => ({ 'vault/a.md': now.getTime() - hoursAgo * 3600_000 });
+
+  it('drops a due card whose note was just read', () => {
+    const cards = [card('card-due1', 'net')];
+    const reviews = new Map([['card-due1', due('card-due1')]]);
+    expect(selectNotRecentlyRead(cards, reviews, read(1), now, 24)).toEqual([]);
+  });
+
+  it('keeps a due card whose note was read outside the window', () => {
+    const cards = [card('card-due1', 'net')];
+    const reviews = new Map([['card-due1', due('card-due1')]]);
+    expect(selectNotRecentlyRead(cards, reviews, read(30), now, 24).map((c) => c.id)).toEqual(['card-due1']);
+  });
+
+  it('NEVER suppresses a new card -- reading a note is how you meet it', () => {
+    const cards = [card('card-new1', 'net')];
+    expect(selectNotRecentlyRead(cards, new Map(), read(1), now, 24).map((c) => c.id)).toEqual(['card-new1']);
+  });
+
+  it('keeps a due card from a different note in the same category', () => {
+    const other = { ...card('card-due2', 'net'), source: { path: 'vault/b.md', block: 'card-due2' } };
+    const reviews = new Map([['card-due2', due('card-due2')]]);
+    expect(selectNotRecentlyRead([other], reviews, read(1), now, 24).map((c) => c.id)).toEqual(['card-due2']);
+  });
+
+  it('is a no-op when the window is 0', () => {
+    const cards = [card('card-due1', 'net')];
+    const reviews = new Map([['card-due1', due('card-due1')]]);
+    expect(selectNotRecentlyRead(cards, reviews, read(1), now, 0).map((c) => c.id)).toEqual(['card-due1']);
+  });
+
+  it('preserves order', () => {
+    const a = card('card-a', 'net');
+    const b = { ...card('card-b', 'net'), source: { path: 'vault/b.md', block: 'card-b' } };
+    const c = card('card-c', 'net');
+    const reviews = new Map([['card-a', due('card-a')], ['card-c', due('card-c')]]);
+    expect(selectNotRecentlyRead([a, b, c], reviews, read(1), now, 24).map((x) => x.id)).toEqual(['card-b']);
+  });
+});
+
+describe('countSuppressed', () => {
+  it('counts exactly what selectNotRecentlyRead removed', () => {
+    const cards = [card('card-due1', 'net'), card('card-new1', 'net')];
+    const reviews = new Map([['card-due1', due('card-due1')]]);
+    const reads = { 'vault/a.md': now.getTime() };
+    expect(countSuppressed(cards, reviews, reads, now, 24)).toBe(1);
+    expect(selectNotRecentlyRead(cards, reviews, reads, now, 24)).toHaveLength(1);
+  });
+
+  it('is 0 when nothing was read', () => {
+    const cards = [card('card-due1', 'net')];
+    const reviews = new Map([['card-due1', due('card-due1')]]);
+    expect(countSuppressed(cards, reviews, {}, now, 24)).toBe(0);
   });
 });

@@ -1,5 +1,6 @@
 import type { ReviewState, StoredCard } from '../db/schema.js';
 import { isDue } from './fsrs.js';
+import { isRecentlyRead, type NoteReads } from '../db/note-reads.js';
 
 /**
  * The hour a review day rolls over. A review logged at 01:00 belongs to the
@@ -114,6 +115,56 @@ export function buildExtension(input: ExtensionInput): StoredCard[] {
 export function selectEnabled(cards: StoredCard[], disabled: ReadonlySet<string>): StoredCard[] {
   if (disabled.size === 0) return cards;
   return cards.filter((card) => !disabled.has(card.category));
+}
+
+/**
+ * Drops DUE cards whose note was opened within the suppression window.
+ *
+ * FSRS estimates retention across elapsed time. A card tested moments
+ * after its note was read measures nothing about memory and writes an
+ * inflated stability score into the one store this app cannot rebuild.
+ * Deferring the test is how that measurement is declined.
+ *
+ * Like `selectEnabled` above, this is a filter, not a freeze: FSRS state
+ * is untouched and due dates keep advancing while a note is suppressed.
+ *
+ * NEW CARDS ARE NEVER SUPPRESSED, and the reason is the one `note-mask.ts`
+ * gave before this replaced it: suppression protects a pending test, and a
+ * card never asked has none. Reading a note and then learning its cards is
+ * the normal order of operations, not contamination -- and under the
+ * planned path feature, reading a note is precisely what INTRODUCES its
+ * cards, so suppressing them here would only have to be undone there.
+ */
+export function selectNotRecentlyRead(
+  cards: StoredCard[],
+  reviews: Map<string, ReviewState>,
+  reads: NoteReads,
+  now: Date,
+  windowHours: number
+): StoredCard[] {
+  if (windowHours <= 0) return cards;
+  return cards.filter((card) => {
+    if (!reviews.has(card.id)) return true; // new: nothing to protect
+    return !isRecentlyRead(reads, card.source.path, now, windowHours);
+  });
+}
+
+/**
+ * How many cards `selectNotRecentlyRead` would remove. Kept separate from
+ * `buildSession`'s return type so the dashboard can say what happened
+ * without every existing session call site changing shape.
+ *
+ * A card that leaves the queue with no explanation is the same defect the
+ * silently-dropped re-queued card already is (state-and-roadmap §6).
+ */
+export function countSuppressed(
+  cards: StoredCard[],
+  reviews: Map<string, ReviewState>,
+  reads: NoteReads,
+  now: Date,
+  windowHours: number
+): number {
+  return cards.length - selectNotRecentlyRead(cards, reviews, reads, now, windowHours).length;
 }
 
 export interface FocusInput {
