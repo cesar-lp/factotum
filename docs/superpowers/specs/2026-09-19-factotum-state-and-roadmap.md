@@ -1,6 +1,6 @@
 # Factotum — State and Roadmap
 
-**Date:** 2026-09-19
+**Date:** 2026-09-19 (figures and status refreshed 2026-09-21)
 **Status:** Current
 **Supersedes:** nothing. Companion to `2026-09-18-factotum-design.md`, which remains the
 design authority for intent. This document records what was actually built, the decisions
@@ -19,20 +19,37 @@ record of the parts worth keeping.
 `https://cesar-lp.github.io/factotum/`, installable to the iPhone Home Screen, and works
 offline.
 
+**Reference and search shipped on 2026-09-20** (`2026-09-20-reference-and-search-design.md`),
+adding the vault's second reader: search across notes, read-on-demand, and read-suppression
+in place of the note viewer's answer-masking.
+
+Figures below are as of 2026-09-21. They have grown roughly fivefold since this document
+was first written, which is itself the most important fact in this section — several design
+problems recorded here were sized against the original numbers and no longer hold at this
+scale.
+
 | | |
 |---|---|
-| Cards | 490 across 66 notes |
-| Categories | 7 |
-| Formats | cloze 178, qa 148, mcq 99, recall 65 |
-| Tests | 156 |
+| Cards | 2439 across 321 notes |
+| Topics | 11 |
+| Categories | 33 |
+| Formats | cloze 847, qa 843, mcq 426, recall 323 |
+| Tests | 589 across 37 files |
 | Workflows | `build-deck`, `deploy`, `ci` |
 
-Categories: `networking` 80, `amp` 75, `os-persistence` 79, `os-virtualization` 66,
-`data-systems` 65, `database-internals` 63, `os-concurrency` 62.
+By topic: `aws` 766, `identity` 334, `algorithms` 326, `security` 177, `api-design` 172,
+`networking` 163, `operating-systems` 145, `concurrency` 137, `math` 91, `data-systems` 65,
+`database-internals` 63.
 
-Source material: Kurose & Ross (networking), Kleppmann DDIA (data-systems), Petrov
-(database-internals), Arpaci-Dusseau OSTEP (the three `os-*` categories), Herlihy & Shavit
-(`amp`).
+The 33 categories run from `aws-observability` (95 cards) down to `aws-api-gateway` (49),
+clustered tightly between 50 and 95 — the 8–12-note sizing rule in §5 has held.
+
+Source material, from the notes' own `citations` frontmatter: Kurose & Ross plus the HTTP
+RFCs (networking), Kleppmann (data-systems), Petrov (database-internals), Arpaci-Dusseau
+OSTEP (`os-*`), Herlihy & Shavit (`amp`), Cormen et al. CLRS 4e (`algo-*`), AWS service
+documentation (`aws-*`), RFC 6749 / SAML 2.0 Core / Auth0 docs (`identity-*`), Aumasson and
+Ristić plus RFC 8446 (`security-*`), the gRPC and Protobuf guides plus RFC 9110
+(`api-*`), and Blitzstein & Hwang with Mitzenmacher & Upfal (`math-*`).
 
 ### Repository layout
 
@@ -212,8 +229,8 @@ treatment must sharpen the first, not restate it.
 | Exhausting the per-session re-queue cap drops the card silently, with no UI signal | Deferred to Phase 2's session-complete screen |
 | Enter-to-submit and routing side effects are verified by hand, not unit-tested | Accepted; jsdom is not a project dependency and §10 sanctions hand-verification |
 | ~19 qa cards in `networking` were term-only prompts | Fixed; no automated guard against recurrence |
-| 14 categories after CLRS would mean 14 mastery bars on a phone | Open design problem for Phase 2 |
-| **FSRS review state (stability, due dates, lapses) lives only in IndexedDB on one device**, with the manual Settings → Export button as the entire mitigation. Deleting the home-screen icon destroys it outright — no iCloud backup, no server copy. Surfaced while designing §4's note viewer; unrelated to it, but real: the deck rebuilds from this repo, months of stability scores do not. | Unmitigated beyond manual export; more urgent than anything in Phase 2, needs its own spec |
+| 14 categories after CLRS would mean 14 mastery bars on a phone | **Superseded by scale: there are now 33.** The problem did not stay put — it roughly doubled past the point at which this row gave up on it. A list of 33 bars is not a design; see Phase 2 below |
+| **FSRS review state (stability, due dates, lapses) lives only in IndexedDB on one device**, with the manual Settings → Export button as the entire mitigation. Deleting the home-screen icon destroys it outright — no iCloud backup, no server copy. Surfaced while designing §4's note viewer; unrelated to it, but real: the deck rebuilds from this repo, months of stability scores do not. **And the mitigation was weaker than recorded here: `exportBackup` can write a file, but no code in `app/` could ever read one back.** | Specified 2026-09-21 in `2026-09-21-review-history-durability-design.md` (versioned format, merging restore, Drive sync as a later phase). **Not yet implemented — still the project's only unrecoverable asset** |
 
 ## 7. Remaining phases
 
@@ -224,8 +241,11 @@ Action, session-complete screen. All specified in `2026-09-18-factotum-design.md
 
 Held until there is real usage to design against. Two things already waiting for it:
 
-- **The mastery-bar screen needs a design idea, not a longer list.** Seven categories today,
-  fourteen after CLRS.
+- **The mastery-bar screen needs a design idea, not a longer list.** Seven categories when
+  this was written; 33 today. At that count the screen is no longer a layout problem with a
+  list answer, and the path spec's map view (piece 3 of the three-way split in
+  `2026-09-20-reference-and-search-design.md` §0) is the better candidate — which means
+  Phase 2 should be re-scoped *after* the path, not built as originally specified.
 - **The session-complete screen** is where the silently-dropped card (§5) should be
   communicated.
 
@@ -240,10 +260,12 @@ been lived with.
 
 ### Content roadmap
 
-- **CLRS** — the large one. Expected 6–7 categories at the 8–12-note sizing: foundations and
-  recurrences, sorting and order statistics, data structures, dynamic programming, greedy and
-  amortized analysis, graphs, NP-completeness. Write one category and review it before
-  committing to the rest.
+- **CLRS** — ~~the large one~~ **written.** It landed as five categories — `algo-graphs` (94 cards),
+  `algo-data-structures` (64), `algo-foundations` (58), `algo-design` (56) and `algo-sorting`
+  (54), 326 in total. Close to the predicted 6–7: the greedy and amortized material went into
+  `algo-design` rather than standing alone, and NP-completeness is not yet written.
+- **Also written since:** `aws-*` (11 categories, 766 cards — by some distance the largest
+  body of material), `identity-*` (4), `security-*` (2), `api-*` (2), `math-*` (1).
 - **A qa-prompt-quality pass** if term-only prompts recur in new material.
 
 ## 8. What implementation taught us
