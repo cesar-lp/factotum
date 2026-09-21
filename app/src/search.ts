@@ -38,8 +38,16 @@ export const MAX_HITS_PER_NOTE = 5;
 export const MIN_QUERY_LENGTH = 2;
 export const SNIPPET_RADIUS = 80;
 
+/**
+ * Deduped: the AND check below (`found.size !== terms.length`) compares
+ * against a Set built from matched terms, so a repeated term (`hash hash`)
+ * would demand two entries in a Set that can only ever hold one distinct
+ * `hash` -- making every note fail the AND check and "No notes match" a
+ * false claim about a query that, deduped, has a real answer.
+ */
 export function parseQuery(query: string): string[] {
-  return query.toLowerCase().split(/\s+/).filter((t) => t !== '');
+  const terms = query.toLowerCase().split(/\s+/).filter((t) => t !== '');
+  return [...new Set(terms)];
 }
 
 export function escapeRegExp(value: string): string {
@@ -131,7 +139,11 @@ export function search(notes: Notes, query: string): NoteResult[] {
     // its prose never spells.
     const fields: { text: string; weight: number }[] = [
       { text: note.title, weight: FIELD_WEIGHTS.title },
-      { text: note.tags.join('\n'), weight: FIELD_WEIGHTS.tags },
+      // `?? []`, not a type-safety hedge: `notes.json` is served network-first
+      // with a cache fallback, so this can genuinely be a pre-`tags` payload
+      // from the previous deploy, and `.join` on `undefined` must not throw
+      // inside the debounce timer and kill search for the rest of the session.
+      { text: (note.tags ?? []).join('\n'), weight: FIELD_WEIGHTS.tags },
       { text: `${note.topic}\n${note.category}`, weight: FIELD_WEIGHTS.tags },
       { text: note.citations.join('\n'), weight: FIELD_WEIGHTS.citations }
     ];

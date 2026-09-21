@@ -21,6 +21,10 @@ describe('parseQuery', () => {
   it('returns an empty list for a blank query', () => {
     expect(parseQuery('   ')).toEqual([]);
   });
+
+  it('dedupes a repeated term', () => {
+    expect(parseQuery('hash hash')).toEqual(['hash']);
+  });
 });
 
 describe('blockText', () => {
@@ -131,6 +135,28 @@ describe('search', () => {
   it('caps the number of notes returned', () => {
     const many = Array.from({ length: 50 }, (_, i) => note({ path: `vault/${i}.md`, title: 'DNS' }));
     expect(search(corpus(...many), 'dns').length).toBeLessThanOrEqual(30);
+  });
+
+  it('a doubled query term returns the same notes as the single term, not zero', () => {
+    // Before parseQuery deduped, `found.size` (from a Set, so capped at 1
+    // distinct term) could never equal `terms.length` (2, undeduped),
+    // failing the AND check and returning nothing for every note.
+    const n = note({ blocks: [{ kind: 'prose', text: 'consistent hashing is useful', clozes: [] }] });
+    const single = search(corpus(n), 'hash');
+    const doubled = search(corpus(n), 'hash hash');
+    expect(doubled).toHaveLength(1);
+    expect(doubled.map((r) => r.path)).toEqual(single.map((r) => r.path));
+  });
+
+  it('does not throw on a note from a previous deploy missing the `tags` field', () => {
+    // Models a stale `notes.json` served from the cache-fallback path before
+    // this branch's `tags` field existed. The cast is deliberate: the real
+    // bug is a runtime payload shape that predates the current type (a
+    // previous deploy's JSON), not a hole in this test's own typing.
+    const { tags: _tags, ...withoutTags } = note({ title: 'DNS' });
+    const stale = withoutTags as NoteDoc;
+    expect(() => search(corpus(stale), 'dns')).not.toThrow();
+    expect(search(corpus(stale), 'dns')).toHaveLength(1);
   });
 });
 
