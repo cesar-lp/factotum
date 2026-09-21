@@ -245,24 +245,53 @@ history.
 
 ### 6.1 Google Drive, honestly scoped
 
+Checked against Google's current documentation on 2026-09-21; each claim below
+cites where it comes from, because an earlier draft of this section asserted
+three things from memory and all three were wrong.
+
 - **Scope:** `drive.appdata` — a hidden per-app folder, invisible in the Drive
   UI, unreadable by other apps. The right shape for a backup blob.
-- **Auth:** Google Identity Services token client. A public client ID, no
-  secret, which is legitimate for a static origin.
+- **No app verification is required.** Drive's auth guide classifies
+  `drive.appdata` as **non-sensitive**, and Google's verification overview
+  states that apps requesting only non-sensitive scopes do not need to complete
+  OAuth app verification. A lighter *brand verification* applies only if the
+  consent screen should show a custom app name and logo — cosmetic, and
+  skippable. This is a materially smaller obstacle than assumed.
+- **There is no refresh token to expire, and none to store.** Google Identity
+  Services' token model states there is no need to store per-user refresh
+  tokens; the browser receives short-lived access tokens only. The 7-day
+  refresh-token expiry that applies to OAuth clients in **Testing** publishing
+  status therefore does not bite here — that rule governs refresh tokens, and
+  this flow is not issued any.
+
+  This is also a genuine security advantage over the private-repo alternative
+  considered during design: no long-lived credential is ever written to the
+  device.
 - **Owner setup, unavoidable and not automatable:** a Google Cloud project and
-  an OAuth client authorized for `https://cesar-lp.github.io`. `drive.appdata`
-  is a sensitive scope — in Testing mode consent expires periodically and is
-  re-granted by hand; Published requires Google's verification for an app with
-  one user.
-- **"Automatic" has a ceiling.** An iOS Home Screen PWA gets no reliable
-  background execution: no Background Sync in Safari, no periodic wakeups. Sync
-  runs **when the app is open** — on launch and after a session. That is at
-  most one session of exposure with nothing to remember, which is a large
-  improvement, but it is not a daemon, and ITP will occasionally drop silent
-  token renewal and require a sign-in tap.
+  an OAuth client ID authorized for the origin `https://cesar-lp.github.io`.
+  The client ID is public by design; there is no secret in the browser.
+- **"Automatic" has a ceiling, and the ceiling is a tap.** GIS documents a new
+  access token being obtained *at page load or through a user gesture such as a
+  button press*. Acquiring one with no prompt at all after the first consent is
+  **not documented by Google**, so this design must not depend on it: treat an
+  occasional sign-in tap as the expected path, and any silent acquisition that
+  happens to work as a bonus.
+
+  Separately, an iOS Home Screen PWA gets no reliable background execution — no
+  Background Sync in Safari, no periodic wakeups. Sync runs **when the app is
+  open**: on launch and after a session. That is at most one session of
+  exposure with nothing to remember, which is a large improvement over today,
+  but it is not a daemon.
 - **Sign-in grants no security.** Nothing in Factotum is access-controlled: the
   deck is public and the history is local. The sign-in is a ticket to reach
   Drive, nothing more, and the UI should not imply otherwise.
+
+Sources: Drive API scopes and their sensitivity classification
+(`developers.google.com/workspace/drive/api/guides/api-specific-auth`), OAuth
+app verification requirements (`support.google.com/cloud/answer/13463073`),
+Testing-status refresh-token expiry
+(`developers.google.com/identity/protocols/oauth2`), and the GIS token model
+(`developers.google.com/identity/oauth2/web/guides/use-token-model`).
 
 ## 7. Testing
 
@@ -284,6 +313,12 @@ history.
 
 ## 8. Open questions
 
-None blocking. Two are deferred by design: the Drive consent-expiry workflow
-(§6.1), which cannot be settled until the OAuth client exists; and multi-device
-merge (§1), which this spec enables and does not build.
+None blocking. One is deferred by design: multi-device merge (§1), which this
+spec enables and does not build.
+
+The Drive consent-expiry question that an earlier draft deferred here is
+**closed** — §6.1 establishes that the browser flow is issued no refresh token,
+so Testing-status expiry does not apply. What replaces it is smaller and needs
+no external setup to decide: whether a sign-in tap on app launch is acceptable
+in the cases where a token cannot be acquired silently. It can be answered the
+first day phase 2 runs.
