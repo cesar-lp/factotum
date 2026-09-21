@@ -57,6 +57,16 @@ export interface Settings {
    * the link never needs conditional hiding.
    */
   obsidianVault: string;
+  /**
+   * How long after opening a note its DUE cards stay out of review.
+   *
+   * FSRS estimates retention across elapsed time, so testing a card
+   * moments after reading its note measures nothing and writes an
+   * inflated stability score. Suppression declines to take that
+   * measurement. `0` disables the mechanic entirely and is the intended
+   * escape hatch -- there is deliberately no separate on/off flag.
+   */
+  readSuppressionHours: number;
 }
 
 export interface FactotumSchema extends DBSchema {

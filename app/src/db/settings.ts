@@ -5,7 +5,8 @@ export const DEFAULT_SETTINGS: Settings = {
   newCardsPerDay: 10,
   theme: 'auto',
   disabledCategories: [],
-  obsidianVault: 'vault'
+  obsidianVault: 'vault',
+  readSuppressionHours: 24
 };
 
 /** Bounds a corrupt or malicious write; far above any plausible real vault. */
@@ -58,13 +59,15 @@ export function sanitizeSettings(input: unknown): Settings {
   const newCardsPerDayRaw = clampFinite(record['newCardsPerDay'], 0, 100, DEFAULT_SETTINGS.newCardsPerDay);
   const newCardsPerDay = Math.round(newCardsPerDayRaw);
   const theme = isTheme(record['theme']) ? record['theme'] : DEFAULT_SETTINGS.theme;
+  const readSuppressionHours = clampFinite(record['readSuppressionHours'], 0, 168, DEFAULT_SETTINGS.readSuppressionHours);
 
   return {
     desiredRetention,
     newCardsPerDay,
     theme,
     disabledCategories: toCategoryList(record['disabledCategories']),
-    obsidianVault: toObsidianVault(record['obsidianVault'])
+    obsidianVault: toObsidianVault(record['obsidianVault']),
+    readSuppressionHours
   };
 }
 

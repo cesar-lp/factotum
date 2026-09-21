@@ -11,14 +11,15 @@ describe('sanitizeSettings', () => {
   it('coerces a corrupt stored record to defaults/clamps', () => {
     const result = sanitizeSettings({ newCardsPerDay: 'ten', desiredRetention: 99, theme: 'chartreuse' });
     expect(result).toEqual({
-      desiredRetention: 0.97, newCardsPerDay: 10, theme: 'auto', disabledCategories: [], obsidianVault: 'vault'
+      desiredRetention: 0.97, newCardsPerDay: 10, theme: 'auto', disabledCategories: [], obsidianVault: 'vault',
+      readSuppressionHours: 24
     });
   });
 
   it('round-trips a valid record unchanged', () => {
     const valid = {
       desiredRetention: 0.85, newCardsPerDay: 20, theme: 'night' as const, disabledCategories: [],
-      obsidianVault: 'second-brain'
+      obsidianVault: 'second-brain', readSuppressionHours: 24
     };
     expect(sanitizeSettings(valid)).toEqual(valid);
   });
@@ -96,7 +97,8 @@ describe('getSettings / saveSettings', () => {
     const db = await openDb();
     await db.put('meta', { newCardsPerDay: 'ten', desiredRetention: 99, theme: 'chartreuse' }, 'settings');
     expect(await getSettings(db)).toEqual({
-      desiredRetention: 0.97, newCardsPerDay: 10, theme: 'auto', disabledCategories: [], obsidianVault: 'vault'
+      desiredRetention: 0.97, newCardsPerDay: 10, theme: 'auto', disabledCategories: [], obsidianVault: 'vault',
+      readSuppressionHours: 24
     });
   });
 
@@ -104,11 +106,12 @@ describe('getSettings / saveSettings', () => {
     const db = await openDb();
     await saveSettings(db, {
       desiredRetention: 99 as unknown as number, newCardsPerDay: -5, theme: 'auto', disabledCategories: [],
-      obsidianVault: 'vault'
+      obsidianVault: 'vault', readSuppressionHours: 24
     });
     const stored = await db.get('meta', 'settings');
     expect(stored).toEqual({
-      desiredRetention: 0.97, newCardsPerDay: 0, theme: 'auto', disabledCategories: [], obsidianVault: 'vault'
+      desiredRetention: 0.97, newCardsPerDay: 0, theme: 'auto', disabledCategories: [], obsidianVault: 'vault',
+      readSuppressionHours: 24
     });
   });
 });
@@ -117,7 +120,8 @@ describe('clampSettings', () => {
   it('keeps valid values', () => {
     expect(clampSettings({ desiredRetention: 0.85, newCardsPerDay: 20, theme: 'night' }))
       .toEqual({
-        desiredRetention: 0.85, newCardsPerDay: 20, theme: 'night', disabledCategories: [], obsidianVault: 'vault'
+        desiredRetention: 0.85, newCardsPerDay: 20, theme: 'night', disabledCategories: [], obsidianVault: 'vault',
+        readSuppressionHours: 24
       });
   });
 
@@ -133,7 +137,8 @@ describe('clampSettings', () => {
 
   it('falls back to defaults for missing or invalid fields', () => {
     expect(clampSettings({})).toEqual({
-      desiredRetention: 0.9, newCardsPerDay: 10, theme: 'auto', disabledCategories: [], obsidianVault: 'vault'
+      desiredRetention: 0.9, newCardsPerDay: 10, theme: 'auto', disabledCategories: [], obsidianVault: 'vault',
+      readSuppressionHours: 24
     });
     expect(clampSettings({ theme: 'chartreuse' as never }).theme).toBe('auto');
   });
@@ -152,5 +157,27 @@ describe('clampSettings', () => {
 describe('retentionPercentBounds', () => {
   it('derives the slider bounds from sanitizeSettings’s own clamp, not a second copy', () => {
     expect(retentionPercentBounds()).toEqual({ min: 70, max: 97 });
+  });
+});
+
+describe('readSuppressionHours', () => {
+  it('defaults to 24 when absent', () => {
+    expect(sanitizeSettings({}).readSuppressionHours).toBe(24);
+  });
+
+  it('accepts 0, which disables suppression entirely', () => {
+    expect(sanitizeSettings({ readSuppressionHours: 0 }).readSuppressionHours).toBe(0);
+  });
+
+  it('clamps a negative value to 0 rather than scheduling into the past', () => {
+    expect(sanitizeSettings({ readSuppressionHours: -5 }).readSuppressionHours).toBe(0);
+  });
+
+  it('clamps an absurd value to one week', () => {
+    expect(sanitizeSettings({ readSuppressionHours: 10000 }).readSuppressionHours).toBe(168);
+  });
+
+  it('falls back to the default for a non-finite value', () => {
+    expect(sanitizeSettings({ readSuppressionHours: Number.NaN }).readSuppressionHours).toBe(24);
   });
 });
