@@ -15,7 +15,7 @@ import { startReview } from './ui/review.js';
 import { renderSettings } from './ui/settings.js';
 import { renderNote } from './ui/note.js';
 import { loadNotes, findNote, prefetchNotes } from './db/notes.js';
-import { loadNoteReads } from './db/note-reads.js';
+import { loadNoteReads, recordNoteRead } from './db/note-reads.js';
 import { maskedCardIds } from './ui/note-mask.js';
 import { obsidianUrl } from './ui/obsidian.js';
 import {
@@ -204,6 +204,15 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
       loadNotes(), loadReviews(db), getSettings(db)
     ]);
     const note = notes ? findNote(notes, decision.path) : null;
+    // Recorded on OPEN, not on dwell time or scroll depth. Opening and
+    // immediately backing out defers that note's due cards by a day, which
+    // is trivially recoverable -- whereas a dwell threshold means timers,
+    // visibility handling and a new class of flaky test for a problem that
+    // resolves itself tomorrow.
+    //
+    // Only for a note that actually exists: a stale or mistyped path must
+    // not write a read for something the reader never saw.
+    if (note) await recordNoteRead(db, decision.path, now, settings.readSuppressionHours);
     const card = note
       ? (await db.getAll('cards')).find((c) => c.source.path === decision.path) ?? null
       : null;
