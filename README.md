@@ -412,16 +412,16 @@ Obsidian. There is no masking any more: **the viewer always shows
 everything**, including which mcq choice is correct. What protects review
 instead is **read-suppression** — opening a note defers its currently-**due**
 cards out of review for `Settings.readSuppressionHours` (default 24, range
-0–168; `0` turns the mechanic off entirely). It has no control in the
-Settings screen yet — the field lives in the settings store, not the UI. New
+0–168; `0` turns the mechanic off entirely), controlled from the Settings
+screen (`#readSuppressionHours`, a number input, min 0 max 168). New
 cards are never deferred, since there's nothing to spoil. This is a filter on the queue, not
 a freeze on scheduling: FSRS state and due dates are untouched, so a deferred
 card is simply served later, once the suppression window has passed.
-Deferral applies to the daily queue, its "keep going" extension, and focused
-sessions — including a session already in progress, so reading a note
-mid-review removes that note's other cards from the rest of that session.
-Tapping any answer still reveals just that one; a header control reveals the
-whole note at once. Full design and rationale in
+Deferral applies to the daily queue and focused sessions — including a
+session already in progress, so reading a note mid-review removes that
+note's other cards from the rest of that session — but not to the "keep
+going" extension, which serves only new cards, and new cards are never
+deferred. Full design and rationale in
 `docs/superpowers/specs/2026-09-20-in-app-note-viewer-design.md`.
 
 **Opening a note mid-review no longer guarantees the session comes back the
