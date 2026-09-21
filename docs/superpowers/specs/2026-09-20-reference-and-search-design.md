@@ -235,9 +235,13 @@ new dependency. Each query walks `notes.json`'s blocks in memory in a single
 scoring pass, debounced at ~150ms.
 
 The corpus is ~197k words across 189 notes — roughly 1.2MB of text, already
-loaded and cached. A lowercase scan over that is single-digit milliseconds on
-an iPhone, and an index built to avoid it would cost more to maintain than the
-scan costs to run. Two alternatives were considered and rejected for now: a
+loaded and cached. This has now been measured against the real 288-note
+corpus: median 3.75 ms/query in Node, and median 17.9 ms/query (min 10.1, max
+35.4) in the browser on an unminified Vite dev build — a production build and
+a real iPhone should both do better than that dev-build figure, not worse.
+Either number sits comfortably inside the 150ms debounce below, which is why
+the scan was kept rather than replaced by an index. Two alternatives were
+considered and rejected for now: a
 runtime-built inverted index (~150 lines plus tests, to replace a scan that was
 already fast enough) and a pipeline-built index with a search library (best
 quality by a distance; also a fourth runtime dependency, a third committed
