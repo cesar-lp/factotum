@@ -19,7 +19,7 @@ import { loadNotes, findNote, prefetchNotes } from './db/notes.js';
 import { loadNoteReads, recordNoteRead } from './db/note-reads.js';
 import { obsidianUrl } from './ui/obsidian.js';
 import {
-  decideRoute, focusHash, noteHash, noteBlockHash, searchHash, resumesSuspendedSession,
+  decideRoute, focusHash, noteHash, noteBlockHash, searchHash, SEARCH_PREFIX, resumesSuspendedSession,
   retainsSuspendedSession, type DashboardState
 } from './route.js';
 import type { Deck } from '../../pipeline/src/types.js';
@@ -33,6 +33,12 @@ const REPO = 'cesar-lp/factotum';
 // against `window.location.hash` alone catches "navigated away" but not
 // "back on #topics via a different route() call in the meantime".
 let topicsRenderId = 0;
+
+// Same guard as topicsRenderId above, for the same reason: loadNotes() is a
+// ~1MB fetch, and a reader who navigated away during that await must not
+// have the search screen painted back over wherever they went once it
+// resolves.
+let searchRenderId = 0;
 
 /**
  * The live review screen, retained across a note detour.
@@ -314,7 +320,13 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
   }
 
   if (decision.kind === 'search') {
+    const renderId = ++searchRenderId;
     const [notes, reads] = await Promise.all([loadNotes(), loadNoteReads(db)]);
+    // Superseded by a newer visit to this branch in the meantime.
+    if (renderId !== searchRenderId) return;
+    // The reader navigated away (back, a result, settings) while this was
+    // in flight -- do not paint the search screen over wherever they went.
+    if (!window.location.hash.startsWith(SEARCH_PREFIX)) return;
     // Newest first. `noteReads` is already maintained by suppression, so
     // the landing screen costs no extra state.
     const recentPaths = Object.entries(reads)

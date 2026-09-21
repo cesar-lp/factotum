@@ -263,4 +263,27 @@ describe('countSuppressed', () => {
     const reviews = new Map([['card-due1', due('card-due1')]]);
     expect(countSuppressed(cards, reviews, {}, now, 24)).toBe(0);
   });
+
+  it('does NOT count a not-yet-due card with review state -- it was never going to be reviewed today', () => {
+    const notDue: ReviewState = { ...initialState('card-notdue', now), due: now.getTime() + 3600_000, reps: 3 };
+    const cards = [card('card-notdue', 'net')];
+    const reviews = new Map([['card-notdue', notDue]]);
+    const reads = { 'vault/a.md': now.getTime() };
+    expect(countSuppressed(cards, reviews, reads, now, 24)).toBe(0);
+  });
+
+  it('does NOT count a suspended due card', () => {
+    const suspended: ReviewState = { ...due('card-susp'), suspended: true };
+    const cards = [card('card-susp', 'net')];
+    const reviews = new Map([['card-susp', suspended]]);
+    const reads = { 'vault/a.md': now.getTime() };
+    expect(countSuppressed(cards, reviews, reads, now, 24)).toBe(0);
+  });
+
+  it('counts a genuinely due card whose note was just read', () => {
+    const cards = [card('card-due1', 'net')];
+    const reviews = new Map([['card-due1', due('card-due1')]]);
+    const reads = { 'vault/a.md': now.getTime() };
+    expect(countSuppressed(cards, reviews, reads, now, 24)).toBe(1);
+  });
 });
