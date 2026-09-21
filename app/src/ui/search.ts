@@ -74,7 +74,7 @@ export function renderRecent(notes: NoteDoc[], paths: string[]): string {
       `<li class="search-result"><div class="search-row">`
       + `<button class="search-open" data-role="open" data-path="${escapeHtml(note.path)}">`
       + `<span class="search-title">${escapeHtml(note.title)}</span>`
-      + `<span class="search-meta">${escapeHtml(note.category ?? '')}</span>`
+      + `<span class="search-meta">${escapeHtml(note.category)}</span>`
       + `</button></div></li>`
     );
   if (rows.length === 0) return '';

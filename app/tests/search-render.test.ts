@@ -8,6 +8,11 @@ const result = (over: Partial<NoteResult> = {}): NoteResult => ({
   score: 10, hits: [], ...over
 });
 
+const noteDoc = (over: Partial<NoteDoc> = {}): NoteDoc => ({
+  path: 'vault/a.md', title: 'DNS', topic: 'networking', category: 'networking',
+  tags: [], citations: [], blocks: [], ...over
+});
+
 describe('highlight', () => {
   it('wraps the matched span', () => {
     expect(highlight('the needle here', [{ start: 4, end: 10 }]))
@@ -85,20 +90,20 @@ describe('renderRecent', () => {
 
   it('lists a read note by title, newest first', () => {
     const notes = [
-      { path: 'vault/a.md', title: 'DNS' },
-      { path: 'vault/b.md', title: 'TCP' }
-    ] as NoteDoc[];
+      noteDoc({ path: 'vault/a.md', title: 'DNS' }),
+      noteDoc({ path: 'vault/b.md', title: 'TCP' })
+    ];
     const html = renderRecent(notes, ['vault/b.md', 'vault/a.md']);
     expect(html.indexOf('TCP')).toBeLessThan(html.indexOf('DNS'));
   });
 
   it('skips a path no longer in the corpus rather than rendering a dead row', () => {
-    const notes = [{ path: 'vault/a.md', title: 'DNS' }] as NoteDoc[];
+    const notes = [noteDoc({ path: 'vault/a.md', title: 'DNS' })];
     expect(renderRecent(notes, ['vault/gone.md'])).toBe('');
   });
 
   it('escapes a title containing html', () => {
-    const notes = [{ path: 'vault/a.md', title: '<script>' }] as NoteDoc[];
+    const notes = [noteDoc({ path: 'vault/a.md', title: '<script>' })];
     expect(renderRecent(notes, ['vault/a.md'])).not.toContain('<script>');
   });
 });
