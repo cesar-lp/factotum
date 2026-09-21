@@ -27,7 +27,8 @@ const state = (
   // dashboard renders them from the same load.
   streak: 0,
   lastSevenDays: [],
-  topics: topicList
+  topics: topicList,
+  deferredCount: 0
 });
 
 describe('decideRoute', () => {

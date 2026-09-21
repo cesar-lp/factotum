@@ -5,7 +5,9 @@ import { getSettings, saveSettings } from './db/settings.js';
 import { mergeDeck } from './db/deck.js';
 import { loadReviews, newCardsSeenToday } from './db/reviews.js';
 import { getLastSevenDays, getStreak } from './db/stats.js';
-import { buildExtension, buildFocusSession, buildSession, selectEnabled } from './scheduler/queue.js';
+import {
+  buildExtension, buildFocusSession, buildSession, countSuppressed, selectEnabled, selectNotRecentlyRead
+} from './scheduler/queue.js';
 import { summarizeTopics, notesByCategory } from './topics.js';
 import { renderDashboard } from './ui/dashboard.js';
 import { renderTopics } from './ui/topics.js';
@@ -13,6 +15,7 @@ import { startReview } from './ui/review.js';
 import { renderSettings } from './ui/settings.js';
 import { renderNote } from './ui/note.js';
 import { loadNotes, findNote, prefetchNotes } from './db/notes.js';
+import { loadNoteReads } from './db/note-reads.js';
 import { maskedCardIds } from './ui/note-mask.js';
 import { obsidianUrl } from './ui/obsidian.js';
 import {
@@ -77,7 +80,7 @@ async function syncDeck(db: FactotumDb): Promise<boolean> {
 }
 
 export async function loadDashboardState(db: FactotumDb, now: Date): Promise<DashboardState> {
-  const [cards, reviews, settings, seen, streak, lastSevenDays] = await Promise.all([
+  const [cards, reviews, settings, seen, streak, lastSevenDays, reads] = await Promise.all([
     db.getAll('cards'),
     loadReviews(db),
     getSettings(db),
@@ -86,7 +89,8 @@ export async function loadDashboardState(db: FactotumDb, now: Date): Promise<Das
     // queue below, so the streak's notion of "today" cannot drift from the
     // one the daily new-card allowance is counted against.
     getStreak(db, now),
-    getLastSevenDays(db, now)
+    getLastSevenDays(db, now),
+    loadNoteReads(db)
   ]);
 
   // The daily queue respects the user's mutes; the topics summary does not
@@ -94,17 +98,23 @@ export async function loadDashboardState(db: FactotumDb, now: Date): Promise<Das
   // are allowed to target a muted category on purpose.
   const enabled = selectEnabled(cards, new Set(settings.disabledCategories));
 
+  // Suppression composes AFTER muting and BEFORE the builders, the same
+  // seam selectEnabled already occupies, so neither filter knows about the
+  // other and `buildSession` keeps exactly one job.
+  const servable = selectNotRecentlyRead(enabled, reviews, reads, now, settings.readSuppressionHours);
+  const deferredCount = countSuppressed(enabled, reviews, reads, now, settings.readSuppressionHours);
+
   const session = buildSession({
-    cards: enabled,
+    cards: servable,
     reviews,
     now,
     newCardsPerDay: settings.newCardsPerDay,
     newCardsSeenToday: seen
   });
-  const extension = buildExtension({ cards: enabled, reviews });
+  const extension = buildExtension({ cards: servable, reviews });
   const topics = summarizeTopics(cards, reviews, now);
 
-  return { session, extension, newCardsSeenToday: seen, streak, lastSevenDays, topics };
+  return { session, extension, newCardsSeenToday: seen, streak, lastSevenDays, topics, deferredCount };
 }
 
 async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: boolean): Promise<void> {
@@ -171,9 +181,17 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
   }
 
   if (decision.kind === 'focus') {
-    const [cards, reviews] = await Promise.all([db.getAll('cards'), loadReviews(db)]);
+    const [cards, reviews, settings, reads] = await Promise.all([
+      db.getAll('cards'), loadReviews(db), getSettings(db), loadNoteReads(db)
+    ]);
+    // Muting is a preference the user is overriding on purpose by choosing
+    // this category, so `selectEnabled` stays out of focus mode. Suppression
+    // is not a preference -- it is a measurement-validity rule, and there is
+    // no version of "test me on the paragraph I read four minutes ago" worth
+    // honouring. Hence the asymmetry.
+    const servable = selectNotRecentlyRead(cards, reviews, reads, now, settings.readSuppressionHours);
     await begin(
-      buildFocusSession({ cards, reviews, now, category: decision.category }),
+      buildFocusSession({ cards: servable, reviews, now, category: decision.category }),
       // Back to the picker, not the dashboard — a focused session lands you
       // where you launched it.
       () => { window.location.hash = '#topics'; }

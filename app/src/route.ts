@@ -23,6 +23,8 @@ export interface DashboardState {
    * `disabledCategories`, unlike `session` and `extension`.
    */
   topics: TopicSummary[];
+  /** Due cards held back because their note was read inside the window. */
+  deferredCount: number;
 }
 
 export type RouteDecision =
