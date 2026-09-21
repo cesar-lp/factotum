@@ -14,7 +14,7 @@ const PAST = NOW.getTime() - 86_400_000;
 const FUTURE = NOW.getTime() + 86_400_000;
 
 const note: NoteDoc = {
-  path: 'vault/a.md', title: 'A', topic: 't', category: 'c', citations: [],
+  path: 'vault/a.md', title: 'A', topic: 't', category: 'c', tags: [], citations: [],
   blocks: [
     { kind: 'prose', text: 'x', clozes: [{ start: 0, end: 1, cardId: 'card-due', answer: 'x' }] },
     { kind: 'qa', cardId: 'card-new', prompt: 'Q', answer: 'A' },

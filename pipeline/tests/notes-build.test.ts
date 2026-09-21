@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { resolveBlocks, noteTitle, withStableNotesGeneratedAt } from '../src/build.js';
+import { resolveBlocks, noteTitle, withStableNotesGeneratedAt, buildNotes } from '../src/build.js';
 import { parseBlocks } from '../src/cards.js';
 import { parseCards } from '../src/cards.js';
 import { assignIds } from '../src/ids.js';
@@ -65,7 +65,7 @@ describe('withStableNotesGeneratedAt', () => {
     // nothing) flaps on every unrelated PR.
     const notes = (generatedAt: string): Notes => ({
       generatedAt,
-      notes: [{ path: 'vault/a.md', title: 'A', topic: 't', category: 'c', citations: [], blocks: [] }]
+      notes: [{ path: 'vault/a.md', title: 'A', topic: 't', category: 'c', tags: [], citations: [], blocks: [] }]
     });
     expect(withStableNotesGeneratedAt(notes('2026-02-02'), notes('2026-01-01')).generatedAt).toBe('2026-01-01');
   });
@@ -74,8 +74,21 @@ describe('withStableNotesGeneratedAt', () => {
     const existing: Notes = { generatedAt: '2026-01-01', notes: [] };
     const next: Notes = {
       generatedAt: '2026-02-02',
-      notes: [{ path: 'vault/a.md', title: 'A', topic: 't', category: 'c', citations: [], blocks: [] }]
+      notes: [{ path: 'vault/a.md', title: 'A', topic: 't', category: 'c', tags: [], citations: [], blocks: [] }]
     };
     expect(withStableNotesGeneratedAt(next, existing).generatedAt).toBe('2026-02-02');
+  });
+});
+
+describe('buildNotes', () => {
+  it('carries frontmatter tags onto the NoteDoc', () => {
+    const body = 'MTU is ==1500 bytes==.';
+    const cards = assignIds(parseCards(body, 0), new Set<string>());
+    const note = {
+      path: 'vault/t.md', topic: 'networking', category: 'networking',
+      tags: ['tcp', 'mtu'], citations: [], cards
+    };
+    const notes = buildNotes([note], new Map([['vault/t.md', body]]), new Date('2026-09-20T00:00:00Z'));
+    expect(notes.notes[0]?.tags).toEqual(['tcp', 'mtu']);
   });
 });

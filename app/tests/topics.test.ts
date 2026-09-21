@@ -120,9 +120,9 @@ describe('notesByCategory', () => {
   const notes: Notes = {
     generatedAt: '2026-01-01T00:00:00.000Z',
     notes: [
-      { path: 'vault/db/raft.md', title: 'Raft', topic: 'db', category: 'db', citations: [], blocks: [] },
-      { path: 'vault/db/consensus.md', title: 'Consensus', topic: 'db', category: 'db', citations: [], blocks: [] },
-      { path: 'vault/net/tcp.md', title: 'TCP', topic: 'net', category: 'net', citations: [], blocks: [] }
+      { path: 'vault/db/raft.md', title: 'Raft', topic: 'db', category: 'db', tags: [], citations: [], blocks: [] },
+      { path: 'vault/db/consensus.md', title: 'Consensus', topic: 'db', category: 'db', tags: [], citations: [], blocks: [] },
+      { path: 'vault/net/tcp.md', title: 'TCP', topic: 'net', category: 'net', tags: [], citations: [], blocks: [] }
     ]
   };
 

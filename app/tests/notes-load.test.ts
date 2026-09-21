@@ -6,7 +6,7 @@ const sample: Notes = {
   generatedAt: '2026-01-01T00:00:00.000Z',
   notes: [{
     path: 'vault/a/consensus.md', title: 'Consensus',
-    topic: 'db', category: 'db', citations: [],
+    topic: 'db', category: 'db', tags: [], citations: [],
     blocks: [{ kind: 'prose', text: 'hello', clozes: [] }]
   }]
 };
