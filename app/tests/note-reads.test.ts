@@ -30,8 +30,11 @@ describe('isRecentlyRead', () => {
 });
 
 describe('pruneReads', () => {
-  it('drops entries older than the window and keeps the rest', () => {
-    const pruned = pruneReads({ 'old.md': hoursAgo(50), 'new.md': hoursAgo(2) }, now, 24);
+  it('drops entries past the 7-day retention floor and keeps the rest', () => {
+    // Retention is decoupled from windowHours (see the tests below) and
+    // floored at 7 days, so demonstrating an actual drop needs an entry
+    // older than that floor, not just older than the 24h window.
+    const pruned = pruneReads({ 'old.md': hoursAgo(24 * 8), 'new.md': hoursAgo(2) }, now, 24);
     expect(Object.keys(pruned)).toEqual(['new.md']);
   });
 
@@ -39,6 +42,28 @@ describe('pruneReads', () => {
     const input = { 'old.md': hoursAgo(50) };
     pruneReads(input, now, 24);
     expect(input['old.md']).toBe(hoursAgo(50));
+  });
+
+  it('keeps an entry older than the window but inside the 7-day retention floor', () => {
+    // 50h is outside a 24h suppression window but well inside 7 days.
+    const pruned = pruneReads({ 'mid.md': hoursAgo(50) }, now, 24);
+    expect(Object.keys(pruned)).toEqual(['mid.md']);
+  });
+
+  it('still drops an entry older than the 7-day retention floor', () => {
+    const pruned = pruneReads({ 'ancient.md': hoursAgo(24 * 8) }, now, 24);
+    expect(Object.keys(pruned)).toEqual([]);
+  });
+
+  it('with windowHours: 0, a prior entry still survives (retention is not tied to the disabled window)', () => {
+    const pruned = pruneReads({ 'mid.md': hoursAgo(50) }, now, 0);
+    expect(Object.keys(pruned)).toEqual(['mid.md']);
+  });
+});
+
+describe('isRecentlyRead still honours the real window, unaffected by retention', () => {
+  it('reports an entry inside the 7-day retention floor but outside a 24h window as NOT recent', () => {
+    expect(isRecentlyRead({ 'mid.md': hoursAgo(50) }, 'mid.md', now, 24)).toBe(false);
   });
 });
 
@@ -56,7 +81,9 @@ describe('sanitizeReads', () => {
 describe('recordNoteRead', () => {
   it('round-trips through the meta store and prunes on write', async () => {
     const db = await openDb();
-    await db.put('meta', { 'stale.md': hoursAgo(99) }, 'noteReads');
+    // Past the 7-day retention floor, not just past the 24h window --
+    // see pruneReads's tests for why 24h alone would no longer prune this.
+    await db.put('meta', { 'stale.md': hoursAgo(24 * 8) }, 'noteReads');
     const after = await recordNoteRead(db, 'fresh.md', now, 24);
     expect(after['fresh.md']).toBe(now.getTime());
     expect(after['stale.md']).toBeUndefined();

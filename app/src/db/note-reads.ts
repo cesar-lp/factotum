@@ -42,10 +42,23 @@ export function isRecentlyRead(
   return age < windowHours * 3600_000;
 }
 
+/** The floor on retention, independent of `windowHours` -- see `pruneReads`. */
+const MIN_RETENTION_HOURS = 24 * 7;
+
 export function pruneReads(reads: NoteReads, now: Date, windowHours: number): NoteReads {
+  // Retention deliberately does NOT use windowHours directly: this store
+  // also drives the "Recently read" landing screen, which has no reason to
+  // track the suppression window. With the default 24h it would show only
+  // today's notes, and with the documented `windowHours: 0` escape hatch --
+  // meant to just turn suppression off -- pruneReads would run with a
+  // window of 0 on every write, and the landing screen would strand at
+  // exactly one row forever. A week-long floor keeps the record useful for
+  // that screen without weakening `isRecentlyRead`, which still enforces
+  // the real window unchanged wherever suppression actually matters.
+  const retentionHours = Math.max(windowHours, MIN_RETENTION_HOURS);
   const out: NoteReads = {};
   for (const path of Object.keys(reads)) {
-    if (isRecentlyRead(reads, path, now, windowHours)) out[path] = reads[path] as number;
+    if (isRecentlyRead(reads, path, now, retentionHours)) out[path] = reads[path] as number;
   }
   return out;
 }
