@@ -157,12 +157,52 @@ export function markdownFiles(dir: string): string[] {
   });
 }
 
+const ANY_ANCHOR = /\^(card-[a-z0-9]{4})\b/g;
+
+/**
+ * Collects every `^card-xxxx` anchor already written anywhere under the vault.
+ *
+ * This exists because minting an id has to avoid every anchor in the vault,
+ * not just the ones seen so far. `processVault` walks files in sorted order,
+ * so seeding `taken` as it went left every not-yet-visited file's anchors
+ * invisible to `generateId`: a note under `vault/aws/` could be handed an id
+ * that a note under `vault/clrs/` already owned, and the build would fail on
+ * `buildDeck`'s duplicate check. That is not a rare shape. Ids are four
+ * characters from a 36-symbol alphabet, so the space is 36^4 and a vault of a
+ * few thousand cards collides by birthday arithmetic often enough to hit it in
+ * practice -- which it did, on a vault of 2439 cards.
+ *
+ * Reading every file twice (once here, once in the walk) is deliberate: it
+ * keeps this pass independent of parsing, so an anchor is reserved even when
+ * it sits in a file with malformed frontmatter that yields no note at all.
+ * Those anchors still belong to real cards with real review history.
+ */
+export function collectAnchors(files: string[]): Set<string> {
+  const taken = new Set<string>();
+  for (const file of files) {
+    let raw: string;
+    try {
+      raw = readFileSync(file, 'utf8');
+    } catch (error) {
+      throw new Error(`Failed to scan ${file} for existing card ids: ${error instanceof Error ? error.message : String(error)}`, {
+        cause: error
+      });
+    }
+    for (const match of raw.matchAll(ANY_ANCHOR)) {
+      const id = match[1];
+      if (id) taken.add(id);
+    }
+  }
+  return taken;
+}
+
 /**
  * Walks `vaultDir`, parses every note, assigns/writes back ids, and returns
  * the parsed notes ready for `buildDeck`.
  *
- * `taken` is a single Set created once here and threaded through every
- * note's `parseNote` call, so generated ids are unique across the whole
+ * `taken` is seeded up front with every anchor already present in the vault
+ * (see `collectAnchors`) and then threaded through every note's `parseNote`
+ * call, so generated ids are unique across the whole
  * vault rather than merely within one file.
  *
  * Source paths are computed relative to `vaultDir`'s PARENT directory
@@ -179,11 +219,12 @@ export function markdownFiles(dir: string): string[] {
  */
 export function processVault(vaultDir: string): { notes: ParsedNote[]; bodies: Map<string, string> } {
   const pathBase = resolve(vaultDir, '..');
-  const taken = new Set<string>();
+  const files = markdownFiles(vaultDir).sort();
+  const taken = collectAnchors(files);
   const notes: ParsedNote[] = [];
   const bodies = new Map<string, string>();
 
-  for (const file of markdownFiles(vaultDir).sort()) {
+  for (const file of files) {
     try {
       const raw = readFileSync(file, 'utf8');
       const rel = relative(pathBase, file);
