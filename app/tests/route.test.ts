@@ -282,14 +282,41 @@ describe('#note routing', () => {
       .toEqual({ kind: 'note', path: 'vault/a.md', cardId: null, block: 3 });
   });
 
-  it('treats a non-numeric b-segment as part of the path', () => {
-    expect(decideRoute('#note/vault%2Fbx.md', s()))
-      .toEqual({ kind: 'note', path: 'vault/bx.md', cardId: null, block: null });
-  });
-
   it('treats a filename starting with b plus digits as a path, not a block index', () => {
+    // Fully percent-encoded, so no literal '/' survives to make 'b12.md'
+    // a trailing segment at all -- this guards the encoding case, not the
+    // BLOCK_SEGMENT anchoring itself (see the three tests below for that).
     expect(decideRoute('#note/vault%2Fb12.md', s()))
       .toEqual({ kind: 'note', path: 'vault/b12.md', cardId: null, block: null });
+  });
+
+  // The three tests below all produce a genuine trailing segment after a
+  // REAL, unencoded '/' -- unlike the encoding-only cases above, these
+  // actually exercise BLOCK_SEGMENT's anchors. Confirmed by temporarily
+  // loosening it to an unanchored /b\d+/: 'carries a real block segment'
+  // still passed (b12 matches either way), but the other two failed --
+  // 'b12x' matched the unanchored pattern and got misread as block 12
+  // instead of staying part of the path, and so did 'xb1'. Restoring the
+  // anchors made all three pass again. See task-13-report.md for the
+  // recorded before/after.
+  it('carries a real block segment', () => {
+    expect(decideRoute('#note/vault%2Fa.md/b12', s()))
+      .toEqual({ kind: 'note', path: 'vault/a.md', cardId: null, block: 12 });
+  });
+
+  it('rejects a trailing segment with trailing junk after the digits', () => {
+    // 'b12x' is not a block index -- BLOCK_SEGMENT's trailing '$' must
+    // reject it -- so the whole raw remainder (including the real '/')
+    // is the path instead.
+    expect(decideRoute('#note/vault%2Fa.md/b12x', s()))
+      .toEqual({ kind: 'note', path: 'vault/a.md/b12x', cardId: null, block: null });
+  });
+
+  it('rejects a trailing segment with junk before the leading b', () => {
+    // 'xb1' is not a block index -- BLOCK_SEGMENT's leading '^' must
+    // reject it -- so it too stays part of the path.
+    expect(decideRoute('#note/vault%2Fa.md/xb1', s()))
+      .toEqual({ kind: 'note', path: 'vault/a.md/xb1', cardId: null, block: null });
   });
 });
 
