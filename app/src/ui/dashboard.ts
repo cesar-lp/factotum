@@ -29,6 +29,7 @@ export interface DashboardProps {
   onKeepGoing: () => void;
   onTopics: () => void;
   onSettings: () => void;
+  onSearch: () => void;
   /**
    * True when there are no cards in local storage AND the deck sync failed —
    * i.e. a genuine first-load failure (offline first launch, broken deploy),
@@ -151,6 +152,7 @@ export function renderDashboard(root: HTMLElement, props: DashboardProps): void 
       <div class="top">
         <span>factotum</span>
         <span>
+          <button class="btn-quiet" id="search">search</button>
           <button class="btn-quiet" id="topics">topics</button>
           <button class="btn-quiet" id="settings">settings</button>
         </span>
@@ -171,6 +173,7 @@ export function renderDashboard(root: HTMLElement, props: DashboardProps): void 
   `;
 
   root.querySelector<HTMLButtonElement>('#start')?.addEventListener('click', props.onStart);
+  root.querySelector<HTMLButtonElement>('#search')?.addEventListener('click', props.onSearch);
   root.querySelector<HTMLButtonElement>('#topics')?.addEventListener('click', props.onTopics);
   root.querySelector<HTMLButtonElement>('#settings')?.addEventListener('click', props.onSettings);
   root.querySelector<HTMLButtonElement>('#keep-going')?.addEventListener('click', props.onKeepGoing);

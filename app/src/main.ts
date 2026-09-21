@@ -14,12 +14,13 @@ import { renderTopics } from './ui/topics.js';
 import { startReview, type ReviewController } from './ui/review.js';
 import { renderSettings } from './ui/settings.js';
 import { renderNote } from './ui/note.js';
+import { renderSearch } from './ui/search.js';
 import { loadNotes, findNote, prefetchNotes } from './db/notes.js';
 import { loadNoteReads, recordNoteRead } from './db/note-reads.js';
 import { obsidianUrl } from './ui/obsidian.js';
 import {
-  decideRoute, focusHash, noteHash, resumesSuspendedSession, retainsSuspendedSession,
-  type DashboardState
+  decideRoute, focusHash, noteHash, noteBlockHash, searchHash, resumesSuspendedSession,
+  retainsSuspendedSession, type DashboardState
 } from './route.js';
 import type { Deck } from '../../pipeline/src/types.js';
 
@@ -234,6 +235,7 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
       note,
       available: notes !== null,
       arrivedFrom: decision.cardId,
+      arrivedAtBlock: decision.block,
       // Obsidian is demoted, not deleted: on a Mac it is still the better
       // tool for EDITING a note, which this viewer will never do.
       obsidianHref: card ? obsidianUrl(card, settings.obsidianVault) : null,
@@ -311,6 +313,29 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
     return;
   }
 
+  if (decision.kind === 'search') {
+    const [notes, reads] = await Promise.all([loadNotes(), loadNoteReads(db)]);
+    // Newest first. `noteReads` is already maintained by suppression, so
+    // the landing screen costs no extra state.
+    const recentPaths = Object.entries(reads)
+      .sort(([, a], [, b]) => b - a)
+      .map(([path]) => path);
+    renderSearch(appRoot, {
+      query: decision.query,
+      notes,
+      recentPaths,
+      // replaceState, not assignment: typing must not stack a history
+      // entry per keystroke, but the hash still has to carry the query so
+      // Back from a note returns to populated results.
+      onQueryChange: (q) => { window.history.replaceState(null, '', searchHash(q)); },
+      onOpen: (path, block) => {
+        window.location.hash = block === null ? noteHash(path) : noteBlockHash(path, block);
+      },
+      onBack: () => { window.location.hash = ''; }
+    });
+    return;
+  }
+
   if (hash === '#review-extend' || hash.startsWith('#focus/')) {
     // Stale/invalid entry into a session route (due cards exist again,
     // nothing left to extend into, or a focus hash whose category is gone)
@@ -331,7 +356,8 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
     onStart: () => { window.location.hash = '#review'; },
     onKeepGoing: () => { window.location.hash = '#review-extend'; },
     onTopics: () => { window.location.hash = '#topics'; },
-    onSettings: () => { window.location.hash = '#settings'; }
+    onSettings: () => { window.location.hash = '#settings'; },
+    onSearch: () => { window.location.hash = '#search'; }
   });
 
   // Warms notes.json once the common case (the dashboard) is up, so a note

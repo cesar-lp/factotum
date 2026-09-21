@@ -63,7 +63,7 @@ describe('renderNoteBlocks', () => {
     // Assert the exact output: this pins down offset placement and that the
     // connective text between the two clozes survived untouched.
     expect(html).toContain(
-      '<p class="note-prose">A <span data-card="c1">one</span> and <span data-card="c2">two</span> here.</p>'
+      '<p class="note-prose" data-block="0">A <span data-card="c1">one</span> and <span data-card="c2">two</span> here.</p>'
     );
   });
 
@@ -78,7 +78,7 @@ describe('renderNoteBlocks', () => {
       { kind: 'prose', text: raw, clozes: [{ start: 21, end: 23, cardId: 'c1', answer: '42' }] }
     ]);
     expect(html).toContain(
-      '<p class="note-prose">a &lt; b &amp; c: answer is <span data-card="c1">42</span>.</p>'
+      '<p class="note-prose" data-block="0">a &lt; b &amp; c: answer is <span data-card="c1">42</span>.</p>'
     );
   });
 
@@ -131,6 +131,15 @@ describe('renderNoteBlocks', () => {
     }]);
     expect(html).toContain('is-correct');
     expect(html).not.toContain('is-masked');
+  });
+
+  it('tags every block with its index so search can scroll to one', () => {
+    const html = renderNoteBlocks([
+      { kind: 'heading', level: 2, text: 'A' },
+      { kind: 'prose', text: 'B', clozes: [] }
+    ]);
+    expect(html).toContain('data-block="0"');
+    expect(html).toContain('data-block="1"');
   });
 });
 

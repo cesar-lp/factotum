@@ -8,6 +8,13 @@ export interface NoteProps {
   available: boolean;
   /** Scrolled to and highlighted on open. */
   arrivedFrom: string | null;
+  /**
+   * Scrolled to (not highlighted) when arriving from a search result and
+   * no `arrivedFrom` card takes precedence. Ephemeral by construction --
+   * generated from whatever notes.json is currently in memory and followed
+   * within seconds -- never a durable anchor the way `^card-xxxx` is.
+   */
+  arrivedAtBlock: number | null;
   obsidianHref: string | null;
   onBack: () => void;
 }
@@ -95,6 +102,18 @@ export function renderNote(root: HTMLElement, props: NoteProps): void {
           target.scrollIntoView({ block: 'center' });
           arrivedScrolled = true;
         }
+      }
+    }
+
+    if (props.arrivedFrom === null && props.arrivedAtBlock !== null && !arrivedScrolled) {
+      // Block indices are EPHEMERAL. They are generated from the
+      // notes.json currently in memory and followed within seconds, so a
+      // deck rebuild shifting them is harmless here. Never persist one,
+      // and never treat it as a durable anchor -- ^card-xxxx is that.
+      const target = article.querySelector<HTMLElement>(`[data-block="${props.arrivedAtBlock}"]`);
+      if (target) {
+        target.scrollIntoView({ block: 'center' });
+        arrivedScrolled = true;
       }
     }
   }

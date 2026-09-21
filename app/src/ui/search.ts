@@ -1,5 +1,5 @@
-import type { Match, NoteResult } from '../search.js';
-import type { NoteDoc } from '../../../pipeline/src/types.js';
+import { MIN_QUERY_LENGTH, search, type Match, type NoteResult } from '../search.js';
+import type { NoteDoc, Notes } from '../../../pipeline/src/types.js';
 import { escapeHtml } from './renderers.js';
 
 /**
@@ -91,4 +91,83 @@ export function renderSearchState(kind: 'empty' | 'no-matches' | 'unavailable', 
     return `<p class="search-state">No notes match &ldquo;${escapeHtml(query)}&rdquo;.</p>`;
   }
   return `<p class="search-state">Search your notes.</p>`;
+}
+
+export interface SearchProps {
+  query: string;
+  notes: Notes | null;
+  /** Note paths, most recently read first. Drives the empty-query screen. */
+  recentPaths: string[];
+  onQueryChange: (query: string) => void;
+  onOpen: (path: string, block: number | null) => void;
+  onBack: () => void;
+}
+
+const DEBOUNCE_MS = 150;
+
+/**
+ * The DOM-wiring entry point -- everything above this line is pure and
+ * unit-tested; this is not (no DOM in the test environment), so it is
+ * hand-verified instead (see the task-13 brief's Step 7 walkthrough).
+ */
+export function renderSearch(root: HTMLElement, props: SearchProps): void {
+  const expanded = new Set<string>();
+  let query = props.query;
+
+  root.innerHTML = `
+    <section class="screen">
+      <div class="top">
+        <button class="btn-quiet" data-role="back">back</button>
+        <span>search</span>
+      </div>
+      <input class="search-input" type="search" autocomplete="off"
+        placeholder="search notes" value="${escapeHtml(query)}" />
+      <div class="search-out"></div>
+    </section>`;
+
+  const out = root.querySelector<HTMLElement>('.search-out');
+  const input = root.querySelector<HTMLInputElement>('.search-input');
+
+  const paint = (): void => {
+    if (!out) return;
+    if (query.trim().length < MIN_QUERY_LENGTH) {
+      const recent = props.notes ? renderRecent(props.notes.notes, props.recentPaths) : '';
+      out.innerHTML = recent === '' ? renderSearchState('empty', query) : recent;
+      return;
+    }
+    if (props.notes === null) { out.innerHTML = renderSearchState('unavailable', query); return; }
+    const results = search(props.notes, query);
+    out.innerHTML = results.length === 0
+      ? renderSearchState('no-matches', query)
+      : `<ul class="search-results">${renderResults(results, expanded)}</ul>`;
+  };
+
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  input?.addEventListener('input', () => {
+    query = input.value;
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => { expanded.clear(); paint(); props.onQueryChange(query); }, DEBOUNCE_MS);
+  });
+
+  out?.addEventListener('click', (event) => {
+    const target = event.target as HTMLElement;
+    const hit = target.closest<HTMLElement>('.search-hit');
+    if (hit) {
+      const path = hit.dataset['path'];
+      const block = Number(hit.dataset['block']);
+      if (path) props.onOpen(path, Number.isFinite(block) ? block : null);
+      return;
+    }
+    const button = target.closest<HTMLElement>('[data-role]');
+    if (!button) return;
+    const path = button.dataset['path'];
+    if (!path) return;
+    if (button.dataset['role'] === 'open') { props.onOpen(path, null); return; }
+    if (expanded.has(path)) expanded.delete(path); else expanded.add(path);
+    paint();
+  });
+
+  root.querySelector('[data-role="back"]')?.addEventListener('click', props.onBack);
+  paint();
+  input?.focus();
 }

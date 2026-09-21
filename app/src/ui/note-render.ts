@@ -20,7 +20,7 @@ function cardIdAttr(cardId: string): string {
  * they are applied to the RAW string and each piece is escaped afterwards --
  * escaping first would shift every offset past the first `<` or `&`.
  */
-function renderProse(block: Extract<NoteBlock, { kind: 'prose' }>): string {
+function renderProse(block: Extract<NoteBlock, { kind: 'prose' }>, blockAttr: string): string {
   const ordered = [...block.clozes].sort((a, b) => a.start - b.start);
   let cursor = 0;
   let html = '';
@@ -35,7 +35,7 @@ function renderProse(block: Extract<NoteBlock, { kind: 'prose' }>): string {
     cursor = cloze.end;
   }
   html += text(block.text.slice(cursor));
-  return `<p class="note-prose">${html}</p>`;
+  return `<p class="note-prose" ${blockAttr}>${html}</p>`;
 }
 
 /**
@@ -52,30 +52,32 @@ function renderProse(block: Extract<NoteBlock, { kind: 'prose' }>): string {
  */
 export function renderNoteBlocks(blocks: NoteBlock[], title?: string): string {
   let skippedTitleHeading = false;
-  return blocks.map((block) => {
+  return blocks.map((block, index) => {
+    const blockAttr = `data-block="${index}"`;
+
     if (block.kind === 'heading') {
       if (!skippedTitleHeading && title !== undefined && block.level === 1 && block.text === title) {
         skippedTitleHeading = true;
         return '';
       }
       const level = Math.min(Math.max(block.level, 1), 6);
-      return `<h${level} class="note-heading">${text(block.text)}</h${level}>`;
+      return `<h${level} class="note-heading" ${blockAttr}>${text(block.text)}</h${level}>`;
     }
 
     if (block.kind === 'code') {
       // Escaped only -- never inline markup. Backticks and asterisks inside
       // a code fence are code, not formatting.
-      return `<pre class="note-code"><code>${escapeHtml(block.text)}</code></pre>`;
+      return `<pre class="note-code" ${blockAttr}><code>${escapeHtml(block.text)}</code></pre>`;
     }
 
     if (block.kind === 'list') {
-      return `<ul class="note-list">${block.items.map((item) => `<li>${text(item)}</li>`).join('')}</ul>`;
+      return `<ul class="note-list" ${blockAttr}>${block.items.map((item) => `<li>${text(item)}</li>`).join('')}</ul>`;
     }
 
-    if (block.kind === 'prose') return renderProse(block);
+    if (block.kind === 'prose') return renderProse(block, blockAttr);
 
     if (block.kind === 'qa') {
-      return `<div class="note-card note-qa" ${cardIdAttr(block.cardId)}>`
+      return `<div class="note-card note-qa" ${cardIdAttr(block.cardId)} ${blockAttr}>`
         + `<p class="note-card-prompt">${text(block.prompt)}</p>`
         + `<p class="note-card-answer">${text(block.answer)}</p>`
         + `</div>`;
@@ -92,7 +94,7 @@ export function renderNoteBlocks(blocks: NoteBlock[], title?: string): string {
         const correct = choice.correct ? ' is-correct' : '';
         return `<li class="note-choice${correct}">${text(choice.text)}</li>`;
       }).join('');
-      return `<div class="note-card note-mcq" ${cardAttr}>`
+      return `<div class="note-card note-mcq" ${cardAttr} ${blockAttr}>`
         + `${head}<ul class="note-choices">${items}</ul></div>`;
     }
 
@@ -106,6 +108,6 @@ export function renderNoteBlocks(blocks: NoteBlock[], title?: string): string {
     const answer = block.answer !== undefined
       ? `<p class="note-card-answer">${text(block.answer)}</p>`
       : '';
-    return `<div class="note-card note-recall" ${cardAttr}>${head}${answer}</div>`;
+    return `<div class="note-card note-recall" ${cardAttr} ${blockAttr}>${head}${answer}</div>`;
   }).join('');
 }

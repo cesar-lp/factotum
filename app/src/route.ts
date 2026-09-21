@@ -38,7 +38,7 @@ export type RouteDecision =
   | { kind: 'review' }
   | { kind: 'review-extend' }
   | { kind: 'focus'; category: string }
-  | { kind: 'note'; path: string; cardId: string | null }
+  | { kind: 'note'; path: string; cardId: string | null; block: number | null }
   | { kind: 'topics' }
   | { kind: 'settings' }
   | { kind: 'search'; query: string }
@@ -86,25 +86,44 @@ export function noteHash(path: string, cardId?: string): string {
 }
 
 /**
+ * Builds the hash for the note viewer, arriving scrolled to a specific
+ * block instead of a card. Block indices are ephemeral (generated from
+ * whatever notes.json is currently in memory, followed within seconds),
+ * unlike a card id, so this is a sibling of `noteHash` rather than another
+ * optional parameter on it.
+ */
+export function noteBlockHash(path: string, block: number): string {
+  return `${NOTE_PREFIX}${encodeURIComponent(path)}/b${block}`;
+}
+
+/** Trailing `/b<N>` segment identifying a block index, e.g. `b12` but not `b12x` or `bx`. */
+const BLOCK_SEGMENT = /^b\d+$/;
+
+/**
  * Decodes a `#note/...` hash. Returns null for a bare prefix, an empty
  * path, and a malformed percent-escape -- decodeURIComponent throws a
  * URIError on input like `%E0%A4%A`, and a hash is plain client state that
  * arrives hand-edited, from stale history, and from bookmarks.
  */
-function noteTarget(hash: string): { path: string; cardId: string | null } | null {
+function noteTarget(hash: string): { path: string; cardId: string | null; block: number | null } | null {
   const raw = hash.slice(NOTE_PREFIX.length);
   if (raw === '') return null;
 
   const slash = raw.lastIndexOf('/');
   const trailing = slash >= 0 ? raw.slice(slash + 1) : '';
   const hasCard = CARD_ID.test(trailing);
-  const encodedPath = hasCard ? raw.slice(0, slash) : raw;
+  const hasBlock = !hasCard && BLOCK_SEGMENT.test(trailing);
+  const encodedPath = hasCard || hasBlock ? raw.slice(0, slash) : raw;
   if (encodedPath === '') return null;
 
   try {
     const path = decodeURIComponent(encodedPath);
     if (path === '') return null;
-    return { path, cardId: hasCard ? trailing : null };
+    return {
+      path,
+      cardId: hasCard ? trailing : null,
+      block: hasBlock ? Number(trailing.slice(1)) : null
+    };
   } catch {
     return null;
   }
@@ -246,7 +265,7 @@ export function decideRoute(
   // needs anyway for a note deleted since the hash was bookmarked.
   if (hash.startsWith(NOTE_PREFIX)) {
     const target = noteTarget(hash);
-    if (target) return { kind: 'note', path: target.path, cardId: target.cardId };
+    if (target) return { kind: 'note', path: target.path, cardId: target.cardId, block: target.block };
     return { kind: 'dashboard' };
   }
 

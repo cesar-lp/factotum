@@ -150,7 +150,7 @@ describe('decideRoute with a suspended session', () => {
   it('still routes the note detour to the note, not to a resume', () => {
     // The whole point: the note has to render while the session waits.
     expect(decideRoute(noteHash('vault/a.md', 'card-ab12'), state([], []), '#review'))
-      .toEqual({ kind: 'note', path: 'vault/a.md', cardId: 'card-ab12' });
+      .toEqual({ kind: 'note', path: 'vault/a.md', cardId: 'card-ab12', block: null });
   });
 
   it('never invents a resume for a non-session route', () => {
@@ -245,26 +245,26 @@ describe('#note routing', () => {
 
   it('routes a note hash to the note screen', () => {
     expect(decideRoute(noteHash('vault/db/consensus.md'), s()))
-      .toEqual({ kind: 'note', path: 'vault/db/consensus.md', cardId: null });
+      .toEqual({ kind: 'note', path: 'vault/db/consensus.md', cardId: null, block: null });
   });
 
   it('carries an arrived-from card id', () => {
     expect(decideRoute(noteHash('vault/db/consensus.md', 'card-ubdh'), s()))
-      .toEqual({ kind: 'note', path: 'vault/db/consensus.md', cardId: 'card-ubdh' });
+      .toEqual({ kind: 'note', path: 'vault/db/consensus.md', cardId: 'card-ubdh', block: null });
   });
 
   it('splits on the LAST segment, since vault paths contain slashes', () => {
     // THE parsing hazard: 'vault/aws/iam/conditions.md' has three slashes
     // of its own, so the card id must be taken from the end, not the start.
     expect(decideRoute('#note/vault%2Faws%2Fiam%2Fconditions.md/card-ab12', s()))
-      .toEqual({ kind: 'note', path: 'vault/aws/iam/conditions.md', cardId: 'card-ab12' });
+      .toEqual({ kind: 'note', path: 'vault/aws/iam/conditions.md', cardId: 'card-ab12', block: null });
   });
 
   it('treats a trailing segment that is not a card id as part of nothing', () => {
     // Only ^card-[a-z0-9]{4} is a card id. Anything else is not one, and the
     // whole remainder is the path.
     expect(decideRoute('#note/vault%2Fa.md', s()))
-      .toEqual({ kind: 'note', path: 'vault/a.md', cardId: null });
+      .toEqual({ kind: 'note', path: 'vault/a.md', cardId: null, block: null });
   });
 
   it('falls back to the dashboard on a bare #note/', () => {
@@ -276,14 +276,28 @@ describe('#note routing', () => {
     // hash is plain client state that can arrive hand-edited.
     expect(decideRoute('#note/%E0%A4%A', s())).toEqual({ kind: 'dashboard' });
   });
+
+  it('carries a block index', () => {
+    expect(decideRoute('#note/vault%2Fa.md/b3', s()))
+      .toEqual({ kind: 'note', path: 'vault/a.md', cardId: null, block: 3 });
+  });
+
+  it('treats a non-numeric b-segment as part of the path', () => {
+    expect(decideRoute('#note/vault%2Fbx.md', s()))
+      .toEqual({ kind: 'note', path: 'vault/bx.md', cardId: null, block: null });
+  });
+
+  it('treats a filename starting with b plus digits as a path, not a block index', () => {
+    expect(decideRoute('#note/vault%2Fb12.md', s()))
+      .toEqual({ kind: 'note', path: 'vault/b12.md', cardId: null, block: null });
+  });
 });
 
 describe('noteHash', () => {
   it('round-trips a path containing slashes', () => {
     const hash = noteHash('vault/aws/iam/conditions.md');
     expect(decideRoute(hash, state([], []))).toEqual({
-      kind: 'note', path: 'vault/aws/iam/conditions.md', cardId: null
-    });
+      kind: 'note', path: 'vault/aws/iam/conditions.md', cardId: null, block: null });
   });
 });
 
