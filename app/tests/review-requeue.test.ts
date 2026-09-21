@@ -6,7 +6,8 @@ import {
   MAX_REQUEUES_PER_CARD,
   distinctCardCount,
   distinctPosition,
-  promoteReady
+  promoteReady,
+  dropRecentlyRead
 } from '../src/ui/review.js';
 import { buildSession, buildExtension } from '../src/scheduler/queue.js';
 import { recordReview, newCardsSeenToday } from '../src/db/reviews.js';
@@ -382,5 +383,46 @@ describe('promoteReady (draw-time gate: never serve a not-yet-due requeued card 
     promoteReady(session, index, reviewStates, now);
 
     expect(session[index]?.id).toBe('card-b');
+  });
+});
+
+describe('dropRecentlyRead', () => {
+  const s = (...ids: string[]): StoredCard[] => ids.map((id) => ({
+    id, format: 'qa', topic: 't', category: 'c', tags: [], prompt: id, answer: 'a',
+    source: { path: 'vault/a.md', block: id }, citations: [], tombstoned: false
+  }));
+
+  it('removes a matching card ahead of the cursor', () => {
+    const out = dropRecentlyRead(s('a', 'b', 'c', 'd'), 1, new Set(['c']), null);
+    expect(out.map((x) => x.id)).toEqual(['a', 'b', 'd']);
+  });
+
+  it('NEVER removes a card at or before the cursor -- those are rated or owed', () => {
+    const out = dropRecentlyRead(s('a', 'b', 'c'), 1, new Set(['a', 'b']), null);
+    expect(out.map((x) => x.id)).toEqual(['a', 'b', 'c']);
+  });
+
+  it('never removes the arrived-from card, even ahead of the cursor', () => {
+    const out = dropRecentlyRead(s('a', 'b', 'c'), 0, new Set(['b', 'c']), 'b');
+    expect(out.map((x) => x.id)).toEqual(['a', 'b']);
+  });
+
+  it('leaves the cursor pointing at the same card', () => {
+    const session = s('a', 'b', 'c', 'd');
+    const index = 1;
+    const before = session[index];
+    const out = dropRecentlyRead(session, index, new Set(['c', 'd']), null);
+    expect(out[index]).toBe(before);
+  });
+
+  it('does not mutate its input', () => {
+    const session = s('a', 'b');
+    dropRecentlyRead(session, 0, new Set(['b']), null);
+    expect(session).toHaveLength(2);
+  });
+
+  it('is a no-op when nothing matches', () => {
+    const session = s('a', 'b');
+    expect(dropRecentlyRead(session, 0, new Set(['z']), null)).toEqual(session);
   });
 });

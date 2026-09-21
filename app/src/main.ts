@@ -11,7 +11,7 @@ import {
 import { summarizeTopics, notesByCategory } from './topics.js';
 import { renderDashboard } from './ui/dashboard.js';
 import { renderTopics } from './ui/topics.js';
-import { startReview } from './ui/review.js';
+import { startReview, type ReviewController } from './ui/review.js';
 import { renderSettings } from './ui/settings.js';
 import { renderNote } from './ui/note.js';
 import { loadNotes, findNote, prefetchNotes } from './db/notes.js';
@@ -57,7 +57,7 @@ let topicsRenderId = 0;
  * Not persisted: a full reload legitimately ends the session, exactly as it
  * does today.
  */
-let suspendedReview: { hash: string; node: HTMLElement } | null = null;
+let suspendedReview: { hash: string; node: HTMLElement; controller: ReviewController } | null = null;
 
 /**
  * Fetches and merges the deck. Never throws: a failed fetch/parse is a
@@ -117,6 +117,16 @@ export async function loadDashboardState(db: FactotumDb, now: Date): Promise<Das
   return { session, extension, newCardsSeenToday: seen, streak, lastSevenDays, topics, deferredCount };
 }
 
+/**
+ * Applied whenever a suspended review screen is reattached. Recomputed from
+ * the store rather than from "which note did we just open", so a detour
+ * through several notes is handled by the same code path as one.
+ */
+async function applyReadsToResumed(db: FactotumDb, controller: ReviewController): Promise<void> {
+  const [settings, reads] = await Promise.all([getSettings(db), loadNoteReads(db)]);
+  controller.dropRead(reads, new Date(), settings.readSuppressionHours);
+}
+
 async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: boolean): Promise<void> {
   const hash = window.location.hash;
 
@@ -131,6 +141,7 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
   // closure they keep alive all survive being taken out of the document.
   if (suspendedReview && resumesSuspendedSession(hash, suspendedReview.hash)) {
     appRoot.replaceChildren(suspendedReview.node);
+    await applyReadsToResumed(db, suspendedReview.controller);
     return;
   }
 
@@ -143,6 +154,7 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
   // ever drift, the answer is a correct resume rather than a lost session.
   if (decision.kind === 'resume' && suspendedReview) {
     appRoot.replaceChildren(suspendedReview.node);
+    await applyReadsToResumed(db, suspendedReview.controller);
     return;
   }
 
@@ -165,9 +177,11 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
     // a box. `.screen` stays the direct flex item of #app it has always
     // been, so no layout rule in base.css or review.css has to know it.
     node.className = 'screen-host';
-    suspendedReview = { hash, node };
     appRoot.replaceChildren(node);
-    await startReview(node, { db, session, repo: REPO, onDone });
+    const controller = await startReview(node, { db, session, repo: REPO, onDone });
+    // Assigned after startReview resolves, since the controller does not
+    // exist before then.
+    suspendedReview = { hash, node, controller };
   };
 
   if (decision.kind === 'review') {
