@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-21T00:40:16.274Z",
+  "generatedAt": "2026-09-21T01:04:12.400Z",
   "notes": [
     {
       "path": "vault/api/grpc/choosing-between-grpc-rest-and-graphql.md",
@@ -10609,6 +10609,1455 @@
           "cardId": "card-09ji",
           "prompt": "What's the honest tradeoff between choosing VPC peering and Transit Gateway as the number of VPCs to connect grows?",
           "answer": "Peering is free and simplest for a small, fairly static number of VPCs; Transit Gateway charges per attachment and per GB but replaces per-pair route maintenance with one attachment per VPC, which pays for itself once the mesh gets large."
+        }
+      ]
+    },
+    {
+      "path": "vault/aws/observability/alarms-evaluation-and-missing-data.md",
+      "title": "Alarms, Evaluation, and Missing Data",
+      "topic": "aws",
+      "category": "aws-observability",
+      "citations": [
+        "Amazon CloudWatch User Guide — 'Using Amazon CloudWatch alarms'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Alarms, Evaluation, and Missing Data"
+        },
+        {
+          "kind": "prose",
+          "text": "`metric-resolution-retention-and-statistics.md` covers what a metric *is*; this note covers what watches it. A CloudWatch alarm is not just a threshold — it's a threshold plus an evaluation window plus a rule for what to do when no data shows up at all, and it's the last two pieces, not the threshold, where alarms actually misbehave in production.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "An alarm is always in exactly one of three states, and the third is a real, first-class state with real consequences rather than an error condition:",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-pn6d",
+          "format": "mcq",
+          "prompt": "A CloudWatch alarm has just been created and no datapoints have arrived yet for its metric. What state is it in?",
+          "choices": [
+            {
+              "text": "INSUFFICIENT_DATA — a distinct third state, not an error",
+              "correct": true
+            },
+            {
+              "text": "OK, since no breach has been observed",
+              "correct": false
+            },
+            {
+              "text": "ALARM, since it can't confirm the threshold is being respected",
+              "correct": false
+            },
+            {
+              "text": "The alarm has no state until the first datapoint arrives",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-q1kv",
+          "prompt": "Why does treating INSUFFICIENT_DATA as \"basically OK\" understate what it means?",
+          "answer": "INSUFFICIENT_DATA means the alarm cannot currently evaluate its condition at all — the metric simply hasn't produced enough datapoints — which is a different claim than \"the condition was checked and found healthy.\" An alarm can sit in INSUFFICIENT_DATA for exactly the same underlying reason it should be sitting in ALARM: the thing it watches has stopped producing data entirely."
+        },
+        {
+          "kind": "prose",
+          "text": "Rather than breaching the moment a single datapoint crosses the threshold, an alarm is configured with M out of N evaluation: it looks at the last N evaluation periods and only transitions to ALARM if at least that many of them breached. A common setting like 3 out of 5 buys tolerance for one noisy or momentarily bad period without giving up sensitivity to a sustained problem — but that tolerance is bought with detection latency, since the alarm cannot fire until enough breaching periods have actually accumulated.",
+          "clozes": [
+            {
+              "start": 103,
+              "end": 104,
+              "answer": "M",
+              "cardId": "card-fbu8"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Raising the number of datapoints required to alarm, out of a fixed window, reduces false positives — but it also delays every true positive by roughly the same margin, because the alarm has no way to tell \"one bad period, ignore it\" apart from \"the start of a real incident\" until enough periods have actually passed.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-igrd",
+          "format": "recall",
+          "prompt": "An alarm set to breach on the very first bad period is flapping between OK and ALARM on a noisy metric. Explain what switching to a looser \"M out of N\" setting, like 3 out of 5, actually changes mechanically, and why that is a different fix than widening the threshold value itself.",
+          "answer": "It stops counting a single noisy period as a full breach — the alarm now needs three breaching periods within the last five before it transitions, so an isolated spike gets absorbed without ever flipping the alarm to ALARM. Widening the threshold instead would mask a genuinely elevated-but-tolerable level at every evaluation, changing what counts as a breach rather than how many breaches are required."
+        },
+        {
+          "kind": "prose",
+          "text": "The evaluation rule above assumes datapoints keep arriving. When they don't, a separate setting called `treatMissingData` decides what happens, and it has four options: `missing`, `notBreaching`, `breaching`, and `ignore`.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-f7nu",
+          "format": "mcq",
+          "prompt": "An alarm watches a custom metric that a function only publishes when a particular error path executes — so on a healthy day, no datapoints arrive at all. `treatMissingData` is left at `notBreaching`. The function's error-reporting code silently breaks and stops publishing entirely. What does the alarm show?",
+          "choices": [
+            {
+              "text": "OK — missing data is treated as a non-breaching datapoint, so total silence looks identical to total health",
+              "correct": true
+            },
+            {
+              "text": "ALARM, since no data for a required metric is itself abnormal",
+              "correct": false
+            },
+            {
+              "text": "INSUFFICIENT_DATA, since CloudWatch can tell the publisher died",
+              "correct": false
+            },
+            {
+              "text": "The alarm is automatically deleted after enough missing periods",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-6e1t",
+          "prompt": "`treatMissingData` set to `notBreaching`",
+          "answer": "missing datapoints are treated as if they did not breach the threshold, so an alarm can sit happily in OK while its underlying metric has stopped being published for any reason — including the exact failure the alarm exists to catch."
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-tk1u",
+          "prompt": "Why is `missing` (leaving missing datapoints as INSUFFICIENT_DATA, the default) called the least opinionated setting rather than the safest one?",
+          "answer": "It makes no assumption in either direction about what an absence of data means — it neither assumes the system is fine (like notBreaching) nor assumes it's broken (like breaching) — which is honest about CloudWatch's actual ignorance, but \"honest and neutral\" is not the same as \"safe\": a genuinely dead metric under `missing` still just sits in INSUFFICIENT_DATA rather than paging anyone, unless something else is watching for that state."
+        },
+        {
+          "kind": "prose",
+          "text": "Sparse metrics — ones only published when a specific condition occurs, rather than on every request — are the root cause of most alarm flapping and most alarm silence alike: flapping, because an alarm oscillates between INSUFFICIENT_DATA and OK as gaps come and go, and silence, because `notBreaching` (or an unwatched INSUFFICIENT_DATA) makes total data loss indistinguishable from nothing happening. The durable fix is usually not to keep tuning `treatMissingData` or the evaluation window, but to change what gets published: alarm on a metric that is emitted on every invocation regardless of outcome (or have the code publish an explicit zero when nothing happened), so the metric's absence itself becomes a signal worth alarming on rather than routine static.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-tyc1",
+          "prompt": "Why does tuning `treatMissingData` settings tend to be a weaker fix for a sparse metric than changing what gets published?",
+          "answer": "`treatMissingData` only decides how to interpret an absence that has already happened; it can't distinguish \"nothing happened\" from \"the reporting pipeline died\" any better after the change than before. Publishing a metric on every invocation (or an explicit zero) removes the ambiguity at the source, so the alarm has real, continuous data to evaluate instead of gaps it has to guess about."
+        },
+        {
+          "kind": "prose",
+          "text": "CloudWatch's alternative to a fixed numeric threshold is an anomaly detection alarm: instead of comparing the metric to a fixed number, it fits a band of expected values from the metric's own recent history (accounting for patterns like daily or weekly seasonality) and alarms when the metric strays outside that band. The weakness mirrors the strength — the band learns whatever pattern it's shown, so a sustained bad period baked into its training window gets absorbed into \"normal,\" and the alarm quietly stops catching the very problem that skewed the band in the first place.",
+          "clozes": [
+            {
+              "start": 60,
+              "end": 77,
+              "answer": "anomaly detection",
+              "cardId": "card-bhq8"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-lb8m",
+          "format": "recall",
+          "prompt": "A service has been running with elevated latency for two weeks due to an undiagnosed regression. An anomaly-detection alarm is created on that latency metric today. Explain why this alarm is a poor tool for catching the existing regression, even though it will likely catch a *new* one.",
+          "answer": "The anomaly band is fitted from the metric's own recent history, and that history already includes the two weeks of elevated latency, so the model learns the regressed level as the new normal rather than as an outlier, and treats a further worsening — not the existing regression — as the anomaly. A fixed threshold set before the regression began would have caught it; the anomaly band, trained on already-bad data, cannot."
+        }
+      ]
+    },
+    {
+      "path": "vault/aws/observability/choosing-between-metrics-logs-and-traces.md",
+      "title": "Choosing Between Metrics, Logs, and Traces",
+      "topic": "aws",
+      "category": "aws-observability",
+      "citations": [
+        "Amazon CloudWatch User Guide — 'What is Amazon CloudWatch?'",
+        "AWS X-Ray Developer Guide — 'How X-Ray works'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Choosing Between Metrics, Logs, and Traces"
+        },
+        {
+          "kind": "prose",
+          "text": "The other notes in this category cover each signal's own mechanics — what a metric's dimensions are, how a log group's retention works, how an X-Ray trace is assembled. This note is about picking between them, which is a question of properties: what each one can answer, and what each one costs to keep around.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The property that decides the most up front is **cardinality**. A metric's storage and query cost scale with the number of distinct dimension-value combinations it has to track — every new combination is effectively a new time series. A log line's cost doesn't work that way: writing a log entry that includes a customer id or a request id costs the same whether that id has been seen once or a million times. That asymmetry is the rule for where an identifier belongs: a high-cardinality value like a customer id or request id belongs in a log field or an X-Ray annotation, never in a metric dimension, because a metric with unbounded dimension values is a cost incident waiting to happen.",
+          "clozes": [
+            {
+              "start": 472,
+              "end": 488,
+              "answer": "high-cardinality",
+              "cardId": "card-9dcu"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-ytoy",
+          "prompt": "Why does putting a unique request id into a metric's dimensions cause a cost problem that putting the same id into a log line does not?",
+          "answer": "A metric is billed and stored per distinct combination of dimension values, so a dimension that takes on a new value for every request creates a new time series per request, growing without bound. A log line's cost doesn't depend on how many distinct values a field has taken across all log entries — one entry with a unique id costs the same as one without, so uniqueness is harmless there."
+        },
+        {
+          "kind": "prose",
+          "text": "Retention and aggregation are the second axis, and they trade off against each other. A CloudWatch metric can survive up to 15 months, but only by progressively rolling older data up into coarser granularity — the detail of an individual data point is gone long before the retention window ends. A log entry keeps its full original content for exactly as long as its log group's retention setting keeps it, with no forced rollup — but that fidelity is also why logs cost more to retain at the same volume.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-jskv",
+          "format": "mcq",
+          "prompt": "A metric retained for its full 15 months and a log group retained for the same period are compared for what they can tell you about a specific event from 10 months ago. What's the key difference?",
+          "choices": [
+            {
+              "text": "The metric has already been aggregated into coarser granularity by then, while the log entry (if not expired or deleted) still holds its original full-fidelity content",
+              "correct": true
+            },
+            {
+              "text": "Both retain identical granularity for the full period, so there's no difference",
+              "correct": false
+            },
+            {
+              "text": "The log has been aggregated into rollups, while the metric keeps full detail",
+              "correct": false
+            },
+            {
+              "text": "Neither can be queried after 6 months regardless of retention settings",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Query cost is the third axis, and it's asymmetric in the opposite direction from storage. Reading a metric is cheap and bounded — you ask for a time series over a window and get back a fixed, small amount of data regardless of how much traffic generated it. Querying logs is charged by the volume of data the query has to scan, so a query over a wide time range or an unindexed log group can be slow and expensive even when the answer it returns is one line.",
+          "clozes": [
+            {
+              "start": 120,
+              "end": 127,
+              "answer": "bounded",
+              "cardId": "card-d7jc"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "The billing model behind that second half is the subject of `logs-insights-and-query-cost.md`.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-osij",
+          "prompt": "Why is reading a metric's value over a time window cheap and predictable, while running a log query over the same window can be expensive and slow?",
+          "answer": "A metric read returns pre-aggregated data points at a fixed resolution — the cost doesn't grow with how much underlying traffic produced those points. A log query has to scan the raw log data covered by the time range to find matches, so its cost and latency scale with the volume of log data written in that window, not with the size of the answer."
+        },
+        {
+          "kind": "prose",
+          "text": "The fourth axis is completeness. A metric counts every event that occurred — a request-count metric reflects all requests, not a sample of them. A trace, by contrast, only exists for the fraction of requests X-Ray decided to sample (`distributed-tracing-with-x-ray.md` covers the sampling mechanics); most requests that ever happened have no trace at all.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "These four axes settle the division of labor. Metrics are for detecting that something is wrong and for alarming, because they're cheap, continuous, and complete — an alarm needs to see every occurrence, not a sample. Logs are for explaining one specific occurrence once you know roughly when it happened, because they keep full fidelity. Traces are for locating where in a multi-service call chain a problem lives, because they carry the causal structure a single log line or metric point doesn't.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-1h74",
+          "format": "recall",
+          "prompt": "A service's error rate metric crosses its alarm threshold. Walk through which signal you'd reach for first to detect this, which you'd reach for next to explain a specific failed request, and which you'd reach for to find which downstream dependency caused it — and say why each one is the right tool for that step rather than either of the others.",
+          "answer": "Detect with the metric: it's cheap, continuous, and counts every request, so it's the only one of the three suited to always-on alarming. Explain a specific request with logs: once you know roughly when the failure happened, a log query (or a request id pulled from the metric's dimensions if logged) gives full-fidelity detail about what that one invocation actually did. Locate the failing dependency with a trace: it's the only signal that preserves the causal structure across services, showing which downstream call the time or error actually came from — something no single log line or metric point can show on its own, since neither one is stitched across service boundaries."
+        },
+        {
+          "kind": "prose",
+          "text": "Two traps follow directly from getting an axis wrong. The first is alarming on a Logs Insights query — polling a log query on a schedule to detect a condition. It's slower and more expensive than it needs to be for anything a metric filter or the embedded metric format could turn into a metric instead, since a metric-based alarm evaluates in seconds against pre-aggregated data rather than re-scanning raw logs each time.",
+          "clozes": [
+            {
+              "start": 67,
+              "end": 75,
+              "answer": "alarming",
+              "cardId": "card-spoj"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Both of those cheaper routes from a log line to a metric are covered in `metric-filters-and-embedded-metric-format.md`.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The second trap is trying to alarm on trace data — for example, treating a rise in sampled trace latency as a proxy for overall latency. Sampling makes this unsound: a sampled subset isn't guaranteed to represent the full traffic, so a trace-based signal can miss a real widespread problem or manufacture a false one purely from which requests happened to be selected.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-e4nv",
+          "prompt": "What makes an alarm built on X-Ray trace data statistically unsound, in a way that an alarm on a metric is not?",
+          "answer": "Traces are sampled, not complete — only a subset of requests are ever recorded. An alarm needs its signal to reliably reflect what's actually happening across all traffic, but a sampled subset isn't guaranteed to be representative, so it can either miss a genuine widespread problem or show an apparent spike caused only by which requests happened to be sampled."
+        }
+      ]
+    },
+    {
+      "path": "vault/aws/observability/composite-alarms-and-alarm-actions.md",
+      "title": "Composite Alarms and Alarm Actions",
+      "topic": "aws",
+      "category": "aws-observability",
+      "citations": [
+        "Amazon CloudWatch User Guide — 'Amazon CloudWatch alarm actions', 'Using composite alarms'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Composite Alarms and Alarm Actions"
+        },
+        {
+          "kind": "prose",
+          "text": "`alarms-evaluation-and-missing-data.md` covers how a single alarm decides its own state. This note covers what happens once it decides: what an alarm actually *does* when it fires, and how to keep fifty individually-correct alarms from turning one incident into fifty pages.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "An **alarm action** is what CloudWatch does automatically on a state change: most commonly publishing to an SNS topic, which is the normal path to a human inbox, a chat channel, or a pager, but an alarm can equally trigger an Auto Scaling policy or an EC2 action like reboot, stop, or recover.",
+          "clozes": [
+            {
+              "start": 108,
+              "end": 111,
+              "answer": "SNS",
+              "cardId": "card-tckl"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-7ljy",
+          "format": "recall",
+          "prompt": "An alarm is configured with an action only on the transition into ALARM, and no action on the transition into OK. Explain what the team loses operationally by not also configuring an OK action, and what an OK action is typically used for.",
+          "answer": "Without an OK action, the alarm firing tells the team something broke, but nothing tells them — automatically — when it recovered; someone has to go check the console or wait for the alarm to simply stop mentioning itself. An OK action, usually publishing to the same or a different SNS topic, is what makes automatic recovery notification possible: \"the thing that paged you is now resolved\" without a human having to go check."
+        },
+        {
+          "kind": "prose",
+          "text": "An alarm action fires once, on the state transition itself — not continuously for as long as the alarm remains in ALARM. An alarm that has been in ALARM for six hours doesn't re-notify on its own; it fired once, when it first crossed into that state, and stays silent until it changes state again.",
+          "clozes": [
+            {
+              "start": 41,
+              "end": 51,
+              "answer": "transition",
+              "cardId": "card-l11a"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-2hb5",
+          "prompt": "Why can't an on-call engineer rely on \"the alarm is still firing every few minutes\" as a sign an incident is still unresolved?",
+          "answer": "An alarm action only fires on a state transition, not repeatedly while the alarm sits in ALARM, so an unresolved incident produces exactly one notification unless something else — a re-notification feature layered on top, or a separate periodic check — is configured to remind anyone."
+        },
+        {
+          "kind": "prose",
+          "text": "Wiring fifty individual alarms straight to SNS means a single root cause that trips all fifty produces fifty separate pages for one incident. A **composite alarm** fixes this by evaluating a boolean rule over other alarms' *states* rather than over a metric — for example `ALARM(\"high-error-rate\") AND ALARM(\"high-latency\")` — and it is the composite alarm, not the children, that has an action attached.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-y4hr",
+          "format": "mcq",
+          "prompt": "A service has twelve CloudWatch alarms, one per downstream dependency. A single upstream outage trips all twelve at once, each independently wired to the same SNS topic. What does wrapping them in a composite alarm (with the children's own SNS actions removed) change?",
+          "choices": [
+            {
+              "text": "The team gets one notification for the incident instead of twelve, since the composite alarm's own action is what fires",
+              "correct": true
+            },
+            {
+              "text": "The twelve child alarms stop evaluating their own metrics entirely",
+              "correct": false
+            },
+            {
+              "text": "CloudWatch automatically diagnoses which of the twelve is the true root cause",
+              "correct": false
+            },
+            {
+              "text": "Nothing — composite alarms only add a rule, they can't replace existing actions",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "A composite alarm is a rule over child alarms' states, such as ALARM(\"a\") AND ALARM(\"b\"), rather than a rule over a metric directly.",
+          "clozes": [
+            {
+              "start": 63,
+              "end": 88,
+              "answer": "ALARM(\"a\") AND ALARM(\"b\")",
+              "cardId": "card-ew6i"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Composite alarms serve two distinct purposes, and it's worth naming them separately: **raising a signal only when a combination is true** — a disk-full alarm ANDed with a backup-job-running alarm, so you're paged only when the disk is full *and* nothing scheduled explains it — and **collapsing a storm of correlated child alarms into one parent notification**, as in the twelve-dependency example above.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-bzut",
+          "prompt": "What are the two distinct things composite alarms are used for, beyond just \"combining alarms\"?",
+          "answer": "Raising a notification only when a specific combination of conditions is true together (an AND across otherwise-independent alarms), and collapsing a storm of correlated child alarms that would otherwise all fire at once into a single parent notification."
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-hrci",
+          "prompt": "The **suppressor** pattern applies this same AND rule to a maintenance or deployment alarm instead of another failure signal: `ALARM(\"app-errors\") AND NOT ALARM(\"deployment-in-progress\")` pages on application errors only while a matching deployment or maintenance alarm is *not* active, so a deploy's expected error blip doesn't page anyone. Why is suppressing at the alarm layer, with a rule like this, preferable to muting the pager or the on-call rotation directly during a deploy?",
+          "answer": "Muting the pager or rotation silences everything indiscriminately for that window, including an unrelated incident that happens to overlap the deploy; a suppressor alarm narrows the silence to exactly the condition the deployment alarm represents, so a genuinely unrelated failure during the same window still pages normally."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-xn9t",
+          "format": "recall",
+          "prompt": "A team wraps twenty alarms for one service's endpoints in a single composite alarm using AND across all of them, on the reasoning that \"if the service is really down, everything fails together.\" One endpoint starts failing on its own, unrelated to the rest. Explain what the team does and doesn't find out from the composite alarm in this case, and why an AND-based composite is an honest trade rather than a strictly better alarm.",
+          "answer": "Because AND requires every child to be in ALARM, a single endpoint failing alone never trips the composite — the team finds out nothing at all from it, even though a real problem exists. The composite alarm deliberately narrows what triggers a notification to reduce noise from correlated failures sharing one root cause, but that same narrowing can hide a real, uncorrelated single failure; it isn't a strictly better alarm, it's a different trade between fewer false alarms and a chance of missing an isolated one."
+        },
+        {
+          "kind": "prose",
+          "text": "Composite alarms over children that genuinely share a root cause are the case they're built for; composite alarms over children that don't are where the suppression buys silence at the price of visibility into exactly the kind of failure that doesn't take everything down at once.",
+          "clozes": []
+        }
+      ]
+    },
+    {
+      "path": "vault/aws/observability/distributed-tracing-with-x-ray.md",
+      "title": "Distributed Tracing with X-Ray",
+      "topic": "aws",
+      "category": "aws-observability",
+      "citations": [
+        "AWS X-Ray Developer Guide — 'How X-Ray works', 'X-Ray concepts', 'Configuring sampling rules'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Distributed Tracing with X-Ray"
+        },
+        {
+          "kind": "prose",
+          "text": "`vault/aws/lambda/observability-and-cost-model.md` covers why tracing exists at all — logs show one invocation, tracing shows where cross-service latency went. This note is about how a trace actually gets assembled, since \"turn on tracing\" hides a fair amount of machinery.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "A **trace** is not one object anyone emits directly — it's the set of records sharing one **trace id** that X-Ray assembles after the fact. Each service the request touches contributes its own **segment** — a record of that service's own work: when it started, when it finished, and whether it errored. A segment breaks down further into **subsegments**, which record a specific downstream call or an internal phase of that service's own work — a subsegment for the outbound DynamoDB call is a child of the segment describing the function that made it.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-6t6d",
+          "prompt": "What is a segment, and what is a subsegment, in an X-Ray trace?",
+          "answer": "A segment is one service's own record of the work it did for a request — start time, end time, fault status. A subsegment is a finer-grained breakdown within that segment, typically a specific downstream call (an outbound HTTP or SDK call) or a distinct phase of the service's own internal processing."
+        },
+        {
+          "kind": "prose",
+          "text": "The trace only holds together across services because the trace id travels with the request. Each hop carries it in the X-Amzn-Trace-Id HTTP header, alongside the sampling decision for that request. A service that receives the header and forwards it downstream extends the same trace; a service that drops it — because it isn't instrumented, or strips unrecognized headers — causes the next hop to mint a fresh trace id of its own. The result isn't an error, just a trace that quietly ends at that component, with everything downstream of it invisible under the original trace id.",
+          "clozes": [
+            {
+              "start": 120,
+              "end": 135,
+              "answer": "X-Amzn-Trace-Id",
+              "cardId": "card-zin3"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-kxyj",
+          "format": "mcq",
+          "prompt": "A request traces cleanly through API Gateway and a Lambda function, but the trace shows nothing for a downstream call to a third internal service — no error, no gap flagged, it just isn't there. What's the most likely explanation?",
+          "choices": [
+            {
+              "text": "The downstream service didn't forward the X-Amzn-Trace-Id header, so it started a new trace instead of continuing the existing one",
+              "correct": true
+            },
+            {
+              "text": "X-Ray silently drops any trace with more than two hops",
+              "correct": false
+            },
+            {
+              "text": "The downstream service exceeded its sampling reservoir for the day",
+              "correct": false
+            },
+            {
+              "text": "Segments can only be produced by services fronted by API Gateway",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-xz5q",
+          "prompt": "Why does a service failing to propagate the trace header produce a trace that looks merely incomplete, rather than an outright error?",
+          "answer": "X-Ray doesn't validate that every hop in a call chain reports back — it just groups whatever segments carry the same trace id. A service that doesn't forward the header starts its own new trace id, so its segment is real and recorded, just filed under a different trace. Nothing fails; the original trace just ends one hop early."
+        },
+        {
+          "kind": "prose",
+          "text": "Tracing every request would mean paying to record and store every request's spans, which is unaffordable at volume — so X-Ray traces a representative sample, not the complete traffic. The default sampling rule combines a fixed reservoir with an additional rate: X-Ray always records a fixed number of requests per second (the reservoir, satisfying a base rate even during quiet periods), and on top of that traces a configurable percentage of any requests beyond the reservoir.",
+          "clozes": [
+            {
+              "start": 429,
+              "end": 439,
+              "answer": "percentage",
+              "cardId": "card-fnyn"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "This is also why you can't reliably retrieve a trace for one specific customer-reported slow request after the fact: if that request wasn't one of the sampled ones, no segments were ever recorded for it, no matter how interesting it turns out to be in hindsight.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The sampling decision itself is made exactly once, at the edge of the call chain, and honored by every downstream service that receives it via the trace header — a service doesn't independently decide whether to record its own segment. That's what keeps a trace from ending up half-sampled: either the whole chain records, or none of it does.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-u4ib",
+          "format": "recall",
+          "prompt": "Explain why the sampling decision for a trace is made once, at the entry point, and carried downstream via the trace header, rather than each service independently deciding whether to sample its own segment.",
+          "answer": "If each service decided independently, a trace could end up partially recorded — some services logging segments, others not — which would produce timelines with holes that look like missing instrumentation rather than an intentional sampling gap, and would make percentage-based sampling rates impossible to reason about across a call chain. Deciding once and propagating the decision guarantees a trace is either fully captured or not captured at all."
+        },
+        {
+          "kind": "prose",
+          "text": "Within a segment or subsegment, you attach data two ways, and the distinction is about what you can later search on. Annotations are indexed key-value pairs — you can filter and group traces by them (find every trace where `customerTier` was `enterprise`). Metadata is attached to the segment for context when you're already looking at it, but it isn't indexed, so you can't query traces by a metadata field.",
+          "clozes": [
+            {
+              "start": 117,
+              "end": 128,
+              "answer": "Annotations",
+              "cardId": "card-a868"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-727q",
+          "prompt": "Why would you deliberately choose to record a value as X-Ray metadata rather than as an annotation, given that metadata isn't searchable?",
+          "answer": "Annotations are indexed, and every indexed field has a cost and cardinality implication for the trace store; attaching everything as an annotation to keep options open would bloat the index with fields nobody queries. Metadata is the right choice for context you want visible when inspecting a trace you already found some other way, but never need to filter or group traces by."
+        },
+        {
+          "kind": "prose",
+          "text": "The **service map** is not something you draw — it's a view X-Ray derives automatically from the segments it has collected, inferring which services called which from the parent-child relationships between segments and subsegments across all recently traced requests.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Instrumenting a service for X-Ray requires three pieces working together: the X-Ray SDK (or the AWS Distro for OpenTelemetry) in the application to create segments and subsegments and inject the trace header, a daemon or collector process to receive those spans locally and forward them to the X-Ray service, and IAM permission for whatever process does that forwarding to call the X-Ray API. Skipping the IAM permission is a common way tracing silently produces nothing — the SDK calls succeed locally, but the daemon's uploads are denied.",
+          "clozes": [
+            {
+              "start": 78,
+              "end": 87,
+              "answer": "X-Ray SDK",
+              "cardId": "card-jgw1"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "The AWS Distro for OpenTelemetry (ADOT) is the portable alternative to the X-Ray SDK: it instruments using the vendor-neutral OpenTelemetry API and can export to X-Ray or to other tracing backends, so switching tracing backends later doesn't mean re-instrumenting every service — only reconfiguring the exporter.",
+          "clozes": []
+        }
+      ]
+    },
+    {
+      "path": "vault/aws/observability/golden-signals-percentiles-and-what-to-alert-on.md",
+      "title": "Golden Signals, Percentiles, and What to Alert On",
+      "topic": "aws",
+      "category": "aws-observability",
+      "citations": [
+        "Amazon CloudWatch User Guide — 'Percentiles', 'Metric math'",
+        "Google SRE Book — 'Monitoring Distributed Systems'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Golden Signals, Percentiles, and What to Alert On"
+        },
+        {
+          "kind": "prose",
+          "text": "`alarms-evaluation-and-missing-data.md` and `composite-alarms-and-alarm-actions.md` cover how an alarm actually evaluates a metric and fires an action. This note is about a layer above that mechanics: which metrics are worth watching in the first place, and which of those are worth waking someone up over.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Four signals are worth instrumenting on nearly any service before anything else, because between them they catch almost every failure mode a user would notice. **Latency** is how long requests take — distinguishing successful-but-slow from genuinely failed matters, since they call for different responses. **Traffic** is how much demand the service is under — requests per second, or whatever the service's natural unit of load is. **Errors** is the rate of requests that failed. **Saturation** is how full the service's most constrained resource is — not raw CPU or memory in isolation, but whichever resource, once exhausted, degrades the other three. A service can look fine on the first three signals while its saturation signal is already climbing toward the point where it won't be.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-en3p",
+          "format": "mcq",
+          "prompt": "A service's latency and error rate both look normal, but a queue depth metric behind it has been climbing steadily for an hour. Which of the four golden signals does that queue depth represent, and why does it matter even though the user-facing signals haven't moved yet?",
+          "choices": [
+            {
+              "text": "Saturation — it measures how close a constrained resource is to its limit, and it tends to move before latency and errors do, since a resource can absorb backlog for a while before it starts visibly degrading requests",
+              "correct": true
+            },
+            {
+              "text": "Traffic — queue depth is just another way of measuring request volume",
+              "correct": false
+            },
+            {
+              "text": "Errors — a growing queue implies requests are already failing somewhere",
+              "correct": false
+            },
+            {
+              "text": "Latency — queue depth is latency measured indirectly",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-wt1z",
+          "prompt": "What does it mean for a resource to be the right one to track as a service's saturation signal, out of everything that could be measured?",
+          "answer": "It should be whichever resource is most constrained for that service — the one that, once exhausted, is what actually degrades latency, throughput, or error rate. Tracking an unconstrained resource (say, disk space on a service that will run out of memory or connection pool slots long first) as \"the\" saturation signal misses the one that will actually cause the outage."
+        },
+        {
+          "kind": "prose",
+          "text": "An average latency is a single number computed across every request in a period, and it hides exactly the requests you'd most want to know about: a slow tail can sit underneath a perfectly normal-looking average, because enough fast requests pull the mean back down. A p99 latency — the value below which 99% of requests fall — is where the users who are actually suffering live, since it isolates the requests the average is diluting away.",
+          "clozes": [
+            {
+              "start": 269,
+              "end": 272,
+              "answer": "p99",
+              "cardId": "card-c99e"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "The problem compounds across instances. Averaging the per-instance average latencies together — an average of averages — is not a statistically meaningful number at all: it weights every instance equally regardless of how many requests each one actually served, so a lightly loaded instance's average distorts the result as much as a heavily loaded one's, in a way a raw distribution over all requests never would.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-8njh",
+          "prompt": "Why is an \"average of averages\" — averaging several instances' own average latencies together — considered not a meaningful statistic, even though each individual instance's average is a legitimate number?",
+          "answer": "Averaging averages implicitly weights every instance equally, regardless of how many requests it actually handled, so an instance that served ten requests skews the combined figure exactly as much as one that served ten thousand. The result no longer reflects the true distribution of latency across actual requests — it reflects the distribution across instances instead."
+        },
+        {
+          "kind": "prose",
+          "text": "CloudWatch turns that from a preference into a constraint you have to satisfy in advance. A percentile can only be computed where the distribution of individual values was preserved; a metric published as a pre-aggregated statistic set has already thrown away what the calculation needs, and nothing you write later recovers it. `metric-resolution-retention-and-statistics.md` works through exactly why those stored statistics are insufficient. The consequence for alerting is the part that matters here: whether you *can* page on p99 is settled when the metric is instrumented, not when the alarm is written.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The choice of what to page on follows from the same distinction between what a metric measures and what actually degrades the user's experience. An alert should fire on a **symptom** — error rate, or latency past an agreed threshold — because that's the thing the user is actually experiencing. Alerting on a **cause** instead — CPU usage, queue depth, disk I/O — produces two kinds of false signal: it can fire while nothing is actually going wrong for users (CPU spikes during a harmless batch job), and it stays silent during an outage whose cause isn't the one you happened to pick a threshold for. Cause-based signals belong as diagnostic information to consult once a symptom-based alert has already fired, not as the trigger itself.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-bakw",
+          "format": "recall",
+          "prompt": "Explain why \"page on symptoms, not causes\" is the right default for what to alarm on, using CPU usage as the example of a cause-based signal that shouldn't itself page anyone.",
+          "answer": "A symptom (error rate, latency past a threshold) is what the user is actually experiencing, so an alert on it is guaranteed to correspond to a real user-facing problem when it fires, and to catch every user-facing problem regardless of what caused it. CPU usage is a cause: it can spike for reasons that never affect users (a scheduled batch job, a GC pause) — a false page — and a real outage can happen without CPU ever moving (the bottleneck is a downstream dependency, or connection pool exhaustion) — a missed page. CPU is still worth watching, just as a diagnostic to check once a symptom-based alert has already told you something is actually wrong."
+        },
+        {
+          "kind": "prose",
+          "text": "An **error budget** answers the question a raw threshold leaves unanswered: how much failure is actually acceptable? Instead of alarming on \"any error,\" you set an objective — say, 99.9% of requests succeed over 30 days — which implies a budget of allowed failures for that window. The threshold that pages someone stops being an arbitrary round number and becomes a decision about how much of that budget can burn before it's a real problem, which is also what tells you whether a brief spike is worth waking up for or safe to absorb.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Alert fatigue is not just an annoyance — it's an engineering failure with a concrete mechanism: every alert that fires without anyone taking action trains the people receiving it to treat the channel as noise, so that when a genuinely serious alert does fire, it gets the same reflexive dismissal as the routine ones before it. Because of that mechanism, deleting an alert that nobody acts on is often the correct fix, not a compromise — a page that trains people to ignore pages is actively making the on-call rotation worse at catching the alerts that matter.",
+          "clozes": [
+            {
+              "start": 203,
+              "end": 208,
+              "answer": "noise",
+              "cardId": "card-lcuf"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-fmbi",
+          "prompt": "Why can deleting a low-value alert improve, rather than worsen, a team's ability to catch real incidents?",
+          "answer": "Every alert that fires without a real action taken conditions the on-call responder to treat that channel as safe to ignore, which degrades their response to every other alert on the same channel, including the ones that matter. Removing an alert nobody acts on removes that training effect, so responders are more likely to treat the alerts that remain as genuinely worth acting on."
+        }
+      ]
+    },
+    {
+      "path": "vault/aws/observability/log-groups-streams-and-retention-cost.md",
+      "title": "Log Groups, Streams, and Retention Cost",
+      "topic": "aws",
+      "category": "aws-observability",
+      "citations": [
+        "Amazon CloudWatch User Guide — 'Working with log groups and log streams', 'CloudWatch Logs pricing'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Log Groups, Streams, and Retention Cost"
+        },
+        {
+          "kind": "prose",
+          "text": "`../lambda/observability-and-cost-model.md` already covers where a function's stdout ends up: one log group per function, populated automatically. This note covers the structure underneath that fact and the cost consequence almost nobody configures on purpose.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "CloudWatch Logs has two levels, and they answer different questions. The log group is the unit you actually manage — it's where retention, encryption, subscription filters, and access permissions are all set — while a log stream is a single sequential sequence of log events sharing a source within that group (one Lambda execution environment, one EC2 instance, one container task), which is why ordering only exists inside a stream and not across the group as a whole.",
+          "clozes": [
+            {
+              "start": 73,
+              "end": 82,
+              "answer": "log group",
+              "cardId": "card-qm8p"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-cm4l",
+          "prompt": "What does a log group govern that an individual log stream inside it never does?",
+          "answer": "Configuration — retention period, encryption (KMS key), subscription filters, and IAM/resource permissions all attach at the log group level. A log stream is just a single sequential source of events within that group; it carries no settings of its own."
+        },
+        {
+          "kind": "prose",
+          "text": "The single fact worth memorizing here is that a newly created log group's retention setting defaults to never expire, not some sensible short window. Left alone, every event ever ingested into that group sits in storage and is billed for it indefinitely — nothing ages out on its own.",
+          "clozes": [
+            {
+              "start": 104,
+              "end": 116,
+              "answer": "never expire",
+              "cardId": "card-sxob"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-tg3g",
+          "format": "mcq",
+          "prompt": "A team has been running dozens of Lambda functions and ECS services for two years and never once touched a CloudWatch log group's retention setting. What is true of every one of those log groups by default?",
+          "choices": [
+            {
+              "text": "They still hold every log event ever ingested, and are being billed for that storage, because the default retention is \"never expire\"",
+              "correct": true
+            },
+            {
+              "text": "They were automatically capped at 30 days of retention to control cost",
+              "correct": false
+            },
+            {
+              "text": "They were automatically archived to S3 Glacier after 90 days",
+              "correct": false
+            },
+            {
+              "text": "CloudWatch deletes log groups that receive no new events for 60 days",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-hc8o",
+          "prompt": "Why is an untouched retention setting called out as the most common avoidable AWS observability cost, rather than, say, an oversized alarm bill?",
+          "answer": "Because it requires no unusual configuration to happen — it's what CloudWatch does by default, silently, on every log group anyone creates — and the cost compounds forever rather than staying flat, since nothing ever ages out to cap the storage being billed."
+        },
+        {
+          "kind": "prose",
+          "text": "Retention isn't the only meter running. CloudWatch Logs charges at three separate points: once to ingest a log event, again to store it for as long as retention keeps it around, and again to scan it when a Logs Insights query reads over it (that query-time cost is its own subject, covered where Insights is discussed). Because the first of those charges is billed up front and can't be undone later, the cheapest lever is almost always writing fewer log lines in the first place, rather than shortening how long you keep what you already paid to take in.",
+          "clozes": [
+            {
+              "start": 98,
+              "end": 104,
+              "answer": "ingest",
+              "cardId": "card-ponf"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-joyx",
+          "prompt": "Why does \"log less\" beat \"retain less\" as a cost-cutting strategy, given that both retention and the initial intake are billed separately?",
+          "answer": "The intake charge is incurred the moment a log line is written, before any retention setting has a chance to act on it — shortening retention only stops paying for storage going forward, it can't undo the charge already paid for taking the line in. Reducing what gets logged in the first place avoids both charges at the source."
+        },
+        {
+          "kind": "prose",
+          "text": "Getting logs out of CloudWatch and somewhere cheaper or more capable — a data lake, a SIEM, a third-party log platform — goes through a subscription filter: a pattern-matching rule on a log group that streams every matching event, in near real time, to a destination like Kinesis Data Firehose or a Lambda function, as it arrives.",
+          "clozes": [
+            {
+              "start": 136,
+              "end": 155,
+              "answer": "subscription filter",
+              "cardId": "card-93z3"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Export to S3 works differently and serves a different purpose: it's a one-time (or scheduled) bulk copy of a log group's existing contents into an S3 bucket for cheap long-term archival, not a live stream of new events. That distinction is why the standard answer to \"we need to keep these logs for seven years for an audit\" is a short CloudWatch retention window paired with an S3 export or subscription-driven archive, rather than just setting the log group's own retention to seven years.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-m4vn",
+          "format": "recall",
+          "prompt": "An auditor tells a team they must retain application logs for seven years. Explain why the right design is short CloudWatch retention plus an S3 archive, rather than simply setting the log group's retention to seven years, in terms of what each storage tier is priced for.",
+          "answer": "CloudWatch Logs storage is priced for logs you expect to actively query — it's optimized for recency, not bulk archival, so paying that rate for seven years of rarely-touched data is far more expensive than it needs to be. S3 (especially with a lifecycle policy into Glacier) is priced for exactly this: cheap, durable, long-term storage of data that's read rarely if ever. Keeping CloudWatch retention short and exporting or streaming everything else into S3 gets the audit requirement satisfied at S3's storage rate instead of CloudWatch's."
+        }
+      ]
+    },
+    {
+      "path": "vault/aws/observability/logs-insights-and-query-cost.md",
+      "title": "Logs Insights and Query Cost",
+      "topic": "aws",
+      "category": "aws-observability",
+      "citations": [
+        "Amazon CloudWatch Logs User Guide — 'Analyzing log data with CloudWatch Logs Insights'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Logs Insights and Query Cost"
+        },
+        {
+          "kind": "prose",
+          "text": "`log-groups-streams-and-retention-cost.md` covers what a log group costs to store and keep around. This note covers the other cost surface entirely — what it costs to *ask a question* of logs you've already stored — and a query language purpose-built for turning raw log lines into an aggregate answer.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "A Logs Insights query is a pipeline of stages, each narrowing or transforming the rows produced by the one before it: `fields` picks which fields to show, `filter` keeps only matching rows, `parse` extracts new fields out of unstructured text, `stats ... by` collapses rows into groups and computes an aggregate per group, and `sort` and `limit` shape the final output.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The stage that actually changes what kind of question you can answer is stats. Without it, a query is a search — it hands back matching log lines for you to read. Adding it turns that same log data into a number: a count, an average, a percentile, one row per group instead of one row per log line. That's the difference between grepping and measuring.",
+          "clozes": [
+            {
+              "start": 72,
+              "end": 77,
+              "answer": "stats",
+              "cardId": "card-nlzl"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-q2xy",
+          "prompt": "Why does adding `stats ... by` to a query change what kind of question you can answer, rather than just changing the output format?",
+          "answer": "Without `stats` a query returns individual matching log lines — you still have to read them and do the aggregation yourself. `stats` computes the aggregate (a count, an average, a percentile) per group inside the query engine itself, so the result is already the answer — \"how many,\" \"how often,\" \"what's the p99\" — instead of raw material for you to summarize by hand."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-rj84",
+          "format": "mcq",
+          "prompt": "A query filters a log group down to every line containing \"timeout\" over the last hour. What turns this from a search into a measurement of how often timeouts are happening per service?",
+          "choices": [
+            {
+              "text": "Adding a `stats count(*) by service` stage",
+              "correct": true
+            },
+            {
+              "text": "Adding a `limit 10000` clause",
+              "correct": false
+            },
+            {
+              "text": "Sorting the results by `@timestamp`",
+              "correct": false
+            },
+            {
+              "text": "Narrowing the `filter` to an exact string match instead of a substring",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "`parse` pulls a new field out of a log line's raw text using a pattern with a glob-like placeholder — useful when the line was written as free-form text and the value you want (a status code, a duration, a request id) is just sitting inside a string with no field boundary around it.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "That extraction step disappears entirely for logs written as JSON: a JSON log line's keys are picked up automatically as addressable fields — no `parse` needed — so `stats avg(duration) by endpoint` works directly against a field that arrived already structured.",
+          "clozes": [
+            {
+              "start": 121,
+              "end": 132,
+              "answer": "addressable",
+              "cardId": "card-s3q7"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-auww",
+          "prompt": "Why is \"JSON log lines are parsed into fields automatically\" the concrete argument for structured logging, rather than just a style preference?",
+          "answer": "It's the difference between a query you can write and one you cannot without extra work. A field that already exists as JSON can go straight into `fields`, `filter`, or `stats by` with no extraction step. The same value sitting inside a free-form text line needs a `parse` pattern to pull out first — and if the text format is inconsistent across log statements, that pattern breaks or misses rows, so the query becomes unreliable exactly where the aggregate matters most."
+        },
+        {
+          "kind": "prose",
+          "text": "Logs Insights charges by the volume of data scanned to run a query, not by how much of that data ends up in the result. A query over an hour of one log group is billed for that hour's bytes; the same query over a month is billed for roughly seven hundred times as much, regardless of how few rows either one returns.",
+          "clozes": [
+            {
+              "start": 29,
+              "end": 51,
+              "answer": "volume of data scanned",
+              "cardId": "card-b3il"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "That billing model inverts the intuition most people bring from an indexed search engine, where a `WHERE` clause makes a query cheaper by letting the engine skip unindexed data. A Logs Insights `filter` does nothing of the kind:",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-5pcq",
+          "prompt": "Why doesn't adding a `filter` clause reduce what a Logs Insights query is charged for?",
+          "answer": "Because there's no index to skip past — the query engine still has to read every byte of every log event in the selected log groups and time range to know whether it matches the filter or not. The filter changes which rows appear in the result, not how much data had to be scanned to produce that result, so a highly selective filter over a huge time range still costs the same as an unfiltered one over that same range."
+        },
+        {
+          "kind": "prose",
+          "text": "The one lever that actually reduces cost is choosing a smaller time range or fewer log groups to scan, since those two settings — not the query body — determine the bytes read.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-uun0",
+          "format": "recall",
+          "prompt": "Two engineers are debugging a spike in errors. One runs a query over the last 30 days with a tight `filter` on the exact error string. The other runs the same `filter` over just the last hour, then widens the range only if nothing turns up. Explain why the second approach is the better default given how Logs Insights is billed, and what \"widen only if needed\" is actually optimizing for.",
+          "answer": "Cost is driven by the time range (and which log groups are scanned), not by how selective the filter is — a `filter` doesn't reduce bytes read either way. Starting narrow means the common case (the error is recent) gets answered for a small fraction of the cost of scanning 30 days upfront, and only the less common case of an older or less obvious problem pays for a wider scan. \"Widen only if needed\" defers the expensive scan until cheaper ones have already failed to answer the question."
+        },
+        {
+          "kind": "prose",
+          "text": "A second consequence of scan-based billing is where you draw log group boundaries in the first place. Because a query only pays for the log groups it actually scans, keeping unrelated concerns in separate log groups means a query against one of them costs nothing extra for the others — mixing them into one giant log group instead forces every query against any one concern to scan, and pay for, all of them.",
+          "clozes": [
+            {
+              "start": 196,
+              "end": 204,
+              "answer": "separate",
+              "cardId": "card-qh2o"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Results are also capped in size regardless of cost — a query that would otherwise return far more rows than the cap stops early, which is what the explicit `limit` clause is for: naming how many rows you actually want back rather than relying on the implicit cap to cut the query off. A query worth running more than once can also be saved, so a recurring investigation doesn't have to be retyped from scratch each time — though a saved query still scans fresh data, and fresh bytes, every time it's run.",
+          "clozes": []
+        }
+      ]
+    },
+    {
+      "path": "vault/aws/observability/metric-filters-and-embedded-metric-format.md",
+      "title": "Metric Filters and Embedded Metric Format",
+      "topic": "aws",
+      "category": "aws-observability",
+      "citations": [
+        "Amazon CloudWatch User Guide — 'Creating metrics from log events using filters', 'Embedded metric format'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Metric Filters and Embedded Metric Format"
+        },
+        {
+          "kind": "prose",
+          "text": "`log-groups-streams-and-retention-cost.md` covers what a log group is and what it costs to keep one around. This note covers a different question: how a metric ever gets produced from a log line at all, and why AWS eventually added a second, better way to do it.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The older mechanism is the metric filter: a pattern evaluated against a log group's incoming events, which increments a metric by a defined value every time an event matches. This is what lets you alarm on the mere presence of a log line — an ERROR, a stack trace, an out-of-memory kill — without the application ever having called a metrics API; the application only had to print the line, and the filter does the counting.",
+          "clozes": [
+            {
+              "start": 27,
+              "end": 40,
+              "answer": "metric filter",
+              "cardId": "card-jkpj"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-lyfg",
+          "prompt": "What must an application do, at minimum, for a metric filter to be able to alarm on one of its failure conditions?",
+          "answer": "Nothing beyond printing an ordinary log line that mentions the condition (an ERROR, an OOM kill, a specific error code). The filter watches the log group and does the counting; the application never calls a metrics API itself."
+        },
+        {
+          "kind": "prose",
+          "text": "Metric filters have two failure modes worth knowing because both are silent. First, a filter only evaluates events as they arrive — it cannot be applied retroactively to logs that were already ingested before the filter existed, so turning one on today tells you nothing about last month's incidents. Second, and more dangerous operationally, a filter's pattern is matched against a specific log format; if a deploy changes how a line is worded or structured, the pattern can simply stop matching. Nothing errors. The metric quietly reads zero, and any alarm built on top of it never fires again — the alarm looks healthy right up until the incident it existed to catch.",
+          "clozes": [
+            {
+              "start": 539,
+              "end": 543,
+              "answer": "zero",
+              "cardId": "card-vguv"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-9d1u",
+          "format": "mcq",
+          "prompt": "A metric filter was built to alarm on a specific ERROR log line. Months later, a routine deploy slightly reworded that log message. What is the most likely operational consequence?",
+          "choices": [
+            {
+              "text": "The filter silently stops matching, the metric reads zero, and the alarm never fires again — with no error surfaced anywhere",
+              "correct": true
+            },
+            {
+              "text": "CloudWatch automatically updates the filter pattern to match the new wording",
+              "correct": false
+            },
+            {
+              "text": "The filter throws a configuration error visible in the CloudWatch console",
+              "correct": false
+            },
+            {
+              "text": "The alarm switches into INSUFFICIENT_DATA and pages on-call immediately",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-v1br",
+          "prompt": "Why can't a newly created metric filter produce a useful metric for an incident that happened last week?",
+          "answer": "A metric filter only evaluates log events as they're ingested going forward; it has no mechanism to scan back over events already stored in the log group, so it can only ever measure activity from the moment it was created onward."
+        },
+        {
+          "kind": "prose",
+          "text": "The newer approach inverts the whole arrangement. With the Embedded Metric Format, the application itself writes one structured JSON log line containing both the metric values and their dimensions inside a defined `_aws` envelope; CloudWatch's ingestion pipeline recognizes that envelope and extracts the metrics automatically, with no separate `PutMetricData` call and no pattern-matching step standing between the log line and the metric.",
+          "clozes": [
+            {
+              "start": 59,
+              "end": 81,
+              "answer": "Embedded Metric Format",
+              "cardId": "card-jeto"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-q26k",
+          "prompt": "What is the practical benefit of a single EMF log line producing both a metric and a log record, compared to publishing a metric filter over an ordinary log line?",
+          "answer": "You keep the metric's speed and alarmability for free, but the log record survives too — with EMF you can pivot from an anomalous metric data point straight back to the exact structured log line that produced it, something a metric filter can't offer since it discards everything about the event except the count."
+        },
+        {
+          "kind": "prose",
+          "text": "EMF earns that outcome through three concrete wins over calling `PutMetricData` directly from the request path: no extra network round trip is added to the request just to publish a number, fields with high or unbounded cardinality (a user id, a request id) can ride along in the structured log record without ever becoming metric dimensions, and the resulting log is queryable on its own terms as full-fidelity structured data, not just a number that was extracted from it.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-emg4",
+          "format": "recall",
+          "prompt": "A teammate says \"we switched this Lambda function to EMF, so now we don't have to think about dimension cardinality anymore.\" Explain what is wrong with that claim — what does EMF actually eliminate, and what does it leave completely unchanged?",
+          "answer": "EMF eliminates the separate PutMetricData network call — the metric is derived from a log line the application was going to write anyway. It does nothing to change how CloudWatch bills or bounds metrics: every distinct combination of values in the dimension sets declared inside the `_aws` envelope still creates a real, separately-billed metric, exactly as if PutMetricData had been called with those dimensions. High-cardinality fields are safe in EMF only if they're left out of the declared dimension sets and kept as plain log fields instead."
+        },
+        {
+          "kind": "prose",
+          "text": "Because the dimension sets an EMF log line declares still generate real, billable CloudWatch metrics, EMF removes the extra API call on the request path, not the cardinality cost of the dimensions themselves.",
+          "clozes": [
+            {
+              "start": 124,
+              "end": 132,
+              "answer": "API call",
+              "cardId": "card-p79l"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "vault/aws/observability/metric-math-and-dashboards.md",
+      "title": "Metric Math and Dashboards",
+      "topic": "aws",
+      "category": "aws-observability",
+      "citations": [
+        "Amazon CloudWatch User Guide — 'Using metric math'",
+        "Amazon CloudWatch User Guide — 'Using Amazon CloudWatch dashboards'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Metric Math and Dashboards"
+        },
+        {
+          "kind": "prose",
+          "text": "`metrics-namespaces-dimensions-and-cardinality.md` covers what a metric is; `alarms-evaluation-and-missing-data.md` covers how an alarm evaluates one. This note covers the layer in between: computing a metric you never published, from ones you already have, entirely at query time — and the dashboards built on top of the result.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Metric math takes one or more existing metrics as input and applies an expression to them, producing a new time series without ever writing anything new to CloudWatch's storage. Nothing about the inputs changes; the new series exists only as the output of that expression, recomputed whenever it's evaluated.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The everyday case that justifies the whole feature is a ratio — dividing an error count by a request count to get an error rate. An alarm on the raw error *count* fires the moment traffic spikes, even if the proportion of failures hasn't moved at all; an alarm on that ratio only fires when failures actually become more common relative to traffic.",
+          "clozes": [
+            {
+              "start": 117,
+              "end": 127,
+              "answer": "error rate",
+              "cardId": "card-rvdp"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-3njj",
+          "prompt": "Why does an alarm on a raw error count risk firing during a plain traffic spike, when an alarm on the error-rate expression (errors divided by requests) does not?",
+          "answer": "A traffic spike raises the absolute number of errors just by raising the number of requests, even if the underlying failure proportion is unchanged — the count alarm can't distinguish \"more traffic, same reliability\" from \"the same traffic, now failing more.\" Dividing by request count normalizes that out, so the rate only moves when the proportion of failures actually changes."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-bg26",
+          "format": "mcq",
+          "prompt": "A service's error count triples during a traffic surge, but its error rate (errors ÷ requests) stays flat. Which alarm correctly stays quiet through this surge?",
+          "choices": [
+            {
+              "text": "An alarm on the metric math expression errors ÷ requests",
+              "correct": true
+            },
+            {
+              "text": "An alarm on the raw error count metric",
+              "correct": false
+            },
+            {
+              "text": "Both alarms, since CloudWatch normalizes count metrics automatically",
+              "correct": false
+            },
+            {
+              "text": "Neither — metric math expressions can't be alarmed on directly",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Beyond arithmetic between metrics, common expression shapes include `SUM` and `AVG` applied across an array of metrics (collapsing several time series from, say, one per instance, into one), `RATE` for converting a cumulative counter into a per-period rate, and `FILL` for substituting a value — a constant, or the last known value — into gaps where a metric has no datapoint.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "`SEARCH` deserves special attention because of what it does to a graph over time rather than at query time: it's an expression that matches metrics dynamically by namespace, metric name, or dimension pattern instead of naming a fixed list of metrics up front. A graph built on a `SEARCH` expression picks up a new instance, a new dimension value, or a newly launched resource automatically, without anyone editing the graph's definition to add it.",
+          "clozes": [
+            {
+              "start": 148,
+              "end": 159,
+              "answer": "dynamically",
+              "cardId": "card-t81x"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-wal2",
+          "prompt": "Why does building a graph on a SEARCH expression avoid the maintenance problem that naming metrics explicitly creates?",
+          "answer": "An explicit list of metrics only ever shows the resources that existed when someone wrote the expression — a new instance or a new dimension value simply doesn't appear until the list is edited by hand. SEARCH instead matches by pattern at evaluation time, so whatever currently satisfies the pattern is included, and a newly created resource shows up on the next evaluation with no edit required."
+        },
+        {
+          "kind": "prose",
+          "text": "The capability that makes ratio-based alarming possible at all is that a metric math expression can itself be the thing an alarm watches — you are not limited to alarming on published metrics. The one constraint is that the expression an alarm uses must collapse to a single time series; an expression that would otherwise fan out into one series per matched metric (a raw `SEARCH` result, for instance) has to be reduced first, with something like `SUM` or `AVG`, before an alarm can be attached to it.",
+          "clozes": [
+            {
+              "start": 254,
+              "end": 262,
+              "answer": "collapse",
+              "cardId": "card-77vy"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-k327",
+          "prompt": "What happens if you try to attach an alarm directly to a metric math expression built from a bare SEARCH, without wrapping it in an aggregating function like SUM?",
+          "answer": "It can't be used, because that expression fans out into one time series per metric the search matches rather than producing a single series — an alarm needs exactly one series to evaluate a threshold against. The SEARCH result has to be collapsed with an aggregating function like SUM or AVG first so the expression resolves to the one time series an alarm requires."
+        },
+        {
+          "kind": "prose",
+          "text": "`FILL`'s gap-substitution matters beyond making a graph look continuous: a gap in one input metric of an expression propagates into the derived series, so a metric math result can end up sparser than either of its inputs on its own. `metrics-namespaces-dimensions-and-cardinality.md` and `alarms-evaluation-and-missing-data.md` cover missing-data handling and `treatMissingData` for a single metric's own alarm; the added twist here is that a *derived* metric's gaps are inherited from whichever input metric happened to be missing a datapoint at that moment, which is easy to miss when reasoning about the expression's numerator and denominator as if they were always both present.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-xuc4",
+          "format": "recall",
+          "prompt": "An error-rate alarm (errors ÷ requests) has gone unexpectedly quiet during an incident where the error count metric is still publishing normally, but the request count metric briefly stopped reporting datapoints. Explain how a gap in just one input metric can silence an alarm built on an expression combining both, and why FILL is the relevant lever here rather than anything about the alarm's own configuration.",
+          "answer": "A metric math expression can only produce an output datapoint where all of its inputs have one — if the request count metric has a gap, the division has nothing to divide by at that timestamp, so the derived rate series has a gap there too, whether or not the error count metric is reporting fine. The alarm never sees a breaching value during that gap because it never sees any value at all, so it stays in whatever state it was already in rather than firing. FILL addresses this by substituting a value into the missing input so the expression can still compute something, rather than the alarm needing different evaluation settings."
+        },
+        {
+          "kind": "prose",
+          "text": "Dashboards are the visualization layer over both plain metrics and query results (including Logs Insights queries — see `logs-insights-and-query-cost.md`): widgets arranged on a grid, each backed by one or more metrics or expressions.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "A dashboard is not a live window onto whatever is currently configured — it is a saved document with its own definition (which widgets, which metrics, which time range) that has to be edited to change, and that definition is what renders every time the dashboard is opened, independent of anything else changing around it.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-btbx",
+          "prompt": "Why does calling a CloudWatch dashboard \"a saved document, not a view of live config\" matter in practice?",
+          "answer": "Because a dashboard's widgets keep showing exactly the metrics and expressions it was built with, even if the underlying resources are renamed, replaced, or removed — nothing about the dashboard's definition updates itself in response. A widget built on an explicit metric list goes stale the same way a metric math expression without SEARCH does; someone has to edit the dashboard deliberately to point it at what currently exists."
+        },
+        {
+          "kind": "prose",
+          "text": "A single dashboard can also mix widgets pulling from different accounts and different regions, so one view can put a metric from a production account next to one from a staging account, or roll up the same metric across several regions, without needing a separate dashboard per account or region.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The honest boundary between a dashboard and ad-hoc querying is what question each is for: a dashboard is worth building for a question you already know you'll keep asking — is this service healthy right now — and pays for its setup cost through repetition. An ad-hoc Logs Insights query or a one-off metric math expression is for the question you didn't know you'd need to ask until the incident that raised it, where building a permanent widget for it would be effort spent on something you may never look at again.",
+          "clozes": []
+        }
+      ]
+    },
+    {
+      "path": "vault/aws/observability/metric-resolution-retention-and-statistics.md",
+      "title": "Metric Resolution, Retention, and Statistics",
+      "topic": "aws",
+      "category": "aws-observability",
+      "citations": [
+        "Amazon CloudWatch User Guide — 'Metric data points'",
+        "Amazon CloudWatch User Guide — 'GetMetricStatistics'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Metric Resolution, Retention, and Statistics"
+        },
+        {
+          "kind": "prose",
+          "text": "`metrics-namespaces-dimensions-and-cardinality.md` covers what a metric *is*; this note covers what CloudWatch actually keeps once you've published one, and why the numbers you get back later don't always answer the question you meant to ask.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The single fact that explains most confusion about CloudWatch's numbers is this: CloudWatch does not store the raw events you publish. It stores statistics computed over a period, and once that computation happens the individual data points behind it are gone — you cannot go back and ask for something the stored statistic didn't preserve.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-46si",
+          "prompt": "What is the one fact about how CloudWatch stores metric data that explains most of the confusion people have about its numbers?",
+          "answer": "CloudWatch stores statistics computed over a period rather than the raw underlying data points — once a period's statistic is computed and the finer-grained data ages out, the individual events behind it are gone and cannot be recomputed a different way later."
+        },
+        {
+          "kind": "prose",
+          "text": "Metrics can be published at standard resolution, a 1-minute granularity, or at high resolution, down to 1 second. High resolution isn't free: it costs more to publish, and an alarm evaluated against a high-resolution metric can check as often as every 10 or 30 seconds instead of once a minute, which makes it far more sensitive to short transient blips than an alarm watching the coarser, once-a-minute version of the same underlying behavior.",
+          "clozes": [
+            {
+              "start": 28,
+              "end": 36,
+              "answer": "standard",
+              "cardId": "card-bugz"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-8n87",
+          "format": "mcq",
+          "prompt": "A team switches a metric from standard to high resolution and also creates an alarm that evaluates it every 10 seconds. What's the most likely operational consequence, beyond the added publishing cost?",
+          "choices": [
+            {
+              "text": "The alarm reacts to much shorter transient spikes, so it can flap or fire on blips that a 1-minute standard-resolution alarm would have smoothed over",
+              "correct": true
+            },
+            {
+              "text": "Nothing changes about alarm behavior, since alarms always evaluate once per minute regardless of the metric's resolution",
+              "correct": false
+            },
+            {
+              "text": "The metric's retention period gets shorter, since higher-resolution data is deliberately discarded sooner in exchange for finer granularity",
+              "correct": false
+            },
+            {
+              "text": "The statistic set CloudWatch keeps changes from average/sum/min/max to raw percentiles",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Retention follows a rollup schedule, not one flat expiration: high- resolution and 1-minute data points are kept at that granularity for only a short window, then CloudWatch aggregates them into 5-minute data points, and later into 1-hour data points, with the coarsest tier held for a total of 15 months.",
+          "clozes": [
+            {
+              "start": 295,
+              "end": 304,
+              "answer": "15 months",
+              "cardId": "card-cj7t"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-8tah",
+          "prompt": "Why would a year-old incident be impossible to examine minute-by-minute, even though CloudWatch's total metric retention is a generous 15 months?",
+          "answer": "Because that 15-month figure describes the coarsest, longest-lived tier of the rollup schedule, not the finest one — the original per-minute or per-second data points are aggregated away into 5-minute and then 1-hour statistics long before a year passes, so by the time you'd go looking, the fine-grained detail has already been replaced by an hourly summary and no longer exists to query."
+        },
+        {
+          "kind": "prose",
+          "text": "CloudWatch keeps a fixed statistic set per period rather than every data point that fed into it: sum, minimum, maximum, sample count, and average. Those five numbers can tell you a lot, but they cannot answer every question — a true median or a p99 latency is mathematically unrecoverable from sum, min, max, count, and average alone, because none of those five values describes how the underlying data points were distributed between the min and the max.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-iy44",
+          "format": "recall",
+          "prompt": "Given only a period's sum, minimum, maximum, sample count, and average for a latency metric, explain why you cannot derive a p99 from them — and what that implies about why CloudWatch treats percentile statistics as something fundamentally different from Average, requiring the distribution itself to have been retained rather than just these five summary numbers.",
+          "answer": "A percentile is a statement about where a value falls within the full ordered distribution of data points — the 99th-smallest out of every hundred, roughly speaking. Sum, min, max, count, and average describe the aggregate shape of the data (its total, its extremes, its center of mass) but say nothing about how values are spread between the min and max, so infinitely many different distributions could produce the same five numbers while having wildly different p99s. Getting a percentile back out requires CloudWatch to have kept something closer to the underlying distribution of data points for that period, not merely the five-number summary — which is why percentiles are computed differently under the hood and can't just be read off the same statistic set that Average comes from."
+        },
+        {
+          "kind": "prose",
+          "text": "`SampleCount` is what separates a genuinely good period from a lucky one: an unusually low average latency backed by a large count means the whole period ran fast, while the same low average backed by a count of one means a single fast request skewed a period where almost nothing else happened — the average can't tell those two stories apart on its own.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-pjer",
+          "prompt": "Why can two periods report the exact same low Average latency and mean completely different things operationally?",
+          "answer": "Average alone doesn't say how many requests it was computed from — a low average from a period with a large SampleCount reflects genuinely fast, consistent behavior across many requests, while the same low average from a period with a SampleCount of one is just a single lucky request, with no information at all about how everything else in that period performed."
+        },
+        {
+          "kind": "prose",
+          "text": "The period you request when graphing or alarming and the resolution at which a metric was actually stored are independent settings, and confusing them produces false expectations rather than an error.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-u7a5",
+          "prompt": "Why doesn't requesting a 1-minute period over a metric whose underlying data has already been rolled up to 5-minute granularity give you back 1-minute detail?",
+          "answer": "Because the period parameter only controls how the query buckets and labels the statistic it returns — it can't invent detail that was never stored. Once the finer-grained points have been aggregated away, querying at a shorter period just returns the coarser statistic relabeled at that period; the stored resolution puts a hard ceiling on how fine any query can meaningfully be, and no query-time setting raises it."
+        }
+      ]
+    },
+    {
+      "path": "vault/aws/observability/metrics-namespaces-dimensions-and-cardinality.md",
+      "title": "Metrics, Namespaces, Dimensions, and Cardinality",
+      "topic": "aws",
+      "category": "aws-observability",
+      "citations": [
+        "Amazon CloudWatch User Guide — 'Metrics'",
+        "Amazon CloudWatch User Guide — 'Dimensions'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Metrics, Namespaces, Dimensions, and Cardinality"
+        },
+        {
+          "kind": "prose",
+          "text": "Lambda's own cost-and-observability note covers what a function emits and why tracing exists; this note starts one layer down, at the thing every CloudWatch metric actually is underneath the graphs — because getting this wrong is the single most common way an observability bill surprises someone.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "A CloudWatch metric's identity is not its name. It is the combination of namespace, metric name, and the full set of dimension name-value pairs attached to a data point. Publish the same metric name under two different dimension sets and CloudWatch does not treat that as one metric viewed two ways — it stores two entirely separate metrics, each with its own data points and its own statistics.",
+          "clozes": [
+            {
+              "start": 73,
+              "end": 82,
+              "answer": "namespace",
+              "cardId": "card-n0wm"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "`Latency` published with `service=api` and `Latency` published with `service=api, region=eu` are not the same metric filtered differently. They are two metrics that happen to share a name, because the dimension set is part of what makes a metric *that* metric.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-7e3k",
+          "prompt": "Why can't you graph a total across all instances if you have only ever published a metric with an `instance_id` dimension set on every data point?",
+          "answer": "Because CloudWatch never stored a total — each distinct `instance_id` value created a distinct metric, and CloudWatch does not retroactively sum across sibling metrics for you. The aggregate you want was never a data point anywhere; you would have had to publish it yourself as its own metric (with no `instance_id` dimension, or with an explicit rollup dimension) at the time you emitted the per-instance ones."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-yp08",
+          "format": "recall",
+          "prompt": "A team publishes a custom metric with dimensions for `endpoint` and `status_code` on every data point, but never publishes a version of that metric without those dimensions. Months later they want a single graph of total request count across all endpoints and status codes. Explain why that graph cannot be built from what they already have, and what they'd need to change going forward.",
+          "answer": "Every combination of `endpoint` and `status_code` values is its own distinct metric under CloudWatch's identity rule, so there is no \"all of them\" metric already stored — summing sibling metrics after the fact isn't something CloudWatch does automatically for an arbitrary set of them. To get the total going forward, they need to publish an additional data point, at write time, that omits those dimensions (or rolls them into a single aggregate dimension), so the aggregate exists as a metric in its own right."
+        },
+        {
+          "kind": "prose",
+          "text": "Custom metrics are billed per metric, not per data point, which turns dimension cardinality into a cost multiplier rather than a free-form label. A measurement broken out along three dimensions with 10, 50, and 200 possible values respectively is not \"one metric with extra detail\" — multiply those value counts together and the same conceptual measurement turns into a potential 100,000 distinct metrics, each billed as its own metric.",
+          "clozes": [
+            {
+              "start": 199,
+              "end": 201,
+              "answer": "10",
+              "cardId": "card-b5on"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-z28q",
+          "format": "mcq",
+          "prompt": "A service publishes a custom metric with dimensions `customer_id` (5,000 distinct values) and `endpoint` (20 distinct values), with every combination actually occurring. Roughly how many billable custom metrics does this generate?",
+          "choices": [
+            {
+              "text": "Up to 100,000 — cardinality multiplies across dimensions, since each distinct combination of dimension values is a separate metric",
+              "correct": true
+            },
+            {
+              "text": "5,020 — one metric per distinct dimension value across both dimensions, added together",
+              "correct": false
+            },
+            {
+              "text": "1 — dimensions are just labels on one underlying metric and don't affect how many are billed",
+              "correct": false
+            },
+            {
+              "text": "25 — only the number of dimensions matters, not how many values each one takes",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-r2hu",
+          "prompt": "What makes a dimension value choice like a raw request id, a user id, or a full URL path a classic cause of a runaway observability bill?",
+          "answer": "Each is effectively unbounded — a new distinct value shows up on essentially every request — so putting one in a dimension doesn't add detail to an existing metric, it mints a brand-new metric per request or per user. Cardinality that should have been in the thousands becomes unbounded, and because custom metrics bill per metric, the cost scales with traffic instead of staying flat."
+        },
+        {
+          "kind": "prose",
+          "text": "A namespace is the top-level container that scopes a metric name and keeps unrelated services (and your own applications) from colliding — AWS's own services publish into fixed namespaces like AWS/Lambda or `AWS/S3`, and a custom application typically gets its own namespace name chosen when you publish to it.",
+          "clozes": [
+            {
+              "start": 193,
+              "end": 203,
+              "answer": "AWS/Lambda",
+              "cardId": "card-vqgq"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-wge7",
+          "prompt": "Why can a service's built-in CloudWatch metric only be sliced along certain dimensions and not others you might want?",
+          "answer": "Because AWS, not you, decided which dimensions get attached to that metric's data points when the service publishes them — a service metric arrives with a fixed dimension set baked in, so you can only view it broken out along whichever dimensions AWS chose to record, never along one it never captured."
         }
       ]
     },
