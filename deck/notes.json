@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-20T23:44:07.056Z",
+  "generatedAt": "2026-09-21T00:14:45.857Z",
   "notes": [
     {
       "path": "vault/api/grpc/choosing-between-grpc-rest-and-graphql.md",
@@ -20822,6 +20822,1436 @@
               "cardId": "card-bwmp"
             }
           ]
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/auth0/actions-and-the-extensibility-pipeline.md",
+      "title": "Actions and the extensibility pipeline",
+      "topic": "identity",
+      "category": "identity-auth0",
+      "citations": [
+        "Auth0 Docs — 'Actions'",
+        "Auth0 Docs — 'Actions Triggers'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Actions and the extensibility pipeline"
+        },
+        {
+          "kind": "prose",
+          "text": "Auth0 lets a tenant run its own Node code at defined points inside a login, token, or registration flow, rather than only configuring built-in behavior. An Action is that code: a small function Auth0 invokes, passes context to, and expects a result back from before it continues the flow. What matters most about any given Action isn't the code inside it — it's which point in the flow it's bound to, because that binding, the trigger, is what determines what the function can even see and what it's allowed to change. The same twenty lines of logic that work perfectly bound to one point in the flow can be inert, or actively wrong, bound to another.",
+          "clozes": [
+            {
+              "start": 427,
+              "end": 434,
+              "answer": "trigger",
+              "cardId": "card-303t"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "The post-login trigger is the one most tenants reach for first, and its scope is wider than the name suggests.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-j18n",
+          "prompt": "Besides an ordinary interactive username-and-password login, what else runs a post-login Action?",
+          "answer": "Silent authentication and refresh token exchanges also fire the post-login trigger, not just an interactive login where the user is present and typing credentials. Logic written assuming a fresh interactive session — prompting for extra verification, or reading a field only ever set at explicit login — can misfire quietly in the background on every refresh instead."
+        },
+        {
+          "kind": "prose",
+          "text": "A separate trigger, credentials-exchange, fires for the client-credentials grant that `client-credentials-and-machine-to-machine.md` covers — the grant where a service authenticates as itself, with no end user involved anywhere in the request.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-pyze",
+          "prompt": "Why does an Action bound to the credentials-exchange trigger that checks something like a user's email address or profile field silently do nothing, rather than raising an error?",
+          "answer": "A client-credentials token has no associated user at all, so the event object handed to that Action carries no user record to inspect. A check written for a user-shaped field simply finds nothing there and moves on — there's no user to be wrong about, so nothing fails loudly; the logic just never has any effect on a machine-to-machine token."
+        },
+        {
+          "kind": "prose",
+          "text": "Two more triggers bracket account creation itself rather than login: pre-user-registration runs before a new user record is written to a database connection, in time to block or alter that record, and post-user-registration runs afterward, once the user already exists.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-sw1u",
+          "format": "mcq",
+          "prompt": "A tenant wants to reject new signups whose email domain matches a banned list, before any user record is created in the database connection at all. Which trigger should that Action be bound to?",
+          "choices": [
+            {
+              "text": "pre-user-registration — it runs before the user record is created, so it can still veto or modify it",
+              "correct": true
+            },
+            {
+              "text": "post-user-registration — the user record already exists by the time this trigger runs",
+              "correct": false
+            },
+            {
+              "text": "post-login — this trigger has nothing to do with the registration flow",
+              "correct": false
+            },
+            {
+              "text": "credentials-exchange — this trigger only fires for machine-to-machine tokens, which never register users",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Whatever the trigger, every Action receives the same two-object shape: an event object and an api object, and the two are not interchangeable.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-wrs2",
+          "prompt": "What can an Action accomplish by mutating the event object it receives?",
+          "answer": "Nothing. Event is a read-only snapshot of the current context — who's logging in, which client, which connection — and changes made to it are simply discarded. Every effect an Action can have on the outcome of the flow, from adding a claim to canceling it outright, has to go through the separate api object instead."
+        },
+        {
+          "kind": "prose",
+          "text": "When a tenant chains several Actions onto one trigger, they run in a defined order, one after another — but \"in sequence\" doesn't mean they form one program.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-h0oh",
+          "prompt": "What do two post-login Actions bound to the same trigger, running one after another, actually share with each other?",
+          "answer": "Nothing beyond whatever the first one explicitly attaches to the api object for the next to read — there's no shared variable scope or memory between them. Each Action executes as its own isolated invocation; if the second one needs something the first computed, the first has to have written it onto api itself, not just held it in a local variable."
+        },
+        {
+          "kind": "prose",
+          "text": "That isolation makes a single Action's reliability the reliability of the whole login, which is easy to underestimate until it fails.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-ufg9",
+          "format": "mcq",
+          "prompt": "A tenant's post-login flow has one Action, twenty lines long, that calls an external API to enrich the user's profile. That external call hangs and the Action never returns within its execution time limit. What happens to the login attempt itself?",
+          "choices": [
+            {
+              "text": "The login fails outright — an unhandled timeout in a post-login Action fails the flow it's bound to, not just that one Action",
+              "correct": true
+            },
+            {
+              "text": "The login succeeds, just without the enrichment data the Action would have added",
+              "correct": false
+            },
+            {
+              "text": "Auth0 retries the Action once automatically and only fails the login if the retry also times out",
+              "correct": false
+            },
+            {
+              "text": "Only that Action's remaining code is skipped; earlier changes it made to the token still apply and login proceeds",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "An Action can also refuse a login on purpose rather than by accident. Calling access.deny on the api object is the deliberate way to stop a login in its tracks — the mechanism a fraud check or a suspended-account check reaches for, as distinct from a login that fails because something in the Action broke instead.",
+          "clozes": [
+            {
+              "start": 78,
+              "end": 89,
+              "answer": "access.deny",
+              "cardId": "card-r872"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "`custom-claims-and-namespacing.md` covers, as its own subject, how a post-login Action uses the api object to attach claims to an issued token — one example among many of what api, and only api, can do.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Actions replaced two older extensibility mechanisms that a long-lived tenant may still have lying around.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-ggtu",
+          "prompt": "What is the relationship between Rules and Hooks, and Actions?",
+          "answer": "Rules and Hooks are Auth0's older, now-deprecated mechanisms for the same kind of customization Actions provide today — Rules ran custom logic at login time, Hooks ran it at specific pipeline events like registration. Existing tenants may still have them configured and running, but they are not the model to build new customization on."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/auth0/applications-versus-apis.md",
+      "title": "Applications versus APIs",
+      "topic": "identity",
+      "category": "identity-auth0",
+      "citations": [
+        "Auth0 Docs — 'Applications'",
+        "Auth0 Docs — 'APIs'",
+        "Auth0 Docs — 'Application Types'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Applications versus APIs"
+        },
+        {
+          "kind": "prose",
+          "text": "`tenants-and-the-auth0-domain.md` covers the container everything below lives in; this note covers the two kinds of thing you register inside it. Auth0's dashboard treats \"Applications\" and \"APIs\" as separate tabs for a reason — they represent opposite ends of a token's journey, and treating them as interchangeable registration forms is the most common beginner mistake in an Auth0 tenant.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "An **Application** is a client: something that asks for tokens on a user's or its own behalf. Registering one gives you a client_id, a setting for allowed callback and logout URLs, and a list of grant types the application is permitted to use — the mechanics of any one of those grants (the authorization code flow, PKCE) belong to `identity-oauth`, not here.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-75x4",
+          "prompt": "QA: What does registering something as an Application in Auth0 actually represent, as opposed to registering it as an API?",
+          "answer": "An Application represents a client — the party asking for a token, whether that's a browser app, a mobile app, or a backend service. It's defined by how it authenticates itself and where it's allowed to send users, not by what it does with a token once it has one."
+        },
+        {
+          "kind": "prose",
+          "text": "An **API**, by contrast, is a resource server: something that *receives* tokens and has to decide whether to honor them. Registering one gives it an identifier — a URI you choose, which becomes the audience value clients request tokens for — and a signing algorithm, which governs how the tokens minted against that identifier are verified.",
+          "clozes": [
+            {
+              "start": 198,
+              "end": 206,
+              "answer": "audience",
+              "cardId": "card-j008"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-2dua",
+          "prompt": "Why does an Auth0 API registration need its own identifier separate from any Application's client_id?",
+          "answer": "Because the identifier names the resource server a token is meant for — the audience — which is an entirely different question from which client asked for the token. A client_id identifies who's asking; an API identifier identifies who's supposed to receive what gets issued."
+        },
+        {
+          "kind": "prose",
+          "text": "Auth0 offers several Application types — Single Page Application, Native, Regular Web App, and Machine to Machine — and the choice among them isn't cosmetic labeling. It decides whether the application can hold a client secret at all: a Regular Web App or a Machine to Machine application runs on infrastructure its operator controls and gets one, while a Single Page Application or Native app ships its code to the end user's browser or device and does not. That single fact cascades into which grant types the application is even allowed to use, since any grant that authenticates the client with a secret is off the table for a type that was never issued one.",
+          "clozes": [
+            {
+              "start": 213,
+              "end": 226,
+              "answer": "client secret",
+              "cardId": "card-1ze1"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-rjy3",
+          "format": "mcq",
+          "prompt": "A team registers a browser-based single-page application in Auth0 and later tries to configure it to use the client credentials grant, which requires the caller to authenticate with a client secret. What happens?",
+          "choices": [
+            {
+              "text": "It isn't possible — a Single Page Application is a public client type with no client secret, so no grant that authenticates via a secret is available to it",
+              "correct": true
+            },
+            {
+              "text": "Auth0 issues a client secret on request for any application type, so this works once requested",
+              "correct": false
+            },
+            {
+              "text": "It works, but the secret is sent to the browser on first login and rotated automatically",
+              "correct": false
+            },
+            {
+              "text": "It works only if the SPA also registers a custom domain",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-i761",
+          "format": "recall",
+          "prompt": "Explain why an application's type in Auth0 (Single Page Application vs. Regular Web App vs. Machine to Machine) is a security-relevant choice rather than a UI label — what does it actually gate, and why can't a Single Page Application be reconfigured into having a client secret later?"
+        },
+        {
+          "kind": "prose",
+          "text": "The interaction between Applications and APIs that trips people up most often is what happens when a client requests a token without specifying an audience at all. With no API to mint the token against, Auth0 falls back to issuing a token scoped only to reading the user's own profile from Auth0's own endpoint — and that fallback token comes back opaque, not as a JWT, because there's no resource server identifier for a signed, self-contained token to be minted for in the first place.",
+          "clozes": [
+            {
+              "start": 348,
+              "end": 354,
+              "answer": "opaque",
+              "cardId": "card-770y"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-r1vk",
+          "prompt": "Why does a token requested with no audience parameter come back as an opaque string instead of a JWT that a resource server can validate?",
+          "answer": "Because the audience names which registered API the token is meant for, and without one, Auth0 has nothing to mint a resource-server-scoped, self-contained token against — it falls back to a token for Auth0's own user-profile endpoint instead, which is opaque by design rather than a signed JWT carrying claims a downstream API could verify."
+        },
+        {
+          "kind": "prose",
+          "text": "That fallback is the root cause behind the single most common Auth0 support question — \"my access token isn't a JWT\" — and the fix is always the same: the client has to request a token for a specific, registered API by passing that API's identifier as the audience, at which point Auth0 has a signing algorithm and a resource server identity to mint the token against, and it comes back as a JWT the API can validate on its own using the checks covered in `token-validation-at-the-resource-server.md`.",
+          "clozes": []
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/auth0/connections-and-identity-providers.md",
+      "title": "Connections and Identity Providers",
+      "topic": "identity",
+      "category": "identity-auth0",
+      "citations": [
+        "Auth0 Docs — 'Identity Providers Supported by Auth0'",
+        "Auth0 Docs — 'Connections'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Connections and Identity Providers"
+        },
+        {
+          "kind": "prose",
+          "text": "`tenants-and-the-auth0-domain.md` covers the tenant as the container everything else lives inside. This note covers what actually sits inside it and produces an identity: not \"users\", but connections.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Auth0's data model has no such thing as a bare, connection-less user. Every account a person holds is tied to a specific source that vouches for it — a password store, a social provider, an enterprise identity provider — and that source, plus everything Auth0 configures about how to talk to it, is what Auth0 calls a connection. \"The user cannot log in\" almost never means the account is missing; it means one particular source of identity, for one particular app, is misconfigured or absent. Losing sight of that distinction is the single most common source of confusing Auth0 support threads.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Connections come in three families. **Database connections** are the simplest: Auth0 hosts the user store itself (hashed passwords included), or you point it at a **custom database** you already run, supplying your own scripts for login, user creation, and password changes so Auth0 can defer to your existing store instead of importing it wholesale.",
+          "clozes": [
+            {
+              "start": 219,
+              "end": 226,
+              "answer": "scripts",
+              "cardId": "card-4bqj"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "**Social connections** federate to a consumer identity provider — Google, GitHub, Facebook — using that provider's own OAuth flow underneath. **Enterprise connections** federate to an organization's own identity system: SAML, OIDC, Azure AD/Entra, or ADFS. What belongs here is only that Auth0 treats an enterprise IdP as one more connection type, configured with the same enable/disable and mapping machinery as any other.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The flow mechanics underneath a social connection are `../oauth/the-authorization-code-flow.md`'s subject, and the SAML protocol itself — assertions, bindings, signatures — is `identity-saml`'s territory.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-2a5l",
+          "prompt": "Why are Auth0's default social connection developer keys unsuitable for production?",
+          "answer": "They're Auth0's own shared OAuth application registered with the provider, pooled across every tenant that hasn't configured its own keys. They come pre-enabled for quick testing, but every tenant using them shares one rate-limited allotment at the provider, so they can throttle or fail unpredictably under real traffic. Production use requires registering your own application with the social provider and supplying its keys."
+        },
+        {
+          "kind": "prose",
+          "text": "A second, distinct fact about connections often reads like the first: they are not enabled tenant-wide just by existing. A connection is switched on **per application**, one checkbox per client. Creating a \"Login with Google\" connection does nothing for an app that never had it enabled, and a connection can be perfectly healthy for one application while being invisible to another in the same tenant. When someone insists their account exists and their password is right but Auth0 still rejects them, checking whether their connection is enabled for the application they're hitting is the first move, well before suspecting the credential itself.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-2e2x",
+          "prompt": "What are the three families of connection Auth0 supports?",
+          "answer": "Database connections (Auth0-hosted, or a custom database backed by your own scripts), social connections (federating to a consumer identity provider like Google or GitHub), and enterprise connections (SAML, OIDC, Azure AD/Entra, ADFS, and similar organizational identity systems)."
+        },
+        {
+          "kind": "prose",
+          "text": "Enabling several connections on one application creates a problem neither connection solves by itself: something has to decide, before any credential is checked, which connection a given login attempt should even be routed to. That decision — mapping an incoming login to the right connection out of several enabled ones — is what identity literature calls home realm discovery.",
+          "clozes": [
+            {
+              "start": 357,
+              "end": 377,
+              "answer": "home realm discovery",
+              "cardId": "card-ahcm"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-7wgs",
+          "format": "mcq",
+          "prompt": "An application has a database connection and two enterprise connections enabled, with no explicit connection specified by the caller. How does Auth0 decide which connection a given login belongs to?",
+          "choices": [
+            {
+              "text": "It matches the email domain the person enters against each enterprise connection's configured domains, falling back to the database connection otherwise",
+              "correct": true
+            },
+            {
+              "text": "It tries every enabled connection's credential check in sequence until one succeeds",
+              "correct": false
+            },
+            {
+              "text": "It always defaults to whichever connection was created first",
+              "correct": false
+            },
+            {
+              "text": "It requires the resource server to declare the connection in the access token's audience",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Domain matching is the implicit path; the explicit one is passing a `connection` parameter on the authorization request, naming the exact connection to use and skipping discovery entirely. Applications that embed a \"sign in with your company\" button per enterprise customer are using the explicit form — it's also how `organizations-and-b2b-multitenancy.md` routes a login without asking the person to type an email first.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-7v6a",
+          "prompt": "Which two mechanisms does Auth0 use to route a login to the right connection when several are enabled on one application?",
+          "answer": "Home realm discovery by matching the email domain entered against each connection's configured domains, or an explicit `connection` parameter passed on the authorization request that names the connection outright and bypasses discovery."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-blhr",
+          "format": "recall",
+          "prompt": "A support ticket says \"our SSO users can log in, but our regular password users on the same app suddenly can't.\" Given that connections are enabled per application and not per tenant, what configuration change would produce exactly this symptom, and why wouldn't it affect the SSO users at all?",
+          "answer": "The database connection was disabled (or removed) from that specific application while the enterprise connection stayed enabled on it. Because each connection's enabled/disabled state is scoped to the application, not the tenant, disabling one connection has no effect on any other connection's users — the SSO users' enterprise connection was never touched, so only the password-based population is locked out."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/auth0/custom-claims-and-namespacing.md",
+      "title": "Custom claims and namespacing",
+      "topic": "identity",
+      "category": "identity-auth0",
+      "citations": [
+        "Auth0 Docs — 'User Profile Claims and Scope'",
+        "Auth0 Docs — 'Create Custom Claims'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Custom claims and namespacing"
+        },
+        {
+          "kind": "prose",
+          "text": "`actions-and-the-extensibility-pipeline.md` covers what a post-login Action can do in general; this note covers the one thing almost every Action ends up doing — adding a claim to a token — and the rule that makes it fail silently if you get it wrong.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "An Action sets a custom claim by writing to the token object it's handed, something like `api.idToken.setCustomClaim(name, value)`. Give that call an unqualified name like `roles`, and the Action reports success, deploys cleanly, runs on every login — and the token it produces never has the claim. Nothing throws. Nothing logs a failure. The claim is just absent.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-cpj4",
+          "prompt": "Why does an Action that calls setCustomClaim with an unqualified name like \"roles\" appear to succeed while the resulting token never carries the claim?",
+          "answer": "Auth0 silently drops any custom claim whose name is not a namespaced URI — the Action runs to completion and returns normally, but the token-issuing step discards the claim rather than raising an error, so nothing in the Action's own execution log reveals the problem."
+        },
+        {
+          "kind": "prose",
+          "text": "The fix is to give the claim a namespaced name instead: something shaped like `https://myapp.example.com/roles` rather than `roles`. That requirement isn't Auth0 being fussy about syntax — it follows from what an ID token and an access token actually are. Both are OIDC and OAuth2 documents whose top-level claim names are drawn from one flat, shared space across every issuer and every party that might ever read one, the way two unrelated programs can each define a variable called `x` without colliding only because each keeps its own scope.",
+          "clozes": [
+            {
+              "start": 344,
+              "end": 350,
+              "answer": "shared",
+              "cardId": "card-hlns"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "A handful of names in that flat space are reserved by the OIDC spec itself — `sub`, `email`, `name`, and the rest of the standard claim set — and those can be set unqualified, wherever the token type allows setting them at all. Everything else is unclaimed territory that a future spec revision, another vendor's integration, or a library further down the request path might one day define with a different meaning. An unqualified claim called `role` collides with that territory the instant a standard `role` claim gets defined, or the instant some other consumer of the same token already expects `role` to mean something else. Auth0 refuses the ambiguity outright instead of gambling on it, which is the entire reason the namespace requirement exists.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-4r39",
+          "prompt": "Which OIDC claims are the exception — the ones that can be set unqualified rather than needing a namespaced URI?",
+          "answer": "The OIDC standard claims, such as sub, email, and name — the small reserved set the spec itself already owns, so there is no shared-namespace collision to guard against for those specific names."
+        },
+        {
+          "kind": "prose",
+          "text": "The namespace string itself doesn't have to point anywhere. Auth0 never fetches it, checks that it resolves, or cares whether a server answers at `myapp.example.com`— the URI only has to look like one, so that its prefix can't collide with anyone else's.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-q8vt",
+          "prompt": "Does Auth0 require the custom claim's namespace URI to actually resolve to a real, reachable page?",
+          "answer": "No — the namespace is never dereferenced. It only has to be a syntactically valid URI that nobody else is likely to also pick, which is why any domain you control (real or not) works as long as it's distinct."
+        },
+        {
+          "kind": "prose",
+          "text": "A few hosts are carved out as namespaces specifically because Auth0 itself already uses them: a custom claim namespaced under auth0.com is rejected, on the same logic that makes an unqualified name rejected — the space is already spoken for.",
+          "clozes": [
+            {
+              "start": 126,
+              "end": 135,
+              "answer": "auth0.com",
+              "cardId": "card-i5rk"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Setting a claim has a cost that has nothing to do with namespacing. Every claim in a token is a copy of some fact about the user, bundled and signed at issuance time. That duplication is what makes the token self-contained — a resource server reads it straight off the token with no round trip back to Auth0 — but it also stops tracking its source the moment it's minted. Change the user's role in your database a minute after a token was issued, and every request that token authorizes for the next several minutes to hours still carries the old role, because nothing about that field updates before the token expires.",
+          "clozes": [
+            {
+              "start": 96,
+              "end": 100,
+              "answer": "copy",
+              "cardId": "card-0cc8"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-xluj",
+          "prompt": "Why is a claim's value described as \"stale until the token expires,\" and what does that trade off against?",
+          "answer": "Because the claim is a snapshot copied into the token at issuance, not a live lookup — updating the underlying data does nothing to a token already issued, so the token keeps asserting the old value until it naturally expires. That staleness is the cost of the token being self-contained: reading the claim needs no callback to Auth0, but acting on stale data is possible for as long as the token remains valid."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-wac1",
+          "format": "mcq",
+          "prompt": "A team decides to simplify their API by putting a user's full profile — every attribute, every group membership, every preference — into custom claims on the access token, so the API never has to call anywhere else to look anything up. What is the most likely operational failure this produces first?",
+          "choices": [
+            {
+              "text": "Requests start failing with 431-class errors, or get rejected by an intermediate proxy, because the resulting header is too large",
+              "correct": true
+            },
+            {
+              "text": "The token's signature becomes invalid once it holds too many claims",
+              "correct": false
+            },
+            {
+              "text": "Auth0 silently truncates the token to fit a fixed size, dropping the newest claims added",
+              "correct": false
+            },
+            {
+              "text": "Nothing breaks; tokens have no practical size limit",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "A token isn't a header field in the abstract — it typically travels *inside* one, as a bearer token on an `Authorization` header, and every byte added to it is a byte every request now carries and every server or proxy along the path now has to parse. Piling on claims to avoid lookups just moves the cost from \"occasional database call\" to \"every request's header,\" and header size limits are a harder wall than most API response bodies ever hit.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "One more decision custom claims force is easy to lose track of: adding a claim to the ID token and adding the same claim to the access token are two separate calls in the Action, against two separate token objects, not one setting that covers both. An Action can set a claim on one and not the other, and Auth0 will not infer that you meant both.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-8k3m",
+          "format": "recall",
+          "prompt": "A post-login Action adds a namespaced roles claim to the ID token only. A client later calls an API and expects that same roles claim to be present on the access token it presents to the resource server. Explain why it won't be there, and what the Action would need to do differently.",
+          "answer": "Setting a custom claim on the ID token and setting one on the access token are independent operations in a post-login Action — each token has its own object to write to, and populating one has no effect on the other. The Action needs a second, explicit call that sets the claim on the access token's own token object; nothing about the ID token claim propagates automatically."
+        },
+        {
+          "kind": "prose",
+          "text": "`jwt-structure-and-pitfalls.md` and `token-validation-at-the-resource-server.md` cover what happens after a claim lands in the token — how the three segments are structured, and how a resource server is supposed to verify the signature before trusting anything the payload says. This note stops at the point Auth0 decides whether the claim goes in at all.",
+          "clozes": []
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/auth0/management-api-versus-authentication-api.md",
+      "title": "Management API versus Authentication API",
+      "topic": "identity",
+      "category": "identity-auth0",
+      "citations": [
+        "Auth0 Docs — 'Authentication API'",
+        "Auth0 Docs — 'Management API'",
+        "Auth0 Docs — 'Access Tokens for the Management API'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Management API versus Authentication API"
+        },
+        {
+          "kind": "prose",
+          "text": "A lot of confusion about \"calling Auth0\" resolves the moment you name which of its two APIs you actually mean, because they exist for opposite audiences and behave nothing alike.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The Authentication API is the one every end-user login flow talks to — its `/authorize`, `/oauth/token`, and `/userinfo` endpoints are what issue and describe tokens for a real person signing in. It's meant to be reached from a browser or a mobile app, and `identity-oauth`'s notes on the authorization code flow and token validation cover what happens on that side in detail — this note doesn't repeat it.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The Management API is a completely different surface: it administers the tenant itself. Creating a user, assigning a role, reading a profile, updating a connection's settings — all of that goes through it, not through anything an end user's login ever touches.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-qix9",
+          "prompt": "What does the Auth0 Management API let you do that the Authentication API does not?",
+          "answer": "Administer the tenant's own configuration and data as an operator — create and update users, assign roles, read profiles, change connection settings, and similar tenant-management operations, as opposed to running an end user's own login and token issuance."
+        },
+        {
+          "kind": "prose",
+          "text": "Because it's a different API, it needs its own token, and that token is requested against its own audience: every Management API call expects an access token whose audience is https://<tenant-domain>/api/v2/, distinct from any audience an application's own resource server uses.",
+          "clozes": [
+            {
+              "start": 176,
+              "end": 207,
+              "answer": "https://<tenant-domain>/api/v2/",
+              "cardId": "card-5tkg"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Getting that token is itself an M2M problem, not a user-login problem — there's no person to authenticate against the tenant's own administration surface. `client-credentials-and-machine-to-machine.md` covers the grant mechanics; here, what matters is that a Machine to Machine application is registered specifically to call the Management API, authorized against it with an explicit, deliberately chosen set of scopes, and it's that application's client credentials — not any end user's session — that obtain the token.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "That deliberateness matters because Management API scopes are coarse and dangerous by vault standards. A scope like update:users doesn't mean \"update one field the app owns\" — it means write access to every user in the tenant. An M2M client should hold only the scopes it actually exercises, not a broad grant kept around in case something later needs it, because every scope it holds is exactly what an attacker gets if that client's credentials leak.",
+          "clozes": [
+            {
+              "start": 116,
+              "end": 128,
+              "answer": "update:users",
+              "cardId": "card-8m3h"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-xwmh",
+          "prompt": "Why are Management API scopes described as \"coarse and dangerous\" compared to a typical application-level permission?",
+          "answer": "Because a Management API scope like read:users or update:users doesn't limit access to one resource or one record — it grants that operation across every user (or connection, or role, and so on) in the whole tenant. Holding a scope you don't actually use turns a credential leak into tenant-wide exposure rather than something narrowly scoped."
+        },
+        {
+          "kind": "prose",
+          "text": "Two mistakes follow from forgetting which API is which.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-cn59",
+          "format": "mcq",
+          "prompt": "A team ships a single-page application that calls the Management API directly from the browser to look up a user's roles, using client credentials embedded in the frontend bundle. What's wrong with this?",
+          "choices": [
+            {
+              "text": "It ships credentials capable of administering the entire tenant to anyone who can read the bundle, since the Management API has no concept of a reduced, browser-safe credential",
+              "correct": true
+            },
+            {
+              "text": "Nothing — the Management API is designed to be called from any client type, the same as the Authentication API",
+              "correct": false
+            },
+            {
+              "text": "It would work, but only after the SPA is registered as a confidential client instead of a public one",
+              "correct": false
+            },
+            {
+              "text": "The call would simply fail CORS and nothing more, with no security exposure either way",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "The second mistake is treating the Management API as a place to serve runtime traffic from — reading a user's profile on every request an application handles, say, instead of caching what a token already carries or maintaining the application's own store. Its rate limits make that untenable at any real request volume: they're sized for occasional administrative operations, not for standing in as a database behind a live application.",
+          "clozes": [
+            {
+              "start": 260,
+              "end": 271,
+              "answer": "rate limits",
+              "cardId": "card-vz98"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-dzw9",
+          "prompt": "Why does using the Management API as a runtime data store for an application fail, independent of any scope or authentication mistake?",
+          "answer": "Its rate limits are set for infrequent administrative calls, not for per-request application traffic — a live application reading it on every request will get throttled well before it reaches ordinary production load. It's a control plane for administering the tenant, not a substitute for the application's own database."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/auth0/operating-a-tenant-environments-and-limits.md",
+      "title": "Operating a tenant: environments and limits",
+      "topic": "identity",
+      "category": "identity-auth0",
+      "citations": [
+        "Auth0 Docs — 'Deploy CLI Tool'",
+        "Auth0 Docs — 'Rotate Signing Keys'",
+        "Auth0 Docs — 'Log Streams'",
+        "Auth0 Docs — 'Rate Limits'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Operating a tenant: environments and limits"
+        },
+        {
+          "kind": "prose",
+          "text": "`tenants-and-the-auth0-domain.md` argues for one tenant per environment because a tenant has no isolation inside itself. Living with that argument is where the real cost shows up: a tenant's configuration — connections, applications, Actions, branding, token lifetimes — is state sitting in a vendor's console, not a file in the repository next to the code it protects. Promoting a change from a development tenant to production is therefore a deployment, with everything that word implies, and clicking through the console to make the same change twice is not that deployment — it's two independent edits that happen to look alike today and are free to drift apart tomorrow.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-66u5",
+          "prompt": "Why is \"it works in dev\" a weak signal for an Auth0 tenant change, specifically, in a way it wouldn't be for a code change already covered by a shared repository?",
+          "answer": "Because the change lives entirely as configuration state inside the dev tenant's console, not as a reviewable artifact applied identically to both environments. Confirming it works in dev confirms nothing about whether the same change was, or ever will be, made the same way in production — there's no shared source the two tenants are built from."
+        },
+        {
+          "kind": "prose",
+          "text": "The fix is treating tenant configuration as code: exporting it into version control and applying it through a repeatable tool instead of a sequence of console clicks. Auth0's own command-line tool for this is a0deploy (the Deploy CLI), and Terraform's Auth0 provider covers the same ground for teams already managing other infrastructure that way. Either turns \"what does production actually have configured\" into a question a diff can answer, rather than one that requires opening two tenants side by side and comparing them by eye.",
+          "clozes": [
+            {
+              "start": 209,
+              "end": 217,
+              "answer": "a0deploy",
+              "cardId": "card-uiam"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-qcl4",
+          "prompt": "What does driving tenant configuration through the Deploy CLI or Terraform give you that clicking through the Auth0 dashboard does not?",
+          "answer": "A reviewable, version-controlled, repeatable record of the configuration — changes go through the same diff-and-apply process as code, so what a given environment is actually configured to do is answered by reading the repository, and promoting a change to another environment means applying the same recorded change rather than re-performing it from memory."
+        },
+        {
+          "kind": "prose",
+          "text": "Signing keys need rotating periodically — on a schedule, or immediately if one is ever suspected of leaking — and Auth0 supports doing that without breaking every token already in flight. A resource server never hardcodes the tenant's public key; it fetches whichever key is current from the tenant's JWKS endpoint, keyed by the `kid` in a token's header, so a new key can be published and old tokens still signed with the previous one keep validating until they expire naturally.",
+          "clozes": [
+            {
+              "start": 301,
+              "end": 305,
+              "answer": "JWKS",
+              "cardId": "card-p07b"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-2mik",
+          "format": "recall",
+          "prompt": "Explain why rotating an Auth0 tenant's signing key doesn't require redeploying every resource server that validates its tokens.",
+          "answer": "A resource server doesn't store the tenant's signing key as a fixed value in its own configuration; it looks the key up dynamically from the tenant's JWKS endpoint, selecting the specific key a given token was signed with by that token's kid header. Rotating the key just means the endpoint starts serving a new key alongside the old one for a transition window — no resource server code or config needs to change, since it was never pinned to the old key in the first place."
+        },
+        {
+          "kind": "prose",
+          "text": "Rotating the key controls how quickly a *new* claim value or a *revoked* signing key takes effect. A separate setting controls something rotation doesn't touch at all: how long an already-issued token keeps asserting stale claims, or keeps granting access the tenant already revoked. A permission pulled from a user, or a role change made to them, still gets honored by every resource server holding one of that user's still-valid tokens for as long as those tokens remain unexpired — and how long that is comes down to one setting, the token lifetime, not anything that happens at rotation.",
+          "clozes": [
+            {
+              "start": 537,
+              "end": 551,
+              "answer": "token lifetime",
+              "cardId": "card-99mm"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Rate limits on the Authentication and Management APIs aren't an incident to react to after the fact — they're a number to design against before launch, the same way a database's connection pool size is.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-z4tl",
+          "format": "mcq",
+          "prompt": "A team builds a login flow that calls an Auth0 Management API endpoint synchronously on every user login to check a custom attribute, and only discovers the tenant's rate limit exists when logins start failing during a marketing-driven traffic spike. What should have driven that design decision instead?",
+          "choices": [
+            {
+              "text": "Rate limits should be treated as a capacity constraint to design around from the start — caching the attribute or reading it from the token instead of calling the Management API per login — not a limit to discover under load",
+              "correct": true
+            },
+            {
+              "text": "Nothing; Auth0 automatically raises rate limits for any tenant once real production traffic arrives",
+              "correct": false
+            },
+            {
+              "text": "The fix is only to request a specific limit increase from Auth0 support, which is available and sufficient for any traffic volume",
+              "correct": false
+            },
+            {
+              "text": "Rate limits apply only to write operations, so a read-only per-login check was never at risk",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "That kind of gap tends to hide until launch specifically because a free or development tenant's limits are lower, and configured differently, than a production tenant's — a load test run against the wrong tier tells you the system copes fine, right up until the traffic actually arrives against tighter production numbers it was never tested with.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Tenant logs are the other place operating a tenant departs from intuition: they cover logins, API calls, and Actions executions, but Auth0 only retains them briefly — on the order of days, not months — so anything needed for a later audit or incident review has to be captured before that window closes, not pulled on demand after the fact.",
+          "clozes": [
+            {
+              "start": 144,
+              "end": 151,
+              "answer": "retains",
+              "cardId": "card-tbc6"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-8p1q",
+          "prompt": "Why can't a team rely on pulling Auth0's own tenant logs months after an incident to reconstruct what happened?",
+          "answer": "Auth0 retains tenant logs for only a short window, on the order of days. Anything that needs to survive longer — for an audit, a compliance requirement, or a delayed incident investigation — has to be captured proactively via log streaming to an external destination before the retention window expires, not fetched from Auth0 after the fact."
+        },
+        {
+          "kind": "prose",
+          "text": "Log streaming exists to close exactly that gap: it forwards tenant events continuously to an external system — a SIEM, a log warehouse, a storage bucket — as they happen, so retention there is however long that external system is configured to keep them, decoupled entirely from Auth0's own short window.",
+          "clozes": []
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/auth0/organizations-and-b2b-multitenancy.md",
+      "title": "Organizations and B2B multitenancy",
+      "topic": "identity",
+      "category": "identity-auth0",
+      "citations": [
+        "Auth0 Docs — 'Organizations'",
+        "Auth0 Docs — 'Organizations Authorization Flows'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Organizations and B2B multitenancy"
+        },
+        {
+          "kind": "prose",
+          "text": "`tenants-and-the-auth0-domain.md` treats the tenant as Auth0's own isolation boundary — one pool of users, connections, and applications, shared account-wide. Organizations solve a different problem, one layer down inside that boundary: a single application, in a single tenant, serving many separate customer companies, each of whom expects to log in and see only their own users, connections, and access — without Auth0 provisioning a whole tenant per customer. An Organization is not a smaller tenant. It's a feature that runs inside one tenant, modeling one of *your* customers rather than one of Auth0's.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Membership is the relationship that makes this work without multiplying accounts. A user can belong to any number of Organizations, including none at all, and belonging to several doesn't split that person into several identities — underneath, every membership points back to the same user record, just associated with more than one company.",
+          "clozes": [
+            {
+              "start": 280,
+              "end": 296,
+              "answer": "same user record",
+              "cardId": "card-k615"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Role assignment then has two different scopes, and confusing them produces the wrong kind of question. `rbac-roles-and-permissions.md` covers how a role's permissions are defined once, tenant-wide; what Organizations add is a second axis for *handing out* that role — it can be assigned to a user only within the context of one particular Organization, so the same person can hold an admin role inside one customer's Organization and hold nothing, or a completely different role, everywhere else.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-qm25",
+          "prompt": "What's the difference between assigning a role to a user directly (tenant-level) versus assigning that role to the user within an Organization?",
+          "answer": "A tenant-level assignment applies to that user everywhere, regardless of any Organization context. An Organization-scoped assignment only grants the role while the user is acting as a member of that specific Organization — the same user can hold a different role, or none at all, in a different Organization."
+        },
+        {
+          "kind": "prose",
+          "text": "Connections are scoped the same way. A tenant might have a dozen identity providers configured across every application in it, but each Organization only enables the subset that makes sense for that one customer — its own enterprise SSO connection, say — rather than every member of every Organization seeing every connection the tenant has ever configured. Which connections are usable for a given login is decided per Organization, not once for the whole tenant.",
+          "clozes": [
+            {
+              "start": 416,
+              "end": 432,
+              "answer": "per Organization",
+              "cardId": "card-chkm"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "The login then has to carry which company it happened for, and that travels as a claim on the resulting token: alongside the usual `sub` identifying the user, Auth0 adds a second identifier naming the Organization the session was authenticated under, plus its display name if the application asked for that too. A resource server reading the token knows not just who is asking, but which of that user's companies they're asking on behalf of — because the token carries an org_id claim (with a companion `org_name` claim available alongside it) naming exactly that.",
+          "clozes": [
+            {
+              "start": 472,
+              "end": 478,
+              "answer": "org_id",
+              "cardId": "card-2p6o"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-b6wp",
+          "prompt": "Getting that Organization into the login in the first place works one of two ways. What authorization parameter lets an application that already knows which company a user belongs to skip straight to that Organization's login, instead of asking the user to pick?",
+          "answer": "The organization parameter, passed to Auth0's authorize call and set to that Organization's id. This scopes both the login and the resulting token to that Organization directly, with no extra step."
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-hagt",
+          "prompt": "Auth0 supports two different login models for an Organization-aware application. What are they, and when does each apply?",
+          "answer": "Named-organization login, where the application already knows which Organization a session belongs to — for instance from a company-specific login URL — and passes the organization parameter up front; and organization discovery, where the application doesn't know yet, so Auth0 either prompts the user to choose among the Organizations they belong to or matches them automatically by email domain."
+        },
+        {
+          "kind": "prose",
+          "text": "That `org_id` claim is not a courtesy field — it's the piece that keeps a member of two Organizations from reading the wrong one's data.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-ef3u",
+          "format": "mcq",
+          "prompt": "A user is a member of both Acme's and Globex's Organizations inside the same B2B application. They authenticate through Acme's Organization-scoped login, then later start a separate session through Globex's. A resource server checks only the user id on incoming requests, never which Organization the token says the session is acting as. What's the concrete risk?",
+          "choices": [
+            {
+              "text": "The resource server can't tell which company's data a request should be scoped to, so a request authenticated under one Organization's session could end up authorized against the other Organization's data",
+              "correct": true
+            },
+            {
+              "text": "None — the user id alone uniquely determines which data the request should touch",
+              "correct": false
+            },
+            {
+              "text": "The token would fail signature validation before it ever reaches the resource server",
+              "correct": false
+            },
+            {
+              "text": "Auth0 would refuse to issue a second token to a user who already holds one for a different Organization",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-vw3w",
+          "format": "recall",
+          "prompt": "Explain why \"this token belongs to user X\" is not enough for a multi-Organization B2B resource server to authorize a request safely — which claim has to be checked in addition, and what goes wrong if it isn't.",
+          "answer": "A user can be a member of more than one Organization, so the user id alone says who is acting, not which company's data they're acting for in this particular session. The resource server has to check the org_id claim and scope every query and permission check to that Organization specifically. Trusting the user id alone risks a legitimate member of two Organizations having a request authorized against whichever Organization the resource server's own records happen to associate with that user id, even when the token says a different Organization entirely."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/auth0/rbac-roles-and-permissions.md",
+      "title": "RBAC, roles, and permissions",
+      "topic": "identity",
+      "category": "identity-auth0",
+      "citations": [
+        "Auth0 Docs — 'Role-Based Access Control'",
+        "Auth0 Docs — 'Enable Role-Based Access Control for APIs'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "RBAC, roles, and permissions"
+        },
+        {
+          "kind": "prose",
+          "text": "`applications-versus-apis.md` establishes that an API is its own Auth0 resource, registered separately from the applications that call it. This note is about the access-control layer Auth0 builds on top of that split.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "A permission — something like `read:invoices` — is defined on an API, not anywhere global. That placement isn't a filing detail; it's required by what a permission means. `read:invoices` only makes sense in relation to whatever resource server is going to receive a token and decide whether to honor a request — a string with no API behind it isn't a permission at all, just a label nobody has agreed to interpret. Two different APIs can each define their own `read:invoices` and they share nothing but a name.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-yk3i",
+          "prompt": "Why does it make no sense for a permission to exist independently of any API, rather than as a global string every application can reference?",
+          "answer": "A permission is only meaningful in relation to the resource server that interprets it and decides what to do when a request carries it — without that API, the string is just text with no agreed meaning, and the same name defined on two different APIs represents two entirely unrelated permissions."
+        },
+        {
+          "kind": "prose",
+          "text": "A role is a named bundle of permissions — `billing-admin`, say, holding several permissions across one or more APIs — created so an administrator can assign one thing instead of enumerating a list every time. A user's actual permission set is the union of both paths: some permissions can be granted to a user directly, and others arrive because the user holds a role that includes them. Auth0 doesn't distinguish the two once a token is issued — a direct grant and a role-derived grant look identical from the resource server's side.",
+          "clozes": [
+            {
+              "start": 18,
+              "end": 24,
+              "answer": "bundle",
+              "cardId": "card-k8tg"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-jsny",
+          "prompt": "Can a user hold a permission that isn't backed by any role, alongside permissions that come from a role?",
+          "answer": "Yes — direct permission grants and role membership are independent, additive paths to the same outcome. A user's effective permissions are the union of whatever was assigned to them individually and whatever their assigned roles carry, and nothing requires every permission to route through a role."
+        },
+        {
+          "kind": "prose",
+          "text": "Two separate, per-API switches govern how any of this reaches a token, and confusing them is the most common RBAC mistake. The first is **enable RBAC**, which tells Auth0 to enforce that the scopes a client requests for this API are checked against what the logged-in user actually holds. The second, independent switch is **add permissions in the access token**, which decides whether the user's permissions are written into the token's `permissions` claim at all. An API can have RBAC enforcement on with that second switch off — scopes get filtered correctly, but the resource server never receives an explicit permissions list to read, only whatever ended up in `scope`.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-9kr1",
+          "format": "mcq",
+          "prompt": "An API has RBAC enabled. A client requests the scopes `read:invoices write:invoices delete:invoices` when it authenticates a user who — via their assigned roles — only actually holds `read:invoices` and `write:invoices`. What does Auth0 do?",
+          "choices": [
+            {
+              "text": "Issues the token with scope narrowed to read:invoices and write:invoices, silently dropping delete:invoices rather than rejecting the request",
+              "correct": true
+            },
+            {
+              "text": "Rejects the authentication outright, since the requested scope exceeds what the user holds",
+              "correct": false
+            },
+            {
+              "text": "Issues the token with all three requested scopes, since scope and permissions are tracked separately",
+              "correct": false
+            },
+            {
+              "text": "Prompts the user to consent to the reduced scope before continuing",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "That narrowing is the switch's whole point, and it has a consequence that's easy to miss: with RBAC on, the `scope` claim a resource server receives is the intersection of what the client asked for and what the user is actually entitled to — never simply an echo of the request. A resource server that decides what to allow based on what it believes it *asked* for, rather than what actually landed in the token it received, will grant access the user was never entitled to the moment those two things diverge.",
+          "clozes": [
+            {
+              "start": 156,
+              "end": 168,
+              "answer": "intersection",
+              "cardId": "card-2aw7"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-2rq0",
+          "prompt": "Why must a resource server check the scope actually present in the access token it receives, rather than trust the scope the client requested during authentication?",
+          "answer": "Because Auth0 enforces RBAC by narrowing, not rejecting — a granted scope can be a strict subset of the requested one, silently. The client's request describes what it asked for, not what the token ultimately carries, so any authorization decision based on the request instead of the token itself can be wrong in the permissive direction."
+        },
+        {
+          "kind": "prose",
+          "text": "Roles themselves live at the tenant level — created once, available to assign to any user in that whole account.",
+          "clozes": [
+            {
+              "start": 29,
+              "end": 35,
+              "answer": "tenant",
+              "cardId": "card-u8l5"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Scoping *who* holds a role to one customer's slice of a multi-tenant setup is a different concept, covered in `organizations-and-b2b-multitenancy.md`.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-eer4",
+          "format": "recall",
+          "prompt": "An engineer argues that turning on \"add permissions in the access token\" is redundant once RBAC enforcement is already enabled for an API, since RBAC is already checking permissions under the hood. Explain what each switch actually controls, and what breaks if only RBAC enforcement is turned on for an API whose resource server needs to branch on individual permissions.",
+          "answer": "RBAC enforcement only governs whether requested scopes get filtered down to what the user holds — it decides what can end up in the `scope` claim. Adding permissions to the access token is a separate decision about whether the user's full permission set is also written into a `permissions` claim. With RBAC on but that second switch off, a resource server that wants to check a specific permission like `delete:invoices` has nothing to read except `scope`, and has to fall back to treating scope strings as permissions — which works only if every permission was also requested as a scope. Enabling the `permissions` claim removes that coupling and gives the resource server the user's actual permission set directly, independent of whatever scopes the client happened to request."
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/auth0/tenants-and-the-auth0-domain.md",
+      "title": "Tenants and the Auth0 Domain",
+      "topic": "identity",
+      "category": "identity-auth0",
+      "citations": [
+        "Auth0 Docs — 'Tenants'",
+        "Auth0 Docs — 'Configure Custom Domains'",
+        "Auth0 Docs — 'Data Residency'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Tenants and the Auth0 Domain"
+        },
+        {
+          "kind": "prose",
+          "text": "Everything else in this category — connections, applications, APIs, Actions, custom claims — is configured inside one container: the tenant. Before any of those pieces make sense on their own, it's worth being precise about what a tenant actually bounds, because that boundary is stricter, and less negotiable, than it looks from the dashboard.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "A tenant holds every user, every connection to an identity provider, every registered application and API, every signing key, and every tenant-wide setting — branding, token lifetimes, default audience. None of that is reachable from outside the tenant it lives in, not even from a second tenant on the same Auth0 account created for a \"related\" purpose.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-guqb",
+          "prompt": "What does creating a second Auth0 tenant give you access to from the first one?",
+          "answer": "Nothing automatically. A tenant is a hard isolation boundary, not a namespace within a shared pool — the second tenant starts with its own empty users, connections, applications, APIs, and settings, and nothing carries over unless someone explicitly configures it in both places."
+        },
+        {
+          "kind": "prose",
+          "text": "Every tenant is reachable at a domain of the shape `<tenant>.<region>.auth0.com`, and that domain is not just where the login pages live — it is also the value that appears in the `iss` claim of every token the tenant issues. A resource server validating a token checks that claim against the domain it expects, so the tenant domain doubles as the tenant's OIDC issuer identifier.",
+          "clozes": [
+            {
+              "start": 319,
+              "end": 332,
+              "answer": "tenant domain",
+              "cardId": "card-qlms"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-94wj",
+          "format": "recall",
+          "prompt": "Explain why the Auth0 tenant domain is not merely a hostname you can swap for cosmetic reasons — what else is tied to it, and what breaks for a resource server if that value changes underneath it?",
+          "answer": "The tenant domain is the OIDC issuer baked into every token's `iss` claim. A resource server validates that claim against the issuer it expects, so changing the domain changes the issuer, and any token minted under the old domain (or validation logic still pinned to it) stops matching. It is an identity value, not just a routing address."
+        },
+        {
+          "kind": "prose",
+          "text": "Auth0 lets a tenant sit behind a custom domain (something like `login.example.com`) instead of the default `*.auth0.com` one. That's usually framed as branding, but the more consequential effect is on cookies: a login page served from Auth0's own domain is, from the browser's point of view, a third-party context relative to the application, which is exactly the kind of cookie modern browsers increasingly restrict or block outright — breaking silent authentication and single sign-on across applications that depend on a session cookie surviving a redirect through Auth0. Serving the login experience from a domain under the application's own registrable domain makes that cookie first-party again.",
+          "clozes": [
+            {
+              "start": 294,
+              "end": 305,
+              "answer": "third-party",
+              "cardId": "card-qioz"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-5del",
+          "prompt": "Why does moving Auth0's hosted login page onto a custom domain fix more than branding?",
+          "answer": "Because it changes whether the browser treats Auth0's session cookie as first-party or third-party. On the default `*.auth0.com` domain, that cookie is third-party relative to the application and subject to browser restrictions that break silent authentication and cross-application SSO; a custom domain under the application's own registrable domain makes the same cookie first-party, which those restrictions don't target."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-2zir",
+          "format": "mcq",
+          "prompt": "A team switches a production tenant from its default `*.auth0.com` domain to a custom domain. Besides the login page's URL, what else changes as a direct consequence?",
+          "choices": [
+            {
+              "text": "The token issuer (`iss`) value, since the custom domain becomes the tenant's domain and any validation logic pinned to the old issuer string must be updated",
+              "correct": true
+            },
+            {
+              "text": "Nothing else — the custom domain is purely cosmetic and every other value stays identical",
+              "correct": false
+            },
+            {
+              "text": "The tenant's region, since custom domains are only available by re-provisioning the tenant in a new region",
+              "correct": false
+            },
+            {
+              "text": "The client_id of every registered application, since custom domains force credential rotation",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "A tenant is also pinned to a region at creation — the geography whose data centers actually store and process that tenant's data — and that choice generally can't be changed later without recreating the tenant, so it's a data-residency decision made once, up front, not a setting to revisit.",
+          "clozes": [
+            {
+              "start": 29,
+              "end": 35,
+              "answer": "region",
+              "cardId": "card-8eee"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Given all of that isolation, the natural shape for a real project is one tenant per environment — separate tenants for development, staging, and production — rather than one tenant with an `environment` field on its users and applications to keep them apart logically. The reason isn't tidiness: inside a single tenant, a \"test\" user created for a staging integration test is a real user in the same pool production login counts against, and a configuration change — a new connection, a stricter password policy, a rule added to the login pipeline — applies to every application and every user in that tenant, staging and production alike, because the tenant has no internal walls to contain it.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-rpid",
+          "prompt": "Why is \"one tenant per environment\" the safer default over a single tenant with environment-tagged users and applications?",
+          "answer": "A tenant has no isolation inside itself — everything in it shares one user pool, one set of connections, and one configuration. Tagging data by environment doesn't create a boundary; it just labels rows in a pool a staging test can still pollute and a configuration change still affects globally. Separate tenants make that isolation real instead of conventional."
+        },
+        {
+          "kind": "prose",
+          "text": "Splitting environments into separate tenants raises its own question — how a tenant's configuration is supposed to be kept consistent, and recoverable, across all of them when most of it isn't version-controlled by default. That tension is covered in `operating-a-tenant-environments-and-limits.md`, not here.",
+          "clozes": []
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/auth0/universal-login-and-the-hosted-page.md",
+      "title": "Universal Login and the hosted page",
+      "topic": "identity",
+      "category": "identity-auth0",
+      "citations": [
+        "Auth0 Docs — 'Universal Login'",
+        "Auth0 Docs — 'Custom Domains'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Universal Login and the hosted page"
+        },
+        {
+          "kind": "prose",
+          "text": "`the-authorization-code-flow.md` covers the redirect-and-callback mechanics that carry a user to an authorization server and back. This note is about what actually sits at the far end of that redirect in Auth0: Universal Login, a login page Auth0 hosts and serves from its own domain, rather than a form the application renders inside itself.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The application never draws a login screen at all. It sends the browser away, to a page living on Auth0's domain, and only gets the browser back once that page has finished. It's tempting to read that detour as friction to be engineered away — why not just render the form locally and call an API? — but the redirect is the feature, not a workaround for one.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Three things follow directly from the credentials being typed on Auth0's own origin instead of the application's. First, the application's own code, and any script it loads, is never in the same origin as the login form — a compromised or careless application dependency simply has nothing to intercept, since the password field it would need to read never renders in that application's page at all.",
+          "clozes": [
+            {
+              "start": 314,
+              "end": 322,
+              "answer": "password",
+              "cardId": "card-2my8"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Second, one hosted page serves every application registered in the tenant. A tenant with a dozen applications maintains one login surface, not a dozen independent ones that each have to be kept patched and consistent.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Third — and this is the one that actually changes user experience — the browser picks up a session cookie scoped to the Auth0 domain the first time it visits Universal Login. A second application in the same tenant, redirecting the same browser to that same domain, finds that cookie already there and returns the user signed in with no prompt at all. That's single sign-on across independently owned applications, and it only works because the login page — and the cookie it sets — genuinely lives in one place shared by all of them.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-gj9e",
+          "prompt": "Why does having every application in a tenant redirect to the same hosted login page, rather than each rendering its own, make cross-application single sign-on possible in the first place?",
+          "answer": "Because the SSO session cookie is set on Auth0's own domain during the first login, and every application redirects the browser back to that same domain. A second application's redirect arrives at a page that already recognizes the browser from the shared cookie, so it can return the user authenticated without asking again — something no application could produce by rendering a login form on its own separate origin."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-tyt4",
+          "format": "mcq",
+          "prompt": "A company runs three independently deployed web applications in the same Auth0 tenant and wants a user who logs into one to be signed into the others automatically, without re-entering credentials. Which approach makes that possible?",
+          "choices": [
+            {
+              "text": "Have each application redirect to Universal Login, so the SSO session cookie set on the Auth0 domain is shared across all three",
+              "correct": true
+            },
+            {
+              "text": "Embed a login form in each application, since Auth0 issues one shared token automatically regardless of where the form renders",
+              "correct": false
+            },
+            {
+              "text": "Redirect only the first application's login through Universal Login and copy its token into the other two",
+              "correct": false
+            },
+            {
+              "text": "This requires SAML instead of an OAuth-based login flow",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "An application can opt out of the redirect and render its own login form, submitting credentials directly to Auth0's Authentication API in the background. Nothing stops this technically, but it gives up everything the redirect model was buying.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-onmp",
+          "prompt": "What does an application give up, specifically, by embedding its own login form instead of redirecting to Universal Login?",
+          "answer": "It loses the shared SSO session, since there is no longer one common page setting one common cookie — each application now has to establish its own idea of \"already logged in.\" It takes on directly handling user credentials: receiving, transmitting, and never accidentally logging the password itself, which is exactly the liability Universal Login existed to remove from application code. And because the login form now lives on the application's own origin while the token exchange still has to reach the Auth0 domain, that traffic becomes cross-origin, which runs straight into a browser's third-party cookie restrictions on exactly the request that needs to read the Auth0 session."
+        },
+        {
+          "kind": "prose",
+          "text": "That last point is why a custom domain matters so much for Auth0 tenants, and it isn't a branding nicety. Left at its default, Auth0's endpoints live on a subdomain of auth0.com — a different registrable domain from the application's own — so browsers enforcing stricter third-party-cookie rules can quietly break silent authentication and session detection between the application and Auth0. Putting Auth0's endpoints on a subdomain of the application's own domain instead makes that traffic first-party, which is what lets embedded or cross-subdomain calls to the Auth0 domain keep working as browsers tighten cookie policy further.",
+          "clozes": [
+            {
+              "start": 25,
+              "end": 38,
+              "answer": "custom domain",
+              "cardId": "card-0nf9"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-vc7j",
+          "format": "recall",
+          "prompt": "An application still calls Auth0's Authentication API directly for its login form instead of redirecting to Universal Login, and its engineers argue this is fine because they're \"still using Auth0.\" Explain what they've actually lost, and why a custom domain does not fix the biggest of those losses.",
+          "answer": "They've lost the shared SSO session and the guarantee that credentials never touch the application's own origin — a custom domain only addresses the third-party-cookie problem for calls that still reach Auth0, it does nothing to restore a login page shared across every application in the tenant, since there is no longer a shared hosted page at all."
+        },
+        {
+          "kind": "prose",
+          "text": "Auth0 offers two ways to shape that hosted page itself, and the choice is a real tradeoff rather than one simply being the \"better\" option. The New experience is built from configuration settings and prebuilt page templates — branding colors, logos, and layout options assembled by Auth0's own rendering. The Classic experience instead hands over the page as arbitrary hand-written HTML, CSS, and client-side JavaScript that the tenant owns outright.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-raam",
+          "format": "mcq",
+          "prompt": "A team wants a login page with fully custom HTML structure and client-side JavaScript behavior beyond what branding settings and templates expose. Which Universal Login experience gives them that, and what do they take on by choosing it?",
+          "choices": [
+            {
+              "text": "The Classic experience — arbitrary hand-written page code, but the tenant now owns maintaining and securing that code itself",
+              "correct": true
+            },
+            {
+              "text": "The New experience — it already supports arbitrary HTML and JavaScript by default",
+              "correct": false
+            },
+            {
+              "text": "The Classic experience, with no added maintenance burden since Auth0 still renders the page",
+              "correct": false
+            },
+            {
+              "text": "Neither; that level of customization requires abandoning Universal Login for an embedded form",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Cookie attributes, the shape of the resulting session, and how logout tears that session down belong to `sessions-and-the-session-identifier.md` and `logout-and-session-termination.md`; this note only covers where the login page itself lives and why that placement is deliberate.",
+          "clozes": []
+        }
+      ]
+    },
+    {
+      "path": "vault/identity/auth0/user-profiles-and-account-linking.md",
+      "title": "User Profiles and Account Linking",
+      "topic": "identity",
+      "category": "identity-auth0",
+      "citations": [
+        "Auth0 Docs — 'User Profile Structure'",
+        "Auth0 Docs — 'Metadata Overview'",
+        "Auth0 Docs — 'User Account Linking'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "User Profiles and Account Linking"
+        },
+        {
+          "kind": "prose",
+          "text": "`connections-and-identity-providers.md` covers how a connection is the source of an identity. This note covers the consequence of that: what Auth0 actually stores per identity, and what happens — and doesn't happen automatically — when the same person shows up through more than one connection.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-8hkd",
+          "prompt": "What is an Auth0 user_id actually composed of?",
+          "answer": "The connection's provider identifier and that identity provider's own subject id, joined by a pipe — for example auth0| followed by a database user's internal id, or google-oauth2| followed by the Google account's subject id — not a plain Auth0-generated UUID on its own."
+        },
+        {
+          "kind": "prose",
+          "text": "That composition has a sharp consequence. The same human signing in once with a Google account and once with a database password produces two distinct users, each with its own user_id and its own profile, because each id is scoped to the connection that produced it rather than to the person. Auth0 has no built-in notion that these are the same human until something tells it so.",
+          "clozes": [
+            {
+              "start": 138,
+              "end": 156,
+              "answer": "two distinct users",
+              "cardId": "card-ik02"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-o1d9",
+          "prompt": "Why does it matter operationally that Google-you and password-you start out as two separate Auth0 users?",
+          "answer": "Because any data your application keyed to a user_id — stored roles, preferences, purchase history, consent records — lives on whichever of the two ids created it. The other identity sees none of it until the two are deliberately linked, so a returning customer who happens to pick a different login method can look, to your app, like a stranger."
+        },
+        {
+          "kind": "prose",
+          "text": "Auth0 smooths some of this over with a normalized profile: a small set of common attributes — email, name, picture — get promoted onto the profile's root, computed the same way regardless of which connection produced them, so your app can read `user.email` without caring whether the source was a password database or an enterprise IdP. The raw, connection-specific version of those attributes (and anything a connection provides that doesn't map onto the normalized set) stays nested in the `identities` array instead, one entry per linked identity, so nothing the connection actually returned is discarded even after normalization.",
+          "clozes": [
+            {
+              "start": 149,
+              "end": 153,
+              "answer": "root",
+              "cardId": "card-13gc"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Two other top-level fields hold data your application puts there itself, and confusing them is a real vulnerability rather than a style mistake. user_metadata is writable directly by the end user — through their own profile update, or a token scoped to their own identity — so it's the right place for preferences and settings the person should control. app_metadata is writable only by server-side or Machine-to-Machine calls carrying elevated scope; an ordinary user's own token cannot touch it.",
+          "clozes": [
+            {
+              "start": 145,
+              "end": 158,
+              "answer": "user_metadata",
+              "cardId": "card-81zb"
+            },
+            {
+              "start": 354,
+              "end": 366,
+              "answer": "app_metadata",
+              "cardId": "card-sig1"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Storing a role, an entitlement, or a plan tier in the user-writable store means the user can edit their own privilege level, because nothing there enforces who's allowed to write it — the split between the two stores is a security boundary, not a naming convention.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-ti6c",
+          "format": "mcq",
+          "prompt": "Your application reads a `role` field from a user's profile to decide what they're allowed to do, and wants that field safe from being edited by the user it describes. Which store must it live in?",
+          "choices": [
+            {
+              "text": "app_metadata — no user-scoped token or self-service profile edit can write to it",
+              "correct": true
+            },
+            {
+              "text": "user_metadata — the two stores enforce the same write permissions",
+              "correct": false
+            },
+            {
+              "text": "Either, since Auth0 encrypts both identically",
+              "correct": false
+            },
+            {
+              "text": "The root profile, alongside email and name",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Account linking — making Auth0 treat two of these separate users as one person — is never automatic on its own. Linking has to be triggered deliberately, whether through the Management API or a linking flow in your application, and it produces one **primary** identity that keeps its user_id while the other becomes a **secondary** identity nested under it; the secondary's own login still works afterward, but it now resolves to the primary's user_id and profile.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-xzlp",
+          "prompt": "Is it safe to link two accounts automatically just because they share the same email address?",
+          "answer": "Only if that email is verified on both sides. Email addresses aren't proof of ownership by themselves — an attacker can register a social or database account using someone else's address and leave the verification step incomplete. Auth0's automatic account linking is designed to require a verified email precisely so this can't be used to hijack an existing account."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-nyik",
+          "format": "recall",
+          "prompt": "Explain concretely how skipping the verified-email requirement in automatic account linking turns it into an account-takeover technique — walk through what an attacker would do and what they'd gain.",
+          "answer": "An attacker signs up through a connection Auth0 will consider for auto-linking (say, a social provider) using the victim's real email address, without ever proving they control that inbox. If Auth0 linked purely on the email string matching, that attacker's new identity would be merged as a secondary onto the victim's existing primary account — and depending on the flow, the attacker could then log in as, or gain visibility into, an account that isn't theirs. Requiring the email be verified first closes this off, since the attacker would need control of the victim's inbox to complete verification, which is the same bar as directly proving account ownership."
+        },
+        {
+          "kind": "prose",
+          "text": "None of this touches what a session or access token looks like once issued for a linked or unlinked user, or how the browser holds onto it — `jwt-structure-and-pitfalls.md` and `token-storage-in-the-browser.md` in `identity-sessions` cover both.",
+          "clozes": []
         }
       ]
     },
