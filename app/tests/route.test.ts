@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   decideRoute, focusHash, noteHash, resumesSuspendedSession, retainsSuspendedSession,
+  searchHash,
   type DashboardState, type RouteDecision
 } from '../src/route.js';
 import type { TopicSummary } from '../src/topics.js';
@@ -186,6 +187,7 @@ describe('retainsSuspendedSession', () => {
     focus: false,
     topics: false,
     settings: false,
+    search: false,
     dashboard: false
   };
 
@@ -282,5 +284,46 @@ describe('noteHash', () => {
     expect(decideRoute(hash, state([], []))).toEqual({
       kind: 'note', path: 'vault/aws/iam/conditions.md', cardId: null
     });
+  });
+});
+
+describe('#search routing', () => {
+  it('routes a bare #search with an empty query', () => {
+    expect(decideRoute('#search', state([], []))).toEqual({ kind: 'search', query: '' });
+  });
+
+  it('carries a query from the q parameter', () => {
+    expect(decideRoute('#search?q=dns', state([], []))).toEqual({ kind: 'search', query: 'dns' });
+  });
+
+  it('decodes a multi-word query', () => {
+    expect(decideRoute('#search?q=consistent%20hashing', state([], []))).toEqual({
+      kind: 'search', query: 'consistent hashing'
+    });
+  });
+
+  it('decodes + as a space', () => {
+    expect(decideRoute('#search?q=consistent+hashing', state([], []))).toEqual({
+      kind: 'search', query: 'consistent hashing'
+    });
+  });
+
+  it('falls back to an empty query on a malformed percent-escape instead of throwing', () => {
+    expect(decideRoute('#search?q=%E0%A4%A', state([], []))).toEqual({ kind: 'search', query: '' });
+  });
+
+  it('ends a suspended session, like every other non-session route', () => {
+    expect(retainsSuspendedSession('search')).toBe(false);
+  });
+});
+
+describe('searchHash', () => {
+  it('round-trips a query needing encoding', () => {
+    const hash = searchHash('a & b');
+    expect(decideRoute(hash, state([], []))).toEqual({ kind: 'search', query: 'a & b' });
+  });
+
+  it('is bare for an empty query', () => {
+    expect(searchHash('')).toBe('#search');
   });
 });

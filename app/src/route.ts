@@ -41,6 +41,7 @@ export type RouteDecision =
   | { kind: 'note'; path: string; cardId: string | null }
   | { kind: 'topics' }
   | { kind: 'settings' }
+  | { kind: 'search'; query: string }
   | { kind: 'dashboard' };
 
 export const FOCUS_PREFIX = '#focus/';
@@ -109,6 +110,34 @@ function noteTarget(hash: string): { path: string; cardId: string | null } | nul
   }
 }
 
+export const SEARCH_PREFIX = '#search';
+
+/** Builds the hash carrying a search query, or the bare prefix for an empty one. */
+export function searchHash(query: string): string {
+  const trimmed = query.trim();
+  return trimmed === '' ? SEARCH_PREFIX : `${SEARCH_PREFIX}?q=${encodeURIComponent(trimmed)}`;
+}
+
+/**
+ * The only route carrying a query string. Parsed rather than strict-matched
+ * so the live query can live in the hash -- which is what makes Back from a
+ * note return to populated results instead of an empty box.
+ *
+ * `URLSearchParams` never throws on a malformed percent-escape; it
+ * substitutes U+FFFD instead. That is indistinguishable from a query that
+ * legitimately contains the replacement character, but a hash is plain
+ * client state that can arrive hand-edited, so the safer read is to treat
+ * either case as "could not parse" and fall back to an empty query.
+ */
+function searchQuery(hash: string): string {
+  const rest = hash.slice(SEARCH_PREFIX.length);
+  if (rest === '') return '';
+  if (!rest.startsWith('?')) return '';
+  const raw = new URLSearchParams(rest.slice(1)).get('q');
+  if (raw === null) return '';
+  return raw.includes('�') ? '' : raw;
+}
+
 /**
  * The three hashes that run a review session, and therefore the only ones a
  * suspended session can belong to. Checked even though `suspendedHash` is
@@ -149,6 +178,8 @@ export function resumesSuspendedSession(hash: string, suspendedHash: string | nu
  * that starts a DIFFERENT session — means the reader has left for good.
  */
 export function retainsSuspendedSession(kind: RouteDecision['kind']): boolean {
+  // 'search' ends a suspended session, like every other non-session route:
+  // it is not one of the three hashes isSessionRoute recognizes.
   return kind === 'note' || kind === 'resume';
 }
 
@@ -222,6 +253,10 @@ export function decideRoute(
   if (hash === '#topics') return { kind: 'topics' };
 
   if (hash === '#settings') return { kind: 'settings' };
+
+  if (hash === SEARCH_PREFIX || hash.startsWith(`${SEARCH_PREFIX}?`)) {
+    return { kind: 'search', query: searchQuery(hash) };
+  }
 
   return { kind: 'dashboard' };
 }
