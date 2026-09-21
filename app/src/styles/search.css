@@ -1,6 +1,17 @@
 /* The #search screen: a query box over a result list, or the recently-read
    list when there's no query yet. */
 
+/* Matches .field select/input in settings.css and .answer-input in
+   review.css: font-size var(--text-body) (not a UA-default ~13px) so iOS
+   does not zoom the page on focus -- this field autofocuses on arrival, so
+   the zoom would happen immediately -- plus the shared 44px tap-target
+   minimum. */
+.search-input {
+  width: 100%; box-sizing: border-box; padding: var(--s3) var(--s4); margin: var(--s3) 0;
+  border-radius: var(--r-md); border: 1px solid var(--line);
+  background: var(--surface); color: var(--text); font-size: var(--text-body); min-height: 44px;
+}
+
 .search-results { list-style: none; margin: 0; padding: 0; }
 
 .search-result + .search-result { border-top: 1px solid var(--line); }
