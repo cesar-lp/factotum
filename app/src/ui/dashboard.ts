@@ -36,6 +36,13 @@ export interface DashboardProps {
    * cached deck (which stays silent). Defaults to false.
    */
   deckUnavailable?: boolean;
+  /**
+   * Due cards held back this pass because the reader recently read the
+   * note that backs them — see `selectNotRecentlyRead` in `scheduler/queue.ts`.
+   * Surfaced so a shrinking due count is never mistaken for cards going
+   * missing.
+   */
+  deferredCount: number;
 }
 
 function weekdayLabel(dayKey: string): string {
@@ -68,6 +75,18 @@ function renderStats(streak: number, lastSevenDays: DayCount[]): string {
       </div>
       <div class="week-bars">${bars}</div>
     </div>`;
+}
+
+/**
+ * A card leaving the queue without explanation is the same defect as the
+ * silently-dropped re-queued card (state-and-roadmap §6). Suppression is
+ * deliberate, so it is stated.
+ */
+export function deferredLine(count: number): string {
+  if (count <= 0) return '';
+  const noun = count === 1 ? 'card' : 'cards';
+  const theirs = count === 1 ? 'its note' : 'their notes';
+  return `<div style="color:var(--dim);font-size:13px;margin-top:4px">${count} ${noun} deferred &mdash; you read ${theirs} recently</div>`;
 }
 
 export function renderDashboard(root: HTMLElement, props: DashboardProps): void {
@@ -140,6 +159,7 @@ export function renderDashboard(root: HTMLElement, props: DashboardProps): void 
       <div style="text-align:center">
         ${message}
         ${newCardsLine}
+        ${deckUnavailable ? '' : deferredLine(props.deferredCount)}
         ${statsBlock}
       </div>
       <div class="spacer"></div>

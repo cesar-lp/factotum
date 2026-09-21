@@ -303,6 +303,7 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
     dueCount: state.session.length,
     newCardsRemaining: state.extension.length,
     newCardsSeenToday: state.newCardsSeenToday,
+    deferredCount: state.deferredCount,
     streak: state.streak,
     lastSevenDays: state.lastSevenDays,
     deckUnavailable,
