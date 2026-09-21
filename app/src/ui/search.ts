@@ -130,12 +130,15 @@ export function renderSearch(root: HTMLElement, props: SearchProps): void {
 
   const paint = (): void => {
     if (!out) return;
+    // Corpus availability first: with no query AND no corpus, the honest
+    // state is "not downloaded yet", not "search your notes" -- the latter
+    // falsely implies typing something would work.
+    if (props.notes === null) { out.innerHTML = renderSearchState('unavailable', query); return; }
     if (query.trim().length < MIN_QUERY_LENGTH) {
-      const recent = props.notes ? renderRecent(props.notes.notes, props.recentPaths) : '';
+      const recent = renderRecent(props.notes.notes, props.recentPaths);
       out.innerHTML = recent === '' ? renderSearchState('empty', query) : recent;
       return;
     }
-    if (props.notes === null) { out.innerHTML = renderSearchState('unavailable', query); return; }
     const results = search(props.notes, query);
     out.innerHTML = results.length === 0
       ? renderSearchState('no-matches', query)
