@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-21T00:14:45.857Z",
+  "generatedAt": "2026-09-21T00:40:16.274Z",
   "notes": [
     {
       "path": "vault/api/grpc/choosing-between-grpc-rest-and-graphql.md",
@@ -13346,6 +13346,1393 @@
           "cardId": "card-hhfe",
           "prompt": "What relationship must hold between Object Lock and bucket versioning?",
           "answer": "Object Lock can only be enabled on a bucket that has versioning enabled, since the lock is applied to a specific version and has no meaning on a key that has no version history."
+        }
+      ]
+    },
+    {
+      "path": "vault/aws/security/data-at-rest-encryption-across-services.md",
+      "title": "Data at Rest Encryption Across Services",
+      "topic": "aws",
+      "category": "aws-security",
+      "citations": [
+        "AWS Key Management Service Developer Guide — 'How AWS services use AWS KMS'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Data at Rest Encryption Across Services"
+        },
+        {
+          "kind": "prose",
+          "text": "The other notes in this category cover what KMS does as a service. This one covers what flipping \"encrypted at rest\" on actually buys you in the services that call it — and, more importantly, what it doesn't.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "S3 offers three distinct ways to encrypt an object server-side, and the difference between them is about who holds the key and what you can see about its use, not how strong the encryption is. **SSE-S3** uses keys that AWS wholly owns and manages: there's no key policy of yours to write, no per-key CloudTrail record of which key encrypted which object, and no cost beyond storage — it's the option for teams who need data encrypted at rest and nothing more. **SSE-KMS** uses a KMS key you control: your own key policy governs who can use it, every encrypt and decrypt call is a CloudTrail event tied to a specific object request, and that auditability is exactly what SSE-S3 cannot offer. That auditability isn't free — every SSE-KMS object read or write is a KMS API call, billed and rate-limited like any other, and a high-volume prefix can throttle against the account's KMS request quota. **S3 Bucket Keys** exist specifically to fix that: S3 caches a time-limited key derived from the KMS key at the bucket level and reuses it for many requests, cutting KMS calls dramatically without weakening the object-level encryption.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-746n",
+          "format": "mcq",
+          "prompt": "A bucket serving heavy, sustained read/write traffic is encrypted with SSE-KMS and starts hitting KMS request throttling under load. What directly addresses this without giving up a customer-managed key?",
+          "choices": [
+            {
+              "text": "Enable S3 Bucket Keys, which reduce the number of calls made to KMS per request by reusing a cached, time-limited key at the bucket level",
+              "correct": true
+            },
+            {
+              "text": "Switch the bucket to SSE-S3, which removes throttling by removing the KMS dependency entirely",
+              "correct": false
+            },
+            {
+              "text": "Request a KMS service quota increase, since Bucket Keys only apply to SSE-S3 buckets",
+              "correct": false
+            },
+            {
+              "text": "Switch to SSE-C, which bypasses KMS request limits by never calling KMS in the first place",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-rwxi",
+          "prompt": "Why does moving from SSE-S3 to SSE-KMS trade away simplicity for something specific, rather than being a strict upgrade?",
+          "answer": "SSE-KMS buys a key policy you control and a CloudTrail record of every use of that key, at the cost of KMS API calls (and their request charges and throttling limits) on every encrypt or decrypt — S3 Bucket Keys exist to blunt that cost, but the trade itself is inherent to using a key you administer rather than one AWS manages invisibly."
+        },
+        {
+          "kind": "prose",
+          "text": "The third mode inverts who holds the key entirely. With **SSE-C**, you supply the raw encryption key on every request — S3 uses it to encrypt or decrypt and then discards it immediately, storing nothing about the key at all, not even a reference to it. That has one blunt consequence: if you lose that key, the object is gone. There is no KMS-style recovery path, no AWS-side copy, nothing to restore from — the object is exactly as unrecoverable as if it had never been backed up.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-m40o",
+          "prompt": "Losing the key used for SSE-C-encrypted data",
+          "answer": "Unrecoverable — S3 never stores the SSE-C key or any reference to it, so losing your own copy means there is nothing on the AWS side to recover the object from; it is functionally destroyed."
+        },
+        {
+          "kind": "prose",
+          "text": "EBS volume encryption is a decision made once, at creation, and it does not budge afterward: there is no API call or console action that encrypts an existing unencrypted volume in place. The only path from unencrypted to encrypted is to snapshot the volume and restore that snapshot as a new, encrypted volume — the data moves, the original volume doesn't change. Because that's easy to forget in the moment a volume gets created, EBS also offers **encryption by default**, a per-region account setting that encrypts every new volume and snapshot automatically without anyone having to remember to check a box.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-y821",
+          "format": "recall",
+          "prompt": "An engineer wants to \"turn on\" encryption for an existing, currently unencrypted EBS volume that's already attached to a running production instance. Explain why this request has no direct answer, and what has to happen instead.",
+          "answer": "EBS encryption is fixed at volume creation and cannot be changed on a live volume — there is no in-place toggle. The only route is indirect: take a snapshot of the unencrypted volume, create a new encrypted volume from that snapshot, and swap it in for the original (typically by detaching the old volume and attaching the new one), rather than modifying the original volume at all."
+        },
+        {
+          "kind": "prose",
+          "text": "RDS follows the identical shape for the identical reason: encryption is set when the database instance is created and cannot be toggled after the fact. An unencrypted RDS instance can only become encrypted by the same detour EBS requires — take a snapshot, copy that snapshot while enabling encryption on the copy, and restore a new instance from the encrypted copy — which for a live database also means a migration window, not a config change.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-ngyt",
+          "prompt": "Which two AWS services covered in this note share the exact same limitation — encryption is fixed at creation, with a snapshot-copy-and-restore as the only route to change it afterward?",
+          "answer": "EBS volumes and RDS instances. Neither can have encryption toggled on a live resource; both require creating a snapshot, producing an encrypted copy of it, and restoring or migrating to a new resource built from that copy."
+        },
+        {
+          "kind": "prose",
+          "text": "DynamoDB breaks that pattern by removing the decision entirely: every DynamoDB table is encrypted at rest unconditionally, with no unencrypted option and nothing to switch on. The only choice DynamoDB leaves you is *which* key performs that mandatory encryption — an AWS-owned key by default, an AWS-managed key (`aws/dynamodb`), or a customer-managed key if you need your own key policy and audit trail over table encryption specifically.",
+          "clozes": [
+            {
+              "start": 106,
+              "end": 121,
+              "answer": "unconditionally",
+              "cardId": "card-bvo7"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-djf8",
+          "format": "mcq",
+          "prompt": "What decision does DynamoDB actually leave in your hands regarding encryption at rest?",
+          "choices": [
+            {
+              "text": "Only which class of KMS key performs the (mandatory) encryption — AWS-owned, AWS-managed, or customer-managed",
+              "correct": true
+            },
+            {
+              "text": "Whether the table is encrypted at rest at all",
+              "correct": false
+            },
+            {
+              "text": "Whether encryption is applied per-item or per-table",
+              "correct": false
+            },
+            {
+              "text": "Whether encryption uses AES-128 or AES-256",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "All of this — SSE-KMS's audit trail, EBS's snapshot dance, DynamoDB's mandatory encryption — protects against exactly one threat: someone getting hold of the underlying storage itself, a stolen disk, a misdirected snapshot, physical media leaving AWS's custody without going through the service's normal access path. It defends against **nothing** once a caller has valid credentials and calls the service's own read API, because the service's job is to decrypt the data and hand back plaintext to any authorized caller — that's what \"the API serves valid requests\" means, encryption at rest included. A leaked S3 access key or an over-broad IAM role reads plaintext objects out of an SSE-KMS bucket exactly as easily as out of an unencrypted one; the ciphertext on disk never enters into it.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-91is",
+          "prompt": "Why is it wrong to treat \"the bucket is encrypted at rest\" as an answer to \"is this data safe from a compromised application credential\"?",
+          "answer": "Because encryption at rest protects the storage medium, not the API — a caller with valid credentials calling GetObject gets decrypted plaintext back regardless of what encryption sits underneath, the same as any other authorized request. The threat a leaked or over-broad credential poses is answered by access control, not by storage-layer encryption; the two defend against entirely different attackers."
+        },
+        {
+          "kind": "prose",
+          "text": "The control that actually stands between a valid credential and the data it can reach is authorization, not encryption: `access-control-and-presigned-urls.md` covers how S3 itself narrows what a given caller or a presigned URL can do, and `least-privilege-in-practice.md` covers the discipline of keeping IAM grants narrow enough that a leaked credential's blast radius stays small. Encryption at rest and access control aren't alternatives to each other — they defend against different attackers, and a system needs both.",
+          "clozes": []
+        }
+      ]
+    },
+    {
+      "path": "vault/aws/security/encryption-context-and-authenticated-data.md",
+      "title": "Encryption Context and Authenticated Data",
+      "topic": "aws",
+      "category": "aws-security",
+      "citations": [
+        "AWS Key Management Service Developer Guide — 'How to use encryption context to secure your encrypted data'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Encryption Context and Authenticated Data"
+        },
+        {
+          "kind": "prose",
+          "text": "`authenticated-encryption-and-aead.md` covers associated data in general: input an AEAD scheme authenticates but never encrypts. KMS's **encryption context** is that mechanism, exposed as a feature you're meant to actually use — a set of non-secret key-value pairs (for example `{\"tenant\": \"acme-corp\"}`) that you pass to `Encrypt`, `Decrypt`, `GenerateDataKey`, and the re-encrypt operations, and that KMS cryptographically binds to the resulting ciphertext.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-9yee",
+          "prompt": "What kind of AEAD input does KMS's encryption context correspond to, and what property does that give it — authenticated, encrypted, or neither?",
+          "answer": "It corresponds to associated data: encryption context is authenticated (bound into the ciphertext's integrity check) but never encrypted. It travels and is stored in the clear; KMS only guarantees that it cannot be altered or swapped without decryption failing."
+        },
+        {
+          "kind": "prose",
+          "text": "The rule that makes it more than a label: whatever context you supply at `Encrypt` time, you must supply exactly that context, unchanged, at `Decrypt` time, or the call fails outright. There's no partial match, no subset check — the pairs have to be identical. That failure mode is the entire point: it turns encryption context from a descriptive tag into a binding between a ciphertext and the fact it was encrypted for.",
+          "clozes": [
+            {
+              "start": 105,
+              "end": 112,
+              "answer": "exactly",
+              "cardId": "card-mjf3"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-7jq2",
+          "prompt": "Why does KMS's exact-match requirement on encryption context matter more than the specific key-value pairs chosen?",
+          "answer": "Because it's what converts encryption context from a passive label into an enforced binding. If a ciphertext could be decrypted with a different or missing context, the context would be documentation, not a control. The exact-match failure is what lets an application rely on context to guarantee a ciphertext is only usable in the situation it was encrypted for."
+        },
+        {
+          "kind": "prose",
+          "text": "This is exactly what stops a specific class of bug: a ciphertext copied or moved into a context it wasn't encrypted for. Say a multi-tenant table stores every row's data encrypted with the same shared KMS key, and each row's encryption context records `tenant=<id>`. If tenant A's encrypted blob is copied into tenant B's row — by a bug, a bad migration, or an attacker with write access but no decrypt rights — decrypting it under B's context fails, because the context baked into the ciphertext still says A. The general shape this guards against is the **confused deputy** problem: a privileged component (KMS, holding decrypt rights) being tricked by a less privileged caller into applying its privilege to the wrong resource.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-k00j",
+          "format": "mcq",
+          "prompt": "A multi-tenant application encrypts every tenant's records under one shared KMS key, setting `tenant=<id>` as the encryption context on each record. A bug copies tenant A's encrypted blob into tenant B's database row. What happens when the application tries to decrypt it as part of serving tenant B?",
+          "choices": [
+            {
+              "text": "The decrypt call fails, because the context recorded in the ciphertext (tenant A) does not match the context supplied for tenant B",
+              "correct": true
+            },
+            {
+              "text": "It decrypts successfully, since both tenants share the same underlying KMS key",
+              "correct": false
+            },
+            {
+              "text": "It decrypts successfully, since encryption context is only checked on encrypt, not decrypt",
+              "correct": false
+            },
+            {
+              "text": "KMS silently re-encrypts the blob under tenant B's context",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Encryption context is deliberately **not secret**. It appears in plaintext in every relevant CloudTrail log entry — `Encrypt`, `Decrypt`, `GenerateDataKey` calls all record it — so it must never hold a password, a token, or anything else that shouldn't be readable by anyone who can read audit logs. Putting a secret value into encryption context doesn't just violate a convention; it puts that secret in plaintext, permanently, in your audit trail.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "That same visibility is a feature, not just a caveat. A `Decrypt` call in CloudTrail is otherwise nearly opaque — a key ARN, a caller identity, a timestamp, and an encrypted blob's ciphertext, none of which says *what* was decrypted or *why*. Encryption context turns that log line into something searchable: filter every `Decrypt` event by `tenant=acme-corp`, or by `purpose=invoice-pdf`, without ever touching the plaintext.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-74xe",
+          "prompt": "Why must encryption context values never contain secrets, given that KMS already restricts who can call Decrypt on a key?",
+          "answer": "Because encryption context is written in the clear into CloudTrail on every Encrypt and Decrypt call, regardless of who is authorized to decrypt. Anyone with read access to the audit log — a broader and differently-scoped population than key users — sees the context values, so anything secret placed there is effectively logged in plaintext."
+        },
+        {
+          "kind": "prose",
+          "text": "The context values you already use as an integrity binding double as an authorization condition. Key policies and grants (grants are covered in `grants-and-temporary-delegation.md`) can use the condition key `kms:EncryptionContext:<key>` to require a specific context value before honoring `Decrypt` — for example, requiring `kms:EncryptionContext:tenant` to equal the caller's own tenant id. That's the mechanism that lets one shared KMS key serve many tenants safely: the key itself grants broad decrypt rights, but the authorization condition narrows each caller down to only the rows whose context matches its own tenant, on top of the ciphertext-level binding that would reject a mismatched row anyway.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-elza",
+          "prompt": "Why does pairing a shared KMS key with a `kms:EncryptionContext` condition in the key policy give a defense that the exact-match decrypt check alone does not?",
+          "answer": "The exact-match check only fires at decrypt time and only rejects a ciphertext whose baked-in context doesn't match what's supplied — it says nothing about who is allowed to supply a given context in the first place. The `kms:EncryptionContext` condition is an authorization check: it restricts which principals may even attempt a Decrypt call carrying a particular context value, so a caller can be blocked from ever presenting another tenant's context, rather than merely failing after the fact if a ciphertext happens to land in the wrong hands with the wrong context supplied."
+        },
+        {
+          "kind": "card",
+          "cardId": "card-02ot",
+          "format": "recall",
+          "prompt": "A single shared KMS key encrypts records for every tenant of a SaaS application, with `tenant=<id>` as encryption context on each record. Explain the two separate mechanisms that together make this safe for multi-tenant isolation, and what each one alone would fail to catch.",
+          "answer": "The first mechanism is the ciphertext-level binding: KMS requires the exact context used at encrypt time to be supplied again at decrypt time, so a ciphertext copied into the wrong tenant's context fails to decrypt. Alone, this only protects against a mismatched context being supplied — it does nothing to stop a caller who is otherwise entitled to call Decrypt from simply supplying another tenant's correct context value if it can guess or obtain it. The second mechanism is the `kms:EncryptionContext` condition in the key policy or a grant, which restricts which principals may issue a Decrypt call carrying a given context value in the first place — for example, tying a caller's allowed context to its own tenant id. Alone, this would restrict who may present a given context, but would do nothing to stop a ciphertext itself from being moved to the wrong row — the ciphertext-level binding is what catches that case. Together, one guards the caller and the other guards the data, and either failing on its own still leaves the other in place."
+        }
+      ]
+    },
+    {
+      "path": "vault/aws/security/envelope-encryption-in-practice.md",
+      "title": "Envelope Encryption in Practice",
+      "topic": "aws",
+      "category": "aws-security",
+      "citations": [
+        "AWS Key Management Service Developer Guide — 'Envelope encryption'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Envelope Encryption in Practice"
+        },
+        {
+          "kind": "prose",
+          "text": "`kms-keys-and-the-key-hierarchy.md` established that a KMS key never gives up its material — you send KMS things to compute, not requests to fetch a key. That constraint alone forces a specific pattern once the data involved is more than trivially small, and this note is about that pattern as AWS actually implements it.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "KMS's `Encrypt` API will not take plaintext larger than 4 KB — call it against a full file or a database row and it simply rejects the request. That ceiling isn't an oversight to work around; it's a design signal pointing at the intended pattern for anything bigger: never send bulk data to KMS at all. Encrypt it locally, and only ever send KMS the much smaller key that protected it.",
+          "clozes": [
+            {
+              "start": 56,
+              "end": 60,
+              "answer": "4 KB",
+              "cardId": "card-34nb"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-iqdb",
+          "prompt": "Why does it make sense to read the 4 KB direct-encryption limit as a design signal rather than as an arbitrary restriction KMS happens to impose?",
+          "answer": "Because it forces exactly the architecture KMS is built around: bulk data should never be sent to the service at all. Anything larger than a trivial payload has to be encrypted locally with an ordinary symmetric cipher, and only the (small, fixed-size) key that did that encryption is ever exchanged with KMS — which is also what keeps KMS's own load and network cost independent of how much data an application actually protects."
+        },
+        {
+          "kind": "prose",
+          "text": "`GenerateDataKey` is the call that makes this possible. It returns the *same* freshly generated data key twice, in two different forms: once as plaintext, ready to use immediately, and once as that same key encrypted (wrapped) under the KMS key you specified. Nothing about the call touches your data at all — it only ever produces a key.",
+          "clozes": [
+            {
+              "start": 144,
+              "end": 153,
+              "answer": "plaintext",
+              "cardId": "card-32pd"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "The discipline that follows from getting both copies back is the whole pattern: encrypt your data locally with the plaintext copy, store the encrypted copy right alongside the resulting ciphertext, and then discard the plaintext copy from memory as soon as the local encryption finishes — it must never be written to disk or logged anywhere.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-5324",
+          "format": "recall",
+          "prompt": "`GenerateDataKey` hands back a plaintext data key and an encrypted data key in the same response. Walk through the three steps an application must perform with those two values, in order, and say what goes wrong if the middle step is skipped.",
+          "answer": "First, use the plaintext copy to encrypt the actual data locally, with an ordinary symmetric cipher. Second, store the encrypted (wrapped) copy of the data key right next to the resulting ciphertext — skip this and the data becomes permanently unreadable, since nothing else records which key, or which wrapped form of it, protects that ciphertext. Third, wipe the plaintext copy from memory once local encryption is done, since holding onto it defeats the entire purpose of never letting a data key rest in the clear longer than it has to."
+        },
+        {
+          "kind": "prose",
+          "text": "Decrypting later needs only the wrapped data key and the KMS `Decrypt` call — and notably, that call takes no key id for a symmetric key. The ciphertext blob produced by `GenerateDataKey`'s encrypted copy already names the key that wrapped it, embedded in the blob itself, so KMS can look it up without being told separately. Losing track of which literal key id encrypted something is a non-issue for this reason alone.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-z6x6",
+          "format": "mcq",
+          "prompt": "An application calls KMS `Decrypt` on a wrapped data key, passing only the ciphertext blob and no `KeyId` parameter. Why does this work for a symmetric KMS key?",
+          "choices": [
+            {
+              "text": "The ciphertext blob itself embeds which KMS key encrypted it, so KMS can resolve the key from the blob without a separate identifier",
+              "correct": true
+            },
+            {
+              "text": "KMS tries every customer-managed key in the account until one succeeds",
+              "correct": false
+            },
+            {
+              "text": "Symmetric keys share one key id across an entire AWS account, so there's nothing to disambiguate",
+              "correct": false
+            },
+            {
+              "text": "The call fails without a KeyId; it is a required parameter for every Decrypt call",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Some workloads only ever write, never read, in the process that generates the key — a backup job that seals data now and will only ever be decrypted by a separate restore process, say. For that case, `GenerateDataKeyWithoutPlaintext` returns only the encrypted copy, never a plaintext one at all, so a plaintext data key never even exists in a process that has no legitimate reason to hold one.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-qhaj",
+          "prompt": "What does `GenerateDataKeyWithoutPlaintext` return, and what kind of workload is it meant for?",
+          "answer": "It returns only the encrypted (wrapped) copy of a freshly generated data key, never the plaintext copy. It suits a write-only workload that needs to seal data under a data key now but has no legitimate need to hold that key's plaintext at all, since a separate process will supply the key material again — via KMS — when the data is actually decrypted."
+        },
+        {
+          "kind": "prose",
+          "text": "Put together, envelope encryption buys three things at once: bulk data is encrypted at local, in-memory speed with no per-record network round trip to KMS; KMS is only ever called once per data key rather than once per object it protects; and revoking access to the KMS key — by changing its key policy, disabling it, or scheduling it for deletion — makes every envelope wrapped under it unreadable immediately, without touching a single byte of the underlying data.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-6tpj",
+          "prompt": "Why does revoking access to a KMS key make every data key wrapped under it useless immediately, even though the encrypted data itself is never touched?",
+          "answer": "Because the wrapped data key is only decryptable through a KMS call to that specific key, and revoking access breaks that call outright — nothing can unwrap the data key anymore, and without the unwrapped data key nothing can decrypt the data it protects. The bulk data and its ciphertext are completely unaffected; what's lost is only the ability to ever recover the key that would decrypt them."
+        },
+        {
+          "kind": "prose",
+          "text": "Calling `GenerateDataKey` for every single object still means one KMS API call per object, which adds up under high request volume and adds latency KMS's per-request cost doesn't. **Data key caching** — reusing one already-generated plaintext data key across several encryption operations for a bounded time or number of uses, instead of asking KMS for a fresh one every time — trades that cost down deliberately, at the price of a larger blast radius: if that one cached key is ever compromised, it has protected more data than a key used exactly once would have.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-i4xj",
+          "format": "recall",
+          "prompt": "Explain data key caching as a deliberate trade-off, naming both sides of the trade: what it buys, and what it gives up compared to requesting a fresh data key from KMS for every operation.",
+          "answer": "It buys reduced cost and latency, since a cached plaintext data key can encrypt many objects without a KMS API call for each one, which matters at high request volume where per-call latency and API cost both add up. It gives up blast-radius containment: a key reused across many operations has protected more data by the time anything goes wrong with it, so a single compromised cached key exposes more than a key that was only ever used once. Caching is a knob between those two costs, not a free improvement."
+        },
+        {
+          "kind": "prose",
+          "text": "The symmetric cipher that actually does the local encryption step — AES in some mode of operation — belongs to `symmetric-encryption-and-block-ciphers.md`, and the authenticated construction that should be used for it belongs to `authenticated-encryption-and-aead.md`; neither is specific to KMS, and this note leans on both rather than re-deriving them.",
+          "clozes": []
+        }
+      ]
+    },
+    {
+      "path": "vault/aws/security/grants-and-temporary-delegation.md",
+      "title": "Grants and Temporary Delegation",
+      "topic": "aws",
+      "category": "aws-security",
+      "citations": [
+        "AWS Key Management Service Developer Guide — 'Grants in AWS KMS'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Grants and Temporary Delegation"
+        },
+        {
+          "kind": "prose",
+          "text": "`key-policies-and-the-root-of-authority.md` covers the key policy — a document you write and attach, meant for durable, human-managed authorization. A **grant** is KMS's second, quite different mechanism, and it exists precisely because a key policy is a bad fit for the case a grant handles well: a piece of software that needs to use a key for a while, and needs to get and give up that access programmatically rather than through an edited document.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "A grant is an attachment to a key that names a **grantee principal**, the set of operations that principal may perform (`Decrypt`, `GenerateDataKey`, and so on), and optionally a constraint tying it to a specific encryption context. Structurally it behaves nothing like a policy statement: it is created and revoked entirely by API call (`CreateGrant`, not a policy edit), it is purely additive — a grant can only add permissions, never deny or narrow anything a policy already allows — and every grant is identified by its own **grant ID** and, at creation time, a **grant token**.",
+          "clozes": [
+            {
+              "start": 213,
+              "end": 231,
+              "answer": "encryption context",
+              "cardId": "card-zfe0"
+            },
+            {
+              "start": 386,
+              "end": 394,
+              "answer": "additive",
+              "cardId": "card-f37f"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-z69l",
+          "format": "mcq",
+          "prompt": "Which statement correctly distinguishes a KMS grant from a key policy statement?",
+          "choices": [
+            {
+              "text": "A grant is created and destroyed by API call and can only add permissions; a key policy is a document you edit and can express both Allow and Deny",
+              "correct": true
+            },
+            {
+              "text": "A grant and a key policy statement are two names for the same underlying mechanism",
+              "correct": false
+            },
+            {
+              "text": "A grant is more durable than a key policy statement, since grants never expire",
+              "correct": false
+            },
+            {
+              "text": "A grant can deny access the key policy already granted, exactly like a Deny statement",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-h6ud",
+          "prompt": "Why is a grant additive-only, unable to express anything like a Deny statement?",
+          "answer": "A grant is meant for narrowly scoped, revocable delegation — it only ever hands out a slice of what the key policy and IAM already allow, never removes it; taking away access is done by revoking or retiring the grant itself, not by encoding a negative permission inside it."
+        },
+        {
+          "kind": "prose",
+          "text": "Grants have one behavior worth being deliberate about: they are eventually consistent. A caller that creates a grant and immediately turns around to use it — call `CreateGrant`, then call `Decrypt` as the new grantee — can be denied, because the grant has not yet propagated to every place KMS checks it. `CreateGrant` solves this by returning a **grant token** alongside the grant ID; passing that token on the very next API call makes KMS honor the not-yet-propagated grant immediately, without waiting out the propagation delay.",
+          "clozes": [
+            {
+              "start": 64,
+              "end": 85,
+              "answer": "eventually consistent",
+              "cardId": "card-gyp6"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-dr3m",
+          "prompt": "Why does CreateGrant return a grant token at all, given that it also returns a grant ID?",
+          "answer": "Because grants are eventually consistent, a grant ID alone doesn't guarantee the grant is visible everywhere yet; passing the grant token on a subsequent call tells KMS to honor that specific grant right away, which is what lets a caller create a grant and use it in the same breath instead of hitting a spurious denial while waiting for propagation."
+        },
+        {
+          "kind": "prose",
+          "text": "A grant's end of life has two distinct paths, and mixing them up is a common mistake:",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-0ue7",
+          "format": "mcq",
+          "prompt": "A service was granted temporary use of a key so it could decrypt a volume, and the volume is now being deleted by that same service. Which API call is the right way for it to end its own grant?",
+          "choices": [
+            {
+              "text": "RetireGrant — the party the grant was made for ends it themselves, once they no longer need it",
+              "correct": true
+            },
+            {
+              "text": "RevokeGrant — reserved for the key or grant owner cutting off someone else's access",
+              "correct": false
+            },
+            {
+              "text": "Neither; grants expire automatically as soon as the underlying resource changes state",
+              "correct": false
+            },
+            {
+              "text": "DeleteGrant, since grants are deleted rather than retired or revoked",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-wymd",
+          "prompt": "What's the difference between who is allowed to call RetireGrant versus RevokeGrant, and what does that difference reflect about the two calls' purpose?",
+          "answer": "RetireGrant is called by the grantee itself (or another party named as a \"retiring principal\" on the grant) to end a grant it was given once it no longer needs the access — the intended, cooperative end-of-life path. RevokeGrant is called by the key's owner or administrator to cut a grant off outright, regardless of whether the grantee still wants it — the owner-initiated path, used when the decision to end access belongs to the key side rather than the grantee."
+        },
+        {
+          "kind": "prose",
+          "text": "The reason unexplained grants show up on a key at all: AWS services create them on your behalf constantly. Attaching an encrypted EBS volume, for instance, has EC2 create a grant naming itself as grantee so it can call `Decrypt` on the volume's key for as long as the volume is attached, without your ever calling `CreateGrant` yourself — the grant is retired automatically when the volume is detached or the resource it backs is deleted. Seeing a grant you never created, naming a service principal you didn't explicitly authorize, is normal and expected, not a sign of a compromised key.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-kosh",
+          "format": "recall",
+          "prompt": "An encrypted EBS volume's key shows a grant you never created, naming `ec2.amazonaws.com` as the grantee. Explain why this exists, what it lets EC2 do, and roughly when it goes away — without treating its presence as suspicious.",
+          "answer": "EC2 created the grant itself when the volume was attached, so it could call operations like Decrypt against the volume's key for as long as the volume needs it, without a human running CreateGrant. It's scoped to the resource's lifetime and is retired once the volume is detached or deleted — this is the normal, intended mechanism by which AWS services get temporary key access on your behalf, not a sign the key policy or IAM has been misconfigured."
+        },
+        {
+          "kind": "prose",
+          "text": "A grant can also be narrowed with an encryption-context constraint, which pins it to one tenant's or one resource's data rather than the whole key — what encryption context itself is belongs to `encryption-context-and-authenticated-data.md`.",
+          "clozes": []
+        }
+      ]
+    },
+    {
+      "path": "vault/aws/security/key-policies-and-the-root-of-authority.md",
+      "title": "Key Policies and the Root of Authority",
+      "topic": "aws",
+      "category": "aws-security",
+      "citations": [
+        "AWS Key Management Service Developer Guide — 'Key policies in AWS KMS'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Key Policies and the Root of Authority"
+        },
+        {
+          "kind": "prose",
+          "text": "`policy-evaluation-logic.md` establishes that for most AWS resources, a same-account request only needs a grant from *either* the identity policy or the resource policy. A KMS key breaks that pattern in a way that surprises almost everyone who first hits it.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Every KMS key carries a **key policy** — a resource-based policy attached directly to the key. For nearly every other resource-based policy in AWS (an S3 bucket policy, an SQS queue policy), that policy is one of two alternative paths to an Allow. For a KMS key, the key policy is not an alternative — it is the root of authority. An IAM policy granting `kms:Decrypt` does nothing on its own. Unless the key policy itself allows the action, directly or by delegating to IAM, the request is denied no matter how permissive the caller's identity policy is.",
+          "clozes": [
+            {
+              "start": 312,
+              "end": 329,
+              "answer": "root of authority",
+              "cardId": "card-efas"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-z915",
+          "format": "mcq",
+          "prompt": "An IAM user has an identity policy granting `kms:Decrypt` on a specific key, with no explicit deny anywhere. The key's key policy contains no statement naming that user, that user's account root, or granting IAM control at all. Can the user decrypt with that key?",
+          "choices": [
+            {
+              "text": "No — a KMS key policy is the root of authority; an IAM Allow is irrelevant unless the key policy also allows the action or delegates to IAM",
+              "correct": true
+            },
+            {
+              "text": "Yes, since within one account an identity-policy grant is always sufficient",
+              "correct": false
+            },
+            {
+              "text": "Yes, because KMS keys ignore key policies once IAM has an explicit Allow",
+              "correct": false
+            },
+            {
+              "text": "No, but only because Decrypt specifically always requires a separate grant",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-uj08",
+          "prompt": "Why is a key policy that grants `kms:Decrypt` only to IAM policies, with no reference to the account root, an unusual and risky way to write it?",
+          "answer": "Because the key policy is the root of authority for the key, an administrator whose only grant path is an IAM Allow depends entirely on that one statement; if it's ever edited out, tightened, or misconfigured, IAM permissions stop mattering for the key and nobody — no matter how much IAM access they hold — can restore access to it."
+        },
+        {
+          "kind": "prose",
+          "text": "That delegation happens through an idiom worth recognizing on sight: a key policy statement granting the account root principal `kms:*`. That single statement is what makes ordinary IAM policies effective for the key at all — it hands the key's authority down to IAM, so that from then on an IAM Allow (or Deny) actually governs access, the way it would for almost any other resource. A key policy written without this statement produces a key that only its explicitly named principals can ever use; IAM administrators, however broad their own permissions, simply have no path in.",
+          "clozes": [
+            {
+              "start": 105,
+              "end": 127,
+              "answer": "account root principal",
+              "cardId": "card-qr52"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "This is the specific failure mode that makes the account-root grant worth memorizing rather than treating as boilerplate: an administrator with full `iam:*` access creates a key policy naming only a handful of application roles, forgets the root-principal delegation statement, and discovers that they themselves cannot decrypt anything protected by that key — not through the console, not by attaching a new IAM policy, nothing in IAM reaches a key policy that never delegated to it. Taken further, a key policy edited to remove every principal that can manage it can be permanently locked out, with no way back short of opening a support case with AWS. The root-principal statement exists precisely so that an account always retains a path back into its own keys.",
+          "clozes": [
+            {
+              "start": 572,
+              "end": 594,
+              "answer": "permanently locked out",
+              "cardId": "card-ayud"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-81fn",
+          "format": "recall",
+          "prompt": "Explain concretely what goes wrong, and why IAM cannot rescue it, when a key policy is written naming only three specific role ARNs and never grants the account root principal anything.",
+          "answer": "None of IAM's usual power helps: the key policy, not IAM, is the root of authority, so any principal not named in the key policy (and not covered by a root-principal delegation statement) is denied regardless of what IAM grants them — including an account administrator with full IAM access. The fix has to happen in the key policy itself; if nobody left in a named principal can still edit it, the account is locked out of the key with no IAM-side recovery."
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-b9rs",
+          "prompt": "Delegating to IAM doesn't mean a key is only ever reachable directly. `kms:ViaService`",
+          "answer": "An IAM or key-policy condition key that restricts a grant so the key can only be used when the request comes *through* a named AWS service (for example `s3.us-east-1.amazonaws.com`), rather than by calling KMS directly — useful for keys meant to back a specific service's encryption rather than general-purpose use."
+        },
+        {
+          "kind": "prose",
+          "text": "Cross-account key use inherits the same \"root of authority\" twist on top of the ordinary cross-account rule. `policy-evaluation-logic.md`'s \"both sides must allow\" already requires the resource's account and the caller's account to each grant the action; for a KMS key, the resource side of that pair is the key policy specifically, not just any resource-based policy, and it must both name the external account (or a principal in it) and, per this note, actually be the thing granting the access rather than deferring silently to IAM assumptions that don't apply across accounts. The calling account still separately needs its own IAM policy granting the same action — `cross-account-access.md` covers that general mechanism and why both sides are required; nothing about KMS changes the mechanism itself, only which policy plays the \"resource side\" role.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-njsf",
+          "prompt": "Why can't an external account read a key policy that names it as principal and simply rely on that alone to use the key cross-account?",
+          "answer": "Naming an external account in the key policy only satisfies the resource side of the cross-account requirement; the calling account still needs its own IAM policy granting the action, since crossing an account boundary always requires both sides to allow it, and a key policy — even one that is itself the root of authority within its own account — has no way to reach into another account and supply that grant."
+        }
+      ]
+    },
+    {
+      "path": "vault/aws/security/key-rotation-and-key-deletion.md",
+      "title": "Key Rotation and Key Deletion",
+      "topic": "aws",
+      "category": "aws-security",
+      "citations": [
+        "AWS Key Management Service Developer Guide — 'Rotating AWS KMS keys'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Key Rotation and Key Deletion"
+        },
+        {
+          "kind": "prose",
+          "text": "`key-management-and-rotation.md` makes the general argument for rotating keys: bound how much data sits under any one key, and bound how long a key stays worth stealing. This note is about what KMS actually *does* when you turn automatic rotation on, and where that mechanism stops short of what people assume it does.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "When automatic rotation is enabled on a KMS key, KMS generates a new backing key on schedule and starts using it for new `Encrypt` and `GenerateDataKey` calls going forward.",
+          "clozes": [
+            {
+              "start": 69,
+              "end": 80,
+              "answer": "backing key",
+              "cardId": "card-04rz"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "It does not touch a single existing ciphertext. Nothing gets re-encrypted, and no ciphertext becomes unreadable — every prior backing key is retained internally by KMS specifically so that data encrypted under it stays decryptable indefinitely, because each ciphertext records which one produced it and KMS looks that up automatically on decrypt.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-oko8",
+          "prompt": "What does the KMS key's key id and ARN do when automatic rotation produces a new backing key — do they change to reflect the new key material?",
+          "answer": "No — the key id and ARN never change across a rotation. Rotation only replaces the backing key material used internally; the customer-facing identifier your applications, IAM policies, and grants reference stays exactly the same, which is why rotation requires no application changes at all."
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-3vwl",
+          "prompt": "Why does a ciphertext encrypted before a KMS key's automatic rotation remain decryptable afterward, with no re-encryption step involved?",
+          "answer": "Because KMS retains every previous backing key rather than discarding it, and each ciphertext internally records which specific backing key produced it. On Decrypt, KMS looks up and uses the backing key that was current when that ciphertext was created, not whichever backing key is current now — so old and new ciphertexts alike stay readable under the same key id indefinitely."
+        },
+        {
+          "kind": "prose",
+          "text": "That's the source of the most common misconception about rotation: believing it re-keys your data. It does the opposite of what an incident response instinct wants. Rotation limits how much *future* data accumulates under a single backing key — it does nothing to undo exposure of data that a compromise already reached, because that data is still sitting there, still decryptable by whoever has the old backing key (or, more realistically, whoever retained decrypt access to the KMS key itself during the exposure window).",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-4vyr",
+          "format": "mcq",
+          "prompt": "A security team learns that a KMS key may have been used to decrypt sensitive data during a window when an attacker had access. They immediately trigger a rotation of that key's backing key. What does this accomplish for the data already exposed during that window?",
+          "choices": [
+            {
+              "text": "Nothing — the already-exposed ciphertexts remain exactly as readable as before, since rotation only changes which backing key is used for new operations going forward",
+              "correct": true
+            },
+            {
+              "text": "It makes the previously exposed ciphertexts unreadable, since the old backing key is discarded",
+              "correct": false
+            },
+            {
+              "text": "It automatically re-encrypts all existing data under the new backing key",
+              "correct": false
+            },
+            {
+              "text": "It revokes the attacker's prior decrypt access retroactively",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Rotation limits the *volume* of data that ever sits under one backing key and bounds how long any single backing key is worth attacking; it is not, and was never designed to be, an incident-response tool for data already exposed. Rotating out from under a known-bad exposure does nothing, because the compromised material — the old backing key — is still retained and still valid for the data it already produced.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "There are two situations where the only real fix is a **manual** rotation: creating an entirely new KMS key and moving an alias to point at it. The first is when you need to change the key's origin — switching from AWS-generated key material to imported material, or to material backed by a custom key store, which automatic rotation on an existing key can never do because it only ever regenerates the same kind of backing key. The second is when you actually need data re-encrypted under different key material — for instance, satisfying a requirement that specific ciphertexts stop being decryptable under any previously-existing key at all, which automatic rotation deliberately does not do (that's what \"old backing keys are retained\" means).",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-4z7x",
+          "prompt": "What must you do to actually change a KMS key's origin — for example, from AWS-generated key material to material you import yourself — given that automatic rotation cannot do this?",
+          "answer": "You have to manually create an entirely new KMS key configured with the desired origin, then move any alias that pointed at the old key over to the new one. Automatic rotation only ever regenerates a new backing key of the same kind the key already has; it cannot change origin or key-store type on an existing key."
+        },
+        {
+          "kind": "prose",
+          "text": "**Imported key material** changes the rotation story entirely. Once you import your own key material into a KMS key, automatic rotation is not available for that key at all — KMS has no material of its own to generate on a schedule, since you supplied it. You also take on retention: if the material has an expiration you set, KMS deletes it automatically when that expiration is reached, and once it's gone, every ciphertext under that key material becomes unreadable, with no rotation-style fallback to an earlier backing key to save it.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-p51t",
+          "prompt": "Does automatic rotation apply to a KMS key whose key material you imported yourself?",
+          "answer": "No — imported key material disables automatic rotation entirely, because KMS has nothing of its own to regenerate. You become responsible for that material's lifecycle, including any expiration you configure, which deletes the material (and everything encrypted under it) when it's reached."
+        },
+        {
+          "kind": "prose",
+          "text": "Deletion, not rotation, is the operation that deserves real caution. Scheduling deletion of a KMS key enforces a mandatory waiting period — configurable from 7 to 30 days — during which the key can still be canceled out of pending deletion and restored to normal use. Once that window elapses and deletion completes, it is irreversible: the key material is gone permanently, and every ciphertext ever encrypted under that key becomes permanently unreadable, with no support path, no backup, and no recovery, because AWS itself never has a copy of that key material to restore.",
+          "clozes": [
+            {
+              "start": 158,
+              "end": 159,
+              "answer": "7",
+              "cardId": "card-kjb5"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-zf5s",
+          "format": "recall",
+          "prompt": "A key is scheduled for deletion with the maximum 30-day waiting period. Explain what the waiting period actually protects against, and why that makes monitoring for use of a pending-deletion key more important than the waiting period alone.",
+          "answer": "The waiting period exists because deletion is irreversible and total: once it completes, every ciphertext ever encrypted under that key becomes permanently unreadable, with no way for AWS to restore the key material afterward. The window is meant to give you a chance to discover a dependency you didn't know about before it's too late to stop. But the window only helps if something actually surfaces that dependency during it — nothing about scheduling deletion by itself searches for or warns about active use. An alarm on key usage during the pending-deletion window is what turns \"you have 7 to 30 days to notice\" into something you'll actually notice, rather than a deadline that quietly expires while a dependency you never found keeps running right up until it breaks."
+        },
+        {
+          "kind": "prose",
+          "text": "Because deletion is irreversible and rotation cannot substitute for it as a safety valve, the operation to reach for almost every time you think you want deletion is **disabling** the key instead. A disabled key immediately stops working for every `Encrypt` and `Decrypt` call, exactly like a deleted one — but it costs nothing to reverse: re-enable it and every ciphertext under it is readable again, with no waiting period and no risk of having guessed wrong about whether something still depended on it.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-wk3h",
+          "prompt": "Why is disabling a KMS key almost always the safer choice over scheduling its deletion, even when the intent is to stop the key from being used going forward?",
+          "answer": "Disabling blocks every Encrypt and Decrypt call on the key immediately, achieving the same practical effect as deletion, but it is instantly and completely reversible — re-enabling restores full access with nothing lost. Deletion, once its waiting period elapses, permanently destroys the key material and makes every ciphertext under it unreadable forever, with no path back. Disabling gets the same protective outcome without exposing you to an irreversible mistake if some dependency on the key turns out to still exist."
+        }
+      ]
+    },
+    {
+      "path": "vault/aws/security/kms-keys-and-the-key-hierarchy.md",
+      "title": "KMS Keys and the Key Hierarchy",
+      "topic": "aws",
+      "category": "aws-security",
+      "citations": [
+        "AWS Key Management Service Developer Guide — 'AWS KMS concepts'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "KMS Keys and the Key Hierarchy"
+        },
+        {
+          "kind": "prose",
+          "text": "`key-management-and-rotation.md` covers why systems protect keys with other keys in general. This note is about what that discipline looks like as a concrete AWS service, and the one property that shapes almost everything else about it.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "A KMS key is not a secret you can go get — it's a reference to key material that lives only inside the service. Every operation is a request to *compute* with the key, never a request to fetch it: call `Encrypt` and you send plaintext in, ciphertext comes back; ask for a data key (the subject of the next note) and KMS generates it inside the service and hands you the result.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The symmetric material behind an ordinary key, and the private half of an asymmetric one, never leave the service at all: no API call exports them. Nearly every surprising shape of the KMS API traces back to that one constraint — you never hold the key, so everything has to travel to where the key already is.",
+          "clozes": [
+            {
+              "start": 134,
+              "end": 141,
+              "answer": "exports",
+              "cardId": "card-zh31"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-s40f",
+          "prompt": "Why does the fact that KMS key material never leaves the service, even to you as the key's owner, change what the service's API has to look like compared to a typical secret store?",
+          "answer": "Because the service can never simply hand back the key, every operation has to be phrased as \"compute this for me using the key\" rather than \"give me the key.\" Encryption, decryption, signing, and data-key generation all happen inside KMS and return only results, never the material itself — which is also what makes it meaningful to revoke access to a key after the fact: there's no copy already out in the world to claw back."
+        },
+        {
+          "kind": "prose",
+          "text": "Not every key you use is equally yours, and the difference is operational, not cosmetic — it determines who can see the key's usage policy, let alone change it. AWS-owned keys are invisible: several services encrypt data with keys AWS itself owns and manages behind the scenes, shared across accounts, with no key resource in your account and no policy of yours to inspect or edit at all. AWS-managed keys — `aws/s3`, `aws/rds`, and one per integrated service — do show up in your account, one per service per account, but you still cannot touch their key policy; AWS sets it and updates it. Customer-managed keys are the only ones you actually administer: you write the key policy, you control whether and how it rotates, and — unlike the other two classes — you pay a per-key monthly charge for having created it.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-qzus",
+          "format": "mcq",
+          "prompt": "A service integration uses the AWS-managed key `aws/dynamodb` to encrypt a table. The team wants to add a condition to that key's policy restricting which principals can use it. What has to happen?",
+          "choices": [
+            {
+              "text": "Nothing is possible on that key — AWS-managed key policies cannot be edited; the team would need to switch the table to a customer-managed key instead",
+              "correct": true
+            },
+            {
+              "text": "Submit a policy update through the KMS console, since any key in your account accepts a custom policy",
+              "correct": false
+            },
+            {
+              "text": "Ask AWS Support to append the condition to the managed policy",
+              "correct": false
+            },
+            {
+              "text": "Attach an IAM permission boundary to the key to achieve the same restriction",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Customer-managed keys also carry a **key spec**, chosen at creation and immutable thereafter: symmetric keys are the default and what nearly all envelope-encryption use cases want, while asymmetric keys hold an RSA or elliptic-curve key pair. Deciding wrong is therefore a migration rather than a setting change. An asymmetric key's whole point is that only half of it is a secret — you can export its public key and hand it out freely for others to encrypt data or verify signatures with, while the operations that need the private half (decrypt, sign) still have to happen inside KMS.",
+          "clozes": [
+            {
+              "start": 72,
+              "end": 81,
+              "answer": "immutable",
+              "cardId": "card-iozz"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-e68a",
+          "prompt": "What can you do with the public half of an asymmetric KMS key that you cannot do with a symmetric key's material at all?",
+          "answer": "You can retrieve and freely distribute the public key itself, letting anyone encrypt data or verify a signature without ever calling KMS. A symmetric key has no such public half — every operation that uses it, including encryption, has to be a call to KMS, since there is nothing safe to hand out."
+        },
+        {
+          "kind": "prose",
+          "text": "A key's identity — its key id or ARN — is assigned at creation and is permanent: a KMS key cannot be renamed, moved to another region, or exported in any form, and it never will be, however the surrounding infrastructure changes. That immutability is exactly why **aliases** exist: a friendly, mutable name like `alias/orders-prod` that your application code references instead of the raw key id. Point the alias at a new key and every caller that names the alias starts using the new key without a code change — repointing the alias is the only form of \"replacing\" a key that KMS actually offers.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-dr3j",
+          "format": "recall",
+          "prompt": "A KMS key's id is permanent and the key itself can never be renamed or moved. Explain why this makes an alias necessary infrastructure rather than a cosmetic convenience, and what would have to change in every caller's code if applications referenced raw key ids directly instead.",
+          "answer": "Because the underlying key id can never change, any process that needs to swap which key is actually in use — rotating to a fresh customer-managed key, recovering from a compromised one, migrating between environments — has no way to do it except by changing what a name points to. An alias is that indirection layer: it's mutable where the key id is not, so repointing one alias updates every caller at once. Without aliases, every caller hardcoding a raw key id would need its own code change and redeploy to pick up a replacement key — turning a one-line update into a coordinated rollout across every consumer."
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-6qq8",
+          "prompt": "What three things can never be done to a KMS key once it's created, regardless of key spec or ownership class?",
+          "answer": "It can never be renamed, moved to a different region, or exported in any form — its id is permanent and its material stays inside the service for its entire life. The only things that can change around it are what an alias points to, and, eventually, whether the key still exists at all."
+        },
+        {
+          "kind": "prose",
+          "text": "None of this touches what happens after a key exists — how rotation actually works, or what deleting one really does — and those questions get sharp, surprising answers of their own in `key-rotation-and-key-deletion.md`. Nor does it touch what a key policy actually says, which is `key-policies-and-the-root-of-authority.md`'s subject, or what happens when a key needs to be usable outside its home region, covered in `multi-region-keys-and-the-regional-boundary.md`.",
+          "clozes": []
+        }
+      ]
+    },
+    {
+      "path": "vault/aws/security/multi-region-keys-and-the-regional-boundary.md",
+      "title": "Multi-Region Keys and the Regional Boundary",
+      "topic": "aws",
+      "category": "aws-security",
+      "citations": [
+        "AWS Key Management Service Developer Guide — 'Multi-Region keys'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Multi-Region Keys and the Regional Boundary"
+        },
+        {
+          "kind": "prose",
+          "text": "`kms-keys-and-the-key-hierarchy.md` already notes that a key's id is permanent and the key can never be moved to another region. This note is about the consequence of that fact once data actually needs to cross regions, and the one deliberate exception KMS offers to it.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "KMS keys are a regional resource: a key created in `us-east-1` exists only in `us-east-1`, and ciphertext produced under it carries no meaning anywhere else. Try to decrypt that ciphertext against KMS in `eu-west-1` and the call fails outright — there's no key there to ask. This stops being a footnote the first time something replicates data across regions: a DynamoDB global table, an S3 cross-region replication rule, a DR copy of an encrypted snapshot. It surfaces as a decrypt failure in the destination region, not as a warning at design time, which is exactly why it catches people who never had a reason to think about it before.",
+          "clozes": [
+            {
+              "start": 15,
+              "end": 23,
+              "answer": "regional",
+              "cardId": "card-swvc"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-ttc2",
+          "format": "recall",
+          "prompt": "A team enables S3 cross-region replication on a bucket encrypted with a single-region customer-managed KMS key, expecting the replica objects in the destination region to just work. Explain what actually happens and why.",
+          "answer": "Replication copies the object, but the destination region has no access to the source region's key material at all — KMS keys never leave their region on their own. Without further setup, the replica either fails to encrypt under an equivalent key or ends up unreadable, because a KMS key id from one region names nothing in another."
+        },
+        {
+          "kind": "prose",
+          "text": "There are exactly two honest answers to \"how do I get KMS-encrypted data into another region,\" and neither makes the problem disappear for free. The default is to decrypt in the source region and re-encrypt under a key that belongs to the destination region — which means the plaintext has to exist somewhere in transit between the two calls, or at best passes through a second, independent envelope-encryption step at the destination. The alternative is a multi-region key, which avoids the plaintext crossing at all by making the *same* key material available in both places.",
+          "clozes": [
+            {
+              "start": 457,
+              "end": 473,
+              "answer": "multi-region key",
+              "cardId": "card-hrhd"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "A multi-region key is a primary and one or more replica copies, created explicitly, that share the same underlying key material and the same key id suffix — only the region portion of the ARN differs.",
+          "clozes": [
+            {
+              "start": 24,
+              "end": 31,
+              "answer": "primary",
+              "cardId": "card-tcvy"
+            },
+            {
+              "start": 48,
+              "end": 55,
+              "answer": "replica",
+              "cardId": "card-sztc"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Because the material behind those copies is identical, ciphertext encrypted under one can be decrypted directly against any other, with no decrypt-and-re-encrypt step and no plaintext ever leaving KMS. This is the *only* situation in which key material leaves a region at all — every other key in the service, including every AWS-managed key, keeps its material sealed inside the region it was created in. That's exactly why this feature is opt-in, created deliberately as a distinct key type, rather than a checkbox on an ordinary key: replicating key material across a regional boundary is the one exception to a rule the rest of the service enforces absolutely.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-a9xu",
+          "format": "mcq",
+          "prompt": "What is true of a multi-region key's primary and its replicas that is not true of any other pair of KMS keys in different regions?",
+          "choices": [
+            {
+              "text": "They share the same underlying key material and key id suffix, so ciphertext from one can be decrypted directly by any of the others",
+              "correct": true
+            },
+            {
+              "text": "They are the same API resource, just displayed in two regions' consoles",
+              "correct": false
+            },
+            {
+              "text": "The replica automatically forwards every decrypt call back to the primary's region",
+              "correct": false
+            },
+            {
+              "text": "They share key material but use independently generated key ids",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Sharing key material is not the same as sharing everything else. Each replica is created as its own resource and stays independent for everything *except* the raw key bits: its own permissions document governing who can use it, its own grants, its own rotation state and schedule, and its own CloudTrail trail, logging usage in its own region only.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-z1oo",
+          "prompt": "Does giving a replica a broader set of permissions than its primary put the primary's own data at risk?",
+          "answer": "Not directly — permissions are per-replica, not shared, so a replica compromised through an overly permissive policy in one region doesn't mean the primary's own policy was ever at fault. It does still expose every ciphertext the shared key material can decrypt, since that material itself is identical across primary and replicas; auditing usage of a multi-region key means checking CloudTrail in every region holding a replica, not just the primary's."
+        },
+        {
+          "kind": "prose",
+          "text": "Multi-region keys also enable a specific failover move that a single-region key cannot: promoting a replica to become the new primary. If a region holding the primary becomes unavailable, promoting a replica in another region lets that region's copy take over as the primary going forward — new replicas can be created from it, and it stops merely mirroring another key's material — without re-encrypting a single byte of existing ciphertext, since every replica could already decrypt everything the old primary had encrypted.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "The trap is that this has to be decided up front: a single-region key cannot be converted into a multi-region key after the fact, and a multi-region key cannot be converted back. The choice is made once, at creation, and a key already in production use under the wrong choice has no in-place fix — only creating a new key of the right kind and migrating to it.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-q6eh",
+          "prompt": "Why can't an existing single-region KMS key simply be \"upgraded\" to multi-region once a cross-region requirement shows up later?",
+          "answer": "Because the multi-region property determines the key's identity model from the moment it's created — a single-region key was never assigned the shared key id suffix or replica structure that lets other regions hold decryptable copies of its material. Retrofitting that after the fact would mean changing what the key id itself refers to, which KMS never allows for any key; the only path is creating a new multi-region key and migrating data and callers to it."
+        },
+        {
+          "kind": "prose",
+          "text": "The case against reaching for multi-region keys by default is the same fact that makes them useful, seen from the other side: sharing key material across regions means a compromise of the material is no longer contained to one region's blast radius. The regional boundary a single-region key gives up isn't just an operational inconvenience to route around — it's a real isolation boundary, and multi-region keys trade it away deliberately in exchange for avoiding plaintext-in-transit or decrypt-and-re-encrypt overhead. That trade makes sense for the cases it's built for — cross-region DynamoDB global tables, S3 cross-region replication, and cross-region disaster recovery where a region-wide outage has to fail over without a re-encryption pass — and makes much less sense as a default choice for a key that will only ever live in one region.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-82ar",
+          "format": "mcq",
+          "prompt": "What is the strongest argument against defaulting to multi-region keys for a key that doesn't yet have a known cross-region requirement?",
+          "choices": [
+            {
+              "text": "Shared key material means a compromise of that material affects every region holding a replica at once, giving up the isolation a single-region key's regional boundary otherwise provides",
+              "correct": true
+            },
+            {
+              "text": "Multi-region keys cannot use key policies at all, only IAM",
+              "correct": false
+            },
+            {
+              "text": "Multi-region keys are billed per region even when only one region is ever used",
+              "correct": false
+            },
+            {
+              "text": "AWS deprecates multi-region keys after their first scheduled rotation",
+              "correct": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "vault/aws/security/retrieving-secrets-at-runtime.md",
+      "title": "Retrieving Secrets at Runtime",
+      "topic": "aws",
+      "category": "aws-security",
+      "citations": [
+        "AWS Secrets Manager User Guide — 'Cache secrets for AWS Lambda functions'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Retrieving Secrets at Runtime"
+        },
+        {
+          "kind": "prose",
+          "text": "`secrets-manager-versus-parameter-store.md` and `secret-rotation-and-staging-labels.md` cover what a secret store does and how it stays current. This note is about the part that only shows up once code actually asks for a value: fetching a secret is a network call to a throttled, billed API, not a free local lookup, and code that treats it as free is exactly how a service becomes slow and expensive at scale.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Every `GetSecretValue` call leaves the process, waits on a service with its own latency and its own throttle limits, and gets billed per request. Call it on every incoming request a service handles and you've added an external dependency, a latency tax, and a cost line to something that used to be a constant your code already had in memory. The default expectation should be the opposite: fetch once, **cache**, and re-fetch on a schedule — not on every use.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "A cache needs a TTL, and choosing one is a real trade, not a formality: too long, and a rotated secret keeps getting served stale long after `AWSCURRENT` moved, so a successful rotation turns into an outage at the worst possible moment — precisely when the old credential finally stops being honored. Too short, and the cache barely reduces call volume at all, undermining the reason it exists.",
+          "clozes": [
+            {
+              "start": 16,
+              "end": 19,
+              "answer": "TTL",
+              "cardId": "card-ycbm"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-tloo",
+          "format": "recall",
+          "prompt": "A team sets a secret cache's TTL to 24 hours to minimize API calls, and rotation runs every 12 hours. Explain what happens to requests in the second half of each rotation cycle, and why the failure looks like a rotation bug rather than a caching bug when someone investigates it.",
+          "answer": "For up to 12 hours out of every cycle, the cache is still serving a secret value that's no longer AWSCURRENT — once the old credential's grace period (if any) ends, every request using the cached value starts failing. It looks like a rotation bug because rotation is the event that immediately precedes the failure and the team's mental model is \"rotation either works or breaks something,\" when the actual defect is a cache TTL longer than the rotation interval, sitting one layer away from where rotation itself runs."
+        },
+        {
+          "kind": "prose",
+          "text": "AWS ships answers to this rather than leaving every team to hand-roll a cache. The **AWS Parameters and Secrets Lambda extension** runs alongside a Lambda function as a local sidecar, serving cached secret values over `localhost` so the function's code makes an in-process HTTP call instead of a cross-network one — the extension owns the TTL and the refresh, not the function's own code. Outside Lambda, the **SDK caching libraries** (a `SecretCache` class in several language SDKs) give the same in-process caching behavior to a long-running service that isn't Lambda at all.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-uida",
+          "prompt": "What does routing secret reads through the AWS Parameters and Secrets Lambda extension change about where the network call actually goes?",
+          "answer": "The function's code calls a local endpoint on localhost instead of Secrets Manager directly — the extension is the one making (and caching) the actual cross-network call, so a cache hit inside the function never leaves the execution environment at all."
+        },
+        {
+          "kind": "prose",
+          "text": "Three anti-patterns show up repeatedly, and each fails for a different reason. Baking a secret into a container image or AMI puts it in every layer of that image and every copy sitting in a registry or snapshot — rotating the live credential afterward does nothing to the copies already shipped, so the old value is permanently recoverable by anyone who can pull an old image. Passing a secret as a plaintext Lambda environment variable is visible to anyone holding `lambda:GetFunctionConfiguration` on that function, and it renders in the console configuration tab in plain text — there's no encryption boundary protecting it from a principal who can merely describe the function, let alone invoke it. And fetching fresh on every single request, the third anti-pattern, is the throttling and cost problem this whole note opened with, just restated as a habit rather than a one-off mistake.",
+          "clozes": [
+            {
+              "start": 416,
+              "end": 436,
+              "answer": "environment variable",
+              "cardId": "card-1q00"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-5tru",
+          "format": "mcq",
+          "prompt": "A Lambda function's database password is stored as a plaintext environment variable rather than fetched from Secrets Manager. Who can see that value without ever invoking the function?",
+          "choices": [
+            {
+              "text": "Anyone with lambda:GetFunctionConfiguration on that function — the value renders in the console's configuration view and the API response, independent of invoke permissions",
+              "correct": true
+            },
+            {
+              "text": "No one — environment variables are encrypted and inaccessible outside the running execution environment",
+              "correct": false
+            },
+            {
+              "text": "Only someone who can also invoke the function and read its logs",
+              "correct": false
+            },
+            {
+              "text": "Only the account root user, regardless of IAM permissions",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "There's a fourth option that sidesteps the runtime code path entirely: resolving a secret at **deploy time** instead of read time. An ECS task definition can reference a Secrets Manager ARN directly, and the ECS agent injects the resolved value into the container's environment at task launch; Lambda supports the same idea for certain configuration. The application code never calls a secrets API at all — there's no runtime fetch, no cache, no TTL to get wrong. The cost is that the injected value is pinned to whatever the secret held at that specific deploy or task launch; a rotation afterward has no effect until the next deploy or task restart picks up the new value.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-g444",
+          "prompt": "Why does deploy-time secret injection eliminate an entire class of runtime bugs that caching can't, and what does it give up in exchange?",
+          "answer": "It eliminates the runtime fetch path entirely — no network call, no cache, no TTL to mis-tune, so there's nothing left to fail at request time. In exchange, the injected value is frozen to whatever the secret held at deploy or task-launch time; a rotation that happens afterward is invisible to that running task until it's redeployed or restarted, unlike a runtime cache that eventually picks up the new value on its own."
+        },
+        {
+          "kind": "prose",
+          "text": "The other side of treating the API as fallible: when a `GetSecretValue` call gets throttled, it fails outright rather than degrading gracefully. A service with no cache and no retry logic around that call discovers, at the worst possible moment, that it is quietly relying on Secrets Manager's own availability and rate limits — an unacknowledged dependency it inherited silently the day someone added a fetch call, long before anyone treated it as one worth protecting against.",
+          "clozes": [
+            {
+              "start": 347,
+              "end": 357,
+              "answer": "dependency",
+              "cardId": "card-02lr"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "vault/aws/security/secret-rotation-and-staging-labels.md",
+      "title": "Secret Rotation and Staging Labels",
+      "topic": "aws",
+      "category": "aws-security",
+      "citations": [
+        "AWS Secrets Manager User Guide — 'Rotate AWS Secrets Manager secrets'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Secret Rotation and Staging Labels"
+        },
+        {
+          "kind": "prose",
+          "text": "`key-rotation-and-key-deletion.md` covers KMS key rotation — swapping the backing key material behind a fixed key id, re-encrypting nothing. This is a different mechanism entirely, wearing the same word: Secrets Manager rotation changes the actual secret *value* — a database password, an API key — and has to do it while other things are actively reading the old one. `key-management-and-rotation.md` already makes the general case for rotating secrets at all; this note is about the specific machinery AWS built to do it without an outage.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Rotation is not a platform feature you flip on — it's a **Lambda function you own**, invoked by Secrets Manager on a schedule, that walks through four steps in a fixed order: `createSecret`, `setSecret`, `testSecret`, `finishSecret`. That sequencing exists because rotation has to stay safe for a caller that's mid-flight — a connection opened seconds before rotation started can't be allowed to suddenly break.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-26u3",
+          "format": "recall",
+          "prompt": "Name the four steps of a Secrets Manager rotation Lambda in order, and explain why testSecret has to run as its own separate step rather than being folded into setSecret.",
+          "answer": "createSecret generates the new candidate value; setSecret applies it to the underlying system (e.g. changes the database password); testSecret verifies the new value actually works before anything is promoted; finishSecret makes the new value the one live callers see. testSecret is separate because setSecret succeeding only proves the write happened, not that the new credential is actually usable end to end — collapsing the two would let a broken credential get promoted on the strength of an unrelated API call succeeding."
+        },
+        {
+          "kind": "prose",
+          "text": "The mechanism that makes this safe is **staging labels** — pointers onto specific versions of the secret's value, not the values themselves. `AWSCURRENT` marks the version an ordinary `GetSecretValue` call returns; `AWSPENDING` marks the candidate rotation is building and testing; `AWSPREVIOUS` marks the value that was current just before the last rotation. `finishSecret`'s entire job is to move the `AWSCURRENT` label onto the version that was `AWSPENDING` — an atomic relabeling, not an overwrite of any stored value.",
+          "clozes": [
+            {
+              "start": 473,
+              "end": 483,
+              "answer": "relabeling",
+              "cardId": "card-jfb7"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-i2nr",
+          "prompt": "Why does finishSecret move a label onto an existing version rather than overwriting the AWSCURRENT version's value in place?",
+          "answer": "Moving a label is atomic and instantaneous from every reader's perspective — a GetSecretValue call either sees the old label placement or the new one, never a half-written value. Overwriting in place would create a window where the value is partially updated, and any concurrent reader hitting that window would get a corrupted or inconsistent secret instead of a clean old-or-new result."
+        },
+        {
+          "kind": "prose",
+          "text": "That label move is what turns rotation from a hazard into a non-event. A client that fetched and cached the secret moments before `finishSecret` ran is holding what is now the `AWSPREVIOUS` value — still a real, working credential for however long the underlying system honors it — so rotation doesn't force every live connection to fail in the instant the label moves.",
+          "clozes": []
+        },
+        {
+          "kind": "card",
+          "cardId": "card-mwe5",
+          "format": "mcq",
+          "prompt": "A web server fetched a database secret 30 seconds before Secrets Manager finished rotating it, and the database still accepts both the old and new password for a grace window. What happens to the server's existing connection?",
+          "choices": [
+            {
+              "text": "It keeps working — the server is holding the value that's now AWSPREVIOUS, and the database still honors it during the grace window, so rotation causes no immediate disruption",
+              "correct": true
+            },
+            {
+              "text": "It fails immediately, because AWSCURRENT moving invalidates every credential that isn't the new one",
+              "correct": false
+            },
+            {
+              "text": "It fails immediately, because finishSecret closes all open connections that used the prior secret",
+              "correct": false
+            },
+            {
+              "text": "It keeps working only if the server re-fetches the secret within one second of the label move",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Databases are where rotation gets genuinely risky, and the standard defense is the **alternating-users strategy**: instead of rotating one database user's password in place, rotation flips between two pre-provisioned users — rotating user A's password while user B's credential is still `AWSCURRENT` and live, then flipping to A as current next cycle while B's password gets rotated in the background. Single-user rotation, changing one user's password directly, is riskier for the opposite reason: the password changes underneath every live connection to that same user, and there is a real gap during which no valid credential exists for it at all if anything goes wrong mid-rotation.",
+          "clozes": [
+            {
+              "start": 402,
+              "end": 413,
+              "answer": "Single-user",
+              "cardId": "card-2r3a"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-om06",
+          "prompt": "Why is alternating between two database users safer than rotating a single user's password directly?",
+          "answer": "With two users, one user's credentials always remain untouched and live (AWSCURRENT) while the other's are being changed in the background, so there's never a moment with zero working credentials. Single-user rotation changes the one live user in place, so any failure mid-rotation — or even the ordinary propagation delay — can leave connections with no valid password to fall back to."
+        },
+        {
+          "kind": "prose",
+          "text": "The failure mode that actually shows up in practice isn't rotation failing loudly — it's `testSecret` passing without really testing anything: a shallow check (the API call returned 200, the connection opened) that doesn't exercise the actual query pattern or permission the application depends on. Rotation reports success, `AWSCURRENT` moves, and the break only surfaces days later at the next deploy, when new code paths hit a working-but-wrong credential for the first time — far enough removed from the rotation event that nobody thinks to look there first.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "For supported engines — MySQL, PostgreSQL, MariaDB, Oracle, SQL Server among them — Secrets Manager offers **managed rotation**: AWS supplies and maintains the four-step Lambda function itself, and you only choose the schedule and, for the alternating-users pattern, the second user. Anything outside that supported list — a third-party API key, a credential for a service AWS doesn't integrate with — means writing and owning the Lambda yourself, with all four steps and their correctness squarely your responsibility.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-gt82",
+          "prompt": "What is the tradeoff a team gives up by using AWS's managed rotation for a supported RDS engine instead of writing its own rotation Lambda?",
+          "answer": "It gives up control over the rotation logic's exact behavior in exchange for not having to write, test, or maintain the four-step Lambda itself — AWS owns correctness of the standard flow, but any rotation need outside what the managed function supports (a nonstandard permission model, a non-RDS credential) still requires a custom Lambda."
+        }
+      ]
+    },
+    {
+      "path": "vault/aws/security/secrets-manager-versus-parameter-store.md",
+      "title": "Secrets Manager versus Parameter Store",
+      "topic": "aws",
+      "category": "aws-security",
+      "citations": [
+        "AWS Secrets Manager User Guide — 'Compare AWS Secrets Manager with Systems Manager Parameter Store'"
+      ],
+      "blocks": [
+        {
+          "kind": "heading",
+          "level": 1,
+          "text": "Secrets Manager versus Parameter Store"
+        },
+        {
+          "kind": "prose",
+          "text": "`data-at-rest-encryption-across-services.md` covered KMS integration at the storage-service level. Secrets Manager and Systems Manager Parameter Store are the two places application configuration and credentials themselves live, and choosing between them is not a feature checklist — it's a handful of axes that actually decide it, plus one boundary question that matters more than any of them.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Start with what they share. Both encrypt at rest with KMS — a Parameter Store `SecureString` and a Secrets Manager secret each name a KMS key, and neither service stores plaintext. That shared foundation creates a shared gotcha: reading either one is gated by two independent checks that both have to pass — the resource's own permissions (a Secrets Manager resource policy, or the IAM policy governing `ssm:GetParameter`) and the KMS key policy for the key that encrypted it. Getting the first right and forgetting the second is the classic failure: the caller has `secretsmanager:GetSecretValue`, the call still fails, because the key policy never granted that principal `kms:Decrypt`.",
+          "clozes": [
+            {
+              "start": 260,
+              "end": 263,
+              "answer": "two",
+              "cardId": "card-0d0p"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-jdq2",
+          "format": "recall",
+          "prompt": "A developer is granted secretsmanager:GetSecretValue on a specific secret but their GetSecretValue call still fails with an access denied error. Explain the second gate they're missing and why both checks exist independently rather than one implying the other.",
+          "answer": "Reading a KMS-encrypted secret requires kms:Decrypt on the KMS key that encrypted it, in addition to the resource-level permission on the secret itself. The two are independent because the key policy and the secret's own permissions are separate roots of authority guarding separate resources — a KMS key can be shared across many secrets or services, so its policy can't be inferred from any one secret's permissions, and has to be checked on its own."
+        },
+        {
+          "kind": "prose",
+          "text": "The differences start with what you're paying for. Secrets Manager charges per secret per month plus per API call, and in exchange gives you built-in rotation: a scheduled Lambda invocation that can change the credential itself, not just its stored copy. Parameter Store's `SecureString` parameters are free at the standard tier — no rotation engine ships with it at all; rotation has to be built by hand, usually as an EventBridge-scheduled Lambda that calls `PutParameter` itself. That single fact is the main reason teams pay for Secrets Manager rather than the mechanics of encryption, which both services get from the same place.",
+          "clozes": [
+            {
+              "start": 303,
+              "end": 307,
+              "answer": "free",
+              "cardId": "card-bu03"
+            }
+          ]
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-n2tg",
+          "prompt": "Why does built-in rotation, rather than encryption or access control, explain most of the decision to pay for Secrets Manager over free SecureString parameters?",
+          "answer": "Because encryption and access control are identical in substance between the two — both defer to KMS and an access policy — so they don't differentiate the services at all. Rotation is the one piece of functionality Parameter Store simply doesn't ship, meaning the fee buys engineering effort you'd otherwise have to build and operate yourself."
+        },
+        {
+          "kind": "prose",
+          "text": "Size and cross-account reach also diverge. A Secrets Manager secret can hold up to 64 KB, comfortably fitting a JSON blob of multiple database credentials; a standard Parameter Store parameter caps at 4 KB, enough for a single value but not a bundled credential set. Cross-account access follows the same split as the rest of AWS resource sharing: Secrets Manager attaches a resource policy directly to the secret, so another account can be granted access without any change on the consumer's side, while standard-tier Parameter Store has no resource policy at all — sharing a parameter across accounts means routing through a role in the owning account instead.",
+          "clozes": [
+            {
+              "start": 201,
+              "end": 205,
+              "answer": "4 KB",
+              "cardId": "card-1d8y"
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "cardId": "card-l8tp",
+          "format": "mcq",
+          "prompt": "A platform team wants Account B to read a specific parameter owned by Account A, without changing anything in Account B's own IAM setup, using standard-tier Parameter Store. What's the outcome?",
+          "choices": [
+            {
+              "text": "Not directly possible — standard Parameter Store parameters have no resource policy; Account B needs a role in Account A to assume, or the team should use a Secrets Manager secret with a resource policy instead",
+              "correct": true
+            },
+            {
+              "text": "Trivial — attach a resource policy to the parameter naming Account B",
+              "correct": false
+            },
+            {
+              "text": "Trivial — all SecureString parameters are readable cross-account by default once KMS grants are configured",
+              "correct": false
+            },
+            {
+              "text": "Not possible at all, even with a role, because Parameter Store has no cross-account mechanism whatsoever",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "Versioning differs in shape, not just presence. Every Parameter Store write creates a new numbered version, and old versions are retained but have no special role — there's no live \"current\" pointer distinct from \"latest.\" Secrets Manager instead uses staging labels (`secret-rotation-and-staging-labels.md` covers this fully) — `AWSCURRENT` marks the version an ordinary read returns, and that label can move without the underlying values changing shape, which is what makes in-place rotation possible at all.",
+          "clozes": []
+        },
+        {
+          "kind": "prose",
+          "text": "Throughput is the last axis, and it's really a cost decision disguised as a technical one. Parameter Store's standard throughput can throttle under heavy concurrent reads from many instances at startup; the fix is the advanced parameter tier or a higher-throughput setting, both of which cost money — so \"Parameter Store is free\" stops being quite true the moment a workload is large enough to need it, and the two services' pricing curves converge from opposite directions.",
+          "clozes": [
+            {
+              "start": 218,
+              "end": 226,
+              "answer": "advanced",
+              "cardId": "card-lgrn"
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "text": "None of these axes matter if the thing being stored was never a secret in the first place. **Configuration is not a secret.** A feature flag, a timeout value, an S3 bucket name — putting these in Secrets Manager buys rotation machinery and per-secret charges for values that never need to rotate and were never sensitive to begin with. The inverse mistake is the dangerous one: a database password in a plaintext Parameter Store value, or worse, in a Lambda environment variable that shows up in `GetFunctionConfiguration` output, isn't a cost optimization — it's a credential sitting in a place logs, consoles, and anyone with read-only describe permissions can see it. The permissions shape that should gate who reaches either service at all is `../iam/least-privilege-in-practice.md`'s territory, not this note's.",
+          "clozes": []
+        },
+        {
+          "kind": "qa",
+          "cardId": "card-fg0j",
+          "prompt": "Why is storing a non-sensitive configuration value in Secrets Manager considered a mistake even though nothing about it is insecure?",
+          "answer": "Because Secrets Manager's cost and rotation machinery exist to solve a problem non-sensitive configuration doesn't have — there's no credential to rotate and no exposure risk to justify the per-secret charge, so the choice buys operational overhead without buying any corresponding safety benefit."
         }
       ]
     },
