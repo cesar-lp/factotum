@@ -29,6 +29,7 @@ export interface DashboardProps {
   onKeepGoing: () => void;
   onTopics: () => void;
   onSettings: () => void;
+  onSearch: () => void;
   /**
    * True when there are no cards in local storage AND the deck sync failed —
    * i.e. a genuine first-load failure (offline first launch, broken deploy),
@@ -36,6 +37,13 @@ export interface DashboardProps {
    * cached deck (which stays silent). Defaults to false.
    */
   deckUnavailable?: boolean;
+  /**
+   * Due cards held back this pass because the reader recently read the
+   * note that backs them — see `selectNotRecentlyRead` in `scheduler/queue.ts`.
+   * Surfaced so a shrinking due count is never mistaken for cards going
+   * missing.
+   */
+  deferredCount: number;
 }
 
 function weekdayLabel(dayKey: string): string {
@@ -68,6 +76,18 @@ function renderStats(streak: number, lastSevenDays: DayCount[]): string {
       </div>
       <div class="week-bars">${bars}</div>
     </div>`;
+}
+
+/**
+ * A card leaving the queue without explanation is the same defect as the
+ * silently-dropped re-queued card (state-and-roadmap §6). Suppression is
+ * deliberate, so it is stated.
+ */
+export function deferredLine(count: number): string {
+  if (count <= 0) return '';
+  const noun = count === 1 ? 'card' : 'cards';
+  const theirs = count === 1 ? 'its note' : 'their notes';
+  return `<div style="color:var(--dim);font-size:13px;margin-top:4px">${count} ${noun} deferred &mdash; you read ${theirs} recently</div>`;
 }
 
 export function renderDashboard(root: HTMLElement, props: DashboardProps): void {
@@ -132,6 +152,7 @@ export function renderDashboard(root: HTMLElement, props: DashboardProps): void 
       <div class="top">
         <span>factotum</span>
         <span>
+          <button class="btn-quiet" id="search">search</button>
           <button class="btn-quiet" id="topics">topics</button>
           <button class="btn-quiet" id="settings">settings</button>
         </span>
@@ -140,6 +161,7 @@ export function renderDashboard(root: HTMLElement, props: DashboardProps): void 
       <div style="text-align:center">
         ${message}
         ${newCardsLine}
+        ${deckUnavailable ? '' : deferredLine(props.deferredCount)}
         ${statsBlock}
       </div>
       <div class="spacer"></div>
@@ -151,6 +173,7 @@ export function renderDashboard(root: HTMLElement, props: DashboardProps): void 
   `;
 
   root.querySelector<HTMLButtonElement>('#start')?.addEventListener('click', props.onStart);
+  root.querySelector<HTMLButtonElement>('#search')?.addEventListener('click', props.onSearch);
   root.querySelector<HTMLButtonElement>('#topics')?.addEventListener('click', props.onTopics);
   root.querySelector<HTMLButtonElement>('#settings')?.addEventListener('click', props.onSettings);
   root.querySelector<HTMLButtonElement>('#keep-going')?.addEventListener('click', props.onKeepGoing);

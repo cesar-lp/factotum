@@ -1,5 +1,6 @@
 import type { ReviewState, StoredCard } from '../db/schema.js';
 import { isDue } from './fsrs.js';
+import { isRecentlyRead, type NoteReads } from '../db/note-reads.js';
 
 /**
  * The hour a review day rolls over. A review logged at 01:00 belongs to the
@@ -114,6 +115,70 @@ export function buildExtension(input: ExtensionInput): StoredCard[] {
 export function selectEnabled(cards: StoredCard[], disabled: ReadonlySet<string>): StoredCard[] {
   if (disabled.size === 0) return cards;
   return cards.filter((card) => !disabled.has(card.category));
+}
+
+/**
+ * Drops DUE cards whose note was opened within the suppression window.
+ *
+ * FSRS estimates retention across elapsed time. A card tested moments
+ * after its note was read measures nothing about memory and writes an
+ * inflated stability score into the one store this app cannot rebuild.
+ * Deferring the test is how that measurement is declined.
+ *
+ * Like `selectEnabled` above, this is a filter, not a freeze: FSRS state
+ * is untouched and due dates keep advancing while a note is suppressed.
+ *
+ * NEW CARDS ARE NEVER SUPPRESSED, and the reason is the one `note-mask.ts`
+ * gave before this replaced it: suppression protects a pending test, and a
+ * card never asked has none. Reading a note and then learning its cards is
+ * the normal order of operations, not contamination -- and under the
+ * planned path feature, reading a note is precisely what INTRODUCES its
+ * cards, so suppressing them here would only have to be undone there.
+ */
+export function selectNotRecentlyRead(
+  cards: StoredCard[],
+  reviews: Map<string, ReviewState>,
+  reads: NoteReads,
+  now: Date,
+  windowHours: number
+): StoredCard[] {
+  if (windowHours <= 0) return cards;
+  return cards.filter((card) => {
+    if (!reviews.has(card.id)) return true; // new: nothing to protect
+    return !isRecentlyRead(reads, card.source.path, now, windowHours);
+  });
+}
+
+/**
+ * How many cards are genuinely being held back by suppression right now.
+ *
+ * This is NOT `cards.length - selectNotRecentlyRead(...).length`:
+ * `selectNotRecentlyRead` filters out every card with review state whose
+ * note was recently read, whether or not that card is due, because that is
+ * harmless for building a queue (a not-due or suspended card was never
+ * going to be served anyway). But this count is shown to the user, so
+ * "deferred" has to mean a card that would otherwise have been reviewed
+ * today -- i.e. it has review state, is not suspended, and `isDue`. Reusing
+ * that subtraction here would overstate the count by every not-yet-due and
+ * suspended card the note happens to own.
+ */
+export function countSuppressed(
+  cards: StoredCard[],
+  reviews: Map<string, ReviewState>,
+  reads: NoteReads,
+  now: Date,
+  windowHours: number
+): number {
+  if (windowHours <= 0) return 0;
+  let count = 0;
+  for (const card of cards) {
+    const state = reviews.get(card.id);
+    if (!state) continue;
+    if (state.suspended) continue;
+    if (!isDue(state, now)) continue;
+    if (isRecentlyRead(reads, card.source.path, now, windowHours)) count += 1;
+  }
+  return count;
 }
 
 export interface FocusInput {

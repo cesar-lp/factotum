@@ -23,6 +23,8 @@ export interface DashboardState {
    * `disabledCategories`, unlike `session` and `extension`.
    */
   topics: TopicSummary[];
+  /** Due cards held back because their note was read inside the window. */
+  deferredCount: number;
 }
 
 export type RouteDecision =
@@ -36,9 +38,10 @@ export type RouteDecision =
   | { kind: 'review' }
   | { kind: 'review-extend' }
   | { kind: 'focus'; category: string }
-  | { kind: 'note'; path: string; cardId: string | null }
+  | { kind: 'note'; path: string; cardId: string | null; block: number | null }
   | { kind: 'topics' }
   | { kind: 'settings' }
+  | { kind: 'search'; query: string }
   | { kind: 'dashboard' };
 
 export const FOCUS_PREFIX = '#focus/';
@@ -83,28 +86,75 @@ export function noteHash(path: string, cardId?: string): string {
 }
 
 /**
+ * Builds the hash for the note viewer, arriving scrolled to a specific
+ * block instead of a card. Block indices are ephemeral (generated from
+ * whatever notes.json is currently in memory, followed within seconds),
+ * unlike a card id, so this is a sibling of `noteHash` rather than another
+ * optional parameter on it.
+ */
+export function noteBlockHash(path: string, block: number): string {
+  return `${NOTE_PREFIX}${encodeURIComponent(path)}/b${block}`;
+}
+
+/** Trailing `/b<N>` segment identifying a block index, e.g. `b12` but not `b12x` or `bx`. */
+const BLOCK_SEGMENT = /^b\d+$/;
+
+/**
  * Decodes a `#note/...` hash. Returns null for a bare prefix, an empty
  * path, and a malformed percent-escape -- decodeURIComponent throws a
  * URIError on input like `%E0%A4%A`, and a hash is plain client state that
  * arrives hand-edited, from stale history, and from bookmarks.
  */
-function noteTarget(hash: string): { path: string; cardId: string | null } | null {
+function noteTarget(hash: string): { path: string; cardId: string | null; block: number | null } | null {
   const raw = hash.slice(NOTE_PREFIX.length);
   if (raw === '') return null;
 
   const slash = raw.lastIndexOf('/');
   const trailing = slash >= 0 ? raw.slice(slash + 1) : '';
   const hasCard = CARD_ID.test(trailing);
-  const encodedPath = hasCard ? raw.slice(0, slash) : raw;
+  const hasBlock = !hasCard && BLOCK_SEGMENT.test(trailing);
+  const encodedPath = hasCard || hasBlock ? raw.slice(0, slash) : raw;
   if (encodedPath === '') return null;
 
   try {
     const path = decodeURIComponent(encodedPath);
     if (path === '') return null;
-    return { path, cardId: hasCard ? trailing : null };
+    return {
+      path,
+      cardId: hasCard ? trailing : null,
+      block: hasBlock ? Number(trailing.slice(1)) : null
+    };
   } catch {
     return null;
   }
+}
+
+export const SEARCH_PREFIX = '#search';
+
+/** Builds the hash carrying a search query, or the bare prefix for an empty one. */
+export function searchHash(query: string): string {
+  const trimmed = query.trim();
+  return trimmed === '' ? SEARCH_PREFIX : `${SEARCH_PREFIX}?q=${encodeURIComponent(trimmed)}`;
+}
+
+/**
+ * The only route carrying a query string. Parsed rather than strict-matched
+ * so the live query can live in the hash -- which is what makes Back from a
+ * note return to populated results instead of an empty box.
+ *
+ * `URLSearchParams` never throws on a malformed percent-escape; it
+ * substitutes U+FFFD instead. That is indistinguishable from a query that
+ * legitimately contains the replacement character, but a hash is plain
+ * client state that can arrive hand-edited, so the safer read is to treat
+ * either case as "could not parse" and fall back to an empty query.
+ */
+function searchQuery(hash: string): string {
+  const rest = hash.slice(SEARCH_PREFIX.length);
+  if (rest === '') return '';
+  if (!rest.startsWith('?')) return '';
+  const raw = new URLSearchParams(rest.slice(1)).get('q');
+  if (raw === null) return '';
+  return raw.includes('�') ? '' : raw;
 }
 
 /**
@@ -147,6 +197,8 @@ export function resumesSuspendedSession(hash: string, suspendedHash: string | nu
  * that starts a DIFFERENT session — means the reader has left for good.
  */
 export function retainsSuspendedSession(kind: RouteDecision['kind']): boolean {
+  // 'search' ends a suspended session, like every other non-session route:
+  // it is not one of the three hashes isSessionRoute recognizes.
   return kind === 'note' || kind === 'resume';
 }
 
@@ -213,13 +265,17 @@ export function decideRoute(
   // needs anyway for a note deleted since the hash was bookmarked.
   if (hash.startsWith(NOTE_PREFIX)) {
     const target = noteTarget(hash);
-    if (target) return { kind: 'note', path: target.path, cardId: target.cardId };
+    if (target) return { kind: 'note', path: target.path, cardId: target.cardId, block: target.block };
     return { kind: 'dashboard' };
   }
 
   if (hash === '#topics') return { kind: 'topics' };
 
   if (hash === '#settings') return { kind: 'settings' };
+
+  if (hash === SEARCH_PREFIX || hash.startsWith(`${SEARCH_PREFIX}?`)) {
+    return { kind: 'search', query: searchQuery(hash) };
+  }
 
   return { kind: 'dashboard' };
 }

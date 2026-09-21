@@ -1,19 +1,5 @@
 /* The note viewer. */
 
-/* A masked span keeps its width so revealing it reflows nothing --
-   reading flow has to survive the tap. */
-.is-masked {
-  filter: blur(6px);
-  cursor: pointer;
-  border-radius: var(--r-sm);
-  transition: filter 120ms ease-out;
-}
-.is-masked:hover { filter: blur(4px); }
-
-@media (prefers-reduced-motion: reduce) {
-  .is-masked { transition: none; }
-}
-
 /*
  * .screen (base.css) already supplies this section's flex sizing and
  * vertical padding, matching every other screen -- the side gutter comes
@@ -43,11 +29,6 @@
 .note-head-actions { display: flex; align-items: center; gap: var(--s3); }
 .note-head-actions [data-role="obsidian"] { margin-left: auto; }
 .note-title { font-size: var(--text-prompt); margin: 0; }
-.note-masked-bar {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: var(--s3); padding: var(--s3); margin-bottom: var(--s4);
-  border-radius: var(--r-md); font-size: var(--text-label);
-}
 /* Same automatic-minimum-size issue as .note-screen above, one level
    closer to .note-code: .note-body is itself a flex item (of .screen's
    column layout) and sits directly between the screen and the code block
@@ -69,7 +50,6 @@
 .note-citations { margin-top: var(--s6); font-size: var(--text-micro); }
 .note-empty { padding: var(--s6) var(--s4); text-align: center; color: var(--dim); }
 
-.note-masked-bar { background: var(--accent-soft); color: var(--accent-text); }
 .note-code { background: var(--surface); border: 1px solid var(--line); }
 .note-card { background: var(--surface); border: 1px solid var(--line); }
 .note-choice.is-correct { background: var(--ok-soft); color: var(--ok); }

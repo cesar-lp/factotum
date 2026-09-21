@@ -197,6 +197,33 @@ card is never pulled forward into it. A muted category can still be
 focused — muting only keeps a category out of the *daily* queue, and
 deliberately choosing it here is the point.
 
+When read-suppression (see [The note viewer](#the-note-viewer) below) has
+held cards back from today's queue, the dashboard names what happened
+instead of silently showing a smaller number: **"N cards deferred — you read
+their notes recently."**
+
+## Search
+
+The dashboard's **Search** button opens `#search`. The query lives in the
+URL hash itself (`#search?q=...`, written with `replaceState` rather than
+pushed as a new history entry), so a search is shareable and back/forward
+behaves sensibly. An empty query lists recently-read notes instead of
+results.
+
+Results are notes, not cards: a row opens the note, a chevron expands it
+in place to show the matching snippets, and tapping a snippet opens the
+note scrolled to that block. The scan covers note titles, tags, topic and
+category, citations, headings, prose (which includes cloze answers),
+list items, qa/mcq/recall prompts and answers, and code fences. Query
+terms are split on whitespace and must **all** match (AND, not OR), each
+at a word boundary with an **open right edge** — `hash` finds `hashing`,
+but `ip` does not match inside `multiple`.
+
+Search reads from `notes.json`, the same file the note viewer uses, so it
+is unavailable on a cold start with no network — if the service worker
+never got a chance to fetch and cache that file, there is nothing to
+search yet.
+
 ## Scripts
 
 Run with `npm run <script>` from the repo root.
@@ -381,20 +408,32 @@ surfacing it beforehand would spoil the card. The topics screen (above)
 also lists every category's notes directly, for browsing outside of review.
 
 Both open `#note/<path>`, an in-app viewer rather than a deep link out to
-Obsidian: **an answer is masked when its card is currently due, and shown
-for new cards and for cards still inside their retention window**, so
-reading a note never hands you the answer to a card you're about to be
-tested on — except the card you arrived from, which is never masked.
-Tapping a hidden answer reveals just that one; a header control reveals the
-whole note at once. Full design and rationale in
+Obsidian. There is no masking any more: **the viewer always shows
+everything**, including which mcq choice is correct. What protects review
+instead is **read-suppression** — opening a note defers its currently-**due**
+cards out of review for `Settings.readSuppressionHours` (default 24, range
+0–168; `0` turns the mechanic off entirely), controlled from the Settings
+screen (`#readSuppressionHours`, a number input, min 0 max 168). New
+cards are never deferred, since there's nothing to spoil. This is a filter on the queue, not
+a freeze on scheduling: FSRS state and due dates are untouched, so a deferred
+card is simply served later, once the suppression window has passed.
+Deferral applies to the daily queue and focused sessions — including a
+session already in progress, so reading a note mid-review removes that
+note's other cards from the rest of that session — but not to the "keep
+going" extension, which serves only new cards, and new cards are never
+deferred. Full design and rationale in
 `docs/superpowers/specs/2026-09-20-in-app-note-viewer-design.md`.
 
-**Opening a note mid-review doesn't end the session.** Going back lands you
-on the same card, revealed as you left it, with the progress counter, the
-rating tallies, the session timer and any card you rated Again all intact —
-the review screen is set aside while you read, not torn down and rebuilt.
-(A long prompt comes back scrolled to the top.) A full page reload still
-ends the session, as it always has.
+**Opening a note mid-review no longer guarantees the session comes back the
+same size.** Going back lands you on the same card, revealed as you left it,
+with the rating tallies, the session timer and any card you rated Again all
+intact — the review screen is set aside while you read, not torn down and
+rebuilt. But the progress counter can shrink: if the note you read owns other
+due cards later in this session, read-suppression removes them from it, so
+you might return to "4 of 17" where it read "4 of 20". That's expected, not a
+bug — the dashboard's deferred-cards line (above) is what tells you where
+they went. (A long prompt comes back scrolled to the top.) A full page reload
+still ends the session, as it always has.
 
 **Open in Obsidian** moved into the viewer's header. It still opens via an
 `obsidian://open` deep link and is still the better tool for *editing* a

@@ -5,19 +5,22 @@ import { getSettings, saveSettings } from './db/settings.js';
 import { mergeDeck } from './db/deck.js';
 import { loadReviews, newCardsSeenToday } from './db/reviews.js';
 import { getLastSevenDays, getStreak } from './db/stats.js';
-import { buildExtension, buildFocusSession, buildSession, selectEnabled } from './scheduler/queue.js';
+import {
+  buildExtension, buildFocusSession, buildSession, countSuppressed, selectEnabled, selectNotRecentlyRead
+} from './scheduler/queue.js';
 import { summarizeTopics, notesByCategory } from './topics.js';
 import { renderDashboard } from './ui/dashboard.js';
 import { renderTopics } from './ui/topics.js';
-import { startReview } from './ui/review.js';
+import { startReview, type ReviewController } from './ui/review.js';
 import { renderSettings } from './ui/settings.js';
 import { renderNote } from './ui/note.js';
+import { renderSearch } from './ui/search.js';
 import { loadNotes, findNote, prefetchNotes } from './db/notes.js';
-import { maskedCardIds } from './ui/note-mask.js';
+import { loadNoteReads, recordNoteRead } from './db/note-reads.js';
 import { obsidianUrl } from './ui/obsidian.js';
 import {
-  decideRoute, focusHash, noteHash, resumesSuspendedSession, retainsSuspendedSession,
-  type DashboardState
+  decideRoute, focusHash, noteHash, noteBlockHash, searchHash, SEARCH_PREFIX, resumesSuspendedSession,
+  retainsSuspendedSession, type DashboardState
 } from './route.js';
 import type { Deck } from '../../pipeline/src/types.js';
 
@@ -30,6 +33,12 @@ const REPO = 'cesar-lp/factotum';
 // against `window.location.hash` alone catches "navigated away" but not
 // "back on #topics via a different route() call in the meantime".
 let topicsRenderId = 0;
+
+// Same guard as topicsRenderId above, for the same reason: loadNotes() is a
+// ~1MB fetch, and a reader who navigated away during that await must not
+// have the search screen painted back over wherever they went once it
+// resolves.
+let searchRenderId = 0;
 
 /**
  * The live review screen, retained across a note detour.
@@ -54,7 +63,7 @@ let topicsRenderId = 0;
  * Not persisted: a full reload legitimately ends the session, exactly as it
  * does today.
  */
-let suspendedReview: { hash: string; node: HTMLElement } | null = null;
+let suspendedReview: { hash: string; node: HTMLElement; controller: ReviewController } | null = null;
 
 /**
  * Fetches and merges the deck. Never throws: a failed fetch/parse is a
@@ -77,7 +86,7 @@ async function syncDeck(db: FactotumDb): Promise<boolean> {
 }
 
 export async function loadDashboardState(db: FactotumDb, now: Date): Promise<DashboardState> {
-  const [cards, reviews, settings, seen, streak, lastSevenDays] = await Promise.all([
+  const [cards, reviews, settings, seen, streak, lastSevenDays, reads] = await Promise.all([
     db.getAll('cards'),
     loadReviews(db),
     getSettings(db),
@@ -86,7 +95,8 @@ export async function loadDashboardState(db: FactotumDb, now: Date): Promise<Das
     // queue below, so the streak's notion of "today" cannot drift from the
     // one the daily new-card allowance is counted against.
     getStreak(db, now),
-    getLastSevenDays(db, now)
+    getLastSevenDays(db, now),
+    loadNoteReads(db)
   ]);
 
   // The daily queue respects the user's mutes; the topics summary does not
@@ -94,17 +104,33 @@ export async function loadDashboardState(db: FactotumDb, now: Date): Promise<Das
   // are allowed to target a muted category on purpose.
   const enabled = selectEnabled(cards, new Set(settings.disabledCategories));
 
+  // Suppression composes AFTER muting and BEFORE the builders, the same
+  // seam selectEnabled already occupies, so neither filter knows about the
+  // other and `buildSession` keeps exactly one job.
+  const servable = selectNotRecentlyRead(enabled, reviews, reads, now, settings.readSuppressionHours);
+  const deferredCount = countSuppressed(enabled, reviews, reads, now, settings.readSuppressionHours);
+
   const session = buildSession({
-    cards: enabled,
+    cards: servable,
     reviews,
     now,
     newCardsPerDay: settings.newCardsPerDay,
     newCardsSeenToday: seen
   });
-  const extension = buildExtension({ cards: enabled, reviews });
+  const extension = buildExtension({ cards: servable, reviews });
   const topics = summarizeTopics(cards, reviews, now);
 
-  return { session, extension, newCardsSeenToday: seen, streak, lastSevenDays, topics };
+  return { session, extension, newCardsSeenToday: seen, streak, lastSevenDays, topics, deferredCount };
+}
+
+/**
+ * Applied whenever a suspended review screen is reattached. Recomputed from
+ * the store rather than from "which note did we just open", so a detour
+ * through several notes is handled by the same code path as one.
+ */
+async function applyReadsToResumed(db: FactotumDb, controller: ReviewController): Promise<void> {
+  const [settings, reads] = await Promise.all([getSettings(db), loadNoteReads(db)]);
+  controller.dropRead(reads, new Date(), settings.readSuppressionHours);
 }
 
 async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: boolean): Promise<void> {
@@ -121,6 +147,7 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
   // closure they keep alive all survive being taken out of the document.
   if (suspendedReview && resumesSuspendedSession(hash, suspendedReview.hash)) {
     appRoot.replaceChildren(suspendedReview.node);
+    await applyReadsToResumed(db, suspendedReview.controller);
     return;
   }
 
@@ -133,6 +160,7 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
   // ever drift, the answer is a correct resume rather than a lost session.
   if (decision.kind === 'resume' && suspendedReview) {
     appRoot.replaceChildren(suspendedReview.node);
+    await applyReadsToResumed(db, suspendedReview.controller);
     return;
   }
 
@@ -155,9 +183,11 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
     // a box. `.screen` stays the direct flex item of #app it has always
     // been, so no layout rule in base.css or review.css has to know it.
     node.className = 'screen-host';
-    suspendedReview = { hash, node };
     appRoot.replaceChildren(node);
-    await startReview(node, { db, session, repo: REPO, onDone });
+    const controller = await startReview(node, { db, session, repo: REPO, onDone });
+    // Assigned after startReview resolves, since the controller does not
+    // exist before then.
+    suspendedReview = { hash, node, controller };
   };
 
   if (decision.kind === 'review') {
@@ -171,9 +201,17 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
   }
 
   if (decision.kind === 'focus') {
-    const [cards, reviews] = await Promise.all([db.getAll('cards'), loadReviews(db)]);
+    const [cards, reviews, settings, reads] = await Promise.all([
+      db.getAll('cards'), loadReviews(db), getSettings(db), loadNoteReads(db)
+    ]);
+    // Muting is a preference the user is overriding on purpose by choosing
+    // this category, so `selectEnabled` stays out of focus mode. Suppression
+    // is not a preference -- it is a measurement-validity rule, and there is
+    // no version of "test me on the paragraph I read four minutes ago" worth
+    // honouring. Hence the asymmetry.
+    const servable = selectNotRecentlyRead(cards, reviews, reads, now, settings.readSuppressionHours);
     await begin(
-      buildFocusSession({ cards, reviews, now, category: decision.category }),
+      buildFocusSession({ cards: servable, reviews, now, category: decision.category }),
       // Back to the picker, not the dashboard — a focused session lands you
       // where you launched it.
       () => { window.location.hash = '#topics'; }
@@ -182,10 +220,19 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
   }
 
   if (decision.kind === 'note') {
-    const [notes, reviews, settings] = await Promise.all([
-      loadNotes(), loadReviews(db), getSettings(db)
+    const [notes, settings] = await Promise.all([
+      loadNotes(), getSettings(db)
     ]);
     const note = notes ? findNote(notes, decision.path) : null;
+    // Recorded on OPEN, not on dwell time or scroll depth. Opening and
+    // immediately backing out defers that note's due cards by a day, which
+    // is trivially recoverable -- whereas a dwell threshold means timers,
+    // visibility handling and a new class of flaky test for a problem that
+    // resolves itself tomorrow.
+    //
+    // Only for a note that actually exists: a stale or mistyped path must
+    // not write a read for something the reader never saw.
+    if (note) await recordNoteRead(db, decision.path, now, settings.readSuppressionHours);
     const card = note
       ? (await db.getAll('cards')).find((c) => c.source.path === decision.path) ?? null
       : null;
@@ -193,8 +240,8 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
     renderNote(appRoot, {
       note,
       available: notes !== null,
-      masked: note ? maskedCardIds(note, reviews, now, decision.cardId) : new Set<string>(),
       arrivedFrom: decision.cardId,
+      arrivedAtBlock: decision.block,
       // Obsidian is demoted, not deleted: on a Mac it is still the better
       // tool for EDITING a note, which this viewer will never do.
       obsidianHref: card ? obsidianUrl(card, settings.obsidianVault) : null,
@@ -272,6 +319,35 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
     return;
   }
 
+  if (decision.kind === 'search') {
+    const renderId = ++searchRenderId;
+    const [notes, reads] = await Promise.all([loadNotes(), loadNoteReads(db)]);
+    // Superseded by a newer visit to this branch in the meantime.
+    if (renderId !== searchRenderId) return;
+    // The reader navigated away (back, a result, settings) while this was
+    // in flight -- do not paint the search screen over wherever they went.
+    if (!window.location.hash.startsWith(SEARCH_PREFIX)) return;
+    // Newest first. `noteReads` is already maintained by suppression, so
+    // the landing screen costs no extra state.
+    const recentPaths = Object.entries(reads)
+      .sort(([, a], [, b]) => b - a)
+      .map(([path]) => path);
+    renderSearch(appRoot, {
+      query: decision.query,
+      notes,
+      recentPaths,
+      // replaceState, not assignment: typing must not stack a history
+      // entry per keystroke, but the hash still has to carry the query so
+      // Back from a note returns to populated results.
+      onQueryChange: (q) => { window.history.replaceState(null, '', searchHash(q)); },
+      onOpen: (path, block) => {
+        window.location.hash = block === null ? noteHash(path) : noteBlockHash(path, block);
+      },
+      onBack: () => { window.location.hash = ''; }
+    });
+    return;
+  }
+
   if (hash === '#review-extend' || hash.startsWith('#focus/')) {
     // Stale/invalid entry into a session route (due cards exist again,
     // nothing left to extend into, or a focus hash whose category is gone)
@@ -285,13 +361,15 @@ async function route(appRoot: HTMLElement, db: FactotumDb, deckUnavailable: bool
     dueCount: state.session.length,
     newCardsRemaining: state.extension.length,
     newCardsSeenToday: state.newCardsSeenToday,
+    deferredCount: state.deferredCount,
     streak: state.streak,
     lastSevenDays: state.lastSevenDays,
     deckUnavailable,
     onStart: () => { window.location.hash = '#review'; },
     onKeepGoing: () => { window.location.hash = '#review-extend'; },
     onTopics: () => { window.location.hash = '#topics'; },
-    onSettings: () => { window.location.hash = '#settings'; }
+    onSettings: () => { window.location.hash = '#settings'; },
+    onSearch: () => { window.location.hash = '#search'; }
   });
 
   // Warms notes.json once the common case (the dashboard) is up, so a note

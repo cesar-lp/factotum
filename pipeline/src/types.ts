@@ -91,6 +91,7 @@ export interface NoteDoc {
   title: string;
   topic: string;
   category: string;
+  tags: string[];
   citations: string[];
   blocks: NoteBlock[];
 }

@@ -320,6 +320,7 @@ export function buildNotes(notes: ParsedNote[], bodies: Map<string, string>, now
       title: noteTitle(note.path, blocks),
       topic: note.topic,
       category: note.category,
+      tags: note.tags,
       citations: note.citations,
       blocks
     };

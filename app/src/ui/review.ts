@@ -5,6 +5,7 @@ import type { Outcome } from '../scheduler/fsrs.js';
 import { initialState, isStillLearning, previewIntervals, ratingFor } from '../scheduler/fsrs.js';
 import { loadReviews, recordReview, flagCard } from '../db/reviews.js';
 import { getSettings } from '../db/settings.js';
+import { isRecentlyRead, type NoteReads } from '../db/note-reads.js';
 import { checkCloze, renderActions, renderPrompt, shuffle } from './renderers.js';
 import { issueUrl } from './flag.js';
 import { renderSummary, type RatingCounts } from './summary.js';
@@ -167,6 +168,35 @@ export function distinctPosition(session: StoredCard[], index: number): number {
   return seen.size;
 }
 
+/**
+ * Removes cards from a LIVE session whose notes were read during a detour
+ * into the note viewer, returning the survivors.
+ *
+ * Three invariants, all pinned by tests:
+ *
+ * 1. Nothing at or before `index` is removed. Those cards are already
+ *    rated, or are the one on screen that still owes a rating.
+ * 2. `arrivedFrom` is never removed. Currently subsumed by rule 1 (a note
+ *    is only ever opened from the card at `index`), but stated separately
+ *    so a future change to how notes are reached cannot silently break it.
+ * 3. Removals happen strictly AFTER the cursor, so `index` stays valid.
+ *    This is what keeps the change away from requeueIndex/promoteReady,
+ *    which are the most delicate code in this file: neither ever observes
+ *    a shifted cursor.
+ */
+export function dropRecentlyRead(
+  session: StoredCard[],
+  index: number,
+  drop: ReadonlySet<string>,
+  arrivedFrom: string | null
+): StoredCard[] {
+  return session.filter((card, i) => {
+    if (i <= index) return true;
+    if (card.id === arrivedFrom) return true;
+    return !drop.has(card.id);
+  });
+}
+
 /** Maps an FSRS Rating to the key summary.ts's per-rating breakdown uses. Rating.Manual never reaches here -- applyRating/ratingFor never produce it. */
 function ratingKey(rating: Rating): keyof RatingCounts {
   switch (rating) {
@@ -183,6 +213,16 @@ function ratingKey(rating: Rating): keyof RatingCounts {
   }
 }
 
+/**
+ * The handle `main.ts` keeps on a suspended review screen. The screen is
+ * resumed by reattaching its detached DOM node, so NO code in this module
+ * runs on resume -- this is the only hook through which the outside world
+ * can tell a live session that something changed while it was set aside.
+ */
+export interface ReviewController {
+  dropRead(reads: NoteReads, now: Date, windowHours: number): void;
+}
+
 export interface ReviewDeps {
   db: FactotumDb;
   session: StoredCard[];
@@ -190,14 +230,19 @@ export interface ReviewDeps {
   onDone: (reviewed: number) => void;
 }
 
-export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<void> {
+export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<ReviewController> {
   const settings = await getSettings(deps.db);
   let index = 0;
   let reviewed = 0;
 
   // Captured ONCE, before any requeue splices into deps.session. See
   // distinctCardCount's doc comment.
-  const totalCards = distinctCardCount(deps.session);
+  //
+  // `let`, not `const`: dropRead below shrinks the session when the reader
+  // detours into a note, and the denominator has to follow or the progress
+  // bar overruns 100%. Requeues never grow it (that reasoning still holds);
+  // suppression is the one thing allowed to shrink it.
+  let totalCards = distinctCardCount(deps.session);
 
   // Current on-disk FSRS state per card, kept in sync as each submit()
   // resolves, so previewIntervals() (used for the rating row's interval
@@ -488,5 +533,57 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
     });
   }
 
+  const dropRead = (reads: NoteReads, at: Date, windowHours: number): void => {
+    const drop = new Set(
+      deps.session
+        // A card with review state is a due card; a new card is never
+        // suppressed (see selectNotRecentlyRead's comment for why).
+        .filter((c) => reviewStates.has(c.id) && isRecentlyRead(reads, c.source.path, at, windowHours))
+        .map((c) => c.id)
+    );
+    if (drop.size === 0) return;
+
+    const current = deps.session[index] ?? null;
+    const survivors = dropRecentlyRead(deps.session, index, drop, current?.id ?? null);
+    if (survivors.length === deps.session.length) return;
+    // Captured before the splice below overwrites deps.session with
+    // survivors, which would otherwise leave this at 0.
+    const removedCount = deps.session.length - survivors.length;
+
+    // splice, never reassign: deps.session is owned by main.ts and this
+    // module's closure captured THIS array. Rebinding it would leave the
+    // screen rendering from an array nobody else can see.
+    deps.session.splice(0, deps.session.length, ...survivors);
+    totalCards = distinctCardCount(deps.session);
+
+    // Patch the header in place rather than calling draw(): a redraw would
+    // rebuild the current card and throw away the revealed state the
+    // reader left it in, which the note detour exists to preserve.
+    const position = distinctPosition(deps.session, index);
+    const counter = root.querySelector('.review-counter');
+    if (counter) counter.textContent = `${position} / ${totalCards}`;
+    const bar = root.querySelector<HTMLElement>('.progress i');
+    // totalCards can only reach 0 here if suppression removed every
+    // remaining card; guard against a NaN width rather than divide by it.
+    if (bar && totalCards > 0) bar.style.width = `${(position / totalCards) * 100}%`;
+
+    // Names what just happened -- the spec requires "a line on return
+    // naming the deferred cards" rather than letting the counter silently
+    // shrink with no explanation. Appended to the header (not the body),
+    // since draw() rebuilds root.innerHTML wholesale for every subsequent
+    // card, this line disappears the instant the reader moves on -- that
+    // is intentional, it explains THIS return, not the rest of the session.
+    const header = root.querySelector('.review-header');
+    if (header) {
+      const noun = removedCount === 1 ? 'card' : 'cards';
+      const notice = document.createElement('p');
+      notice.className = 'review-deferred';
+      notice.textContent = `${removedCount} ${noun} deferred — you read their notes`;
+      header.appendChild(notice);
+    }
+  };
+
   draw(false);
+
+  return { dropRead };
 }

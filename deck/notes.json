@@ -1,11 +1,18 @@
 {
-  "generatedAt": "2026-09-21T01:04:12.400Z",
+  "generatedAt": "2026-09-21T01:46:49.285Z",
   "notes": [
     {
       "path": "vault/api/grpc/choosing-between-grpc-rest-and-graphql.md",
       "title": "Choosing between gRPC, REST, and GraphQL",
       "topic": "api-design",
       "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "rest",
+        "graphql",
+        "api-design",
+        "tradeoffs"
+      ],
       "citations": [
         "gRPC documentation (grpc.io)"
       ],
@@ -188,6 +195,13 @@
       "title": "Deadlines and Cancellation",
       "topic": "api-design",
       "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "deadlines",
+        "cancellation",
+        "distributed-systems",
+        "timeouts"
+      ],
       "citations": [
         "gRPC Core Concepts (grpc.io)"
       ],
@@ -317,6 +331,13 @@
       "title": "gRPC over HTTP/2, and gRPC-web",
       "topic": "api-design",
       "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "http2",
+        "grpc-web",
+        "wire-mapping",
+        "browsers"
+      ],
       "citations": [
         "gRPC over HTTP/2 Protocol Specification",
         "gRPC-Web documentation"
@@ -488,6 +509,13 @@
       "title": "IDL and generated stubs",
       "topic": "api-design",
       "category": "api-grpc",
+      "tags": [
+        "protobuf",
+        "contract-first",
+        "code-generation",
+        "stubs",
+        "idl"
+      ],
       "citations": [
         "Protocol Buffers Language Guide (proto3)",
         "Protocol Buffers Encoding"
@@ -636,6 +664,13 @@
       "title": "Metadata and Interceptors",
       "topic": "api-design",
       "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "metadata",
+        "interceptors",
+        "cross-cutting-concerns",
+        "rpc"
+      ],
       "citations": [
         "gRPC Core Concepts (grpc.io)"
       ],
@@ -765,6 +800,13 @@
       "title": "Protobuf schema and wire format",
       "topic": "api-design",
       "category": "api-grpc",
+      "tags": [
+        "protobuf",
+        "wire-format",
+        "varint",
+        "schema-design",
+        "serialization"
+      ],
       "citations": [
         "Protocol Buffers Language Guide (proto3)",
         "Protocol Buffers Encoding"
@@ -900,6 +942,13 @@
       "title": "Protobuf schema evolution",
       "topic": "api-design",
       "category": "api-grpc",
+      "tags": [
+        "protobuf",
+        "schema-evolution",
+        "reserved-fields",
+        "compatibility",
+        "proto2"
+      ],
       "citations": [
         "Protocol Buffers Language Guide (proto3)",
         "Protocol Buffers Encoding"
@@ -1051,6 +1100,13 @@
       "title": "Retries, load balancing, and connection reuse",
       "topic": "api-design",
       "category": "api-grpc",
+      "tags": [
+        "load-balancing",
+        "retries",
+        "backoff",
+        "hedging",
+        "grpc"
+      ],
       "citations": [
         "gRPC documentation (grpc.io)"
       ],
@@ -1219,6 +1275,12 @@
       "title": "Status codes and the error model",
       "topic": "api-design",
       "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "status-codes",
+        "error-handling",
+        "api-design"
+      ],
       "citations": [
         "gRPC over HTTP/2 Protocol Specification",
         "gRPC-Web documentation"
@@ -1433,6 +1495,12 @@
       "title": "Streaming semantics and flow control",
       "topic": "api-design",
       "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "streaming",
+        "backpressure",
+        "half-close"
+      ],
       "citations": [
         "gRPC Core Concepts (grpc.io)"
       ],
@@ -1562,6 +1630,12 @@
       "title": "The four gRPC call types",
       "topic": "api-design",
       "category": "api-grpc",
+      "tags": [
+        "grpc",
+        "streaming",
+        "service-contract",
+        "rpc"
+      ],
       "citations": [
         "gRPC Core Concepts (grpc.io)"
       ],
@@ -1686,6 +1760,13 @@
       "title": "API versioning and evolution",
       "topic": "api-design",
       "category": "api-rest",
+      "tags": [
+        "api-versioning",
+        "breaking-changes",
+        "deprecation",
+        "tolerant-reader",
+        "sunset-header"
+      ],
       "citations": [
         "Richardson & Ruby, RESTful Web Services",
         "RFC 9110",
@@ -1841,6 +1922,13 @@
       "title": "Async operations and long-running requests",
       "topic": "api-design",
       "category": "api-rest",
+      "tags": [
+        "async-operations",
+        "job-resource",
+        "polling",
+        "webhooks",
+        "long-running-requests"
+      ],
       "citations": [
         "RFC 9110",
         "WHATWG Fetch Standard (CORS)"
@@ -1982,6 +2070,13 @@
       "title": "Collection queries: pagination and filtering",
       "topic": "api-design",
       "category": "api-rest",
+      "tags": [
+        "pagination",
+        "keyset",
+        "filtering",
+        "sorting",
+        "rest-api"
+      ],
       "citations": [
         "RFC 9457 (Problem Details for HTTP APIs)",
         "RFC 8288 (Web Linking)"
@@ -2185,6 +2280,13 @@
       "title": "CORS and browser-enforced access",
       "topic": "api-design",
       "category": "api-rest",
+      "tags": [
+        "cors",
+        "same-origin-policy",
+        "preflight",
+        "browser-security",
+        "fetch-standard"
+      ],
       "citations": [
         "WHATWG Fetch Standard (CORS)",
         "RFC 9110",
@@ -2332,6 +2434,12 @@
       "title": "Error responses and Problem Details",
       "topic": "api-design",
       "category": "api-rest",
+      "tags": [
+        "error-handling",
+        "problem-details",
+        "validation",
+        "rest-api"
+      ],
       "citations": [
         "RFC 9457 (Problem Details for HTTP APIs)",
         "RFC 8288 (Web Linking)"
@@ -2492,6 +2600,13 @@
       "title": "Idempotency keys and safe retries",
       "topic": "api-design",
       "category": "api-rest",
+      "tags": [
+        "idempotency-key",
+        "retries",
+        "post",
+        "reliability",
+        "rest"
+      ],
       "citations": [
         "RFC 9110 (HTTP Semantics)",
         "IETF Idempotency-Key HTTP Header Field (draft)"
@@ -2628,6 +2743,13 @@
       "title": "Optimistic concurrency and conditional writes",
       "topic": "api-design",
       "category": "api-rest",
+      "tags": [
+        "concurrency",
+        "conditional-requests",
+        "optimistic-locking",
+        "preconditions",
+        "rest"
+      ],
       "citations": [
         "RFC 9110 (HTTP Semantics)"
       ],
@@ -2760,6 +2882,13 @@
       "title": "Representations and media types",
       "topic": "api-design",
       "category": "api-rest",
+      "tags": [
+        "rest",
+        "representations",
+        "media-types",
+        "content-negotiation",
+        "api-design"
+      ],
       "citations": [
         "Fielding, Architectural Styles and the Design of Network-based Software Architectures, Ch. 5"
       ],
@@ -2864,6 +2993,13 @@
       "title": "Resource modelling and URI design",
       "topic": "api-design",
       "category": "api-rest",
+      "tags": [
+        "rest",
+        "resource-modelling",
+        "uri-design",
+        "identifiers",
+        "api-design"
+      ],
       "citations": [
         "Fielding, Architectural Styles and the Design of Network-based Software Architectures, Ch. 5"
       ],
@@ -3003,6 +3139,13 @@
       "title": "REST constraints and the uniform interface",
       "topic": "api-design",
       "category": "api-rest",
+      "tags": [
+        "rest",
+        "architectural-style",
+        "uniform-interface",
+        "statelessness",
+        "api-design"
+      ],
       "citations": [
         "Fielding, Architectural Styles and the Design of Network-based Software Architectures, Ch. 5"
       ],
@@ -3138,6 +3281,13 @@
       "title": "Richardson maturity model and HATEOAS",
       "topic": "api-design",
       "category": "api-rest",
+      "tags": [
+        "rest",
+        "hateoas",
+        "richardson-maturity-model",
+        "hypermedia",
+        "api-design"
+      ],
       "citations": [
         "Richardson & Ruby, RESTful Web Services",
         "RFC 9110"
@@ -3298,6 +3448,12 @@
       "title": "Concurrent Linked Lists: A Synchronization Case Study",
       "topic": "concurrency",
       "category": "amp",
+      "tags": [
+        "linked-lists",
+        "optimistic-synchronization",
+        "lazy-synchronization",
+        "lock-free"
+      ],
       "citations": [
         "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 9 (Linked Lists: The Role of Locking)",
         "Heller et al., \"A Lazy Concurrent List-Based Set Algorithm\" (2005)"
@@ -3392,6 +3548,12 @@
       "title": "Concurrent Stacks and Queues: Treiber, Michael-Scott, and the ABA Problem",
       "topic": "concurrency",
       "category": "amp",
+      "tags": [
+        "treiber-stack",
+        "michael-scott-queue",
+        "aba-problem",
+        "hazard-pointers"
+      ],
       "citations": [
         "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 10-11 (Concurrent Queues and the ABA Problem; Concurrent Stacks and Elimination)",
         "Michael & Scott, \"Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms\" (1996)"
@@ -3499,6 +3661,12 @@
       "title": "Consensus and the Consensus Number Hierarchy",
       "topic": "concurrency",
       "category": "amp",
+      "tags": [
+        "consensus",
+        "compare-and-swap",
+        "universal-construction",
+        "wait-free"
+      ],
       "citations": [
         "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 5-6 (The Relative Power of Primitive Synchronization Operations; Universality of Consensus)",
         "Herlihy, \"Wait-Free Synchronization\" (1991)"
@@ -3599,6 +3767,12 @@
       "title": "Linearizability, Sequential Consistency, and Quiescent Consistency",
       "topic": "concurrency",
       "category": "amp",
+      "tags": [
+        "linearizability",
+        "sequential-consistency",
+        "quiescent-consistency",
+        "correctness-conditions"
+      ],
       "citations": [
         "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 3 (Concurrent Objects)",
         "Herlihy & Wing, \"Linearizability: A Correctness Condition for Concurrent Objects\" (1990)"
@@ -3693,6 +3867,13 @@
       "title": "Memory Models, Reordering, and Fences",
       "topic": "concurrency",
       "category": "amp",
+      "tags": [
+        "memory-models",
+        "reordering",
+        "fences",
+        "atomics",
+        "volatile"
+      ],
       "citations": [
         "Herlihy & Shavit, The Art of Multiprocessor Programming, Appendix A (Software Basics, Java Memory Model); Appendix B (Hardware Basics, Relaxed Memory Consistency)",
         "Adve & Gharachorloo, \"Shared Memory Consistency Models: A Tutorial\" (1996)"
@@ -3799,6 +3980,12 @@
       "title": "Mutual Exclusion: Correctness Conditions and Read/Write-Only Locks",
       "topic": "concurrency",
       "category": "amp",
+      "tags": [
+        "mutual-exclusion",
+        "peterson-lock",
+        "bakery-algorithm",
+        "progress-conditions"
+      ],
       "citations": [
         "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 2 (Mutual Exclusion)",
         "Lamport, \"A New Solution of Dijkstra's Concurrent Programming Problem\" (1974)",
@@ -3917,6 +4104,12 @@
       "title": "Progress Conditions: Blocking, Obstruction-Free, Lock-Free, Wait-Free",
       "topic": "concurrency",
       "category": "amp",
+      "tags": [
+        "progress-conditions",
+        "lock-free",
+        "wait-free",
+        "obstruction-free"
+      ],
       "citations": [
         "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 3 (Concurrent Objects)",
         "Herlihy, \"Wait-Free Synchronization\" (1991)"
@@ -4029,6 +4222,12 @@
       "title": "The Shared-Memory Model: What a Register Actually Promises",
       "topic": "concurrency",
       "category": "amp",
+      "tags": [
+        "registers",
+        "atomicity",
+        "shared-memory",
+        "memory-hierarchy"
+      ],
       "citations": [
         "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 4 (Foundations of Shared Memory)",
         "Lamport, \"On Interprocess Communication, Parts I & II\" (1986)"
@@ -4123,6 +4322,14 @@
       "title": "Spin Locks in Practice: Coherence Traffic, Backoff, and Queue Locks",
       "topic": "concurrency",
       "category": "amp",
+      "tags": [
+        "spin-locks",
+        "cache-coherence",
+        "backoff",
+        "queue-locks",
+        "mcs-lock",
+        "clh-lock"
+      ],
       "citations": [
         "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 7 (Spin Locks and Contention)",
         "Mellor-Crummey & Scott, \"Algorithms for Scalable Synchronization on Shared-Memory Multiprocessors\" (1991)"
@@ -4235,6 +4442,12 @@
       "title": "Work Distribution: Work Stealing as a Concurrency Problem",
       "topic": "concurrency",
       "category": "amp",
+      "tags": [
+        "work-stealing",
+        "load-balancing",
+        "deques",
+        "scheduling"
+      ],
       "citations": [
         "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 16 (Futures, Scheduling, and Work Distribution)",
         "Blumofe & Leiserson, \"Scheduling Multithreaded Computations by Work Stealing\" (1999)"
@@ -4335,6 +4548,13 @@
       "title": "API Types: REST, HTTP, and WebSocket",
       "topic": "aws",
       "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "rest-api",
+        "http-api",
+        "websocket-api",
+        "api-types"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon API Gateway, 'Choose between REST APIs and HTTP APIs', 'About WebSocket APIs in API Gateway'"
       ],
@@ -4432,6 +4652,14 @@
       "title": "Authorizers and Access Control",
       "topic": "aws",
       "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "authorizers",
+        "iam",
+        "cognito",
+        "lambda-authorizer",
+        "resource-policy"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon API Gateway, 'Control access to a REST API using Amazon Cognito user pools', 'Use API Gateway Lambda authorizers', 'Control access to an API with API Gateway resource policies'"
       ],
@@ -4541,6 +4769,14 @@
       "title": "Caching and Observability",
       "topic": "aws",
       "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "caching",
+        "invalidation",
+        "logging",
+        "metrics",
+        "x-ray"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon API Gateway, 'Enable API caching to enhance responsiveness', 'Setting up CloudWatch API logging and metrics', 'Trace requests with X-Ray'"
       ],
@@ -4643,6 +4879,12 @@
       "title": "Lambda Proxy Integration",
       "topic": "aws",
       "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "lambda",
+        "proxy-integration",
+        "event-shape"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon API Gateway, 'Set up Lambda proxy integrations', 'Working with AWS Lambda proxy integrations'"
       ],
@@ -4750,6 +4992,13 @@
       "title": "Request Validation and Mapping Templates",
       "topic": "aws",
       "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "request-validation",
+        "mapping-templates",
+        "vtl",
+        "non-proxy"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon API Gateway, 'Set up basic request validation', 'Set up data transformations for a REST API'"
       ],
@@ -4842,6 +5091,13 @@
       "title": "Resources, Methods, and Integrations",
       "topic": "aws",
       "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "resources",
+        "methods",
+        "integrations",
+        "routing"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon API Gateway, 'Set up API integrations for REST API', 'Set up a REST API method'"
       ],
@@ -4977,6 +5233,13 @@
       "title": "Stages, Deployments, and Canary Releases",
       "topic": "aws",
       "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "stages",
+        "deployments",
+        "stage-variables",
+        "canary"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon API Gateway, 'Deploy a REST API in Amazon API Gateway', 'Canary release deployments for REST APIs'"
       ],
@@ -5074,6 +5337,13 @@
       "title": "Throttling and Usage Plans",
       "topic": "aws",
       "category": "aws-api-gateway",
+      "tags": [
+        "api-gateway",
+        "throttling",
+        "token-bucket",
+        "api-keys",
+        "usage-plans"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon API Gateway, 'Throttle API requests for better throughput', 'Create and use usage plans with API keys'"
       ],
@@ -5177,6 +5447,13 @@
       "title": "Capacity Modes and Throttling",
       "topic": "aws",
       "category": "aws-dynamodb",
+      "tags": [
+        "dynamodb",
+        "capacity",
+        "throttling",
+        "backoff",
+        "on-demand"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon DynamoDB, 'Read/write capacity mode'"
       ],
@@ -5279,6 +5556,12 @@
       "title": "Consistency and Read Modes",
       "topic": "aws",
       "category": "aws-dynamodb",
+      "tags": [
+        "dynamodb",
+        "consistency",
+        "eventual-consistency",
+        "replication"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon DynamoDB, 'Read consistency'"
       ],
@@ -5383,6 +5666,12 @@
       "title": "Data Model and Keys",
       "topic": "aws",
       "category": "aws-dynamodb",
+      "tags": [
+        "dynamodb",
+        "data-model",
+        "partition-key",
+        "sort-key"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon DynamoDB, 'Core components of Amazon DynamoDB'"
       ],
@@ -5492,6 +5781,12 @@
       "title": "Partitioning and Hot Keys",
       "topic": "aws",
       "category": "aws-dynamodb",
+      "tags": [
+        "dynamodb",
+        "partitioning",
+        "hot-partition",
+        "key-design"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon DynamoDB, 'Partitions and data distribution'"
       ],
@@ -5618,6 +5913,13 @@
       "title": "Query, Scan, and Access-Pattern-First Modeling",
       "topic": "aws",
       "category": "aws-dynamodb",
+      "tags": [
+        "dynamodb",
+        "query",
+        "scan",
+        "access-patterns",
+        "data-modeling"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon DynamoDB, 'Working with queries' and 'Working with scans'"
       ],
@@ -5732,6 +6034,13 @@
       "title": "Secondary Indexes: GSI vs LSI",
       "topic": "aws",
       "category": "aws-dynamodb",
+      "tags": [
+        "dynamodb",
+        "gsi",
+        "lsi",
+        "secondary-index",
+        "projections"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon DynamoDB, 'Improving data access with secondary indexes'"
       ],
@@ -5852,6 +6161,12 @@
       "title": "Single-Table Design",
       "topic": "aws",
       "category": "aws-dynamodb",
+      "tags": [
+        "dynamodb",
+        "single-table-design",
+        "key-overloading",
+        "data-modeling"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon DynamoDB, 'Best practices for designing and using partition keys'"
       ],
@@ -5950,6 +6265,12 @@
       "title": "Streams and Change Data Capture",
       "topic": "aws",
       "category": "aws-dynamodb",
+      "tags": [
+        "dynamodb",
+        "streams",
+        "change-data-capture",
+        "ordering"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon DynamoDB, 'Capturing table activity with DynamoDB Streams'"
       ],
@@ -6059,6 +6380,12 @@
       "title": "Transactions and Conditional Writes",
       "topic": "aws",
       "category": "aws-dynamodb",
+      "tags": [
+        "dynamodb",
+        "transactions",
+        "conditional-writes",
+        "optimistic-concurrency"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon DynamoDB, 'Managing complex workflows with transactions'"
       ],
@@ -6163,6 +6490,12 @@
       "title": "Conditions and Context Keys",
       "topic": "aws",
       "category": "aws-iam",
+      "tags": [
+        "iam",
+        "conditions",
+        "context-keys",
+        "least-privilege"
+      ],
       "citations": [
         "AWS Identity and Access Management User Guide — 'IAM JSON policy elements: Condition'"
       ],
@@ -6318,6 +6651,12 @@
       "title": "Cross-Account Access",
       "topic": "aws",
       "category": "aws-iam",
+      "tags": [
+        "iam",
+        "cross-account",
+        "resource-policy",
+        "assume-role"
+      ],
       "citations": [
         "AWS Identity and Access Management User Guide — 'Providing access to AWS accounts owned by third parties'"
       ],
@@ -6415,6 +6754,12 @@
       "title": "Least Privilege in Practice",
       "topic": "aws",
       "category": "aws-iam",
+      "tags": [
+        "iam",
+        "least-privilege",
+        "wildcards",
+        "access-analyzer"
+      ],
       "citations": [
         "AWS Identity and Access Management User Guide — 'Grant least privilege'"
       ],
@@ -6518,6 +6863,13 @@
       "title": "Permission Boundaries and SCPs",
       "topic": "aws",
       "category": "aws-iam",
+      "tags": [
+        "iam",
+        "permission-boundaries",
+        "scp",
+        "organizations",
+        "ceilings"
+      ],
       "citations": [
         "AWS Identity and Access Management User Guide — 'Permissions boundaries for IAM identities'",
         "AWS Organizations User Guide — 'Service control policies (SCPs)'"
@@ -6651,6 +7003,12 @@
       "title": "Policy Documents",
       "topic": "aws",
       "category": "aws-iam",
+      "tags": [
+        "iam",
+        "policy-documents",
+        "json",
+        "policy-elements"
+      ],
       "citations": [
         "AWS Identity and Access Management User Guide — 'Policies and permissions in IAM'"
       ],
@@ -6763,6 +7121,12 @@
       "title": "Policy Evaluation Logic",
       "topic": "aws",
       "category": "aws-iam",
+      "tags": [
+        "iam",
+        "policy-evaluation",
+        "explicit-deny",
+        "cross-account"
+      ],
       "citations": [
         "AWS Identity and Access Management User Guide — 'Policy evaluation logic'"
       ],
@@ -6906,6 +7270,13 @@
       "title": "Principals and Identities",
       "topic": "aws",
       "category": "aws-iam",
+      "tags": [
+        "iam",
+        "principals",
+        "users",
+        "roles",
+        "root-user"
+      ],
       "citations": [
         "AWS Identity and Access Management User Guide — 'IAM identities'"
       ],
@@ -7032,6 +7403,13 @@
       "title": "Roles and AssumeRole",
       "topic": "aws",
       "category": "aws-iam",
+      "tags": [
+        "iam",
+        "roles",
+        "sts",
+        "assume-role",
+        "trust-policy"
+      ],
       "citations": [
         "AWS Identity and Access Management User Guide — 'IAM roles'"
       ],
@@ -7144,6 +7522,13 @@
       "title": "Service Roles and Instance Profiles",
       "topic": "aws",
       "category": "aws-iam",
+      "tags": [
+        "iam",
+        "service-roles",
+        "instance-profiles",
+        "ec2",
+        "credentials"
+      ],
       "citations": [
         "AWS Identity and Access Management User Guide — 'IAM roles for Amazon EC2'"
       ],
@@ -7245,6 +7630,12 @@
       "title": "Cold Starts",
       "topic": "aws",
       "category": "aws-lambda",
+      "tags": [
+        "lambda",
+        "cold-start",
+        "latency",
+        "init-phase"
+      ],
       "citations": [
         "AWS Lambda Developer Guide — 'Lambda execution environment'"
       ],
@@ -7361,6 +7752,12 @@
       "title": "Concurrency and Scaling",
       "topic": "aws",
       "category": "aws-lambda",
+      "tags": [
+        "lambda",
+        "concurrency",
+        "scaling",
+        "throttling"
+      ],
       "citations": [
         "AWS Lambda Developer Guide — 'Managing Lambda reserved concurrency', 'Configuring provisioned concurrency'"
       ],
@@ -7475,6 +7872,13 @@
       "title": "Error Handling and Retries",
       "topic": "aws",
       "category": "aws-lambda",
+      "tags": [
+        "lambda",
+        "retries",
+        "dead-letter-queue",
+        "destinations",
+        "idempotency"
+      ],
       "citations": [
         "AWS Lambda Developer Guide — 'Error handling and automatic retries in AWS Lambda', 'Configuring destinations for asynchronous invocation'"
       ],
@@ -7590,6 +7994,12 @@
       "title": "Event Sources and Invocation Modes",
       "topic": "aws",
       "category": "aws-lambda",
+      "tags": [
+        "lambda",
+        "invocation",
+        "event-sources",
+        "event-source-mapping"
+      ],
       "citations": [
         "AWS Lambda Developer Guide — 'Lambda invocation types', 'Using AWS Lambda with event source mappings'"
       ],
@@ -7707,6 +8117,12 @@
       "title": "Execution Model and Lifecycle",
       "topic": "aws",
       "category": "aws-lambda",
+      "tags": [
+        "lambda",
+        "execution-environment",
+        "lifecycle",
+        "statelessness"
+      ],
       "citations": [
         "AWS Lambda Developer Guide — 'Lambda execution environment'"
       ],
@@ -7828,6 +8244,13 @@
       "title": "Networking and VPC",
       "topic": "aws",
       "category": "aws-lambda",
+      "tags": [
+        "lambda",
+        "vpc",
+        "networking",
+        "nat-gateway",
+        "eni"
+      ],
       "citations": [
         "AWS Lambda Developer Guide — 'Configuring a Lambda function to access resources in a VPC'"
       ],
@@ -7937,6 +8360,13 @@
       "title": "Observability and Cost Model",
       "topic": "aws",
       "category": "aws-lambda",
+      "tags": [
+        "lambda",
+        "observability",
+        "tracing",
+        "logging",
+        "cost-model"
+      ],
       "citations": [
         "AWS Lambda Developer Guide — 'Monitoring and troubleshooting Lambda applications', 'AWS Lambda pricing'"
       ],
@@ -8053,6 +8483,13 @@
       "title": "Packaging, Layers, and Runtimes",
       "topic": "aws",
       "category": "aws-lambda",
+      "tags": [
+        "lambda",
+        "packaging",
+        "layers",
+        "container-images",
+        "runtime-api"
+      ],
       "citations": [
         "AWS Lambda Developer Guide — 'Lambda deployment packages', 'Lambda layers', 'Building custom Lambda runtimes'"
       ],
@@ -8173,6 +8610,13 @@
       "title": "Choosing Between SQS, SNS, and EventBridge",
       "topic": "aws",
       "category": "aws-messaging",
+      "tags": [
+        "sqs",
+        "sns",
+        "eventbridge",
+        "architecture",
+        "synthesis"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon EventBridge, 'Choosing between Amazon EventBridge, Amazon SNS, and Amazon SQS'"
       ],
@@ -8274,6 +8718,12 @@
       "title": "Dead-Letter Queues and Redrive",
       "topic": "aws",
       "category": "aws-messaging",
+      "tags": [
+        "sqs",
+        "dead-letter-queue",
+        "redrive",
+        "poison-messages"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon Simple Queue Service, 'Amazon SQS dead-letter queues'"
       ],
@@ -8372,6 +8822,12 @@
       "title": "EventBridge and Event Routing",
       "topic": "aws",
       "category": "aws-messaging",
+      "tags": [
+        "eventbridge",
+        "event-driven",
+        "routing",
+        "pattern-matching"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon EventBridge, 'What is Amazon EventBridge?'"
       ],
@@ -8475,6 +8931,12 @@
       "title": "Idempotency and \"Exactly-Once\"",
       "topic": "aws",
       "category": "aws-messaging",
+      "tags": [
+        "idempotency",
+        "exactly-once",
+        "deduplication",
+        "at-least-once"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon Simple Queue Service, 'Amazon SQS FIFO queues'"
       ],
@@ -8584,6 +9046,13 @@
       "title": "Long Polling and Batching",
       "topic": "aws",
       "category": "aws-messaging",
+      "tags": [
+        "sqs",
+        "long-polling",
+        "batching",
+        "throughput",
+        "partial-failure"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon Simple Queue Service, 'Amazon SQS short and long polling'"
       ],
@@ -8705,6 +9174,12 @@
       "title": "Message Filtering",
       "topic": "aws",
       "category": "aws-messaging",
+      "tags": [
+        "sns",
+        "filter-policies",
+        "fan-out",
+        "message-attributes"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon Simple Notification Service, 'Amazon SNS message filtering'"
       ],
@@ -8796,6 +9271,12 @@
       "title": "SNS and the Fan-Out Pattern",
       "topic": "aws",
       "category": "aws-messaging",
+      "tags": [
+        "sns",
+        "pub-sub",
+        "fan-out",
+        "sqs"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon Simple Notification Service, 'Fanout to Amazon SQS queues'"
       ],
@@ -8899,6 +9380,12 @@
       "title": "The SQS Queue Model",
       "topic": "aws",
       "category": "aws-messaging",
+      "tags": [
+        "sqs",
+        "queues",
+        "delivery-semantics",
+        "decoupling"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon Simple Queue Service, 'How Amazon SQS works'"
       ],
@@ -9002,6 +9489,13 @@
       "title": "Standard vs FIFO Queues",
       "topic": "aws",
       "category": "aws-messaging",
+      "tags": [
+        "sqs",
+        "fifo",
+        "ordering",
+        "deduplication",
+        "throughput"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon Simple Queue Service, 'FIFO queues'"
       ],
@@ -9135,6 +9629,12 @@
       "title": "Visibility Timeout",
       "topic": "aws",
       "category": "aws-messaging",
+      "tags": [
+        "sqs",
+        "visibility-timeout",
+        "redelivery",
+        "consumer-failure"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon Simple Queue Service, 'Amazon SQS visibility timeout'"
       ],
@@ -9256,6 +9756,12 @@
       "title": "DNS Inside a VPC",
       "topic": "aws",
       "category": "aws-networking",
+      "tags": [
+        "vpc-dns",
+        "route53",
+        "private-hosted-zone",
+        "split-horizon"
+      ],
       "citations": [
         "Amazon VPC User Guide",
         "Amazon Route 53 Developer Guide"
@@ -9377,6 +9883,13 @@
       "title": "Elastic Network Interfaces and IP Addressing",
       "topic": "aws",
       "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "eni",
+        "network-interface",
+        "ip-addressing",
+        "aws-networking"
+      ],
       "citations": [
         "Amazon VPC User Guide"
       ],
@@ -9518,6 +10031,13 @@
       "title": "Flow Logs and Connectivity Troubleshooting",
       "topic": "aws",
       "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "flow-logs",
+        "troubleshooting",
+        "connectivity",
+        "diagnostics"
+      ],
       "citations": [
         "Amazon VPC User Guide"
       ],
@@ -9654,6 +10174,13 @@
       "title": "Internet Gateway and Public Addressing",
       "topic": "aws",
       "category": "aws-networking",
+      "tags": [
+        "internet-gateway",
+        "public-ip",
+        "elastic-ip",
+        "connectivity",
+        "vpc-networking"
+      ],
       "citations": [
         "Amazon VPC User Guide"
       ],
@@ -9764,6 +10291,13 @@
       "title": "NAT Gateways and Egress",
       "topic": "aws",
       "category": "aws-networking",
+      "tags": [
+        "nat-gateway",
+        "egress",
+        "availability-zone",
+        "nat-instance",
+        "ipv6"
+      ],
       "citations": [
         "Amazon VPC User Guide"
       ],
@@ -9857,6 +10391,12 @@
       "title": "Route Tables and the Implicit Router",
       "topic": "aws",
       "category": "aws-networking",
+      "tags": [
+        "route-tables",
+        "routing",
+        "cidr",
+        "longest-prefix-match"
+      ],
       "citations": [
         "Amazon VPC User Guide"
       ],
@@ -9971,6 +10511,13 @@
       "title": "Security groups versus network ACLs",
       "topic": "aws",
       "category": "aws-networking",
+      "tags": [
+        "security-groups",
+        "network-acls",
+        "vpc",
+        "stateful",
+        "stateless"
+      ],
       "citations": [
         "Amazon VPC User Guide"
       ],
@@ -10109,6 +10656,12 @@
       "title": "Subnets, Availability Zones, and Public vs. Private",
       "topic": "aws",
       "category": "aws-networking",
+      "tags": [
+        "subnets",
+        "availability-zones",
+        "route-tables",
+        "public-subnet"
+      ],
       "citations": [
         "Amazon VPC User Guide"
       ],
@@ -10233,6 +10786,12 @@
       "title": "VPC and CIDR Planning",
       "topic": "aws",
       "category": "aws-networking",
+      "tags": [
+        "vpc",
+        "cidr",
+        "ip-address-planning",
+        "network-design"
+      ],
       "citations": [
         "Amazon VPC User Guide"
       ],
@@ -10352,6 +10911,12 @@
       "title": "VPC endpoints and PrivateLink",
       "topic": "aws",
       "category": "aws-networking",
+      "tags": [
+        "vpc-endpoints",
+        "privatelink",
+        "gateway-endpoint",
+        "interface-endpoint"
+      ],
       "citations": [
         "Amazon VPC User Guide",
         "AWS PrivateLink documentation"
@@ -10490,6 +11055,12 @@
       "title": "VPC Peering and Transit Gateway",
       "topic": "aws",
       "category": "aws-networking",
+      "tags": [
+        "vpc-peering",
+        "transit-gateway",
+        "routing",
+        "hub-and-spoke"
+      ],
       "citations": [
         "Amazon VPC User Guide",
         "Amazon Route 53 Developer Guide"
@@ -10617,6 +11188,12 @@
       "title": "Alarms, Evaluation, and Missing Data",
       "topic": "aws",
       "category": "aws-observability",
+      "tags": [
+        "cloudwatch",
+        "alarms",
+        "missing-data",
+        "anomaly-detection"
+      ],
       "citations": [
         "Amazon CloudWatch User Guide — 'Using Amazon CloudWatch alarms'"
       ],
@@ -10768,6 +11345,14 @@
       "title": "Choosing Between Metrics, Logs, and Traces",
       "topic": "aws",
       "category": "aws-observability",
+      "tags": [
+        "cloudwatch",
+        "x-ray",
+        "metrics",
+        "logs",
+        "tracing",
+        "cost-model"
+      ],
       "citations": [
         "Amazon CloudWatch User Guide — 'What is Amazon CloudWatch?'",
         "AWS X-Ray Developer Guide — 'How X-Ray works'"
@@ -10905,6 +11490,13 @@
       "title": "Composite Alarms and Alarm Actions",
       "topic": "aws",
       "category": "aws-observability",
+      "tags": [
+        "cloudwatch",
+        "alarms",
+        "composite-alarms",
+        "sns",
+        "alarm-actions"
+      ],
       "citations": [
         "Amazon CloudWatch User Guide — 'Amazon CloudWatch alarm actions', 'Using composite alarms'"
       ],
@@ -11033,6 +11625,12 @@
       "title": "Distributed Tracing with X-Ray",
       "topic": "aws",
       "category": "aws-observability",
+      "tags": [
+        "x-ray",
+        "tracing",
+        "sampling",
+        "opentelemetry"
+      ],
       "citations": [
         "AWS X-Ray Developer Guide — 'How X-Ray works', 'X-Ray concepts', 'Configuring sampling rules'"
       ],
@@ -11176,6 +11774,13 @@
       "title": "Golden Signals, Percentiles, and What to Alert On",
       "topic": "aws",
       "category": "aws-observability",
+      "tags": [
+        "cloudwatch",
+        "alerting",
+        "slo",
+        "percentiles",
+        "golden-signals"
+      ],
       "citations": [
         "Amazon CloudWatch User Guide — 'Percentiles', 'Metric math'",
         "Google SRE Book — 'Monitoring Distributed Systems'"
@@ -11296,6 +11901,12 @@
       "title": "Log Groups, Streams, and Retention Cost",
       "topic": "aws",
       "category": "aws-observability",
+      "tags": [
+        "cloudwatch",
+        "logs",
+        "retention",
+        "cost"
+      ],
       "citations": [
         "Amazon CloudWatch User Guide — 'Working with log groups and log streams', 'CloudWatch Logs pricing'"
       ],
@@ -11419,6 +12030,12 @@
       "title": "Logs Insights and Query Cost",
       "topic": "aws",
       "category": "aws-observability",
+      "tags": [
+        "cloudwatch",
+        "logs-insights",
+        "query-cost",
+        "structured-logging"
+      ],
       "citations": [
         "Amazon CloudWatch Logs User Guide — 'Analyzing log data with CloudWatch Logs Insights'"
       ],
@@ -11562,6 +12179,12 @@
       "title": "Metric Filters and Embedded Metric Format",
       "topic": "aws",
       "category": "aws-observability",
+      "tags": [
+        "cloudwatch",
+        "logs",
+        "metrics",
+        "emf"
+      ],
       "citations": [
         "Amazon CloudWatch User Guide — 'Creating metrics from log events using filters', 'Embedded metric format'"
       ],
@@ -11685,6 +12308,12 @@
       "title": "Metric Math and Dashboards",
       "topic": "aws",
       "category": "aws-observability",
+      "tags": [
+        "cloudwatch",
+        "metric-math",
+        "dashboards",
+        "alarms"
+      ],
       "citations": [
         "Amazon CloudWatch User Guide — 'Using metric math'",
         "Amazon CloudWatch User Guide — 'Using Amazon CloudWatch dashboards'"
@@ -11833,6 +12462,13 @@
       "title": "Metric Resolution, Retention, and Statistics",
       "topic": "aws",
       "category": "aws-observability",
+      "tags": [
+        "cloudwatch",
+        "metrics",
+        "resolution",
+        "retention",
+        "statistics"
+      ],
       "citations": [
         "Amazon CloudWatch User Guide — 'Metric data points'",
         "Amazon CloudWatch User Guide — 'GetMetricStatistics'"
@@ -11954,6 +12590,13 @@
       "title": "Metrics, Namespaces, Dimensions, and Cardinality",
       "topic": "aws",
       "category": "aws-observability",
+      "tags": [
+        "cloudwatch",
+        "metrics",
+        "dimensions",
+        "cardinality",
+        "cost"
+      ],
       "citations": [
         "Amazon CloudWatch User Guide — 'Metrics'",
         "Amazon CloudWatch User Guide — 'Dimensions'"
@@ -12066,6 +12709,12 @@
       "title": "Aggregations",
       "topic": "aws",
       "category": "aws-opensearch",
+      "tags": [
+        "aggregations",
+        "buckets",
+        "metrics",
+        "analytics"
+      ],
       "citations": [
         "OpenSearch Documentation — 'Aggregations'"
       ],
@@ -12195,6 +12844,12 @@
       "title": "Cluster Sizing and Node Roles",
       "topic": "aws",
       "category": "aws-opensearch",
+      "tags": [
+        "node-roles",
+        "master-eligible",
+        "quorum",
+        "split-brain"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon OpenSearch Service, 'Dedicated master nodes'",
         "OpenSearch Documentation — 'Cluster formation'"
@@ -12303,6 +12958,12 @@
       "title": "Index, Shard, and Cluster Model",
       "topic": "aws",
       "category": "aws-opensearch",
+      "tags": [
+        "shards",
+        "primary-replica",
+        "cluster-model",
+        "sharding"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon OpenSearch Service, 'Sizing Amazon OpenSearch Service domains'",
         "OpenSearch Documentation — 'Index sharding'"
@@ -12420,6 +13081,12 @@
       "title": "Indexing Pipeline, Refresh, and Segment Merging",
       "topic": "aws",
       "category": "aws-opensearch",
+      "tags": [
+        "near-real-time",
+        "refresh-interval",
+        "segments",
+        "merging"
+      ],
       "citations": [
         "OpenSearch Documentation — 'Near real-time search'",
         "OpenSearch Documentation — 'Index refresh'"
@@ -12547,6 +13214,12 @@
       "title": "Mappings and Analyzers",
       "topic": "aws",
       "category": "aws-opensearch",
+      "tags": [
+        "mappings",
+        "analyzers",
+        "tokenizer",
+        "text-analysis"
+      ],
       "citations": [
         "OpenSearch Documentation — 'Mappings and field types'",
         "OpenSearch Documentation — 'Text analysis'"
@@ -12674,6 +13347,12 @@
       "title": "OpenSearch vs. a System of Record",
       "topic": "aws",
       "category": "aws-opensearch",
+      "tags": [
+        "system-of-record",
+        "derived-data",
+        "dual-write",
+        "change-data-capture"
+      ],
       "citations": [
         "OpenSearch Documentation — 'Reindexing OpenSearch data'"
       ],
@@ -12778,6 +13457,12 @@
       "title": "Queries vs. Filters, and Relevance",
       "topic": "aws",
       "category": "aws-opensearch",
+      "tags": [
+        "query-context",
+        "filter-context",
+        "relevance-scoring",
+        "bm25"
+      ],
       "citations": [
         "OpenSearch Documentation — 'Query DSL'",
         "OpenSearch Documentation — 'Text scoring'"
@@ -12907,6 +13592,12 @@
       "title": "Snapshots and Index Lifecycle Management",
       "topic": "aws",
       "category": "aws-opensearch",
+      "tags": [
+        "snapshots",
+        "index-state-management",
+        "hot-warm-cold",
+        "data-lifecycle"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon OpenSearch Service, 'Working with Amazon OpenSearch Service index snapshots'",
         "OpenSearch Documentation — 'Index State Management'"
@@ -13017,6 +13708,13 @@
       "title": "Aurora Architecture",
       "topic": "aws",
       "category": "aws-rds",
+      "tags": [
+        "aurora",
+        "storage-engine",
+        "distributed-storage",
+        "replication",
+        "failover"
+      ],
       "citations": [
         "AWS User Guide — Amazon Aurora, 'Aurora storage and reliability'"
       ],
@@ -13121,6 +13819,13 @@
       "title": "Aurora vs RDS: Tradeoffs",
       "topic": "aws",
       "category": "aws-rds",
+      "tags": [
+        "aurora",
+        "rds",
+        "tradeoffs",
+        "compatibility",
+        "cost"
+      ],
       "citations": [
         "AWS User Guide — Amazon Aurora, 'Aurora versus RDS for MySQL and PostgreSQL'"
       ],
@@ -13225,6 +13930,13 @@
       "title": "Backups and Point-in-Time Recovery",
       "topic": "aws",
       "category": "aws-rds",
+      "tags": [
+        "rds",
+        "backups",
+        "point-in-time-recovery",
+        "snapshots",
+        "restore"
+      ],
       "citations": [
         "AWS User Guide — Amazon RDS, 'Backing up and restoring an Amazon RDS DB instance'"
       ],
@@ -13328,6 +14040,13 @@
       "title": "Connection Management and RDS Proxy",
       "topic": "aws",
       "category": "aws-rds",
+      "tags": [
+        "rds",
+        "rds-proxy",
+        "connections",
+        "lambda",
+        "pooling"
+      ],
       "citations": [
         "AWS User Guide — Amazon RDS Proxy, 'How RDS Proxy works'"
       ],
@@ -13437,6 +14156,12 @@
       "title": "The Managed Database Model",
       "topic": "aws",
       "category": "aws-rds",
+      "tags": [
+        "rds",
+        "managed-database",
+        "shared-responsibility",
+        "operations"
+      ],
       "citations": [
         "AWS User Guide — Amazon RDS, 'What is Amazon RDS?'"
       ],
@@ -13541,6 +14266,13 @@
       "title": "Multi-AZ and Failover",
       "topic": "aws",
       "category": "aws-rds",
+      "tags": [
+        "rds",
+        "multi-az",
+        "failover",
+        "availability",
+        "synchronous-replication"
+      ],
       "citations": [
         "AWS User Guide — Amazon RDS, 'Configuring and managing a Multi-AZ deployment'"
       ],
@@ -13645,6 +14377,13 @@
       "title": "Parameter Groups and Maintenance",
       "topic": "aws",
       "category": "aws-rds",
+      "tags": [
+        "rds",
+        "parameter-groups",
+        "maintenance-window",
+        "version-upgrades",
+        "operations"
+      ],
       "citations": [
         "AWS User Guide — Amazon RDS, 'Working with parameter groups'"
       ],
@@ -13761,6 +14500,13 @@
       "title": "Read Replicas and Scaling Reads",
       "topic": "aws",
       "category": "aws-rds",
+      "tags": [
+        "rds",
+        "read-replicas",
+        "replication-lag",
+        "read-your-writes",
+        "scaling"
+      ],
       "citations": [
         "AWS User Guide — Amazon RDS, 'Working with DB instance read replicas'"
       ],
@@ -13865,6 +14611,12 @@
       "title": "Access Control and Presigned URLs",
       "topic": "aws",
       "category": "aws-s3",
+      "tags": [
+        "access-control",
+        "iam",
+        "bucket-policy",
+        "presigned-url"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon S3, 'Identity and access management in Amazon S3'"
       ],
@@ -13982,6 +14734,12 @@
       "title": "Consistency Model",
       "topic": "aws",
       "category": "aws-s3",
+      "tags": [
+        "consistency",
+        "read-after-write",
+        "linearizability",
+        "eventual-consistency"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon S3, 'Amazon S3 data consistency model'"
       ],
@@ -14098,6 +14856,12 @@
       "title": "Durability and Replication",
       "topic": "aws",
       "category": "aws-s3",
+      "tags": [
+        "durability",
+        "replication",
+        "cross-region",
+        "failure-domains"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon S3, 'Replication'"
       ],
@@ -14215,6 +14979,13 @@
       "title": "Event Notifications and Integration",
       "topic": "aws",
       "category": "aws-s3",
+      "tags": [
+        "event-notifications",
+        "sqs",
+        "sns",
+        "lambda",
+        "eventbridge"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon S3, 'Amazon S3 Event Notifications'"
       ],
@@ -14332,6 +15103,12 @@
       "title": "Multipart Upload and Large Objects",
       "topic": "aws",
       "category": "aws-s3",
+      "tags": [
+        "multipart-upload",
+        "large-objects",
+        "upload-reliability",
+        "storage-cost"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon S3, 'Uploading and copying objects using multipart upload'"
       ],
@@ -14449,6 +15226,12 @@
       "title": "Object Model and Naming",
       "topic": "aws",
       "category": "aws-s3",
+      "tags": [
+        "object-storage",
+        "key-naming",
+        "partitioning",
+        "listing"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon S3, 'Organizing objects using prefixes'"
       ],
@@ -14565,6 +15348,12 @@
       "title": "Storage Classes and Lifecycle",
       "topic": "aws",
       "category": "aws-s3",
+      "tags": [
+        "storage-classes",
+        "lifecycle",
+        "durability",
+        "retrieval-latency"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon S3, 'Using Amazon S3 storage classes'"
       ],
@@ -14686,6 +15475,12 @@
       "title": "Versioning and Deletion",
       "topic": "aws",
       "category": "aws-s3",
+      "tags": [
+        "versioning",
+        "delete-markers",
+        "recovery",
+        "object-lock"
+      ],
       "citations": [
         "AWS Developer Guide — Amazon S3, 'Using versioning in S3 buckets'"
       ],
@@ -14803,6 +15598,14 @@
       "title": "Data at Rest Encryption Across Services",
       "topic": "aws",
       "category": "aws-security",
+      "tags": [
+        "kms",
+        "s3",
+        "ebs",
+        "rds",
+        "dynamodb",
+        "encryption-at-rest"
+      ],
       "citations": [
         "AWS Key Management Service Developer Guide — 'How AWS services use AWS KMS'"
       ],
@@ -14945,6 +15748,13 @@
       "title": "Encryption Context and Authenticated Data",
       "topic": "aws",
       "category": "aws-security",
+      "tags": [
+        "kms",
+        "encryption-context",
+        "aad",
+        "cloudtrail",
+        "multi-tenancy"
+      ],
       "citations": [
         "AWS Key Management Service Developer Guide — 'How to use encryption context to secure your encrypted data'"
       ],
@@ -15053,6 +15863,12 @@
       "title": "Envelope Encryption in Practice",
       "topic": "aws",
       "category": "aws-security",
+      "tags": [
+        "kms",
+        "envelope-encryption",
+        "data-keys",
+        "key-caching"
+      ],
       "citations": [
         "AWS Key Management Service Developer Guide — 'Envelope encryption'"
       ],
@@ -15184,6 +16000,12 @@
       "title": "Grants and Temporary Delegation",
       "topic": "aws",
       "category": "aws-security",
+      "tags": [
+        "kms",
+        "grants",
+        "delegation",
+        "eventual-consistency"
+      ],
       "citations": [
         "AWS Key Management Service Developer Guide — 'Grants in AWS KMS'"
       ],
@@ -15323,6 +16145,12 @@
       "title": "Key Policies and the Root of Authority",
       "topic": "aws",
       "category": "aws-security",
+      "tags": [
+        "kms",
+        "key-policy",
+        "iam",
+        "cross-account"
+      ],
       "citations": [
         "AWS Key Management Service Developer Guide — 'Key policies in AWS KMS'"
       ],
@@ -15434,6 +16262,13 @@
       "title": "Key Rotation and Key Deletion",
       "topic": "aws",
       "category": "aws-security",
+      "tags": [
+        "kms",
+        "key-rotation",
+        "key-deletion",
+        "backing-key",
+        "imported-key-material"
+      ],
       "citations": [
         "AWS Key Management Service Developer Guide — 'Rotating AWS KMS keys'"
       ],
@@ -15570,6 +16405,12 @@
       "title": "KMS Keys and the Key Hierarchy",
       "topic": "aws",
       "category": "aws-security",
+      "tags": [
+        "kms",
+        "key-hierarchy",
+        "key-policy",
+        "aliases"
+      ],
       "citations": [
         "AWS Key Management Service Developer Guide — 'AWS KMS concepts'"
       ],
@@ -15684,6 +16525,12 @@
       "title": "Multi-Region Keys and the Regional Boundary",
       "topic": "aws",
       "category": "aws-security",
+      "tags": [
+        "kms",
+        "multi-region",
+        "replication",
+        "disaster-recovery"
+      ],
       "citations": [
         "AWS Key Management Service Developer Guide — 'Multi-Region keys'"
       ],
@@ -15839,6 +16686,12 @@
       "title": "Retrieving Secrets at Runtime",
       "topic": "aws",
       "category": "aws-security",
+      "tags": [
+        "secrets-manager",
+        "caching",
+        "runtime",
+        "lambda"
+      ],
       "citations": [
         "AWS Secrets Manager User Guide — 'Cache secrets for AWS Lambda functions'"
       ],
@@ -15954,6 +16807,12 @@
       "title": "Secret Rotation and Staging Labels",
       "topic": "aws",
       "category": "aws-security",
+      "tags": [
+        "secrets-manager",
+        "rotation",
+        "staging-labels",
+        "rds"
+      ],
       "citations": [
         "AWS Secrets Manager User Guide — 'Rotate AWS Secrets Manager secrets'"
       ],
@@ -16068,6 +16927,12 @@
       "title": "Secrets Manager versus Parameter Store",
       "topic": "aws",
       "category": "aws-security",
+      "tags": [
+        "secrets-manager",
+        "parameter-store",
+        "kms",
+        "cost"
+      ],
       "citations": [
         "AWS Secrets Manager User Guide — 'Compare AWS Secrets Manager with Systems Manager Parameter Store'"
       ],
@@ -16190,6 +17055,12 @@
       "title": "Augmenting Data Structures",
       "topic": "algorithms",
       "category": "algo-data-structures",
+      "tags": [
+        "augmentation",
+        "order-statistics",
+        "interval-trees",
+        "red-black-trees"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 17 (Augmenting Data Structures)"
       ],
@@ -16294,6 +17165,12 @@
       "title": "B-Trees",
       "topic": "algorithms",
       "category": "algo-data-structures",
+      "tags": [
+        "b-trees",
+        "branching-factor",
+        "disk-access",
+        "node-splitting"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 18 (B-Trees)"
       ],
@@ -16398,6 +17275,12 @@
       "title": "Binary Search Trees",
       "topic": "algorithms",
       "category": "algo-data-structures",
+      "tags": [
+        "binary-search-trees",
+        "tree-traversal",
+        "tree-height",
+        "bst-property"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 12 (Binary Search Trees)"
       ],
@@ -16507,6 +17390,12 @@
       "title": "Disjoint Sets (Union-Find)",
       "topic": "algorithms",
       "category": "algo-data-structures",
+      "tags": [
+        "disjoint-sets",
+        "union-find",
+        "path-compression",
+        "amortized-analysis"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 19 (Data Structures for Disjoint Sets)"
       ],
@@ -16621,6 +17510,13 @@
       "title": "Stacks, Queues, and Linked Lists",
       "topic": "algorithms",
       "category": "algo-data-structures",
+      "tags": [
+        "stacks",
+        "queues",
+        "linked-lists",
+        "arrays",
+        "pointers"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 10 (Elementary Data Structures)"
       ],
@@ -16735,6 +17631,12 @@
       "title": "Hash Tables and Chaining",
       "topic": "algorithms",
       "category": "algo-data-structures",
+      "tags": [
+        "hash-tables",
+        "chaining",
+        "load-factor",
+        "simple-uniform-hashing"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 11 (Hash Tables)"
       ],
@@ -16849,6 +17751,12 @@
       "title": "Open Addressing",
       "topic": "algorithms",
       "category": "algo-data-structures",
+      "tags": [
+        "open-addressing",
+        "linear-probing",
+        "double-hashing",
+        "clustering"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 11 (Hash Tables)"
       ],
@@ -16958,6 +17866,12 @@
       "title": "Red-Black Trees",
       "topic": "algorithms",
       "category": "algo-data-structures",
+      "tags": [
+        "red-black-trees",
+        "tree-height",
+        "rotations",
+        "balanced-search-trees"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 13 (Red-Black Trees)"
       ],
@@ -17072,6 +17986,12 @@
       "title": "Universal and Perfect Hashing",
       "topic": "algorithms",
       "category": "algo-data-structures",
+      "tags": [
+        "universal-hashing",
+        "perfect-hashing",
+        "collisions",
+        "static-key-sets"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 11 (Hash Tables)"
       ],
@@ -17188,6 +18108,12 @@
       "title": "Amortized Analysis: Aggregate, Accounting, and Potential Methods",
       "topic": "algorithms",
       "category": "algo-design",
+      "tags": [
+        "amortized-analysis",
+        "potential-method",
+        "dynamic-tables",
+        "worst-case-analysis"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 16 (Amortized Analysis)"
       ],
@@ -17302,6 +18228,12 @@
       "title": "Dynamic Programming: Optimal Substructure and Overlapping Subproblems",
       "topic": "algorithms",
       "category": "algo-design",
+      "tags": [
+        "dynamic-programming",
+        "memoization",
+        "tabulation",
+        "rod-cutting"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 14 (Dynamic Programming)"
       ],
@@ -17423,6 +18355,12 @@
       "title": "Greedy Algorithms and the Activity-Selection Problem",
       "topic": "algorithms",
       "category": "algo-design",
+      "tags": [
+        "greedy-algorithms",
+        "activity-selection",
+        "optimal-substructure",
+        "exchange-argument"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 15 (Greedy Algorithms)"
       ],
@@ -17532,6 +18470,12 @@
       "title": "Huffman Coding",
       "topic": "algorithms",
       "category": "algo-design",
+      "tags": [
+        "huffman-coding",
+        "greedy-algorithms",
+        "prefix-free-codes",
+        "data-compression"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 15 (Greedy Algorithms)"
       ],
@@ -17641,6 +18585,12 @@
       "title": "0-1 Knapsack vs. Fractional Knapsack",
       "topic": "algorithms",
       "category": "algo-design",
+      "tags": [
+        "knapsack",
+        "dynamic-programming",
+        "greedy",
+        "pseudo-polynomial"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 14 (Dynamic Programming)",
         "Cormen et al., Introduction to Algorithms 4e, Ch. 15 (Greedy Algorithms)"
@@ -17756,6 +18706,12 @@
       "title": "Longest Common Subsequence and Edit Distance",
       "topic": "algorithms",
       "category": "algo-design",
+      "tags": [
+        "dynamic-programming",
+        "lcs",
+        "edit-distance",
+        "string-algorithms"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 14 (Dynamic Programming)"
       ],
@@ -17858,6 +18814,12 @@
       "title": "Interval DP: Matrix-Chain Multiplication and Optimal BSTs",
       "topic": "algorithms",
       "category": "algo-design",
+      "tags": [
+        "dynamic-programming",
+        "matrix-chain",
+        "binary-search-trees",
+        "interval-dp"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 14 (Dynamic Programming)"
       ],
@@ -17966,6 +18928,12 @@
       "title": "Matroids: Why Greedy Works, and Where That Explanation Runs Out",
       "topic": "algorithms",
       "category": "algo-design",
+      "tags": [
+        "matroids",
+        "greedy-algorithms",
+        "exchange-property",
+        "minimum-spanning-tree"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 15 (Greedy Algorithms)"
       ],
@@ -18074,6 +19042,12 @@
       "title": "Asymptotic Notation: Theta, O, Omega, o, and omega",
       "topic": "algorithms",
       "category": "algo-foundations",
+      "tags": [
+        "asymptotic-notation",
+        "big-o",
+        "theta",
+        "omega"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 3 (Characterizing Running Times)"
       ],
@@ -18206,6 +19180,11 @@
       "title": "Divide-and-Conquer",
       "topic": "algorithms",
       "category": "algo-foundations",
+      "tags": [
+        "divide-and-conquer",
+        "merge-sort",
+        "recursion"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 2 (Getting Started)"
       ],
@@ -18323,6 +19302,12 @@
       "title": "Loop Invariants and Correctness",
       "topic": "algorithms",
       "category": "algo-foundations",
+      "tags": [
+        "loop-invariants",
+        "correctness",
+        "insertion-sort",
+        "proof-technique"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 2 (Getting Started)"
       ],
@@ -18442,6 +19427,12 @@
       "title": "Maximum Subarray and Strassen's Algorithm",
       "topic": "algorithms",
       "category": "algo-foundations",
+      "tags": [
+        "maximum-subarray",
+        "strassen",
+        "divide-and-conquer",
+        "matrix-multiplication"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 4 (Divide-and-Conquer) — the maximum-subarray problem moved to the 4e online supplement for this chapter"
       ],
@@ -18551,6 +19542,12 @@
       "title": "Probabilistic Analysis and Indicator Random Variables",
       "topic": "algorithms",
       "category": "algo-foundations",
+      "tags": [
+        "probabilistic-analysis",
+        "indicator-random-variables",
+        "hiring-problem",
+        "expectation"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 5 (Probabilistic Analysis and Randomized Algorithms)"
       ],
@@ -18658,6 +19655,12 @@
       "title": "The RAM Model and Analyzing Running Time",
       "topic": "algorithms",
       "category": "algo-foundations",
+      "tags": [
+        "ram-model",
+        "algorithm-analysis",
+        "worst-case",
+        "running-time"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 2 (Getting Started)"
       ],
@@ -18772,6 +19775,12 @@
       "title": "Randomized Algorithms",
       "topic": "algorithms",
       "category": "algo-foundations",
+      "tags": [
+        "randomized-algorithms",
+        "las-vegas",
+        "monte-carlo",
+        "expected-running-time"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 5 (Probabilistic Analysis and Randomized Algorithms)"
       ],
@@ -18887,6 +19896,12 @@
       "title": "Solving Recurrences",
       "topic": "algorithms",
       "category": "algo-foundations",
+      "tags": [
+        "recurrences",
+        "master-theorem",
+        "recursion-tree",
+        "substitution-method"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 4 (Divide-and-Conquer)"
       ],
@@ -18995,6 +20010,12 @@
       "title": "All-Pairs Shortest Paths: Floyd-Warshall and Johnson's Algorithm",
       "topic": "algorithms",
       "category": "algo-graphs",
+      "tags": [
+        "floyd-warshall",
+        "johnsons-algorithm",
+        "all-pairs-shortest-paths",
+        "reweighting"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 23 (All-Pairs Shortest Paths)"
       ],
@@ -19123,6 +20144,12 @@
       "title": "Breadth-First Search",
       "topic": "algorithms",
       "category": "algo-graphs",
+      "tags": [
+        "breadth-first-search",
+        "shortest-paths",
+        "bfs-tree",
+        "queue"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 20 (Elementary Graph Algorithms)"
       ],
@@ -19234,6 +20261,12 @@
       "title": "Depth-First Search: Timestamps, Theorems, and Edge Classification",
       "topic": "algorithms",
       "category": "algo-graphs",
+      "tags": [
+        "depth-first-search",
+        "parenthesis-theorem",
+        "white-path-theorem",
+        "edge-classification"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 20 (Elementary Graph Algorithms)"
       ],
@@ -19357,6 +20390,12 @@
       "title": "Dijkstra's Algorithm and Shortest Paths in a DAG",
       "topic": "algorithms",
       "category": "algo-graphs",
+      "tags": [
+        "dijkstra",
+        "greedy-algorithms",
+        "dag-shortest-paths",
+        "negative-weights"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 22 (Single-Source Shortest Paths)"
       ],
@@ -19473,6 +20512,12 @@
       "title": "Graph Representations: Adjacency List vs Adjacency Matrix",
       "topic": "algorithms",
       "category": "algo-graphs",
+      "tags": [
+        "adjacency-list",
+        "adjacency-matrix",
+        "graph-representation",
+        "sparse-graphs"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 20 (Elementary Graph Algorithms)"
       ],
@@ -19589,6 +20634,13 @@
       "title": "Kruskal's and Prim's Algorithms",
       "topic": "algorithms",
       "category": "algo-graphs",
+      "tags": [
+        "kruskal",
+        "prim",
+        "disjoint-set",
+        "priority-queue",
+        "mst"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 21 (Minimum Spanning Trees)"
       ],
@@ -19722,6 +20774,12 @@
       "title": "Maximum Flow: Residual Networks and Augmenting Paths",
       "topic": "algorithms",
       "category": "algo-graphs",
+      "tags": [
+        "maximum-flow",
+        "residual-network",
+        "ford-fulkerson",
+        "min-cut"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 24 (Maximum Flow)"
       ],
@@ -19845,6 +20903,12 @@
       "title": "Minimum Spanning Trees: The Cut Property and Generic Algorithm",
       "topic": "algorithms",
       "category": "algo-graphs",
+      "tags": [
+        "minimum-spanning-tree",
+        "cut-property",
+        "greedy-algorithms",
+        "safe-edge"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 21 (Minimum Spanning Trees)"
       ],
@@ -19983,6 +21047,12 @@
       "title": "Shortest Paths and the Bellman-Ford Algorithm",
       "topic": "algorithms",
       "category": "algo-graphs",
+      "tags": [
+        "shortest-paths",
+        "relaxation",
+        "bellman-ford",
+        "negative-weight-cycle"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 22 (Single-Source Shortest Paths)"
       ],
@@ -20110,6 +21180,12 @@
       "title": "Strongly Connected Components",
       "topic": "algorithms",
       "category": "algo-graphs",
+      "tags": [
+        "strongly-connected-components",
+        "transpose-graph",
+        "dfs",
+        "finish-time"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 20 (Elementary Graph Algorithms)"
       ],
@@ -20219,6 +21295,12 @@
       "title": "Topological Sort and DAGs",
       "topic": "algorithms",
       "category": "algo-graphs",
+      "tags": [
+        "topological-sort",
+        "dag",
+        "dfs",
+        "cycle-detection"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 20 (Elementary Graph Algorithms)"
       ],
@@ -20340,6 +21422,12 @@
       "title": "Choosing a Sort in Practice",
       "topic": "algorithms",
       "category": "algo-sorting",
+      "tags": [
+        "sorting",
+        "stability",
+        "in-place",
+        "hybrid-algorithms"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 6-8"
       ],
@@ -20442,6 +21530,12 @@
       "title": "The Comparison-Sort Lower Bound",
       "topic": "algorithms",
       "category": "algo-sorting",
+      "tags": [
+        "decision-tree",
+        "lower-bound",
+        "comparison-sort",
+        "omega-notation"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 8 (Sorting in Linear Time)"
       ],
@@ -20552,6 +21646,12 @@
       "title": "Counting Sort and Stability",
       "topic": "algorithms",
       "category": "algo-sorting",
+      "tags": [
+        "counting-sort",
+        "stability",
+        "non-comparison-sort",
+        "linear-time"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 8 (Sorting in Linear Time)"
       ],
@@ -20648,6 +21748,12 @@
       "title": "Heaps and Heapsort",
       "topic": "algorithms",
       "category": "algo-sorting",
+      "tags": [
+        "heap",
+        "heapsort",
+        "priority-queue",
+        "build-max-heap"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 6 (Heapsort)"
       ],
@@ -20767,6 +21873,12 @@
       "title": "Order Statistics and Selection",
       "topic": "algorithms",
       "category": "algo-sorting",
+      "tags": [
+        "order-statistics",
+        "selection",
+        "median-of-medians",
+        "expected-time"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 9 (Medians and Order Statistics)"
       ],
@@ -20881,6 +21993,12 @@
       "title": "Quicksort and Lomuto Partitioning",
       "topic": "algorithms",
       "category": "algo-sorting",
+      "tags": [
+        "quicksort",
+        "partitioning",
+        "lomuto",
+        "divide-and-conquer"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 7 (Quicksort)"
       ],
@@ -20999,6 +22117,12 @@
       "title": "Radix Sort and Bucket Sort",
       "topic": "algorithms",
       "category": "algo-sorting",
+      "tags": [
+        "radix-sort",
+        "bucket-sort",
+        "stable-sort",
+        "digit-by-digit"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 8 (Sorting in Linear Time)"
       ],
@@ -21108,6 +22232,11 @@
       "title": "Randomized Quicksort and Its Expected Running Time",
       "topic": "algorithms",
       "category": "algo-sorting",
+      "tags": [
+        "randomized-quicksort",
+        "expected-running-time",
+        "indicator-random-variables"
+      ],
       "citations": [
         "Cormen et al., Introduction to Algorithms 4e, Ch. 7 (Quicksort)"
       ],
@@ -21205,6 +22334,13 @@
       "title": "Consistency Guarantees and Consensus",
       "topic": "data-systems",
       "category": "data-systems",
+      "tags": [
+        "linearizability",
+        "serializability",
+        "cap",
+        "consensus",
+        "total-order-broadcast"
+      ],
       "citations": [
         "Kleppmann, Designing Data-Intensive Applications, Ch. 9"
       ],
@@ -21357,6 +22493,13 @@
       "title": "Data Models: Relational, Document, and Graph",
       "topic": "data-systems",
       "category": "data-systems",
+      "tags": [
+        "data-models",
+        "relational",
+        "document",
+        "graph",
+        "schema"
+      ],
       "citations": [
         "Kleppmann, Designing Data-Intensive Applications, Ch. 2"
       ],
@@ -21477,6 +22620,12 @@
       "title": "The Trouble with Distributed Systems",
       "topic": "data-systems",
       "category": "data-systems",
+      "tags": [
+        "distributed-systems",
+        "clocks",
+        "partial-failure",
+        "fencing-tokens"
+      ],
       "citations": [
         "Kleppmann, Designing Data-Intensive Applications, Ch. 8"
       ],
@@ -21622,6 +22771,13 @@
       "title": "Encoding and Schema Evolution",
       "topic": "data-systems",
       "category": "data-systems",
+      "tags": [
+        "encoding",
+        "schema-evolution",
+        "avro",
+        "protobuf",
+        "compatibility"
+      ],
       "citations": [
         "Kleppmann, Designing Data-Intensive Applications, Ch. 4"
       ],
@@ -21773,6 +22929,12 @@
       "title": "Partitioning",
       "topic": "data-systems",
       "category": "data-systems",
+      "tags": [
+        "partitioning",
+        "sharding",
+        "hot-spots",
+        "rebalancing"
+      ],
       "citations": [
         "Kleppmann, Designing Data-Intensive Applications, Ch. 6"
       ],
@@ -21899,6 +23061,12 @@
       "title": "Reliability, Scalability, and Maintainability",
       "topic": "data-systems",
       "category": "data-systems",
+      "tags": [
+        "reliability",
+        "scalability",
+        "latency",
+        "load"
+      ],
       "citations": [
         "Kleppmann, Designing Data-Intensive Applications, Ch. 1"
       ],
@@ -22026,6 +23194,12 @@
       "title": "Replication",
       "topic": "data-systems",
       "category": "data-systems",
+      "tags": [
+        "replication",
+        "leader-election",
+        "read-your-writes",
+        "consistency"
+      ],
       "citations": [
         "Kleppmann, Designing Data-Intensive Applications, Ch. 5"
       ],
@@ -22210,6 +23384,13 @@
       "title": "Storage Engines: LSM-Trees and B-Trees",
       "topic": "data-systems",
       "category": "data-systems",
+      "tags": [
+        "storage-engines",
+        "lsm-tree",
+        "b-tree",
+        "ssm",
+        "compaction"
+      ],
       "citations": [
         "Kleppmann, Designing Data-Intensive Applications, Ch. 3"
       ],
@@ -22337,6 +23518,13 @@
       "title": "Transactions and Isolation Levels",
       "topic": "data-systems",
       "category": "data-systems",
+      "tags": [
+        "transactions",
+        "acid",
+        "isolation",
+        "write-skew",
+        "serializability"
+      ],
       "citations": [
         "Kleppmann, Designing Data-Intensive Applications, Ch. 7"
       ],
@@ -22486,6 +23674,11 @@
       "title": "B-Tree Basics",
       "topic": "database-internals",
       "category": "database-internals",
+      "tags": [
+        "b-tree",
+        "fanout",
+        "disk-seeks"
+      ],
       "citations": [
         "Petrov, Database Internals, Ch. 2"
       ],
@@ -22644,6 +23837,12 @@
       "title": "B-Tree Implementation",
       "topic": "database-internals",
       "category": "database-internals",
+      "tags": [
+        "b-tree",
+        "slotted-pages",
+        "copy-on-write",
+        "rebalancing"
+      ],
       "citations": [
         "Petrov, Database Internals, Ch. 3-4"
       ],
@@ -22788,6 +23987,13 @@
       "title": "Consensus and Atomic Commitment",
       "topic": "database-internals",
       "category": "database-internals",
+      "tags": [
+        "paxos",
+        "raft",
+        "two-phase-commit",
+        "consensus",
+        "leader-election"
+      ],
       "citations": [
         "Petrov, Database Internals, Ch. 13-14"
       ],
@@ -22970,6 +24176,12 @@
       "title": "Failure Detection",
       "topic": "database-internals",
       "category": "database-internals",
+      "tags": [
+        "failure-detection",
+        "heartbeats",
+        "phi-accrual",
+        "gossip"
+      ],
       "citations": [
         "Petrov, Database Internals, Ch. 9"
       ],
@@ -23109,6 +24321,12 @@
       "title": "LSM-Trees and Compaction",
       "topic": "database-internals",
       "category": "database-internals",
+      "tags": [
+        "lsm-tree",
+        "compaction",
+        "amplification",
+        "sstable"
+      ],
       "citations": [
         "Petrov, Database Internals, Ch. 7"
       ],
@@ -23250,6 +24468,13 @@
       "title": "Quorums and Tunable Consistency",
       "topic": "database-internals",
       "category": "database-internals",
+      "tags": [
+        "quorums",
+        "read-repair",
+        "hinted-handoff",
+        "crdt",
+        "tunable-consistency"
+      ],
       "citations": [
         "Petrov, Database Internals, Ch. 11-12"
       ],
@@ -23400,6 +24625,12 @@
       "title": "Storage Engine Basics",
       "topic": "database-internals",
       "category": "database-internals",
+      "tags": [
+        "storage-engines",
+        "row-store",
+        "column-store",
+        "buffer-pool"
+      ],
       "citations": [
         "Petrov, Database Internals, Ch. 1"
       ],
@@ -23515,6 +24746,13 @@
       "title": "Transaction Processing and Recovery",
       "topic": "database-internals",
       "category": "database-internals",
+      "tags": [
+        "wal",
+        "aries",
+        "steal-force",
+        "recovery",
+        "buffer-management"
+      ],
       "citations": [
         "Petrov, Database Internals, Ch. 5"
       ],
@@ -23666,6 +24904,14 @@
       "title": "Actions and the extensibility pipeline",
       "topic": "identity",
       "category": "identity-auth0",
+      "tags": [
+        "auth0",
+        "actions",
+        "extensibility",
+        "triggers",
+        "rules",
+        "hooks"
+      ],
       "citations": [
         "Auth0 Docs — 'Actions'",
         "Auth0 Docs — 'Actions Triggers'"
@@ -23825,6 +25071,14 @@
       "title": "Applications versus APIs",
       "topic": "identity",
       "category": "identity-auth0",
+      "tags": [
+        "auth0",
+        "application",
+        "api",
+        "audience",
+        "client-id",
+        "opaque-token"
+      ],
       "citations": [
         "Auth0 Docs — 'Applications'",
         "Auth0 Docs — 'APIs'",
@@ -23942,6 +25196,13 @@
       "title": "Connections and Identity Providers",
       "topic": "identity",
       "category": "identity-auth0",
+      "tags": [
+        "auth0",
+        "connections",
+        "social-login",
+        "enterprise-connections",
+        "home-realm-discovery"
+      ],
       "citations": [
         "Auth0 Docs — 'Identity Providers Supported by Auth0'",
         "Auth0 Docs — 'Connections'"
@@ -24062,6 +25323,13 @@
       "title": "Custom claims and namespacing",
       "topic": "identity",
       "category": "identity-auth0",
+      "tags": [
+        "auth0",
+        "custom-claims",
+        "actions",
+        "oidc",
+        "namespacing"
+      ],
       "citations": [
         "Auth0 Docs — 'User Profile Claims and Scope'",
         "Auth0 Docs — 'Create Custom Claims'"
@@ -24205,6 +25473,13 @@
       "title": "Management API versus Authentication API",
       "topic": "identity",
       "category": "identity-auth0",
+      "tags": [
+        "auth0",
+        "management-api",
+        "authentication-api",
+        "m2m",
+        "scopes"
+      ],
       "citations": [
         "Auth0 Docs — 'Authentication API'",
         "Auth0 Docs — 'Management API'",
@@ -24326,6 +25601,15 @@
       "title": "Operating a tenant: environments and limits",
       "topic": "identity",
       "category": "identity-auth0",
+      "tags": [
+        "auth0",
+        "tenant",
+        "operations",
+        "jwks",
+        "rate-limits",
+        "logging",
+        "deploy-cli"
+      ],
       "citations": [
         "Auth0 Docs — 'Deploy CLI Tool'",
         "Auth0 Docs — 'Rotate Signing Keys'",
@@ -24462,6 +25746,13 @@
       "title": "Organizations and B2B multitenancy",
       "topic": "identity",
       "category": "identity-auth0",
+      "tags": [
+        "auth0",
+        "organizations",
+        "b2b",
+        "multitenancy",
+        "org_id"
+      ],
       "citations": [
         "Auth0 Docs — 'Organizations'",
         "Auth0 Docs — 'Organizations Authorization Flows'"
@@ -24579,6 +25870,13 @@
       "title": "RBAC, roles, and permissions",
       "topic": "identity",
       "category": "identity-auth0",
+      "tags": [
+        "auth0",
+        "rbac",
+        "roles",
+        "permissions",
+        "scope"
+      ],
       "citations": [
         "Auth0 Docs — 'Role-Based Access Control'",
         "Auth0 Docs — 'Enable Role-Based Access Control for APIs'"
@@ -24701,6 +25999,14 @@
       "title": "Tenants and the Auth0 Domain",
       "topic": "identity",
       "category": "identity-auth0",
+      "tags": [
+        "auth0",
+        "tenant",
+        "domain",
+        "custom-domain",
+        "region",
+        "data-residency"
+      ],
       "citations": [
         "Auth0 Docs — 'Tenants'",
         "Auth0 Docs — 'Configure Custom Domains'",
@@ -24824,6 +26130,13 @@
       "title": "Universal Login and the hosted page",
       "topic": "identity",
       "category": "identity-auth0",
+      "tags": [
+        "auth0",
+        "universal-login",
+        "hosted-page",
+        "sso",
+        "custom-domain"
+      ],
       "citations": [
         "Auth0 Docs — 'Universal Login'",
         "Auth0 Docs — 'Custom Domains'"
@@ -24967,6 +26280,13 @@
       "title": "User Profiles and Account Linking",
       "topic": "identity",
       "category": "identity-auth0",
+      "tags": [
+        "auth0",
+        "user-profile",
+        "metadata",
+        "account-linking",
+        "identities"
+      ],
       "citations": [
         "Auth0 Docs — 'User Profile Structure'",
         "Auth0 Docs — 'Metadata Overview'",
@@ -25096,6 +26416,13 @@
       "title": "Access tokens, scope, and audience",
       "topic": "identity",
       "category": "identity-oauth",
+      "tags": [
+        "access-token",
+        "scope",
+        "audience",
+        "opaque-token",
+        "token-security"
+      ],
       "citations": [
         "RFC 6749 (OAuth 2.0 Authorization Framework)",
         "RFC 6750 (Bearer Token Usage)"
@@ -25232,6 +26559,13 @@
       "title": "Client Credentials and Machine-to-Machine Auth",
       "topic": "identity",
       "category": "identity-oauth",
+      "tags": [
+        "client-credentials",
+        "machine-to-machine",
+        "service-authentication",
+        "scope",
+        "token-endpoint"
+      ],
       "citations": [
         "RFC 6750 (Bearer Token Usage)",
         "RFC 9700 (OAuth 2.0 Security Best Current Practice)"
@@ -25380,6 +26714,13 @@
       "title": "Front channel versus back channel",
       "topic": "identity",
       "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "front-channel",
+        "back-channel",
+        "browser",
+        "exposure"
+      ],
       "citations": [
         "RFC 6749 (OAuth 2.0 Authorization Framework)",
         "OAuth 2.1 (draft)"
@@ -25485,6 +26826,13 @@
       "title": "Choosing a Grant, and the Two That Were Removed",
       "topic": "identity",
       "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "device-grant",
+        "implicit-flow",
+        "password-grant",
+        "grant-selection"
+      ],
       "citations": [
         "RFC 8628 (Device Authorization Grant)",
         "OAuth 2.1 draft"
@@ -25608,6 +26956,13 @@
       "title": "ID Tokens and OpenID Connect",
       "topic": "identity",
       "category": "identity-oauth",
+      "tags": [
+        "oidc",
+        "id-token",
+        "authentication",
+        "claims",
+        "jwt"
+      ],
       "citations": [
         "OpenID Connect Core 1.0"
       ],
@@ -25752,6 +27107,13 @@
       "title": "OAuth roles and the delegation problem",
       "topic": "identity",
       "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "delegation",
+        "authorization",
+        "roles",
+        "authentication"
+      ],
       "citations": [
         "RFC 6749 (OAuth 2.0 Authorization Framework)"
       ],
@@ -25879,6 +27241,13 @@
       "title": "PKCE and Public Clients",
       "topic": "identity",
       "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "pkce",
+        "public-client",
+        "mobile-security",
+        "authorization-code"
+      ],
       "citations": [
         "RFC 7636 (PKCE)",
         "RFC 6749 (OAuth 2.0 Authorization Framework)"
@@ -26014,6 +27383,13 @@
       "title": "Refresh tokens and rotation",
       "topic": "identity",
       "category": "identity-oauth",
+      "tags": [
+        "refresh-token",
+        "rotation",
+        "reuse-detection",
+        "revocation",
+        "token-security"
+      ],
       "citations": [
         "RFC 6749 (OAuth 2.0 Authorization Framework)",
         "RFC 9700 (Best Current Practice for OAuth 2.0 Security)"
@@ -26145,6 +27521,13 @@
       "title": "State, Nonce, and Redirect URI Validation",
       "topic": "identity",
       "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "state",
+        "nonce",
+        "redirect-uri",
+        "openid-connect"
+      ],
       "citations": [
         "RFC 6749 (OAuth 2.0 Authorization Framework)",
         "RFC 7636 (PKCE)"
@@ -26285,6 +27668,13 @@
       "title": "The authorization code flow",
       "topic": "identity",
       "category": "identity-oauth",
+      "tags": [
+        "oauth",
+        "authorization-code",
+        "redirect",
+        "token-exchange",
+        "delegation"
+      ],
       "citations": [
         "RFC 6749 (OAuth 2.0 Authorization Framework)"
       ],
@@ -26399,6 +27789,13 @@
       "title": "Token Validation at the Resource Server",
       "topic": "identity",
       "category": "identity-oauth",
+      "tags": [
+        "token-validation",
+        "jwks",
+        "resource-server",
+        "key-id",
+        "clock-skew"
+      ],
       "citations": [
         "RFC 6750 (Bearer Token Usage)",
         "RFC 9700 (OAuth 2.0 Security Best Current Practice)"
@@ -26589,6 +27986,13 @@
       "title": "Assertion Validation at the Service Provider",
       "topic": "identity",
       "category": "identity-saml",
+      "tags": [
+        "saml",
+        "assertion-validation",
+        "replay",
+        "destination",
+        "in-response-to"
+      ],
       "citations": [
         "OASIS SAML 2.0 Core",
         "OASIS SAML 2.0 Profiles"
@@ -26735,6 +28139,13 @@
       "title": "Attribute statements and mapping",
       "topic": "identity",
       "category": "identity-saml",
+      "tags": [
+        "saml",
+        "attributes",
+        "mapping",
+        "groups",
+        "integration"
+      ],
       "citations": [
         "OASIS SAML 2.0 Core"
       ],
@@ -26828,6 +28239,13 @@
       "title": "Bindings: Redirect, POST, and Artifact",
       "topic": "identity",
       "category": "identity-saml",
+      "tags": [
+        "saml",
+        "bindings",
+        "relaystate",
+        "redirect",
+        "artifact"
+      ],
       "citations": [
         "OASIS SAML 2.0 Bindings",
         "OASIS SAML 2.0 Profiles"
@@ -26938,6 +28356,13 @@
       "title": "NameID formats and user identity",
       "topic": "identity",
       "category": "identity-saml",
+      "tags": [
+        "saml",
+        "nameid",
+        "identity",
+        "persistent",
+        "transient"
+      ],
       "citations": [
         "OASIS SAML 2.0 Core"
       ],
@@ -27043,6 +28468,13 @@
       "title": "SAML integration failure modes",
       "topic": "identity",
       "category": "identity-saml",
+      "tags": [
+        "saml",
+        "troubleshooting",
+        "clock-skew",
+        "key-rotation",
+        "encoding"
+      ],
       "citations": [
         "OASIS SAML 2.0 Core",
         "OASIS SAML 2.0 Profiles"
@@ -27217,6 +28649,13 @@
       "title": "SAML Metadata and Trust Establishment",
       "topic": "identity",
       "category": "identity-saml",
+      "tags": [
+        "saml",
+        "metadata",
+        "trust-model",
+        "key-rotation",
+        "federation"
+      ],
       "citations": [
         "OASIS SAML 2.0 Metadata",
         "OASIS SAML 2.0 Core"
@@ -27355,6 +28794,13 @@
       "title": "SAML roles and the assertion",
       "topic": "identity",
       "category": "identity-saml",
+      "tags": [
+        "saml",
+        "assertion",
+        "sso",
+        "conditions",
+        "statements"
+      ],
       "citations": [
         "OASIS SAML 2.0 Core"
       ],
@@ -27475,6 +28921,13 @@
       "title": "SAML versus OIDC",
       "topic": "identity",
       "category": "identity-saml",
+      "tags": [
+        "saml",
+        "oidc",
+        "federation",
+        "trust-model",
+        "protocol-comparison"
+      ],
       "citations": [
         "OASIS SAML 2.0 Core",
         "OASIS SAML 2.0 Profiles"
@@ -27608,6 +29061,13 @@
       "title": "Single Logout and Why It Is Hard",
       "topic": "identity",
       "category": "identity-saml",
+      "tags": [
+        "saml",
+        "single-logout",
+        "front-channel",
+        "back-channel",
+        "partial-logout"
+      ],
       "citations": [
         "OASIS SAML 2.0 Core",
         "OASIS SAML 2.0 Profiles"
@@ -27748,6 +29208,13 @@
       "title": "SP-initiated versus IdP-initiated SSO",
       "topic": "identity",
       "category": "identity-saml",
+      "tags": [
+        "saml",
+        "sso",
+        "sp-initiated",
+        "idp-initiated",
+        "correlation"
+      ],
       "citations": [
         "OASIS SAML 2.0 Bindings",
         "OASIS SAML 2.0 Profiles"
@@ -27858,6 +29325,13 @@
       "title": "XML Signatures in SAML",
       "topic": "identity",
       "category": "identity-saml",
+      "tags": [
+        "saml",
+        "xml-signature",
+        "canonicalization",
+        "wrapping-attack",
+        "signing"
+      ],
       "citations": [
         "W3C XML Signature Syntax and Processing",
         "OASIS SAML 2.0 Core"
@@ -28001,6 +29475,12 @@
       "title": "Cookie attributes and scope",
       "topic": "identity",
       "category": "identity-sessions",
+      "tags": [
+        "cookies",
+        "samesite",
+        "httponly",
+        "cookie-scope"
+      ],
       "citations": [
         "OWASP Session Management Cheat Sheet",
         "RFC 6265bis (HTTP State Management)"
@@ -28156,6 +29636,12 @@
       "title": "Credential Storage and Breach Response",
       "topic": "identity",
       "category": "identity-sessions",
+      "tags": [
+        "credential-storage",
+        "breach-response",
+        "credential-stuffing",
+        "hash-migration"
+      ],
       "citations": [
         "OWASP Authentication Cheat Sheet",
         "OWASP Forgot Password Cheat Sheet"
@@ -28277,6 +29763,13 @@
       "title": "CSRF and request forgery",
       "topic": "identity",
       "category": "identity-sessions",
+      "tags": [
+        "csrf",
+        "request-forgery",
+        "synchronizer-token",
+        "same-site",
+        "state-changing-get"
+      ],
       "citations": [
         "OWASP Cross-Site Request Forgery Prevention Cheat Sheet"
       ],
@@ -28419,6 +29912,13 @@
       "title": "JWT Structure and Pitfalls",
       "topic": "identity",
       "category": "identity-sessions",
+      "tags": [
+        "jwt",
+        "token-format",
+        "algorithm-confusion",
+        "base64url",
+        "security-pitfalls"
+      ],
       "citations": [
         "RFC 7519 (JSON Web Token)",
         "RFC 8725 (JWT Best Current Practices)"
@@ -28561,6 +30061,12 @@
       "title": "Login Flows and Account Recovery",
       "topic": "identity",
       "category": "identity-sessions",
+      "tags": [
+        "account-recovery",
+        "user-enumeration",
+        "rate-limiting",
+        "step-up-auth"
+      ],
       "citations": [
         "OWASP Authentication Cheat Sheet",
         "OWASP Forgot Password Cheat Sheet"
@@ -28726,6 +30232,12 @@
       "title": "Logout and session termination",
       "topic": "identity",
       "category": "identity-sessions",
+      "tags": [
+        "logout",
+        "session-termination",
+        "revocation",
+        "global-signout"
+      ],
       "citations": [
         "OWASP Session Management Cheat Sheet",
         "RFC 6265bis (HTTP State Management)"
@@ -28838,6 +30350,13 @@
       "title": "Multi-Factor Authentication and TOTP",
       "topic": "identity",
       "category": "identity-sessions",
+      "tags": [
+        "mfa",
+        "totp",
+        "sms",
+        "phishing",
+        "push-fatigue"
+      ],
       "citations": [
         "RFC 6238 (TOTP)",
         "W3C Web Authentication (WebAuthn)"
@@ -29011,6 +30530,12 @@
       "title": "Sessions and the session identifier",
       "topic": "identity",
       "category": "identity-sessions",
+      "tags": [
+        "sessions",
+        "authentication",
+        "session-fixation",
+        "timeouts"
+      ],
       "citations": [
         "OWASP Session Management Cheat Sheet",
         "RFC 6265bis (HTTP State Management)"
@@ -29128,6 +30653,13 @@
       "title": "Stateless Tokens Versus Server Sessions",
       "topic": "identity",
       "category": "identity-sessions",
+      "tags": [
+        "session-architecture",
+        "revocation",
+        "horizontal-scaling",
+        "token-size",
+        "hybrid-credential"
+      ],
       "citations": [
         "RFC 7519 (JSON Web Token)",
         "RFC 8725 (JWT Best Current Practices)",
@@ -29283,6 +30815,13 @@
       "title": "Token storage in the browser",
       "topic": "identity",
       "category": "identity-sessions",
+      "tags": [
+        "token-storage",
+        "local-storage",
+        "backend-for-frontend",
+        "script-injection",
+        "in-memory"
+      ],
       "citations": [
         "OWASP Session Management Cheat Sheet",
         "OWASP Cross-Site Request Forgery Prevention Cheat Sheet"
@@ -29388,6 +30927,12 @@
       "title": "WebAuthn and Passkeys",
       "topic": "identity",
       "category": "identity-sessions",
+      "tags": [
+        "webauthn",
+        "passkeys",
+        "origin-binding",
+        "phishing-resistance"
+      ],
       "citations": [
         "RFC 6238 (TOTP)",
         "W3C Web Authentication (WebAuthn)"
@@ -29546,6 +31091,12 @@
       "title": "Balls, Bins, and Collisions",
       "topic": "math",
       "category": "math-probability",
+      "tags": [
+        "balls-and-bins",
+        "birthday-problem",
+        "coupon-collector",
+        "maximum-load"
+      ],
       "citations": [
         "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 4",
         "Mitzenmacher & Upfal, Probability and Computing, Ch. 5"
@@ -29695,6 +31246,12 @@
       "title": "Bayes' Theorem and Inference",
       "topic": "math",
       "category": "math-probability",
+      "tags": [
+        "bayes-theorem",
+        "posterior",
+        "base-rate-fallacy",
+        "false-positive-paradox"
+      ],
       "citations": [
         "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 2"
       ],
@@ -29830,6 +31387,12 @@
       "title": "Concentration and Tail Bounds",
       "topic": "math",
       "category": "math-probability",
+      "tags": [
+        "tail-bounds",
+        "markov-chebyshev-chernoff",
+        "concentration",
+        "union-bound"
+      ],
       "citations": [
         "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 6, 10"
       ],
@@ -30007,6 +31570,12 @@
       "title": "Conditional Probability and Independence",
       "topic": "math",
       "category": "math-probability",
+      "tags": [
+        "conditional-probability",
+        "independence",
+        "total-probability",
+        "multiplication-rule"
+      ],
       "citations": [
         "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 2"
       ],
@@ -30143,6 +31712,13 @@
       "title": "Continuous Distribution Families",
       "topic": "math",
       "category": "math-probability",
+      "tags": [
+        "continuous-distributions",
+        "exponential",
+        "normal",
+        "memorylessness",
+        "poisson-process"
+      ],
       "citations": [
         "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 5, 7"
       ],
@@ -30282,6 +31858,13 @@
       "title": "Discrete Distribution Families",
       "topic": "math",
       "category": "math-probability",
+      "tags": [
+        "discrete-distributions",
+        "binomial",
+        "poisson",
+        "geometric",
+        "hypergeometric"
+      ],
       "citations": [
         "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 3-4"
       ],
@@ -30462,6 +32045,12 @@
       "title": "Expectation and Linearity",
       "topic": "math",
       "category": "math-probability",
+      "tags": [
+        "expectation",
+        "lotus",
+        "linearity",
+        "discrete-vs-continuous"
+      ],
       "citations": [
         "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 4-5"
       ],
@@ -30650,6 +32239,12 @@
       "title": "Joint Distributions and Conditional Expectation",
       "topic": "math",
       "category": "math-probability",
+      "tags": [
+        "joint-distribution",
+        "independence",
+        "conditional-expectation",
+        "adams-law"
+      ],
       "citations": [
         "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 3, 7, 9"
       ],
@@ -30824,6 +32419,12 @@
       "title": "Limit Theorems: LLN and the CLT",
       "topic": "math",
       "category": "math-probability",
+      "tags": [
+        "law-of-large-numbers",
+        "central-limit-theorem",
+        "sampling-distribution",
+        "standard-error"
+      ],
       "citations": [
         "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 10"
       ],
@@ -30964,6 +32565,13 @@
       "title": "Probability Axioms and Counting",
       "topic": "math",
       "category": "math-probability",
+      "tags": [
+        "sample-space",
+        "probability-axioms",
+        "inclusion-exclusion",
+        "combinatorics",
+        "binomial-coefficient"
+      ],
       "citations": [
         "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 1"
       ],
@@ -31108,6 +32716,13 @@
       "title": "Random Variables and Distributions",
       "topic": "math",
       "category": "math-probability",
+      "tags": [
+        "random-variable",
+        "pmf",
+        "cdf",
+        "pdf",
+        "support"
+      ],
       "citations": [
         "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 2-3"
       ],
@@ -31290,6 +32905,13 @@
       "title": "Variance, Covariance, and Correlation",
       "topic": "math",
       "category": "math-probability",
+      "tags": [
+        "variance",
+        "covariance",
+        "correlation",
+        "uncorrelated",
+        "independence"
+      ],
       "citations": [
         "Blitzstein & Hwang, Introduction to Probability 2e, Ch. 4, 6"
       ],
@@ -31482,6 +33104,11 @@
       "title": "TCP Congestion Control",
       "topic": "networking",
       "category": "networking",
+      "tags": [
+        "congestion-control",
+        "tcp",
+        "transport-layer"
+      ],
       "citations": [
         "Kurose & Ross, Computer Networking 8e, Ch. 3.6-3.7"
       ],
@@ -31594,6 +33221,11 @@
       "title": "Delay, Loss, and Throughput",
       "topic": "networking",
       "category": "networking",
+      "tags": [
+        "delay",
+        "queuing",
+        "throughput"
+      ],
       "citations": [
         "Kurose & Ross, Computer Networking 8e, Ch. 1.4"
       ],
@@ -31693,6 +33325,10 @@
       "title": "DNS",
       "topic": "networking",
       "category": "networking",
+      "tags": [
+        "dns",
+        "application-layer"
+      ],
       "citations": [
         "Kurose & Ross, Computer Networking 8e, Ch. 2.4",
         "RFC 1035"
@@ -31798,6 +33434,13 @@
       "title": "HTTP Caching: Freshness and Validation",
       "topic": "networking",
       "category": "http-protocol",
+      "tags": [
+        "caching",
+        "cache-control",
+        "etag",
+        "validation",
+        "http"
+      ],
       "citations": [
         "RFC 9111 (HTTP Caching)",
         "RFC 9110 (HTTP Semantics)"
@@ -31944,6 +33587,12 @@
       "title": "Connection management in HTTP/1.1",
       "topic": "networking",
       "category": "http-protocol",
+      "tags": [
+        "http1-1",
+        "head-of-line-blocking",
+        "pipelining",
+        "connection-management"
+      ],
       "citations": [
         "RFC 9113 (HTTP/2)",
         "Grigorik, High Performance Browser Networking"
@@ -32073,6 +33722,13 @@
       "title": "Content Negotiation and Encoding",
       "topic": "networking",
       "category": "http-protocol",
+      "tags": [
+        "content-negotiation",
+        "encoding",
+        "compression",
+        "chunked-transfer",
+        "http"
+      ],
       "citations": [
         "RFC 9110 (HTTP Semantics)"
       ],
@@ -32169,6 +33825,13 @@
       "title": "Header compression: HPACK and QPACK",
       "topic": "networking",
       "category": "http-protocol",
+      "tags": [
+        "http2",
+        "hpack",
+        "qpack",
+        "header-compression",
+        "http3"
+      ],
       "citations": [
         "RFC 9113 (HTTP/2)",
         "RFC 9204 (QPACK)"
@@ -32285,6 +33948,12 @@
       "title": "HTTP/2: binary framing and multiplexing",
       "topic": "networking",
       "category": "http-protocol",
+      "tags": [
+        "http2",
+        "multiplexing",
+        "binary-framing",
+        "flow-control"
+      ],
       "citations": [
         "RFC 9113 (HTTP/2)",
         "Grigorik, High Performance Browser Networking"
@@ -32429,6 +34098,11 @@
       "title": "HTTP",
       "topic": "networking",
       "category": "http-protocol",
+      "tags": [
+        "http",
+        "application-layer",
+        "web"
+      ],
       "citations": [
         "Kurose & Ross, Computer Networking 8e, Ch. 2.2",
         "RFC 9110"
@@ -32536,6 +34210,13 @@
       "title": "HTTP message format and semantics",
       "topic": "networking",
       "category": "http-protocol",
+      "tags": [
+        "http",
+        "message-format",
+        "semantics",
+        "methods",
+        "idempotency"
+      ],
       "citations": [
         "RFC 9110 (HTTP Semantics)"
       ],
@@ -32716,6 +34397,13 @@
       "title": "QUIC and HTTP/3",
       "topic": "networking",
       "category": "http-protocol",
+      "tags": [
+        "quic",
+        "http-3",
+        "udp",
+        "connection-migration",
+        "transport"
+      ],
       "citations": [
         "RFC 9000 (QUIC)",
         "RFC 9114 (HTTP/3)"
@@ -32847,6 +34535,12 @@
       "title": "Server push, Early Hints, and what HTTP/2 didn't fix",
       "topic": "networking",
       "category": "http-protocol",
+      "tags": [
+        "http2",
+        "server-push",
+        "early-hints",
+        "head-of-line-blocking"
+      ],
       "citations": [
         "RFC 9113 (HTTP/2)",
         "RFC 8297 (Early Hints)"
@@ -32986,6 +34680,12 @@
       "title": "Status codes in practice",
       "topic": "networking",
       "category": "http-protocol",
+      "tags": [
+        "http",
+        "status-codes",
+        "redirects",
+        "error-handling"
+      ],
       "citations": [
         "RFC 9110 (HTTP Semantics)"
       ],
@@ -33166,6 +34866,12 @@
       "title": "WebSockets and the Upgrade Mechanism",
       "topic": "networking",
       "category": "http-protocol",
+      "tags": [
+        "websockets",
+        "upgrade-handshake",
+        "real-time",
+        "server-sent-events"
+      ],
       "citations": [
         "RFC 6455 (WebSocket)"
       ],
@@ -33304,6 +35010,11 @@
       "title": "Internet Structure and Switching",
       "topic": "networking",
       "category": "networking",
+      "tags": [
+        "internet-structure",
+        "access-networks",
+        "switching"
+      ],
       "citations": [
         "Kurose & Ross, Computer Networking 8e, Ch. 1"
       ],
@@ -33415,6 +35126,12 @@
       "title": "The Network Layer: IPv4, Fragmentation, NAT, and DHCP",
       "topic": "networking",
       "category": "networking",
+      "tags": [
+        "network-layer",
+        "ip",
+        "nat",
+        "dhcp"
+      ],
       "citations": [
         "Kurose & Ross, Computer Networking 8e, Ch. 4",
         "RFC 791",
@@ -33523,6 +35240,11 @@
       "title": "Reliable Data Transfer Protocols",
       "topic": "networking",
       "category": "networking",
+      "tags": [
+        "reliable-transfer",
+        "sliding-window",
+        "transport-layer"
+      ],
       "citations": [
         "Kurose & Ross, Computer Networking 8e, Ch. 3.4"
       ],
@@ -33622,6 +35344,14 @@
       "title": "Routing Algorithms and the Link Layer",
       "topic": "networking",
       "category": "networking",
+      "tags": [
+        "routing",
+        "link-layer",
+        "ethernet",
+        "arp",
+        "bgp",
+        "ospf"
+      ],
       "citations": [
         "Kurose & Ross, Computer Networking 8e, Ch. 5-6"
       ],
@@ -33740,6 +35470,10 @@
       "title": "TCP Connection Management",
       "topic": "networking",
       "category": "networking",
+      "tags": [
+        "tcp",
+        "transport-layer"
+      ],
       "citations": [
         "Kurose & Ross, Computer Networking 8e, Ch. 3.5",
         "RFC 9293"
@@ -33864,6 +35598,11 @@
       "title": "Transport Layer Basics and UDP",
       "topic": "networking",
       "category": "networking",
+      "tags": [
+        "transport-layer",
+        "udp",
+        "multiplexing"
+      ],
       "citations": [
         "Kurose & Ross, Computer Networking 8e, Ch. 3.1-3.3",
         "RFC 768"
@@ -33964,6 +35703,12 @@
       "title": "Common Concurrency Bugs",
       "topic": "concurrency",
       "category": "os-concurrency",
+      "tags": [
+        "concurrency-bugs",
+        "atomicity-violation",
+        "order-violation",
+        "debugging"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 32 (Concurrency Bugs)"
       ],
@@ -34072,6 +35817,12 @@
       "title": "Performance: Lock Contention, Scalability, and the Limits of Concurrency",
       "topic": "concurrency",
       "category": "os-concurrency",
+      "tags": [
+        "performance",
+        "scalability",
+        "lock-contention",
+        "amdahls-law"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 29 (Lock-based Concurrent Data Structures)",
         "Arpaci-Dusseau, OSTEP, Ch. 28 (Locks)"
@@ -34164,6 +35915,12 @@
       "title": "Condition Variables",
       "topic": "concurrency",
       "category": "os-concurrency",
+      "tags": [
+        "condition-variables",
+        "synchronization",
+        "producer-consumer",
+        "locks"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 30 (Condition Variables)"
       ],
@@ -34272,6 +36029,12 @@
       "title": "Deadlock: Conditions, Prevention, Avoidance",
       "topic": "concurrency",
       "category": "os-concurrency",
+      "tags": [
+        "deadlock",
+        "resource-allocation",
+        "prevention",
+        "avoidance"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 32 (Concurrency Bugs)"
       ],
@@ -34392,6 +36155,12 @@
       "title": "Event-Based Concurrency",
       "topic": "concurrency",
       "category": "os-concurrency",
+      "tags": [
+        "event-based-concurrency",
+        "event-loop",
+        "non-blocking-io",
+        "select"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 33 (Event-based Concurrency)"
       ],
@@ -34495,6 +36264,12 @@
       "title": "Lock-Based Concurrent Data Structures",
       "topic": "concurrency",
       "category": "os-concurrency",
+      "tags": [
+        "data-structures",
+        "locks",
+        "concurrency",
+        "hand-over-hand-locking"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 29 (Lock-based Concurrent Data Structures)"
       ],
@@ -34596,6 +36371,13 @@
       "title": "Locks and How They Are Built",
       "topic": "concurrency",
       "category": "os-concurrency",
+      "tags": [
+        "locks",
+        "mutexes",
+        "spin-locks",
+        "test-and-set",
+        "ticket-locks"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 28 (Locks)"
       ],
@@ -34709,6 +36491,12 @@
       "title": "Semaphores",
       "topic": "concurrency",
       "category": "os-concurrency",
+      "tags": [
+        "semaphores",
+        "synchronization",
+        "producer-consumer",
+        "locks"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 31 (Semaphores)"
       ],
@@ -34817,6 +36605,12 @@
       "title": "Threads, the Thread API, and Why Shared State Breaks",
       "topic": "concurrency",
       "category": "os-concurrency",
+      "tags": [
+        "threads",
+        "thread-api",
+        "race-conditions",
+        "critical-section"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 26 (Concurrency and Threads)",
         "Arpaci-Dusseau, OSTEP, Ch. 27 (Thread API)"
@@ -34931,6 +36725,12 @@
       "title": "Crash Consistency: fsck and Journaling",
       "topic": "operating-systems",
       "category": "os-persistence",
+      "tags": [
+        "crash-consistency",
+        "fsck",
+        "journaling",
+        "write-ahead-logging"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 42 (Crash Consistency: FSCK and Journaling)"
       ],
@@ -35064,6 +36864,12 @@
       "title": "Data Integrity and Checksums",
       "topic": "operating-systems",
       "category": "os-persistence",
+      "tags": [
+        "data-integrity",
+        "checksums",
+        "corruption",
+        "scrubbing"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 45 (Data Integrity and Protection)"
       ],
@@ -35169,6 +36975,12 @@
       "title": "FFS and Locality",
       "topic": "operating-systems",
       "category": "os-persistence",
+      "tags": [
+        "ffs",
+        "locality",
+        "block-groups",
+        "disk-awareness"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 41 (Locality and The Fast File System)"
       ],
@@ -35262,6 +37074,12 @@
       "title": "File System Implementation: Inodes, Bitmaps, and Allocation",
       "topic": "operating-systems",
       "category": "os-persistence",
+      "tags": [
+        "file-system-implementation",
+        "inodes",
+        "allocation",
+        "superblock"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 40 (File System Implementation)"
       ],
@@ -35360,6 +37178,12 @@
       "title": "Files, Directories, and the File API",
       "topic": "operating-systems",
       "category": "os-persistence",
+      "tags": [
+        "file-api",
+        "directories",
+        "inodes",
+        "links"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 39 (Files and Directories)"
       ],
@@ -35453,6 +37277,12 @@
       "title": "Flash and SSDs: Erase Blocks, the Flash Translation Layer (FTL), and Wear Levelling",
       "topic": "operating-systems",
       "category": "os-persistence",
+      "tags": [
+        "ssd",
+        "flash",
+        "ftl",
+        "wear-levelling"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 44 (Flash-based SSDs)"
       ],
@@ -35559,6 +37389,12 @@
       "title": "Hard Disk Drives and Disk Scheduling",
       "topic": "operating-systems",
       "category": "os-persistence",
+      "tags": [
+        "hard-disk-drives",
+        "disk-scheduling",
+        "seek-time",
+        "rotational-latency"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 37 (Hard Disk Drives)"
       ],
@@ -35662,6 +37498,12 @@
       "title": "I/O Devices, Interrupts, and DMA (Direct Memory Access)",
       "topic": "operating-systems",
       "category": "os-persistence",
+      "tags": [
+        "io-devices",
+        "interrupts",
+        "polling",
+        "dma"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 36 (I/O Devices)"
       ],
@@ -35772,6 +37614,12 @@
       "title": "Log-Structured File Systems",
       "topic": "operating-systems",
       "category": "os-persistence",
+      "tags": [
+        "log-structured-file-systems",
+        "lfs",
+        "cleaning",
+        "imap"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 43 (Log-structured File Systems)"
       ],
@@ -35877,6 +37725,12 @@
       "title": "RAID Levels and Their Trade-offs",
       "topic": "operating-systems",
       "category": "os-persistence",
+      "tags": [
+        "raid",
+        "redundancy",
+        "fault-tolerance",
+        "parity"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 38 (RAID)"
       ],
@@ -35982,6 +37836,12 @@
       "title": "Address Spaces and the Memory API",
       "topic": "operating-systems",
       "category": "os-virtualization",
+      "tags": [
+        "address-space",
+        "memory-api",
+        "malloc",
+        "memory-bugs"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 13 (Address Spaces)",
         "Arpaci-Dusseau, OSTEP, Ch. 14 (Interlude: Memory API)"
@@ -36079,6 +37939,12 @@
       "title": "Address Translation and Segmentation",
       "topic": "operating-systems",
       "category": "os-virtualization",
+      "tags": [
+        "address-translation",
+        "segmentation",
+        "base-and-bounds",
+        "fragmentation"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 15 (Address Translation)",
         "Arpaci-Dusseau, OSTEP, Ch. 16 (Segmentation)"
@@ -36181,6 +38047,12 @@
       "title": "Free-Space Management",
       "topic": "operating-systems",
       "category": "os-virtualization",
+      "tags": [
+        "free-space-management",
+        "malloc-internals",
+        "fragmentation",
+        "allocation-strategies"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 17 (Free-Space Management)"
       ],
@@ -36288,6 +38160,12 @@
       "title": "Limited Direct Execution",
       "topic": "operating-systems",
       "category": "os-virtualization",
+      "tags": [
+        "limited-direct-execution",
+        "traps",
+        "mode-switch",
+        "system-calls"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 6 (Limited Direct Execution)"
       ],
@@ -36397,6 +38275,11 @@
       "title": "Multi-Level Feedback Queue (MLFQ)",
       "topic": "operating-systems",
       "category": "os-virtualization",
+      "tags": [
+        "scheduling",
+        "mlfq",
+        "multi-level-feedback-queue"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 8 (Multi-Level Feedback Queue)"
       ],
@@ -36503,6 +38386,12 @@
       "title": "Multi-Level Page Tables and Swapping",
       "topic": "operating-systems",
       "category": "os-virtualization",
+      "tags": [
+        "multi-level-page-tables",
+        "swapping",
+        "page-replacement",
+        "thrashing"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 20 (Paging: Smaller Tables)",
         "Arpaci-Dusseau, OSTEP, Ch. 21 (Beyond Physical Memory: Mechanisms)",
@@ -36616,6 +38505,12 @@
       "title": "Paging, Page Tables, and TLBs",
       "topic": "operating-systems",
       "category": "os-virtualization",
+      "tags": [
+        "paging",
+        "page-tables",
+        "tlb",
+        "address-translation"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 18 (Paging: Introduction)",
         "Arpaci-Dusseau, OSTEP, Ch. 19 (Paging: Faster Translations (TLBs))"
@@ -36729,6 +38624,13 @@
       "title": "Processes and the Process API",
       "topic": "operating-systems",
       "category": "os-virtualization",
+      "tags": [
+        "processes",
+        "process-api",
+        "fork",
+        "exec",
+        "wait"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 4 (Processes)",
         "Arpaci-Dusseau, OSTEP, Ch. 5 (Process API)"
@@ -36838,6 +38740,13 @@
       "title": "Proportional-Share Scheduling",
       "topic": "operating-systems",
       "category": "os-virtualization",
+      "tags": [
+        "scheduling",
+        "lottery-scheduling",
+        "stride-scheduling",
+        "cfs",
+        "proportional-share"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 9 (Scheduling: Proportional Share)"
       ],
@@ -36951,6 +38860,15 @@
       "title": "Scheduling Basics",
       "topic": "operating-systems",
       "category": "os-virtualization",
+      "tags": [
+        "scheduling",
+        "fifo",
+        "sjf",
+        "stcf",
+        "round-robin",
+        "turnaround-time",
+        "response-time"
+      ],
       "citations": [
         "Arpaci-Dusseau, OSTEP, Ch. 7 (Scheduling: Introduction)"
       ],
@@ -37052,6 +38970,13 @@
       "title": "Authenticated Encryption and AEAD",
       "topic": "security",
       "category": "security-crypto",
+      "tags": [
+        "aead",
+        "authenticated-encryption",
+        "aes-gcm",
+        "chacha20-poly1305",
+        "nonce-reuse"
+      ],
       "citations": [
         "Aumasson, Serious Cryptography, Ch. 8"
       ],
@@ -37184,6 +39109,13 @@
       "title": "Cryptographic Hash Functions",
       "topic": "security",
       "category": "security-crypto",
+      "tags": [
+        "hash-functions",
+        "sha-2",
+        "sha-3",
+        "merkle-damgard",
+        "collision-resistance"
+      ],
       "citations": [
         "Aumasson, Serious Cryptography, Ch. 6"
       ],
@@ -37345,6 +39277,13 @@
       "title": "Digital Signatures",
       "topic": "security",
       "category": "security-crypto",
+      "tags": [
+        "digital-signatures",
+        "rsa-pss",
+        "ecdsa",
+        "ed25519",
+        "non-repudiation"
+      ],
       "citations": [
         "Aumasson, Serious Cryptography, Ch. 10, 12"
       ],
@@ -37503,6 +39442,12 @@
       "title": "Key Management and Rotation",
       "topic": "security",
       "category": "security-crypto",
+      "tags": [
+        "key-management",
+        "envelope-encryption",
+        "key-rotation",
+        "key-hierarchy"
+      ],
       "citations": [
         "Aumasson, Serious Cryptography, Ch. 3"
       ],
@@ -37629,6 +39574,13 @@
       "title": "Message Authentication Codes",
       "topic": "security",
       "category": "security-crypto",
+      "tags": [
+        "mac",
+        "hmac",
+        "integrity",
+        "authenticity",
+        "constant-time"
+      ],
       "citations": [
         "Aumasson, Serious Cryptography, Ch. 7"
       ],
@@ -37754,6 +39706,13 @@
       "title": "Password Hashing and KDFs",
       "topic": "security",
       "category": "security-crypto",
+      "tags": [
+        "password-hashing",
+        "kdf",
+        "bcrypt",
+        "argon2",
+        "salt"
+      ],
       "citations": [
         "Aumasson, Serious Cryptography, Ch. 7"
       ],
@@ -37878,6 +39837,13 @@
       "title": "Public-Key Encryption and Key Exchange",
       "topic": "security",
       "category": "security-crypto",
+      "tags": [
+        "public-key-crypto",
+        "rsa",
+        "elliptic-curves",
+        "diffie-hellman",
+        "forward-secrecy"
+      ],
       "citations": [
         "Aumasson, Serious Cryptography, Ch. 10-12"
       ],
@@ -38036,6 +40002,14 @@
       "title": "Randomness and CSPRNGs",
       "topic": "security",
       "category": "security-crypto",
+      "tags": [
+        "randomness",
+        "csprng",
+        "entropy",
+        "nonce",
+        "iv",
+        "salt"
+      ],
       "citations": [
         "Aumasson, Serious Cryptography, Ch. 2"
       ],
@@ -38165,6 +40139,12 @@
       "title": "Security Goals and Threat Models",
       "topic": "security",
       "category": "security-crypto",
+      "tags": [
+        "security-goals",
+        "threat-models",
+        "kerckhoffs",
+        "cryptanalysis"
+      ],
       "citations": [
         "Aumasson, Serious Cryptography, Ch. 1"
       ],
@@ -38309,6 +40289,13 @@
       "title": "Side Channels and Implementation Pitfalls",
       "topic": "security",
       "category": "security-crypto",
+      "tags": [
+        "side-channels",
+        "timing-attacks",
+        "constant-time",
+        "padding-oracle",
+        "implementation-security"
+      ],
       "citations": [
         "Aumasson, Serious Cryptography, Ch. 3"
       ],
@@ -38437,6 +40424,13 @@
       "title": "Symmetric Encryption and Block Ciphers",
       "topic": "security",
       "category": "security-crypto",
+      "tags": [
+        "symmetric-encryption",
+        "block-ciphers",
+        "aes",
+        "modes-of-operation",
+        "malleability"
+      ],
       "citations": [
         "Aumasson, Serious Cryptography, Ch. 3"
       ],
@@ -38594,6 +40588,13 @@
       "title": "Certificate validation and revocation",
       "topic": "security",
       "category": "security-tls",
+      "tags": [
+        "tls",
+        "certificate-validation",
+        "hostname-verification",
+        "revocation",
+        "ocsp"
+      ],
       "citations": [
         "Ristić, Bulletproof TLS and PKI, Ch. 4",
         "RFC 8446"
@@ -38830,6 +40831,12 @@
       "title": "Certificates and X.509",
       "topic": "security",
       "category": "security-tls",
+      "tags": [
+        "x509",
+        "certificates",
+        "pki",
+        "subject-alternative-name"
+      ],
       "citations": [
         "Ristić, Bulletproof TLS and PKI, Ch. 4"
       ],
@@ -38974,6 +40981,12 @@
       "title": "Chain of Trust and Certificate Authorities",
       "topic": "security",
       "category": "security-tls",
+      "tags": [
+        "pki",
+        "certificate-authority",
+        "chain-of-trust",
+        "trust-store"
+      ],
       "citations": [
         "Ristić, Bulletproof TLS and PKI, Ch. 5"
       ],
@@ -39105,6 +41118,13 @@
       "title": "Cipher suites and version negotiation",
       "topic": "security",
       "category": "security-tls",
+      "tags": [
+        "tls",
+        "cipher-suites",
+        "version-negotiation",
+        "downgrade-attacks",
+        "tls-1.3"
+      ],
       "citations": [
         "RFC 8446",
         "Ristić, Bulletproof TLS and PKI, Ch. 4"
@@ -39244,6 +41264,13 @@
       "title": "Mutual TLS and client authentication",
       "topic": "security",
       "category": "security-tls",
+      "tags": [
+        "tls",
+        "mtls",
+        "client-authentication",
+        "certificate-pinning",
+        "bearer-tokens"
+      ],
       "citations": [
         "Ristić, Bulletproof TLS and PKI, Ch. 4",
         "RFC 8446"
@@ -39425,6 +41452,13 @@
       "title": "Session resumption and 0-RTT",
       "topic": "security",
       "category": "security-tls",
+      "tags": [
+        "tls",
+        "session-resumption",
+        "session-tickets",
+        "0-rtt",
+        "replay-attacks"
+      ],
       "citations": [
         "RFC 8446",
         "Ristić, Bulletproof TLS and PKI, Ch. 4"
@@ -39562,6 +41596,13 @@
       "title": "SNI and ALPN",
       "topic": "security",
       "category": "security-tls",
+      "tags": [
+        "tls",
+        "sni",
+        "alpn",
+        "virtual-hosting",
+        "encrypted-client-hello"
+      ],
       "citations": [
         "RFC 8446",
         "Ristić, Bulletproof TLS and PKI, Ch. 4"
@@ -39713,6 +41754,13 @@
       "title": "The TLS 1.2 handshake",
       "topic": "security",
       "category": "security-tls",
+      "tags": [
+        "tls",
+        "tls-1-2",
+        "handshake",
+        "key-exchange",
+        "forward-secrecy"
+      ],
       "citations": [
         "RFC 8446",
         "Ristić, Bulletproof TLS and PKI, Ch. 4"
@@ -39878,6 +41926,13 @@
       "title": "The TLS 1.3 handshake",
       "topic": "security",
       "category": "security-tls",
+      "tags": [
+        "tls",
+        "tls-1-3",
+        "handshake",
+        "forward-secrecy",
+        "protocol-design"
+      ],
       "citations": [
         "RFC 8446",
         "Ristić, Bulletproof TLS and PKI, Ch. 4"
@@ -40042,6 +42097,13 @@
       "title": "TLS failure modes and operational pitfalls",
       "topic": "security",
       "category": "security-tls",
+      "tags": [
+        "tls",
+        "outages",
+        "misconfiguration",
+        "hsts",
+        "interception-proxy"
+      ],
       "citations": [
         "Ristić, Bulletproof TLS and PKI, Ch. 6"
       ],
@@ -40192,6 +42254,12 @@
       "title": "What TLS Provides, and the Record Layer",
       "topic": "security",
       "category": "security-tls",
+      "tags": [
+        "tls",
+        "record-layer",
+        "transport-security",
+        "rfc-8446"
+      ],
       "citations": [
         "Ristić, Bulletproof TLS and PKI, Ch. 1",
         "RFC 8446"

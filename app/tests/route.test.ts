@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   decideRoute, focusHash, noteHash, resumesSuspendedSession, retainsSuspendedSession,
+  searchHash,
   type DashboardState, type RouteDecision
 } from '../src/route.js';
 import type { TopicSummary } from '../src/topics.js';
@@ -27,7 +28,8 @@ const state = (
   // dashboard renders them from the same load.
   streak: 0,
   lastSevenDays: [],
-  topics: topicList
+  topics: topicList,
+  deferredCount: 0
 });
 
 describe('decideRoute', () => {
@@ -148,7 +150,7 @@ describe('decideRoute with a suspended session', () => {
   it('still routes the note detour to the note, not to a resume', () => {
     // The whole point: the note has to render while the session waits.
     expect(decideRoute(noteHash('vault/a.md', 'card-ab12'), state([], []), '#review'))
-      .toEqual({ kind: 'note', path: 'vault/a.md', cardId: 'card-ab12' });
+      .toEqual({ kind: 'note', path: 'vault/a.md', cardId: 'card-ab12', block: null });
   });
 
   it('never invents a resume for a non-session route', () => {
@@ -185,6 +187,7 @@ describe('retainsSuspendedSession', () => {
     focus: false,
     topics: false,
     settings: false,
+    search: false,
     dashboard: false
   };
 
@@ -242,26 +245,26 @@ describe('#note routing', () => {
 
   it('routes a note hash to the note screen', () => {
     expect(decideRoute(noteHash('vault/db/consensus.md'), s()))
-      .toEqual({ kind: 'note', path: 'vault/db/consensus.md', cardId: null });
+      .toEqual({ kind: 'note', path: 'vault/db/consensus.md', cardId: null, block: null });
   });
 
   it('carries an arrived-from card id', () => {
     expect(decideRoute(noteHash('vault/db/consensus.md', 'card-ubdh'), s()))
-      .toEqual({ kind: 'note', path: 'vault/db/consensus.md', cardId: 'card-ubdh' });
+      .toEqual({ kind: 'note', path: 'vault/db/consensus.md', cardId: 'card-ubdh', block: null });
   });
 
   it('splits on the LAST segment, since vault paths contain slashes', () => {
     // THE parsing hazard: 'vault/aws/iam/conditions.md' has three slashes
     // of its own, so the card id must be taken from the end, not the start.
     expect(decideRoute('#note/vault%2Faws%2Fiam%2Fconditions.md/card-ab12', s()))
-      .toEqual({ kind: 'note', path: 'vault/aws/iam/conditions.md', cardId: 'card-ab12' });
+      .toEqual({ kind: 'note', path: 'vault/aws/iam/conditions.md', cardId: 'card-ab12', block: null });
   });
 
   it('treats a trailing segment that is not a card id as part of nothing', () => {
     // Only ^card-[a-z0-9]{4} is a card id. Anything else is not one, and the
     // whole remainder is the path.
     expect(decideRoute('#note/vault%2Fa.md', s()))
-      .toEqual({ kind: 'note', path: 'vault/a.md', cardId: null });
+      .toEqual({ kind: 'note', path: 'vault/a.md', cardId: null, block: null });
   });
 
   it('falls back to the dashboard on a bare #note/', () => {
@@ -273,13 +276,95 @@ describe('#note routing', () => {
     // hash is plain client state that can arrive hand-edited.
     expect(decideRoute('#note/%E0%A4%A', s())).toEqual({ kind: 'dashboard' });
   });
+
+  it('carries a block index', () => {
+    expect(decideRoute('#note/vault%2Fa.md/b3', s()))
+      .toEqual({ kind: 'note', path: 'vault/a.md', cardId: null, block: 3 });
+  });
+
+  it('treats a filename starting with b plus digits as a path, not a block index', () => {
+    // Fully percent-encoded, so no literal '/' survives to make 'b12.md'
+    // a trailing segment at all -- this guards the encoding case, not the
+    // BLOCK_SEGMENT anchoring itself (see the three tests below for that).
+    expect(decideRoute('#note/vault%2Fb12.md', s()))
+      .toEqual({ kind: 'note', path: 'vault/b12.md', cardId: null, block: null });
+  });
+
+  // The three tests below all produce a genuine trailing segment after a
+  // REAL, unencoded '/' -- unlike the encoding-only cases above, these
+  // actually exercise BLOCK_SEGMENT's anchors. Confirmed by temporarily
+  // loosening it to an unanchored /b\d+/: 'carries a real block segment'
+  // still passed (b12 matches either way), but the other two failed --
+  // 'b12x' matched the unanchored pattern and got misread as block 12
+  // instead of staying part of the path, and so did 'xb1'. Restoring the
+  // anchors made all three pass again. See task-13-report.md for the
+  // recorded before/after.
+  it('carries a real block segment', () => {
+    expect(decideRoute('#note/vault%2Fa.md/b12', s()))
+      .toEqual({ kind: 'note', path: 'vault/a.md', cardId: null, block: 12 });
+  });
+
+  it('rejects a trailing segment with trailing junk after the digits', () => {
+    // 'b12x' is not a block index -- BLOCK_SEGMENT's trailing '$' must
+    // reject it -- so the whole raw remainder (including the real '/')
+    // is the path instead.
+    expect(decideRoute('#note/vault%2Fa.md/b12x', s()))
+      .toEqual({ kind: 'note', path: 'vault/a.md/b12x', cardId: null, block: null });
+  });
+
+  it('rejects a trailing segment with junk before the leading b', () => {
+    // 'xb1' is not a block index -- BLOCK_SEGMENT's leading '^' must
+    // reject it -- so it too stays part of the path.
+    expect(decideRoute('#note/vault%2Fa.md/xb1', s()))
+      .toEqual({ kind: 'note', path: 'vault/a.md/xb1', cardId: null, block: null });
+  });
 });
 
 describe('noteHash', () => {
   it('round-trips a path containing slashes', () => {
     const hash = noteHash('vault/aws/iam/conditions.md');
     expect(decideRoute(hash, state([], []))).toEqual({
-      kind: 'note', path: 'vault/aws/iam/conditions.md', cardId: null
+      kind: 'note', path: 'vault/aws/iam/conditions.md', cardId: null, block: null });
+  });
+});
+
+describe('#search routing', () => {
+  it('routes a bare #search with an empty query', () => {
+    expect(decideRoute('#search', state([], []))).toEqual({ kind: 'search', query: '' });
+  });
+
+  it('carries a query from the q parameter', () => {
+    expect(decideRoute('#search?q=dns', state([], []))).toEqual({ kind: 'search', query: 'dns' });
+  });
+
+  it('decodes a multi-word query', () => {
+    expect(decideRoute('#search?q=consistent%20hashing', state([], []))).toEqual({
+      kind: 'search', query: 'consistent hashing'
     });
+  });
+
+  it('decodes + as a space', () => {
+    expect(decideRoute('#search?q=consistent+hashing', state([], []))).toEqual({
+      kind: 'search', query: 'consistent hashing'
+    });
+  });
+
+  it('falls back to an empty query on a malformed percent-escape instead of throwing', () => {
+    expect(decideRoute('#search?q=%E0%A4%A', state([], []))).toEqual({ kind: 'search', query: '' });
+  });
+
+  it('ends a suspended session, like every other non-session route', () => {
+    expect(retainsSuspendedSession('search')).toBe(false);
+  });
+});
+
+describe('searchHash', () => {
+  it('round-trips a query needing encoding', () => {
+    const hash = searchHash('a & b');
+    expect(decideRoute(hash, state([], []))).toEqual({ kind: 'search', query: 'a & b' });
+  });
+
+  it('is bare for an empty query', () => {
+    expect(searchHash('')).toBe('#search');
   });
 });
