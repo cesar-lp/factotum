@@ -67,7 +67,7 @@ invalid measurement is simply not taken.
 
 Three properties make this the right shape for this codebase specifically:
 
-**It is a filter, not a freeze.** `queue.ts`'s `filterEnabled` already carries
+**It is a filter, not a freeze.** `queue.ts`'s `selectEnabled` already carries
 that exact contract for category muting — FSRS state untouched, due dates keep
 advancing. Suppression is the same species and composes at the same seam.
 
@@ -116,10 +116,10 @@ if the mechanic proves annoying — no separate on/off flag.
 
 ## 4. The suppression mechanic
 
-**A pure filter beside the existing one.** `filterRecentlyRead(cards, readAt,
-now, windowHours)` lands in `queue.ts` next to `filterEnabled`, same signature
-shape, same contract. Composition is `cards -> filterEnabled ->
-filterRecentlyRead -> buildSession`; both filters run before the session is
+**A pure filter beside the existing one.** `selectNotRecentlyRead(cards, readAt,
+now, windowHours)` lands in `queue.ts` next to `selectEnabled`, same signature
+shape, same contract. Composition is `cards -> selectEnabled ->
+selectNotRecentlyRead -> buildSession`; both filters run before the session is
 built and neither knows about the other.
 
 **It suppresses due cards only, never new ones.** `note-mask.ts` already made
@@ -185,8 +185,8 @@ on paragraphs read ninety seconds ago, which is the exact failure the mechanic
 exists to prevent.
 
 **The in-flight filter.** A pure `dropRecentlyRead(session, index, cardIds,
-arrivedFrom)` returning a new array, called when the review screen is restored
-from a note. Its invariant, pinned by tests:
+arrivedFrom)` returning the surviving array, applied when the review screen is
+restored from a note. Its invariant, pinned by tests:
 
 - Nothing at or before `index` is ever removed — those are rated or owed.
 - `arrivedFrom` is never removed.
@@ -194,7 +194,29 @@ from a note. Its invariant, pinned by tests:
   `requeueIndex` nor `promoteReady` observes a shifted cursor.
 
 That last point is what keeps this change away from the re-queue machinery,
-which is the most delicate code in the app. A re-queued card from the read note
+which is the most delicate code in the app.
+
+**Applying it needs a hook that does not exist yet.** Two facts about the
+current resume path constrain the implementation:
+
+- The session array is **owned by `main.ts`** (`loadDashboardState`'s
+  `state.session`) and passed to `startReview` as `deps.session`, which splices
+  it **in place**. `startReview`'s closure captured that exact array, so
+  replacing it with a new one would leave the review screen reading the old
+  contents.
+- **Nothing in `review.ts` runs on resume.** `main.ts` reattaches the retained
+  DOM node (`appRoot.replaceChildren(suspendedReview.node); return;`) and
+  returns before any review code executes.
+
+So `startReview` returns a controller — `{ dropCards(cardIds: string[]): void }`
+— which `main.ts` stores alongside the node in `suspendedReview` and calls on
+resume. The controller applies `dropRecentlyRead` and writes the result back
+with `session.splice(0, session.length, ...survivors)`, preserving the array
+identity `review.ts` depends on. The progress denominator `totalCards` is
+currently a `const` computed once and becomes a `let` the controller refreshes.
+
+The pure function stays pure and carries the invariants; only the splice and
+the counter refresh are impure, and they are hand-verified per §8. A re-queued card from the read note
 sitting ahead of the cursor is removed like any other: it has review state, so
 it is a due card by §4's rule.
 
@@ -318,7 +340,7 @@ list; and notes-unavailable-offline, with §6's distinct message.
 
 ## 8. Testing
 
-Unit-testable and therefore required to be tested: `filterRecentlyRead` and
+Unit-testable and therefore required to be tested: `selectNotRecentlyRead` and
 `countSuppressed`; `dropRecentlyRead`'s three invariants individually; the
 search module's matching, escaping, scoring and snippet offsets; the `noteReads`
 record's pruning; and the settings sanitizer.
