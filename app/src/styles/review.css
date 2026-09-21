@@ -65,6 +65,13 @@
 
 .progress > i { display: block; height: 100%; background: var(--accent); transition: width 0.2s; }
 
+/* Appended by dropRead() when returning from a note shrinks the live
+   session, naming what happened rather than leaving the counter's jump
+   unexplained. Same muted treatment as .review-counter since it is a
+   status line, not the prompt -- and it disappears on its own the next
+   time draw() rebuilds the header for a new card. */
+.review-deferred { color: var(--dim); font-size: var(--text-micro); margin: var(--s2) 0 0; }
+
 /* Scrolls when the prompt is long (p90 365 chars, max 851) instead of
    pushing .review-actions off screen -- min-height:0 lets this flex child
    actually shrink below its content size so overflow-y can engage. */

@@ -546,6 +546,9 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
     const current = deps.session[index] ?? null;
     const survivors = dropRecentlyRead(deps.session, index, drop, current?.id ?? null);
     if (survivors.length === deps.session.length) return;
+    // Captured before the splice below overwrites deps.session with
+    // survivors, which would otherwise leave this at 0.
+    const removedCount = deps.session.length - survivors.length;
 
     // splice, never reassign: deps.session is owned by main.ts and this
     // module's closure captured THIS array. Rebinding it would leave the
@@ -563,6 +566,21 @@ export async function startReview(root: HTMLElement, deps: ReviewDeps): Promise<
     // totalCards can only reach 0 here if suppression removed every
     // remaining card; guard against a NaN width rather than divide by it.
     if (bar && totalCards > 0) bar.style.width = `${(position / totalCards) * 100}%`;
+
+    // Names what just happened -- the spec requires "a line on return
+    // naming the deferred cards" rather than letting the counter silently
+    // shrink with no explanation. Appended to the header (not the body),
+    // since draw() rebuilds root.innerHTML wholesale for every subsequent
+    // card, this line disappears the instant the reader moves on -- that
+    // is intentional, it explains THIS return, not the rest of the session.
+    const header = root.querySelector('.review-header');
+    if (header) {
+      const noun = removedCount === 1 ? 'card' : 'cards';
+      const notice = document.createElement('p');
+      notice.className = 'review-deferred';
+      notice.textContent = `${removedCount} ${noun} deferred — you read their notes`;
+      header.appendChild(notice);
+    }
   };
 
   draw(false);
