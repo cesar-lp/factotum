@@ -1,0 +1,48 @@
+/* The #search screen: a query box over a result list, or the recently-read
+   list when there's no query yet. */
+
+.search-results { list-style: none; margin: 0; padding: 0; }
+
+.search-result + .search-result { border-top: 1px solid var(--line); }
+
+/* Two separate tap targets on one row: the row body opens the note, the
+   chevron expands it to show snippets. Splitting them (rather than one
+   row that does both, or a whole-row tap that always expands) is what
+   keeps a snippet -- the only unmasked prose a result list shows -- behind
+   a deliberate second tap instead of on the way past. */
+.search-row {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s2);
+}
+
+.search-open {
+  flex: 1 1 auto; display: flex; flex-direction: column; align-items: flex-start;
+  gap: var(--s1); min-width: 0; padding: var(--s2) 0; background: transparent;
+  border: 0; color: var(--text); text-align: left; cursor: pointer;
+}
+
+.search-title {
+  font-size: var(--text-body); font-weight: 600; color: var(--text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%;
+}
+
+.search-meta { font-size: var(--text-micro); color: var(--dim); }
+
+/* Fixed-width so the chevron never competes with the title for space, and
+   tall enough on its own -- independent of the row's own height -- to meet
+   the 44px tap-target minimum. */
+.search-expand {
+  flex: 0 0 auto; min-width: 44px; min-height: 44px; background: transparent;
+  border: 0; color: var(--dim); font-size: var(--text-label); cursor: pointer;
+}
+
+.search-hits { list-style: none; margin: 0 0 var(--s2); padding: 0; }
+
+.search-hit {
+  display: block; width: 100%; padding: var(--s2); border-radius: var(--r-sm);
+  background: var(--surface); color: var(--dim); font-size: var(--text-micro);
+  margin-bottom: var(--s1); cursor: pointer;
+}
+
+mark { background: var(--accent-soft); color: var(--accent-text); border-radius: var(--r-sm); }
+
+.search-state { color: var(--dim); text-align: center; padding: var(--s4) 0; }
