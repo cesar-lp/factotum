@@ -77,6 +77,14 @@ export async function renderSettings(root: HTMLElement, db: FactotumDb, onBack: 
       <label class="field">New cards per day
         <input id="newcards" type="number" step="1" min="0" max="100" value="${settings.newCardsPerDay}" />
       </label>
+      <label class="field">Hours to defer a note's cards after reading it
+        <input id="readSuppressionHours" type="number" step="1" min="0" max="168" value="${settings.readSuppressionHours}" />
+      </label>
+      <p class="field-note">
+        Opening a note hides its due cards for this many hours, so you don't
+        immediately re-review what you just read. Set to <code>0</code> to
+        turn deferral off.
+      </p>
       <label class="field">Obsidian vault name
         <input id="obsidianVault" type="text" value="${escapeHtml(settings.obsidianVault)}" />
       </label>
@@ -98,6 +106,7 @@ export async function renderSettings(root: HTMLElement, db: FactotumDb, onBack: 
   const retentionValue = root.querySelector<HTMLElement>('#retention-value');
   const retentionHelp = root.querySelector<HTMLElement>('#retention-help');
   const newCardsInput = root.querySelector<HTMLInputElement>('#newcards');
+  const readSuppressionHoursInput = root.querySelector<HTMLInputElement>('#readSuppressionHours');
   const obsidianVaultInput = root.querySelector<HTMLInputElement>('#obsidianVault');
   const backButton = root.querySelector<HTMLButtonElement>('#back');
   const exportButton = root.querySelector<HTMLButtonElement>('#export');
@@ -106,7 +115,7 @@ export async function renderSettings(root: HTMLElement, db: FactotumDb, onBack: 
 
   const persist = async (): Promise<void> => {
     // Re-read rather than reusing the render-time `settings` snapshot: this
-    // form owns four fields, and must not write stale values over any
+    // form owns five fields, and must not write stale values over any
     // field it does not render (disabledCategories, owned by the topics
     // screen).
     const current = await getSettings(db);
@@ -116,6 +125,9 @@ export async function renderSettings(root: HTMLElement, db: FactotumDb, onBack: 
       // The slider is in whole percent; Settings stores a 0-1 fraction.
       desiredRetention: retentionInput ? Number(retentionInput.value) / 100 : DEFAULT_SETTINGS.desiredRetention,
       newCardsPerDay: newCardsInput ? Number(newCardsInput.value) : DEFAULT_SETTINGS.newCardsPerDay,
+      readSuppressionHours: readSuppressionHoursInput
+        ? Number(readSuppressionHoursInput.value)
+        : DEFAULT_SETTINGS.readSuppressionHours,
       obsidianVault: obsidianVaultInput ? obsidianVaultInput.value : DEFAULT_SETTINGS.obsidianVault
     });
     await saveSettings(db, next);
@@ -135,6 +147,7 @@ export async function renderSettings(root: HTMLElement, db: FactotumDb, onBack: 
     if (retentionValue) retentionValue.textContent = `${nextRetentionPercent}%`;
     if (retentionHelp) retentionHelp.textContent = retentionCopy(nextRetentionPercent);
     if (newCardsInput) newCardsInput.value = String(next.newCardsPerDay);
+    if (readSuppressionHoursInput) readSuppressionHoursInput.value = String(next.readSuppressionHours);
     if (obsidianVaultInput) obsidianVaultInput.value = next.obsidianVault;
   };
 
@@ -157,6 +170,7 @@ export async function renderSettings(root: HTMLElement, db: FactotumDb, onBack: 
   retentionInput?.addEventListener('change', () => void persist());
 
   newCardsInput?.addEventListener('change', () => void persist());
+  readSuppressionHoursInput?.addEventListener('change', () => void persist());
   obsidianVaultInput?.addEventListener('change', () => void persist());
   backButton?.addEventListener('click', onBack);
 

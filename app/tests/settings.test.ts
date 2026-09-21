@@ -135,6 +135,11 @@ describe('clampSettings', () => {
     expect(clampSettings({ newCardsPerDay: 7.6 }).newCardsPerDay).toBe(8);
   });
 
+  it('clamps read suppression hours into 0–168', () => {
+    expect(clampSettings({ readSuppressionHours: 10000 }).readSuppressionHours).toBe(168);
+    expect(clampSettings({ readSuppressionHours: -5 }).readSuppressionHours).toBe(0);
+  });
+
   it('falls back to defaults for missing or invalid fields', () => {
     expect(clampSettings({})).toEqual({
       desiredRetention: 0.9, newCardsPerDay: 10, theme: 'auto', disabledCategories: [], obsidianVault: 'vault',
