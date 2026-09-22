@@ -15,13 +15,13 @@ opposite sides of the map.
 
 The **column space** of A lives in the codomain: it's the span of A's
 columns, which by the column picture is exactly the set of every vector
-`A*x` can ever equal. Its dimension is the ==rank== of A — the number of ^card-xo2a
+$Ax$ can ever equal. Its dimension is the ==rank== of A — the number of ^card-xo2a
 genuinely independent directions the map can reach, no matter how many
 columns A has. Extra columns that are combinations of earlier ones add
 no new reachable directions at all.
 
 The **null space** lives in the domain: it's the set of every x with
-`A*x = 0`, everything the map crushes to nothing. Its dimension is
+$Ax = 0$, everything the map crushes to nothing. Its dimension is
 called the nullity. A map with a nontrivial null space is one where
 distinct inputs — x and x plus anything in the null space — produce the
 identical output, since A*(x + v) = A*x + A*v = A*x + 0 = A*x for any v
@@ -36,9 +36,9 @@ in the null space.
 
 These two numbers are linked by the **rank-nullity theorem**:
 
-```
-rank(A) + nullity(A) = n
-```
+$$
+\operatorname{rank}(A) + \operatorname{nullity}(A) = n
+$$
 
 where n is the number of columns of A — the dimension of the domain.
 
@@ -60,11 +60,11 @@ coincidental once you see it: rank counts the "survived" dimensions and
 nullity counts the "collapsed" ones, and a dimension cannot do both or
 neither.
 
-The theorem's real payoff is what it says about solving `A*x = b`,
+The theorem's real payoff is what it says about solving $Ax = b$,
 where it splits one question people conflate into two genuinely
 separate ones. Existence — does a solution exist at all — depends
 entirely on the column space: a solution exists exactly when b lies in
-the column space of A, since `A*x` can only ever produce vectors from
+the column space of A, since $Ax$ can only ever produce vectors from
 that span. Uniqueness — if a solution exists, is it the only one —
 depends entirely on the null space: solutions are unique exactly when
 the null space is ==trivial== (contains only the zero vector), because ^card-15c1

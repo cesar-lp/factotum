@@ -14,13 +14,13 @@ measures: how much A scales volume.
 
 Feed A the unit square (or unit cube, in higher dimensions) spanned by
 the standard basis vectors, and look at the volume of the parallelepiped
-its columns now span. That volume, with a sign attached, is `det(A)` —
+its columns now span. That volume, with a sign attached, is $\det(A)$ —
 the ==signed volume== scaling factor of the linear map A. A map that ^card-0q3b
 doubles all areas has determinant 2; one that leaves volume unchanged
 (a rotation) has determinant 1.
 
 That single reading makes the determinant's headline property obvious
-rather than memorized: `det(A) = 0` exactly when A collapses space into
+rather than memorized: $\det(A) = 0$ exactly when A collapses space into
 a lower dimension — squashing a square into a line segment, or a cube
 into a plane, has zero area or volume no matter how you measure it. And
 collapsing dimension is exactly what makes a map non-invertible: if two
@@ -37,7 +37,7 @@ inverse map can exist.
 
 Why does det(A) = 0 imply that A is not invertible, rather than the two facts being independent? :: det(A) is the signed volume-scaling factor of A, and a determinant of zero means A collapses the domain into a lower-dimensional image — some nonzero volume gets crushed to zero. Whenever a map collapses dimension, multiple distinct inputs land on the same output, so the map cannot be undone: there is no way to recover which input produced a given point in the flattened image, which is precisely what "not invertible" means. The zero determinant is a symptom of that collapse, not a coincidence alongside it. ^card-m8uq
 
-The sign of `det(A)` carries information the magnitude alone does not:
+The sign of $\det(A)$ carries information the magnitude alone does not:
 a negative determinant means A reverses ==orientation== — flips ^card-oocj
 handedness, the way a reflection turns a right hand into what looks
 like a left hand — while a positive determinant preserves it. Two maps
@@ -54,9 +54,9 @@ det(A^-1) = 1 / det(A)
 ```
 
 Scaling volume by B's factor and then by A's factor scales it by their
-product overall — exactly what `det(A*B) = det(A)*det(B)` says — and a
+product overall — exactly what $\det(AB) = \det(A)\det(B)$ says — and a
 map composed with its own inverse must scale volume back to exactly 1,
-which is only possible if the inverse's factor is `1/det(A)`.
+which is only possible if the inverse's factor is $1/\det(A)$.
 
 > [!card] mcq
 > A has det(A) = 4. What is det(A^-1)?
@@ -87,7 +87,7 @@ det([[a, b], [c, d]]) = a*d - b*c
 det(A) = sum_{j=1}^n (-1)^{1+j} * A_{1j} * det(M_{1j})
 ```
 
-where `M_{1j}` is the minor formed by deleting row 1 and column j.
+where $M_{1j}$ is the minor formed by deleting row 1 and column j.
 
 Cofactor expansion is worth knowing conceptually, but it is not how
 determinants get computed in practice: each recursive expansion spawns

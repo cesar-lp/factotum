@@ -39,8 +39,8 @@ or a space of functions — the proof only ever used addition and scaling.
 > other. ^card-thle
 
 The single operation everything else in this category is built from is
-the **linear combination**: given vectors `v_1, ..., v_n` and scalars
-`c_1, ..., c_n`, form
+the **linear combination**: given vectors $v_1, \ldots, v_n$ and scalars
+$c_1, \ldots, c_n$, form
 
 ```
 c_1*v_1 + c_2*v_2 + ... + c_n*v_n
@@ -52,12 +52,12 @@ fixed collection of vectors. There is no second operation to learn later —
 matrix multiplication itself is defined as taking linear combinations of
 columns.
 
-What does it mean, structurally, for span, independence, and basis to all reduce to "questions about linear combinations" rather than being three unrelated ideas? :: All three are properties of the set `{c_1*v_1 + ... + c_n*v_n}` formed from a fixed list of vectors: span asks which vectors that set contains, independence asks whether more than one choice of coefficients can produce the same vector (in particular, the zero vector), and basis asks for the smallest list whose combinations already give the whole space. Because they're all views of the same construction, a fact proved about linear combinations — e.g. that they're closed under further combination — applies to all three automatically. ^card-xdmr
+What does it mean, structurally, for span, independence, and basis to all reduce to "questions about linear combinations" rather than being three unrelated ideas? :: All three are properties of the set $\{c_1 v_1 + \cdots + c_n v_n\}$ formed from a fixed list of vectors: span asks which vectors that set contains, independence asks whether more than one choice of coefficients can produce the same vector (in particular, the zero vector), and basis asks for the smallest list whose combinations already give the whole space. Because they're all views of the same construction, a fact proved about linear combinations — e.g. that they're closed under further combination — applies to all three automatically. ^card-xdmr
 
 A **subspace** is a subset of a vector space that is itself a vector
 space under the same operations — equivalently, a subset closed under
 linear combinations. That closure requirement forces a subspace to
-contain the zero vector, since `0*v = 0` is itself a linear combination of
+contain the zero vector, since $0v = 0$ is itself a linear combination of
 anything in the subset. This is the standard first trap: a line in the
 plane that does not pass through the origin fails to contain the zero
 vector, so despite looking exactly like a line through the origin, it is
@@ -74,16 +74,16 @@ multiplication, and 0 is in S)
 
 > [!card] mcq
 > Which of the following is NOT a subspace of R^2?
-> - [x] The line `{(x, y) : y = x + 1}`
-> - [ ] The line `{(x, y) : y = x}`
-> - [ ] The single point `{(0, 0)}`
+> - [x] The line $\{(x, y) : y = x + 1\}$
+> - [ ] The line $\{(x, y) : y = x\}$
+> - [ ] The single point $\{(0, 0)\}$
 > - [ ] All of R^2 ^card-3b91
 
 Why must every subspace contain the zero vector, and what everyday-looking set does this rule out? :: A subspace must be closed under scalar multiplication, and multiplying any vector already in the subspace by the scalar 0 produces the zero vector — so 0 has to be in the subspace already for closure to hold. This rules out any line, plane, or other flat set that does not pass through the origin: it looks geometrically like a subspace (straight, flat, extends infinitely) but fails this one algebraic test. ^card-hhmq
 
-`R^n` — the set of ordered n-tuples of real numbers — is the vector space
+$\mathbb{R}^n$ — the set of ordered n-tuples of real numbers — is the vector space
 used constantly in practice, but it's worth keeping a distinction in
-mind: an element of `R^n` is a list of ==coordinates==, meaningful only ^card-5isu
+mind: an element of $\mathbb{R}^n$ is a list of ==coordinates==, meaningful only ^card-5isu
 relative to a chosen basis. The same geometric vector gets a different
 numeric list depending on which basis you measure it against. Conflating
 "the vector" with "its list in the standard basis" is harmless until
