@@ -188,6 +188,15 @@ export function isNumericAnswer(answer: string): boolean {
  */
 const CLOZE_BLANK = /_{3,}/;
 
+/**
+ * Stands in for the cloze blank while markup and math rendering run.
+ * Deliberately free of HTML-special and LaTeX-special characters, so it
+ * passes through escapeHtml and KaTeX untouched, and it is stripped from the
+ * incoming prompt first so note content cannot forge it -- the same
+ * discipline ESCAPED_DOLLAR uses, and for the same reason.
+ */
+const BLANK_MARKER = '@@factotum-cloze-blank@@';
+
 export interface ClozeRevealInfo {
   /** How this cloze reveal was reached — mirrors renderActions' clozeOutcome. */
   outcome?: 'correct' | 'wrong' | 'self-graded';
@@ -203,19 +212,70 @@ export interface ClozeRevealInfo {
  * where what's inserted is the answer key, not something the user
  * produced themselves).
  *
- * Runs the substitution on the already-escaped-and-marked-up prompt HTML
- * (not the raw prompt), so it never reopens an injection path: `___`
- * survives both escapeHtml and inlineMarkup untouched, so matching it
- * afterwards is safe. If no blank is found at all (a malformed/legacy
- * card), the filler is appended in parentheses instead of silently
- * dropped.
+ * The blank is marked with BLANK_MARKER in the RAW prompt, before
+ * inlineWithMath runs -- it is NOT matched against the rendered HTML.
+ * KaTeX's MathML annotation echoes its LaTeX source verbatim, so math
+ * containing three or more consecutive underscores (e.g. `\text{a___b}`)
+ * would reintroduce a `___` sequence into the rendered output; matching
+ * CLOZE_BLANK there let that echoed run hijack the substitution instead of
+ * the real blank. Marking the blank first, then running markup over the
+ * whole string in one pass, also keeps emphasis that spans the blank
+ * (`**a ___ b**`) working, since slicing the raw prompt around the blank
+ * would break it instead.
+ *
+ * The raw prompt can ALSO contain a `___`-shaped run inside its own math
+ * source (the same `\text{a___b}` case, before KaTeX ever sees it), so
+ * marking is done via markFirstBlank rather than a bare `.replace` -- it
+ * skips math spans using the same tokenizing inlineWithMath does, so an
+ * underscore run that is really part of a LaTeX source string never
+ * competes with the pipeline's own blank. A code span is deliberately NOT
+ * skipped: the vault already has a real card whose blank lives inside one
+ * (`` `___` `` rendering to `<code>___</code>`), and unlike math, a code
+ * span's content is never echoed a second time elsewhere in the output, so
+ * it carries none of the risk that math does. If no blank is found at all
+ * (a malformed/legacy card), the filler is appended in parentheses instead
+ * of silently dropped.
  */
 function substituteClozeBlank(card: StoredCard, reveal: ClozeRevealInfo): string {
-  const promptHtml = inlineWithMath(card.prompt);
   const tint = reveal.outcome === 'correct' ? 'is-ok' : 'is-accent';
   const filler = `<span class="cloze-fill ${tint}">${inlineWithMath(card.answer ?? '')}</span>`;
-  if (CLOZE_BLANK.test(promptHtml)) return promptHtml.replace(CLOZE_BLANK, filler);
-  return `${promptHtml} (${filler})`;
+
+  // Strip any literal marker from note content first (forge protection --
+  // the same discipline ESCAPED_DOLLAR uses), then mark the real blank, if
+  // any, before markup/math rendering runs.
+  const unforgedPrompt = card.prompt.replaceAll(BLANK_MARKER, '');
+  const markedPrompt = markFirstBlank(unforgedPrompt);
+  const promptHtml = inlineWithMath(markedPrompt);
+
+  return promptHtml.includes(BLANK_MARKER)
+    ? promptHtml.replaceAll(BLANK_MARKER, filler)
+    : `${promptHtml} (${filler})`;
+}
+
+/**
+ * Replaces the first CLOZE_BLANK found OUTSIDE any math span with
+ * BLANK_MARKER, leaving the rest of the string -- including any math span,
+ * whatever underscores its LaTeX source contains -- untouched. Reuses
+ * MATH_TOKENS, the same split inlineWithMath tokenizes with, so a span it
+ * would hand to renderMath is skipped here too rather than scanned for a
+ * blank that was never meant to be there. Code spans are deliberately left
+ * searchable (see substituteClozeBlank's doc comment). The whole string is
+ * still returned as one piece (not sliced into before/after fragments), so
+ * a subsequent single inlineWithMath call over the result still sees one
+ * string and markup spanning the blank still works.
+ */
+function markFirstBlank(prompt: string): string {
+  let marked = false;
+  return prompt
+    .split(MATH_TOKENS)
+    .map((part) => {
+      if (marked || !part) return part ?? '';
+      if (part.startsWith('$') && part.endsWith('$')) return part;
+      if (!CLOZE_BLANK.test(part)) return part;
+      marked = true;
+      return part.replace(CLOZE_BLANK, BLANK_MARKER);
+    })
+    .join('');
 }
 
 /**
@@ -280,11 +340,15 @@ export function renderPrompt(card: StoredCard, revealed = false, reveal: ClozeRe
   // mcq's "answer" is its choice buttons (rendered by renderActions), and
   // a cloze's answer is now inline in the prompt above — neither format
   // gets a separate expected-answer paragraph here.
-  // A <div>, not a <p>: a card answer may contain a $$...$$ run, which KaTeX
-  // renders as a block-level <span class="katex-display">. Block content
-  // inside a <p> makes the browser close the paragraph early, which detaches
-  // the rest of the answer from its own element and breaks .expected's
-  // styling for the text after the equation.
+  // A <div> rather than a <p>: this element can hold a centred display
+  // equation as well as prose, which is not a paragraph in any useful sense.
+  //
+  // It is NOT, as an earlier revision of this code claimed, because block
+  // content forces the browser to close a <p> early. KaTeX display mode emits
+  // <span class="katex-display">, and the optional-end-tag rule for <p> keys
+  // off tag names, never off CSS display -- a <span> never closes a
+  // paragraph. A <p> would in fact have worked; the <div> is a semantic
+  // preference, not a correctness fix.
   const expected =
     revealed && !isCloze && card.format !== 'mcq' && card.answer
       ? `<div class="expected">${inlineWithMath(card.answer)}</div>`

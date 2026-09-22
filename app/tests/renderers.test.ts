@@ -552,6 +552,37 @@ describe('math in review cards', () => {
     expect(html).not.toContain('(<span class="cloze-fill');  // not the append fallback
   });
 
+  it('fills the real blank, not underscores inside rendered math', () => {
+    const card: StoredCard = {
+      ...base, id: 'card-u', format: 'cloze', due: 0, reps: 0, lapses: 0,
+      prompt: 'In $\\text{a___b}$ the notation marks ___ explicitly.',
+      answer: 'the gap'
+    } as StoredCard;
+    const html = renderPrompt(card, true, { outcome: 'correct' });
+    // Exactly one filler, and the math span is still intact around it.
+    expect(html.match(/cloze-fill/g)).toHaveLength(1);
+    expect(html).toContain('katex');
+  });
+
+  it('keeps emphasis that spans the blank working', () => {
+    const card: StoredCard = {
+      ...base, id: 'card-e', format: 'cloze', due: 0, reps: 0, lapses: 0,
+      prompt: 'It is **very ___ indeed**.', answer: 'odd'
+    } as StoredCard;
+    expect(renderPrompt(card, true, { outcome: 'correct' })).toContain('<strong>');
+  });
+
+  it('cannot have its blank marker forged by note content', () => {
+    const card: StoredCard = {
+      ...base, id: 'card-f', format: 'cloze', due: 0, reps: 0, lapses: 0,
+      prompt: 'Literal @@factotum-cloze-blank@@ then the real ___ blank.',
+      answer: 'filled'
+    } as StoredCard;
+    const html = renderPrompt(card, true, { outcome: 'correct' });
+    expect(html.match(/cloze-fill/g)).toHaveLength(1);
+    expect(html).not.toContain('@@factotum-cloze-blank@@');
+  });
+
   it('typesets math in an mcq choice', () => {
     const mcqCard: StoredCard = {
       ...base, id: 'card-mcq', format: 'mcq', due: 0, reps: 0, lapses: 0,
