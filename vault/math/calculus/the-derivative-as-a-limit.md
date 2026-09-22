@@ -14,23 +14,23 @@ than a specific limit, but the two readings of that limit are what make
 the rest of calculus work.
 
 Start with the difference quotient, which measures average change over an
-interval of width `h`, and take its limit as that interval shrinks to
+interval of width $h$, and take its limit as that interval shrinks to
 nothing:
 
-```
-f'(a) = lim_{h->0} (f(a + h) - f(a)) / h
-```
+$$
+f'(a) = \lim_{h \to 0} \frac{f(a + h) - f(a)}{h}
+$$
 
-The first reading is physical: if `f(t)` is position at time `t`, the
-difference quotient is average velocity over `[a, a+h]`, and its limit as
-`h -> 0` is ==instantaneous== velocity — the rate of change at a single ^card-5ty2
+The first reading is physical: if $f(t)$ is position at time $t$, the
+difference quotient is average velocity over $[a, a+h]$, and its limit as
+$h \to 0$ is ==instantaneous== velocity — the rate of change at a single ^card-5ty2
 instant, with no interval left to average over.
 
 The second reading is geometric: the difference quotient is the slope of
-the secant line through `(a, f(a))` and `(a+h, f(a+h))`.
+the secant line through $(a, f(a))$ and $(a+h, f(a+h))$.
 
-As `h -> 0`, that secant line rotates toward the tangent line at `a`, so
-`f'(a)` is exactly the tangent's slope. A tangent, on this view, isn't a
+As $h \to 0$, that secant line rotates toward the tangent line at $a$, so
+$f'(a)$ is exactly the tangent's slope. A tangent, on this view, isn't a
 separate geometric idea — it's *defined* as the limit of secants.
 
 > [!card] recall
@@ -41,8 +41,8 @@ separate geometric idea — it's *defined* as the limit of secants.
 Differentiability is a strictly stronger condition than continuity.
 Every differentiable function is continuous — you can't have a
 well-defined tangent slope at a point where the function jumps or blows
-up — but the converse fails, and the standard counterexample is `|x|` at
-`x = 0`. It's continuous there; the two pieces meet with no gap. But it
+up — but the converse fails, and the standard counterexample is $|x|$ at
+$x = 0$. It's continuous there; the two pieces meet with no gap. But it
 isn't differentiable there, because the left-hand difference quotient
 limits to -1 and the right-hand one limits to +1 — they disagree, so no
 single tangent slope exists. Graphically this is the **corner**: a sharp
@@ -64,23 +64,23 @@ function look, up close, like a specific straight line. That's a much
 sharper demand, which is why so many continuous functions used in practice
 still fail it at isolated points.
 
-The derivative itself is a function, not a single number — `f'(x)` is
-defined at every point where the limit above exists, mapping each `x` to
-the slope of `f` at that point. `f'(x)` and `d/dx f(x)` name the same
+The derivative itself is a function, not a single number — $f'(x)$ is
+defined at every point where the limit above exists, mapping each $x$ to
+the slope of $f$ at that point. $f'(x)$ and $\frac{d}{dx} f(x)$ name the same
 object; the first emphasizes the derivative as a new function built from
-`f`, the second emphasizes it as an operation applied to `f`.
+$f$, the second emphasizes it as an operation applied to $f$.
 
 Why are f'(x) and d/dx f(x) considered the same mathematical object rather than two different things? :: Both denote the function that maps each x to the slope of f at x, obtained from the same limit of a difference quotient. f'(x) emphasizes the derivative as a new function derived from f; d/dx f(x) emphasizes it as an operator applied to f. The notation differs, but neither construction nor value does. ^card-k43u
 
 The practical payoff of all of this is the linear approximation it hands
 you for free:
 
-```
-f(a + h) ~ f(a) + f'(a) * h
-```
+$$
+f(a + h) \approx f(a) + f'(a) h
+$$
 
-This says the tangent line is a good stand-in for `f` itself, as long as
-you stay close to `a`. Almost everything differentiation is used *for* —
+This says the tangent line is a good stand-in for $f$ itself, as long as
+you stay close to $a$. Almost everything differentiation is used *for* —
 estimating a small change, linearizing a hard equation, running one step
 of Newton's method — is this formula in disguise: replace a curve, locally,
 by the line that best matches its instantaneous behavior.

@@ -8,12 +8,12 @@ citations: ["Stewart, Calculus: Early Transcendentals 8e, Ch. 4"]
 # Extrema and the first derivative test
 
 `differentiation-rules.md` and `the-chain-rule.md` build the machinery for
-computing `f'`. This note is about what that machinery is *for* in
+computing $f'$. This note is about what that machinery is *for* in
 optimization: finding where a function is largest or smallest, and being
 precise about what the derivative can and can't tell you about that.
 
-A **critical point** of f is a point in its domain where either `f'(x) =
-0` or `f'(x)` fails to exist. **Fermat's theorem** says that if f has a
+A **critical point** of f is a point in its domain where either
+$f'(x) = 0$ or $f'(x)$ fails to exist. **Fermat's theorem** says that if f has a
 local extremum at an interior point c, and f is differentiable there, then
 c is a critical point.
 
@@ -23,26 +23,26 @@ direction straight: the theorem gives a *necessary* condition for an
 interior extremum, not a sufficient one. It says extrema are found among
 critical points; it does not say every critical point is an extremum.
 
-The standard counterexample is `f(x) = x^3` at `x = 0`. Its derivative
-`f'(x) = 3x^2` is zero at the origin, so 0 is a critical point — but f is
+The standard counterexample is $f(x) = x^3$ at $x = 0$. Its derivative
+$f'(x) = 3x^2$ is zero at the origin, so 0 is a critical point — but f is
 increasing on both sides of 0, so there's no local max or min there at
 all, just a flattened inflection in the climb.
 
 > [!card] mcq
-> `f(x) = x^3` has `f'(0) = 0`. What does this imply about `x = 0`?
+> $f(x) = x^3$ has $f'(0) = 0$. What does this imply about $x = 0$?
 > - [x] It is a critical point, but not necessarily a local extremum — and in fact it isn't one here
 > - [ ] It must be a local minimum, since the derivative vanishes
 > - [ ] It must be a local maximum, since the derivative vanishes
 > - [ ] It cannot be a critical point, since f has no extremum there ^card-elyr
 
-Why does `f'(c) = 0` fail to guarantee that f has a local extremum at c? :: Fermat's theorem only asserts that a local extremum forces the derivative to vanish (or fail to exist) there — it says nothing about the converse. A vanishing derivative just as easily marks a point where the function keeps increasing or decreasing through a momentary flattening, as `x^3` does at the origin, which is a critical point with no extremum at all. ^card-bl9j
+Why does $f'(c) = 0$ fail to guarantee that f has a local extremum at c? :: Fermat's theorem only asserts that a local extremum forces the derivative to vanish (or fail to exist) there — it says nothing about the converse. A vanishing derivative just as easily marks a point where the function keeps increasing or decreasing through a momentary flattening, as $x^3$ does at the origin, which is a critical point with no extremum at all. ^card-bl9j
 
 Since critical points are only candidates, you need something else to
 decide which ones are extrema: the **first derivative test** reads the
-sign of `f'` on either side of a critical point c. If `f'` changes from
+sign of $f'$ on either side of a critical point c. If $f'$ changes from
 positive to negative at c, f has a local maximum there; negative to
 positive gives a local minimum; no sign change means no extremum, exactly
-the `x^3` case.
+the $x^3$ case.
 
 A **local** extremum only has to beat its immediate neighbors; a
 **global** (absolute) extremum has to beat every point in the domain
@@ -53,7 +53,7 @@ What distinguishes a local extremum from a global extremum? :: A local extremum 
 
 Whether a global extremum is even guaranteed to exist is a separate
 question, answered by the **Extreme Value Theorem**: a function continuous
-on a closed, bounded interval `[a, b]` attains both an absolute maximum
+on a closed, bounded interval $[a, b]$ attains both an absolute maximum
 and an absolute minimum on that interval.
 
 ```
@@ -62,7 +62,7 @@ f continuous on [a, b]  =>  f attains an absolute max and an absolute min
                              somewhere in [a, b]
 ```
 
-This is exactly why finding a global extremum on `[a, b]` requires
+This is exactly why finding a global extremum on $[a, b]$ requires
 checking endpoints, not just critical points: a global maximum can sit at
 an endpoint, where the derivative test says nothing at all, because
 endpoints of a closed interval aren't interior points and Fermat's theorem
@@ -74,7 +74,7 @@ never applies to them.
 > Find all critical points of f in the open interval (a, b). Evaluate f at each critical point and at both endpoints a and b. The largest of these values is the absolute maximum on [a, b]; the smallest is the absolute minimum. ^card-9gol
 
 Both hypotheses of the Extreme Value Theorem are load-bearing. Drop
-==closed== and `f(x) = x` on `(0, 1)` has no maximum — it keeps climbing ^card-yzon
+==closed== and $f(x) = x$ on $(0, 1)$ has no maximum — it keeps climbing ^card-yzon
 toward a value it never reaches at the excluded endpoint. Drop continuity
 and a function can jump upward right before the interval ends, again with
 no attained maximum, only a supremum it never touches.
