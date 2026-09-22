@@ -102,6 +102,43 @@ const INLINE_MATH_SPAN = `${OPEN_BEFORE}\\$(?:\\S(?:[^$]*\\S)?)\\$${CLOSE_AFTER}
 const MATH_TOKENS = new RegExp(`(${CODE_SPAN}|${DISPLAY_MATH_SPAN}|${INLINE_MATH_SPAN})`, 'gu');
 
 /**
+ * One token of tokenizeForMath's output: the shielded text exactly as
+ * MATH_TOKENS produced it, plus whether it is a math span (display or
+ * inline) as opposed to a code span or a plain-text gap.
+ */
+interface MathToken {
+  text: string;
+  isMath: boolean;
+}
+
+/**
+ * Shields `\$`, splits on MATH_TOKENS, and classifies each resulting part.
+ * This is the one place both inlineWithMath and markFirstBlank tokenize
+ * through now, rather than each running MATH_TOKENS on its own -- that
+ * duplication was exactly how the two drifted apart: inlineWithMath shielded
+ * `\$` before splitting so it could never accidentally open a math span, but
+ * markFirstBlank split the RAW prompt, so an escaped dollar sitting near a
+ * real `$...$` span could make the two carve the same string up differently.
+ * Sharing this helper makes that provably impossible: both now see the same
+ * shielded split, so they agree on where every math span starts and ends.
+ */
+function tokenizeForMath(raw: string): MathToken[] {
+  // Enforce the invariant ESCAPED_DOLLAR depends on rather than asserting it.
+  // NUL is legal UTF-8 and nothing upstream strips it, so a note containing
+  // the sentinel's own bytes would otherwise have them rewritten into a stray
+  // dollar sign on the way out. It is not an escaping bypass -- escapeHtml
+  // still runs on every non-math chunk -- but a sentinel that real content can
+  // forge is not a sentinel.
+  const shielded = raw.replaceAll('\u0000', '').replace(/\\\$/g, ESCAPED_DOLLAR);
+  return shielded.split(MATH_TOKENS).map((part) => {
+    const text = part ?? '';
+    const isDisplay = text.startsWith('$$') && text.endsWith('$$') && text.length >= 4;
+    const isInline = !isDisplay && text.startsWith('$') && text.endsWith('$') && text.length >= 2;
+    return { text, isMath: isDisplay || isInline };
+  });
+}
+
+/**
  * Entry point for any text that may contain math. Takes RAW, unescaped text
  * -- unlike `inlineMarkup`, which requires pre-escaped input.
  *
@@ -123,17 +160,9 @@ const MATH_TOKENS = new RegExp(`(${CODE_SPAN}|${DISPLAY_MATH_SPAN}|${INLINE_MATH
  * exception to renderers.ts's escape-first contract -- do not widen it.
  */
 export function inlineWithMath(raw: string): string {
-  // Enforce the invariant ESCAPED_DOLLAR depends on rather than asserting it.
-  // NUL is legal UTF-8 and nothing upstream strips it, so a note containing
-  // the sentinel's own bytes would otherwise have them rewritten into a stray
-  // dollar sign on the way out. It is not an escaping bypass -- escapeHtml
-  // still runs on every non-math chunk -- but a sentinel that real content can
-  // forge is not a sentinel.
-  const shielded = raw.replaceAll('\u0000', '').replace(/\\\$/g, ESCAPED_DOLLAR);
-  return shielded
-    .split(MATH_TOKENS)
-    .map((part) => {
-      if (part === undefined || part === '') return '';
+  return tokenizeForMath(raw)
+    .map(({ text: part }) => {
+      if (part === '') return '';
       if (part.startsWith('`') && part.endsWith('`') && part.length >= 2) {
         // Same output as inlineMarkup's code branch; produced here because
         // the span was consumed by this pass rather than that one.
@@ -157,6 +186,19 @@ function unshieldLiteral(text: string): string {
 
 /** Inside math, `\$` is LaTeX's own escape and must survive as such. */
 function unshieldLatex(text: string): string {
+  return text.replaceAll(ESCAPED_DOLLAR, String.raw`\$`);
+}
+
+/**
+ * Reverses ESCAPED_DOLLAR back to a literal `\$` rather than resolving it.
+ * markFirstBlank's contract is to hand back the RAW prompt with only the
+ * blank replaced -- the result is passed to inlineWithMath again afterward
+ * (see substituteClozeBlank), which needs to see the original escape and
+ * shield it itself. unshieldLiteral/unshieldLatex, by contrast, run at final
+ * render time and resolve the escape for good; this one is an intermediate
+ * round-trip, not a resolution.
+ */
+function unshieldToEscaped(text: string): string {
   return text.replaceAll(ESCAPED_DOLLAR, String.raw`\$`);
 }
 
@@ -255,27 +297,34 @@ function substituteClozeBlank(card: StoredCard, reveal: ClozeRevealInfo): string
 /**
  * Replaces the first CLOZE_BLANK found OUTSIDE any math span with
  * BLANK_MARKER, leaving the rest of the string -- including any math span,
- * whatever underscores its LaTeX source contains -- untouched. Reuses
- * MATH_TOKENS, the same split inlineWithMath tokenizes with, so a span it
- * would hand to renderMath is skipped here too rather than scanned for a
- * blank that was never meant to be there. Code spans are deliberately left
- * searchable (see substituteClozeBlank's doc comment). The whole string is
- * still returned as one piece (not sliced into before/after fragments), so
- * a subsequent single inlineWithMath call over the result still sees one
- * string and markup spanning the blank still works.
+ * whatever underscores its LaTeX source contains -- untouched. Tokenizes via
+ * tokenizeForMath, the same shield-then-split inlineWithMath uses, so a span
+ * it would hand to renderMath is skipped here too rather than scanned for a
+ * blank that was never meant to be there. Splitting the raw prompt directly
+ * (without that shield) would let an escaped `\$` near a real `$...$` span
+ * make this function and inlineWithMath disagree about where the span
+ * starts; sharing the helper is what rules that out. Code spans are
+ * deliberately left searchable (see substituteClozeBlank's doc comment). The
+ * whole string is still returned as one piece (not sliced into before/after
+ * fragments), so a subsequent single inlineWithMath call over the result
+ * still sees one string and markup spanning the blank still works.
  */
 function markFirstBlank(prompt: string): string {
   let marked = false;
-  return prompt
-    .split(MATH_TOKENS)
-    .map((part) => {
-      if (marked || !part) return part ?? '';
-      if (part.startsWith('$') && part.endsWith('$')) return part;
+  const shieldedResult = tokenizeForMath(prompt)
+    .map(({ text: part, isMath }) => {
+      if (marked || part === '') return part;
+      if (isMath) return part;
       if (!CLOZE_BLANK.test(part)) return part;
       marked = true;
       return part.replace(CLOZE_BLANK, BLANK_MARKER);
     })
     .join('');
+  // tokenizeForMath shields `\$` before splitting so it agrees with
+  // inlineWithMath about where math spans start (see its doc comment); this
+  // reverses that shielding so the return value is still the raw prompt
+  // (blank aside), since the caller hands it to inlineWithMath again.
+  return unshieldToEscaped(shieldedResult);
 }
 
 /**

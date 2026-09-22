@@ -583,6 +583,32 @@ describe('math in review cards', () => {
     expect(html).not.toContain('@@factotum-cloze-blank@@');
   });
 
+  it('agrees with inlineWithMath about math-span boundaries near an escaped dollar', () => {
+    // Regression test for markFirstBlank and inlineWithMath tokenizing
+    // inconsistently on escaped dollars. `$note___\$` has no real closing
+    // `$` once `\$` is shielded (the shielded second dollar can't pair), so
+    // inlineWithMath treats the whole thing as literal text, not math -- and
+    // markFirstBlank must agree, finding the blank in place there, rather
+    // than mistaking `$note___\$` for a matched math span (it starts and
+    // ends with an unshielded `$`) and skipping over the only blank in the
+    // prompt entirely.
+    const card: StoredCard = {
+      ...base, id: 'card-g', format: 'cloze', due: 0, reps: 0, lapses: 0,
+      prompt: 'A real span $y$ is fine, but $note___\\$ trails after it.',
+      answer: 'filled'
+    } as StoredCard;
+    const html = renderPrompt(card, true, { outcome: 'correct' });
+    // Filled exactly once, in place -- not the parenthetical append fallback
+    // that would fire if markFirstBlank found no blank at all.
+    expect(html.match(/cloze-fill/g)).toHaveLength(1);
+    expect(html).not.toContain('(<span class="cloze-fill');
+    expect(html).not.toContain('___');
+    // The genuine math span still typesets, and the literal dollar in
+    // `\$note___` (rendered outside math) survives as a plain `$`.
+    expect(html).toContain('katex');
+    expect(html).toContain('$note');
+  });
+
   it('typesets math in an mcq choice', () => {
     const mcqCard: StoredCard = {
       ...base, id: 'card-mcq', format: 'mcq', due: 0, reps: 0, lapses: 0,
