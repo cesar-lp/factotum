@@ -18,8 +18,10 @@ The property that makes a matrix worth studying as a *linear* map is
 linearity itself:
 
 $$
-A(x + y) = Ax + Ay \\
-A(cx) = c(Ax)
+\begin{aligned}
+A(x + y) &= Ax + Ay \\
+A(cx) &= c(Ax)
+\end{aligned}
 $$
 
 That pair of identities looks modest, but it has a strong consequence:
