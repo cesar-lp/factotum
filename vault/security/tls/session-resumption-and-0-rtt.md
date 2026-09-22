@@ -108,7 +108,7 @@ per-connection freshness guarantees don't extend to data sent before
 the handshake finishes establishing them.
 
 > [!card] mcq
-> A payments API accepts a "transfer $100 from account A to account B"
+> A payments API accepts a "transfer \$100 from account A to account B"
 > request as 0-RTT early data. An attacker captures that early data
 > flight and replays it to the server later. What does TLS itself do
 > about this replay?

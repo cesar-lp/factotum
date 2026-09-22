@@ -212,3 +212,74 @@ describe('lintNote — note-filename-reference', () => {
     expect(lintNote(note(['The ==MD5== digest and the .mdx format are unrelated.']))).toEqual([]);
   });
 });
+
+describe('math lint rules', () => {
+  const note = (body: string) => `---\ncategory: math\n---\n\n${body}\n`;
+  const rules = (body: string) => lintNote(note(body)).map((p) => p.rule);
+
+  it('flags an unpaired dollar in prose', () => {
+    expect(rules('A transfer of $100 between accounts.')).toContain('unpaired-dollar');
+  });
+
+  it('accepts an escaped dollar', () => {
+    expect(rules('A transfer of \\$100 between accounts.')).not.toContain('unpaired-dollar');
+  });
+
+  it('accepts a balanced inline math span', () => {
+    expect(rules('The residual $b - Ax$ is orthogonal.')).not.toContain('unpaired-dollar');
+  });
+
+  it('ignores dollars inside a code span', () => {
+    expect(rules('Reserved routes (`$connect`, `$disconnect`).')).not.toContain('unpaired-dollar');
+  });
+
+  it('ignores dollars inside a code fence', () => {
+    expect(rules('```\nadd $1, %eax\n```')).not.toContain('unpaired-dollar');
+  });
+
+  it('flags math inside a cloze answer', () => {
+    // Not "==$P^2 = P$==": HIGHLIGHT (cards.ts) excludes "=" from cloze
+    // content entirely, as a pre-existing, unrelated limitation, so a
+    // cloze answer containing a literal "=" never matches HIGHLIGHT at
+    // all and this rule (which only inspects text HIGHLIGHT itself
+    // matched) has nothing to see. "$P^2$" still exercises "math inside
+    // a cloze" without tripping that separate limitation.
+    expect(rules('A projection satisfies ==$P^2$==.')).toContain('math-in-cloze');
+  });
+
+  it('flags a math span straddling a cloze boundary', () => {
+    expect(rules('A projection is ==idempotent$== so $P^2 = P$.')).toContain('math-in-cloze');
+  });
+
+  it('accepts math in the prompt with a prose cloze answer', () => {
+    expect(rules('The matrix $P$ with $P^2 = P$ is called ==idempotent==.')).not.toContain('math-in-cloze');
+  });
+
+  it('flags LaTeX KaTeX cannot parse', () => {
+    expect(rules('The gradient $\\frac{$ vanishes.')).toContain('invalid-math');
+  });
+
+  it('flags a cloze inside a display block', () => {
+    expect(rules('$$\nP^2 = ==P==\n$$')).toContain('display-math-block');
+  });
+
+  it('flags a display block not separated from prose by a blank line', () => {
+    expect(rules('The equation is:\n$$\nP^2 = P\n$$')).toContain('display-math-block');
+  });
+
+  it('accepts a well-formed display block', () => {
+    expect(rules('The equation is:\n\n$$\nP^2 = P\n$$\n\nwhich is idempotence.')).toEqual([]);
+  });
+
+  it('validates a multi-line block as one equation, not line by line', () => {
+    // A bare "\\begin{aligned}" is not valid LaTeX on its own. If this rule
+    // ever regresses to a per-line check, this is the test that catches it.
+    const body = ['$$', '\\begin{aligned}', 'A^\\top A x &= A^\\top b', '\\end{aligned}', '$$'].join('\n');
+    expect(rules(body)).toEqual([]);
+  });
+
+  it('still reports a genuinely broken multi-line block, at its opening line', () => {
+    const body = ['$$', '\\begin{aligned}', 'x &= 1', '$$'].join('\n');
+    expect(rules(body)).toContain('invalid-math');
+  });
+});

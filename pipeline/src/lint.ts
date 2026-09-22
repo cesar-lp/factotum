@@ -1,4 +1,7 @@
-import { HIGHLIGHT, QA, FENCE, CALLOUT_OPEN, CALLOUT_LINE, CHOICE, parseCards, stripAnchor } from './cards.js';
+import katex from 'katex';
+import {
+  HIGHLIGHT, QA, FENCE, CALLOUT_OPEN, CALLOUT_LINE, CHOICE, DISPLAY_MATH_FENCE, parseCards, stripAnchor
+} from './cards.js';
 import { parseFrontmatter } from './frontmatter.js';
 
 export interface LintProblem {
@@ -15,6 +18,39 @@ export interface LintProblem {
 // we can compare "what looks like an attempted highlight" against "what the
 // parser's real HIGHLIGHT regex accepts" and flag the gap.
 const HIGHLIGHT_CANDIDATE = /==([^=]*)==/g;
+
+/**
+ * Strips what the math tokenizer would never see as math: code spans, and
+ * backslash-escaped dollars. Mirrors app/src/ui/renderers.ts's inlineWithMath
+ * -- if that tokenizer's precedence changes, this must change with it, or the
+ * lint starts flagging text the renderer handles fine (or worse, stops
+ * flagging text it chokes on).
+ */
+function withoutNonMath(line: string): string {
+  return line.replace(/`[^`]+`/g, '').replace(/\\\$/g, '');
+}
+
+/** The math spans a line contains, display first, as raw LaTeX source. */
+function mathSpans(line: string): string[] {
+  const stripped = withoutNonMath(line);
+  const spans: string[] = [];
+  for (const match of stripped.matchAll(/\$\$([^$]+)\$\$|\$(\S(?:[^$]*\S)?)\$/g)) {
+    spans.push((match[1] ?? match[2] ?? '').trim());
+  }
+  return spans;
+}
+
+/** Validates one span the way the build should, not the way the app renders. */
+function latexError(latex: string): string | null {
+  try {
+    // strict + throwOnError, unlike renderMath's forgiving app-side options:
+    // a typo must fail CI here rather than render an error card on a phone.
+    katex.renderToString(latex, { throwOnError: true, strict: 'error', output: 'html' });
+    return null;
+  } catch (error) {
+    return error instanceof Error ? error.message : String(error);
+  }
+}
 
 /**
  * Pure, filesystem-free lint over one note's full raw text (frontmatter +
@@ -40,6 +76,9 @@ export function lintNote(text: string): LintProblem[] {
   const lines = body.split('\n');
   let inFence = false;
   let fenceOpenLine = -1;
+  let inMath = false;
+  let mathOpenLine = -1;
+  let mathLines: string[] = [];
 
   for (let i = 0; i < lines.length; i++) {
     const raw = lines[i] ?? '';
@@ -53,6 +92,108 @@ export function lintNote(text: string): LintProblem[] {
       continue;
     }
     if (inFence) continue;
+
+    if (DISPLAY_MATH_FENCE.test(raw)) {
+      inMath = !inMath;
+      if (inMath) {
+        mathOpenLine = fileLine;
+        mathLines = [];
+        const previous = (lines[i - 1] ?? '').trim();
+        if (previous !== '' && i > 0) {
+          problems.push({
+            line: fileLine,
+            rule: 'display-math-block',
+            message:
+              'A "$$" display block must be separated from the prose above it by a blank line. ' +
+              'Without one, parseCards joins that prose to the block while parseBlocks does not, ' +
+              'and the two walks can disagree about how many cards the note has.'
+          });
+        }
+      } else {
+        const next = (lines[i + 1] ?? '').trim();
+        if (next !== '' && i + 1 < lines.length) {
+          problems.push({
+            line: fileLine,
+            rule: 'display-math-block',
+            message:
+              'A "$$" display block must be followed by a blank line before prose resumes, ' +
+              'for the same reason it must be preceded by one.'
+          });
+        }
+        // Validated as ONE equation at the close, never line by line: a
+        // multi-line block is a single LaTeX expression, and its individual
+        // lines are not valid on their own -- a bare "\begin{aligned}" fails
+        // to parse, so a per-line check would reject every legal multi-line
+        // equation in the vault.
+        const blockSource = mathLines.join('\n').trim();
+        const blockError = blockSource === '' ? null : latexError(blockSource);
+        if (blockError) {
+          problems.push({
+            line: mathOpenLine,
+            rule: 'invalid-math',
+            message: `KaTeX cannot parse the display math opened at line ${mathOpenLine}: ${blockError}`
+          });
+        }
+        mathLines = [];
+      }
+      continue;
+    }
+
+    if (inMath) {
+      mathLines.push(raw);
+      // Card syntax is checked per line, because unlike the LaTeX itself it
+      // IS a per-line property and the line number is the useful part of the
+      // report.
+      if (new RegExp(HIGHLIGHT.source, HIGHLIGHT.flags).test(raw) || QA.test(raw.trim())) {
+        problems.push({
+          line: fileLine,
+          rule: 'display-math-block',
+          message:
+            'Card syntax ("==cloze==" or "A :: B") inside a "$$" display block. parseBlocks skips ' +
+            'the block entirely while parseCards would mint a card from this line, so the two walks ' +
+            'disagree and the build throws. Move the card outside the equation.'
+        });
+      }
+      continue;
+    }
+
+    const mathStripped = withoutNonMath(raw);
+    const dollars = (mathStripped.match(/\$/g) ?? []).length;
+    if (dollars % 2 !== 0) {
+      problems.push({
+        line: fileLine,
+        rule: 'unpaired-dollar',
+        message:
+          'An unpaired "$" outside code. "$" now opens inline math, so a lone one is either a ' +
+          'literal dollar sign that needs writing as "\\$", a shell/AWS token that belongs in ' +
+          'backticks, or a math span missing its closing delimiter.'
+      });
+    }
+
+    for (const span of mathSpans(raw)) {
+      const error = latexError(span);
+      if (error) {
+        problems.push({
+          line: fileLine,
+          rule: 'invalid-math',
+          message: `KaTeX cannot parse the math span "$${span}$": ${error}`
+        });
+      }
+    }
+
+    for (const match of raw.matchAll(new RegExp(HIGHLIGHT.source, HIGHLIGHT.flags))) {
+      const inner = match[1] ?? '';
+      if (inner.includes('$')) {
+        problems.push({
+          line: fileLine,
+          rule: 'math-in-cloze',
+          message:
+            `Cloze answer "==${inner}==" contains math. A cloze is graded by exact typed match, ` +
+            'and nobody types LaTeX on a phone keyboard. Move the math into the prompt and let the ' +
+            'blank fall on typeable prose.'
+        });
+      }
+    }
 
     for (const match of raw.matchAll(HIGHLIGHT_CANDIDATE)) {
       const inner = match[1] ?? '';
@@ -97,6 +238,17 @@ export function lintNote(text: string): LintProblem[] {
         `Fence opened at line ${fenceOpenLine} is never closed. Everything below it is ` +
         'skipped by the parser, so every card in the rest of this note silently disappears. ' +
         'Add a matching closing fence.'
+    });
+  }
+
+  if (inMath) {
+    problems.push({
+      line: mathOpenLine,
+      rule: 'display-math-block',
+      message:
+        `Display math opened at line ${mathOpenLine} is never closed. Everything below it is ` +
+        'skipped by both parser walks, so every card in the rest of this note silently disappears. ' +
+        'Add a matching closing "$$".'
     });
   }
 

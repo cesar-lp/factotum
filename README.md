@@ -86,6 +86,35 @@ Obsidian renders `---` as a divider, so the callout still reads correctly
 in the editor. Without a separator, the card stays purely self-graded, just
 as before — there is no answer key to check yourself against.
 
+**Math** — `$...$` inline, `$$` on its own line for a display block:
+
+```markdown
+The residual $b - Ax$ is orthogonal to every column of $A$:
+
+$$
+A^\top (b - Ax) = 0
+$$
+```
+
+Rendered with KaTeX. Four rules the linter enforces:
+
+- A **literal dollar sign** in prose is written `\$`. A lone unescaped `$`
+  is an error, because it now opens math. A shell or AWS token like
+  `$LATEST` belongs in backticks instead — code spans are matched before
+  math, so anything inside backticks is never touched.
+- A **cloze answer may not contain math.** Clozes are graded by exact
+  typed match, and nobody types `\frac{a}{b}` on a phone. Put the math in
+  the prompt and let the blank fall on typeable prose.
+- A **display block is surrounded by blank lines**, and contains no card
+  syntax. Both parser walks skip its contents, so a `==cloze==` inside one
+  makes them disagree about the note's card count and fails the build.
+- **Invalid LaTeX fails the build**, checked in KaTeX strict mode, rather
+  than rendering an error card on a phone.
+
+Display math also works inline inside card text, written `$$...$$` on one
+line — a card's prompt and answer are single joined strings, so a block
+cannot occur in one.
+
 ### Parser behavior worth knowing
 
 - **A run of plain prose lines wraps and joins.** A sentence you hard-wrap
