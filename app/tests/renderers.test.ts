@@ -7,7 +7,8 @@ import {
   renderActions,
   shuffle,
   inlineMarkup,
-  escapeHtml
+  escapeHtml,
+  inlineWithMath
 } from '../src/ui/renderers.js';
 import { issueUrl } from '../src/ui/flag.js';
 import type { StoredCard } from '../src/db/schema.js';
@@ -454,5 +455,59 @@ describe('issueUrl', () => {
     expect(url).toContain('https://github.com/cesar-lp/factotum/issues/new');
     expect(decodeURIComponent(url)).toContain('card-aaaa');
     expect(decodeURIComponent(url)).toContain('vault/a.md');
+  });
+});
+
+describe('inlineWithMath', () => {
+  it('renders an inline math span', () => {
+    const html = inlineWithMath('the residual $b - Ax$ is orthogonal');
+    expect(html).toContain('class="katex"');
+    expect(html).toContain('the residual ');
+    expect(html).toContain(' is orthogonal');
+  });
+
+  it('renders a $$...$$ run inside card text as display math', () => {
+    expect(inlineWithMath('gives $$A^\\top A x = A^\\top b$$ exactly')).toContain('katex-display');
+  });
+
+  it('gives code spans precedence, so `$connect` stays code', () => {
+    const html = inlineWithMath('reserved routes (`$connect`, `$disconnect`)');
+    expect(html).toContain('<code>$connect</code>');
+    expect(html).toContain('<code>$disconnect</code>');
+    expect(html).not.toContain('katex');
+  });
+
+  it('treats \\$ as a literal dollar, not a delimiter', () => {
+    const html = inlineWithMath('transfer \\$100 from account A to account B');
+    expect(html).toContain('transfer $100 from account A');
+    expect(html).not.toContain('katex');
+  });
+
+  it('leaves an unpaired $ completely literal', () => {
+    const html = inlineWithMath('point at $LATEST and let it float');
+    expect(html).toBe('point at $LATEST and let it float');
+  });
+
+  it('escapes the non-math gaps', () => {
+    expect(inlineWithMath('a <b> & $x$')).toContain('&lt;b&gt; &amp;');
+  });
+
+  it('does not escape the math itself -- KaTeX needs raw LaTeX', () => {
+    // If "<" reached KaTeX as "&lt;" it would typeset the entity text.
+    const html = inlineWithMath('$x < y$');
+    expect(html).toContain('katex');
+    expect(html).not.toContain('&amp;lt;');
+  });
+
+  it('still applies emphasis in the gaps', () => {
+    expect(inlineWithMath('**bold** and $x$')).toContain('<strong>bold</strong>');
+  });
+
+  it('does not mistake multiplication asterisks for emphasis', () => {
+    expect(inlineWithMath('O(E * |f*|)')).not.toContain('<em>');
+  });
+
+  it('leaves a lone $ inside an otherwise plain sentence alone', () => {
+    expect(inlineWithMath('costs $5')).toBe('costs $5');
   });
 });
