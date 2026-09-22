@@ -1,13 +1,14 @@
 import type { NoteBlock } from '../../../pipeline/src/types.js';
-import { escapeHtml, inlineMarkup } from './renderers.js';
+import { escapeHtml, inlineWithMath } from './renderers.js';
 
 /**
- * Escape, then apply inline markup. Never the other way round: the inline
- * layer wraps spans in tags and escapes nothing itself, so running it first
- * would reintroduce an injection path. See renderers.ts's own contract.
+ * Inline markup plus math. `inlineWithMath` takes RAW text and escapes each
+ * non-math chunk itself -- it must NOT be handed pre-escaped input, or KaTeX
+ * receives HTML entities where it expects LaTeX operators. See its contract
+ * in renderers.ts.
  */
 function text(value: string): string {
-  return inlineMarkup(escapeHtml(value));
+  return inlineWithMath(value);
 }
 
 function cardIdAttr(cardId: string): string {

@@ -175,3 +175,30 @@ describe('renderNoteBlocks over the real notes corpus', () => {
     expect(violations, violations.join('\n')).toEqual([]);
   });
 });
+
+describe('inline math in notes', () => {
+  it('typesets math in prose', () => {
+    const html = renderNoteBlocks([{ kind: 'prose', text: 'The residual $b - Ax$ is orthogonal.', clozes: [] }]);
+    expect(html).toContain('class="katex"');
+  });
+
+  it('typesets math in a heading', () => {
+    expect(renderNoteBlocks([{ kind: 'heading', level: 2, text: 'Projections onto $R^n$' }])).toContain('katex');
+  });
+
+  it('leaves a code fence completely alone', () => {
+    const html = renderNoteBlocks([{ kind: 'code', lang: 'bash', text: 'echo $HOME && echo $PATH' }]);
+    expect(html).toContain('echo $HOME &amp;&amp; echo $PATH');
+    expect(html).not.toContain('katex');
+  });
+
+  it('keeps cloze offsets correct when the same block contains math', () => {
+    const html = renderNoteBlocks([{
+      kind: 'prose',
+      text: 'A projection $P$ satisfies idempotence exactly.',
+      clozes: [{ start: 27, end: 38, cardId: 'card-abcd', answer: 'idempotence' }]
+    }]);
+    expect(html).toContain('data-card="card-abcd"');
+    expect(html).toContain('>idempotence<');
+  });
+});
