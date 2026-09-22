@@ -1,0 +1,25 @@
+/* A wide equation must scroll inside its own block rather than widening the
+   page. This is the same failure the .note-code rule guards against, and it
+   depends on the same ancestor min-width:0 chain (.note-screen, .note-body)
+   already established in note.css. */
+.note-math { margin: 0 0 var(--s4); overflow-x: auto; overflow-y: hidden; }
+
+/* KaTeX ships its own 1em top/bottom margin on display math. The wrapper
+   above owns block spacing, so drop it to avoid doubling. */
+.note-math .katex-display { margin: 0; }
+
+/* A $$...$$ run inside a card answer is inline-with-block content: it needs
+   breathing room from the prose around it, which the note wrapper's own
+   margin does not provide here. */
+.expected .katex-display { margin: var(--s3) 0; overflow-x: auto; overflow-y: hidden; }
+
+/* KaTeX's default 1.21em is sized for a desktop article. The review screen's
+   prompt is already --text-prompt, and math at 1.21em above that overflows a
+   375px phone for any equation of real length. */
+.katex { font-size: 1.05em; }
+
+/* `inherit`, NOT var(--text). A revealed card answer is styled
+   `color: var(--ok)` (review.css:124), so math pinned to --text would
+   render dark against green prose in the same sentence. Inheriting also
+   handles both themes for free, and the cloze-fill tints besides. */
+.katex, .katex .mord, .katex .mbin, .katex .mrel { color: inherit; }

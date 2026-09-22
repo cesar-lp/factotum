@@ -16,6 +16,7 @@
     "build:app": "vite build --config vite.config.ts"
   },
   "devDependencies": {
+    "@types/katex": "^0.16.8",
     "@types/node": "^22.10.0",
     "fake-indexeddb": "^6.2.5",
     "tsx": "^4.16.0",
@@ -26,6 +27,7 @@
   "dependencies": {
     "gray-matter": "^4.0.3",
     "idb": "^8.0.0",
+    "katex": "^0.16.47",
     "ts-fsrs": "^5.4.2"
   }
 }

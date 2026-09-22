@@ -13,12 +13,12 @@ questions about a fixed list of vectors, built entirely from that
 operation, and shows that a basis is just what happens when both
 questions get the best possible answer at once.
 
-The **span** of vectors `v_1, ..., v_n` is the set of everything reachable
+The **span** of vectors $v_1, \ldots, v_n$ is the set of everything reachable
 by combining them:
 
-```
-span{v_1, ..., v_n} = { c_1*v_1 + c_2*v_2 + ... + c_n*v_n : c_1, ..., c_n in R }
-```
+$$
+\operatorname{span}\{v_1, \ldots, v_n\} = \{ c_1 v_1 + c_2 v_2 + \cdots + c_n v_n : c_1, \ldots, c_n \in \mathbb{R} \}
+$$
 
 Span is purely about *coverage* — how much of the space you can reach —
 and says nothing about whether the list used to reach it is efficient.
@@ -28,14 +28,14 @@ exact same set as a shorter one.
 
 **Independence** is the question span leaves unanswered: does every
 vector in the list pull its own weight, or could one be dropped without
-shrinking the span? Formally, `v_1, ..., v_n` are linearly independent if
+shrinking the span? Formally, $v_1, \ldots, v_n$ are linearly independent if
 the only solution to
 
-```
-c_1*v_1 + c_2*v_2 + ... + c_n*v_n = 0
-```
+$$
+c_1 v_1 + c_2 v_2 + \cdots + c_n v_n = 0
+$$
 
-is `c_1 = c_2 = ... = c_n = 0`. If some other combination also hits zero,
+is $c_1 = c_2 = \cdots = c_n = 0$. If some other combination also hits zero,
 one vector is expressible in terms of the others — it's redundant, and
 removing it leaves the span unchanged. Independence is the formal name
 for "no redundancy in this particular list."
@@ -57,8 +57,8 @@ list that is still redundancy-free.
 
 The real payoff of a basis isn't spanning or independence individually —
 it's that together they guarantee every vector in the space has exactly
-one representation as a combination of the basis vectors. If `x = sum
-c_i*v_i` had two different coefficient lists, their difference would be a
+one representation as a combination of the basis vectors. If
+$x = \sum c_i v_i$ had two different coefficient lists, their difference would be a
 nontrivial combination summing to zero, contradicting independence; and
 spanning guarantees at least one representation exists in the first
 place. Unique coordinates are what make every later construction —
@@ -93,11 +93,11 @@ particular basis into a well-posed property of the space as a whole.
 What would go wrong if two different bases of the same vector space were allowed to have different numbers of vectors? :: "Dimension" would stop being a well-defined property of the space itself — it would instead depend on which basis happened to be picked, so a statement like "R^3 is 3-dimensional" would be meaningless without also specifying a basis. The theorem that all bases of a space share the same size is exactly what promotes dimension from a fact about one particular basis to an invariant of the space. ^card-ygxw
 
 Two related counting facts follow directly from dimension being fixed.
-Any list of more than `n` vectors in `R^n` must be dependent — there
-simply isn't room for more than `n` independent directions once every
-direction is already spanned by some combination of `n` basis vectors, so
+Any list of more than $n$ vectors in $\mathbb{R}^n$ must be dependent — there
+simply isn't room for more than $n$ independent directions once every
+direction is already spanned by some combination of $n$ basis vectors, so
 a longer list has redundancy forced on it. Symmetrically, any list of
-fewer than `n` vectors cannot span `R^n` — a shorter list reaches at most
+fewer than $n$ vectors cannot span $\mathbb{R}^n$ — a shorter list reaches at most
 a lower-dimensional slice of the space, since each new independent vector
 adds at most one new dimension of coverage.
 

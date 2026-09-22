@@ -76,7 +76,7 @@ in ==us-east-1== regardless of where the distribution or its viewers are, ^card-
 because CloudFront then replicates it out to edge locations globally.
 
 Lambda@Edge also associates a specific published ==version== with a ^card-ivu1
-trigger — never an alias. There's no "point at $LATEST and let it float"
+trigger — never an alias. There's no "point at `$LATEST` and let it float"
 option; each new deployment has to be published and the trigger's
 association updated to it by hand.
 

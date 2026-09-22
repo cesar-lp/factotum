@@ -7,7 +7,7 @@ citations: ["Stewart, Calculus: Early Transcendentals 8e, Ch. 3"]
 
 # Differentiation rules
 
-`the-derivative-as-a-limit.md` defines `f'` as a limit of difference
+`the-derivative-as-a-limit.md` defines $f'$ as a limit of difference
 quotients. Computing that limit from scratch every time would make
 calculus unusable in practice, which is exactly what these rules exist to
 avoid — each one is a limit computed once, in general, and then reused
@@ -18,14 +18,16 @@ Two rules follow almost immediately from the limit definition, because the
 limit of a sum (or a constant multiple) is the sum (or multiple) of the
 limits:
 
-```
-(f + g)' = f' + g'
-(c*f)'   = c*f'
-d/dx [x^n] = n * x^(n-1)
-```
+$$
+\begin{aligned}
+(f + g)' &= f' + g' \\
+(cf)' &= cf' \\
+\frac{d}{dx}[x^n] &= n x^{n-1}
+\end{aligned}
+$$
 
-The power rule takes slightly more work — expanding `(x+h)^n` and watching
-every term except the linear one vanish as `h -> 0` — but the other two
+The power rule takes slightly more work — expanding $(x+h)^n$ and watching
+every term except the linear one vanish as $h \to 0$ — but the other two
 are direct consequences of limit laws you already have, and together they
 give differentiation the property called ==linearity==. ^card-3gm4
 
@@ -33,9 +35,9 @@ The product rule is where intuition most often goes wrong, because the
 tempting guess — that the derivative of a product is the product of the
 derivatives — is false. The actual rule has two terms:
 
-```
-(f*g)' = f'*g + f*g'
-```
+$$
+(fg)' = f'g + fg'
+$$
 
 d/dx of a product f(x)*g(x) is NOT f'(x)*g'(x). What is it instead, and why does the correct rule need two terms rather than one? :: It's f'(x)*g(x) + f(x)*g'(x). Both factors are changing at once, and each term in the rule isolates the contribution of one factor changing while the other is held fixed; adding them captures the combined effect. A single term (or the naive product of derivatives) would silently discard one factor's contribution entirely. ^card-d4p1
 
@@ -43,9 +45,9 @@ The quotient rule follows the same "both parts are changing" logic, but
 the denominator's own derivative enters with a minus sign and the whole
 thing is scaled down by the denominator squared:
 
-```
-(f/g)' = (f'*g - f*g') / g^2
-```
+$$
+\left(\frac{f}{g}\right)' = \frac{f'g - fg'}{g^2}
+$$
 
 > [!card] recall
 > State the product rule and the quotient rule for (f*g)' and (f/g)'.
@@ -63,24 +65,26 @@ thing is scaled down by the denominator squared:
 The standard functions each contribute a derivative worth knowing outright
 rather than re-deriving:
 
-```
-d/dx [exp(x)] = exp(x)
-d/dx [ln(x)]  = 1/x
-d/dx [sin(x)] = cos(x)
-d/dx [cos(x)] = -sin(x)
-```
+$$
+\begin{aligned}
+\frac{d}{dx}[e^x] &= e^x \\
+\frac{d}{dx}[\ln(x)] &= \frac{1}{x} \\
+\frac{d}{dx}[\sin(x)] &= \cos(x) \\
+\frac{d}{dx}[\cos(x)] &= -\sin(x)
+\end{aligned}
+$$
 
-`exp(x)` is singled out by the first line: it is, up to a constant
+$e^x$ is singled out by the first line: it is, up to a constant
 multiple, the only function that is its **own** derivative. That property
 is not incidental — it's the defining characteristic that pins down what
-`e` has to be in the first place, since `d/dx [a^x] = a^x * ln(a)`, and `e`
-is precisely the base for which `ln(a) = 1`, making the extra factor
+$e$ has to be in the first place, since $\frac{d}{dx}[a^x] = a^x \ln(a)$, and $e$
+is precisely the base for which $\ln(a) = 1$, making the extra factor
 disappear.
 
 Why is exp(x) described as "the function that is its own derivative," and how does that property single out the specific base e among all exponential functions a^x? :: For general base a, d/dx[a^x] = a^x * ln(a) — the derivative is the original function scaled by ln(a). That extra factor vanishes only when ln(a) = 1, which happens for exactly one value of a, namely e. So e is defined by the property that makes its exponential function equal to its own derivative with no scaling at all. ^card-xo66
 
-Derivatives can be applied repeatedly: `f''` is the derivative of `f'`,
-`f'''` the derivative of that, and so on, each one differentiating
+Derivatives can be applied repeatedly: $f''$ is the derivative of $f'$,
+$f'''$ the derivative of that, and so on, each one differentiating
 whatever function came before it.
 
 What relationship does f'' (the second derivative) bear to f, in terms of repeated differentiation? :: f'' is the derivative of f' — that is, f differentiated twice in a row. Each higher derivative is obtained by differentiating the previous one again, not by differentiating f itself some other way. ^card-m9aa

@@ -8,11 +8,11 @@ citations: ["Stewart, Calculus: Early Transcendentals 8e, Ch. 4"]
 # The mean value theorem
 
 `extrema-and-the-first-derivative-test.md` and the previous note both use
-`f'` and `f''` to read local shape at a point. The Mean Value Theorem
+$f'$ and $f''$ to read local shape at a point. The Mean Value Theorem
 (MVT) is the tool that turns those local, pointwise facts into global
 conclusions about a function across an entire interval — which is why it
 sits underneath results that look nothing like it on the surface,
-including the `+ C` at the end of every antiderivative you've computed.
+including the $+ C$ at the end of every antiderivative you've computed.
 
 ```
 Mean Value Theorem
@@ -25,9 +25,9 @@ In words: somewhere in the interval, the instantaneous rate of change
 equals the average rate of change over the whole interval. Geometrically,
 some tangent line is parallel to the secant line joining the endpoints.
 
-The special case where `f(a) = f(b)` is **Rolle's theorem**: under the
+The special case where $f(a) = f(b)$ is **Rolle's theorem**: under the
 same hypotheses, if the endpoint values are equal, there is some c in
-(a, b) with `f'(c) = 0`.
+(a, b) with $f'(c) = 0$.
 
 How does Rolle's theorem relate to the Mean Value Theorem, and how is it typically used to prove the MVT? :: Rolle's theorem is the special case of the MVT where the endpoint values are equal, f(a) = f(b), which makes the secant slope zero and the conclusion simplify to the existence of some c with f'(c) = 0. It is also the usual route to proving the general MVT: tilt the secant line into the horizontal case by subtracting off the line joining the endpoints, then apply Rolle's theorem to that tilted function. ^card-4vkw
 
@@ -38,10 +38,10 @@ How does Rolle's theorem relate to the Mean Value Theorem, and how is it typical
 
 The hypotheses are not bureaucratic fine print; drop differentiability at
 even one interior point and the conclusion can fail outright. Take
-`f(x) = |x|` on `[-1, 1]`: it's continuous everywhere, and differentiable
-everywhere except at `x = 0`. The secant slope from `-1` to `1` is `(1 -
-1)/(1 - (-1)) = 0`, but `f'(x)` is `-1` for every x left of 0 and `+1` for
-every x to its right — it's never 0 anywhere on `(-1, 1)`. No c exists, and
+$f(x) = |x|$ on $[-1, 1]$: it's continuous everywhere, and differentiable
+everywhere except at $x = 0$. The secant slope from $-1$ to $1$ is
+$(1 - 1)/(1 - (-1)) = 0$, but $f'(x)$ is $-1$ for every x left of 0 and $+1$ for
+every x to its right — it's never 0 anywhere on $(-1, 1)$. No c exists, and
 the single point where differentiability fails is exactly what breaks it.
 
 > [!card] mcq
@@ -51,7 +51,7 @@ the single point where differentiability fails is exactly what breaks it.
 > - [ ] f continuous on the open interval (a, b) only
 > - [ ] f continuous and differentiable on [a, b], including both endpoints ^card-zbnb
 
-Why does `f(x) = |x|` on `[-1, 1]` fail to satisfy the Mean Value Theorem's conclusion, despite being continuous on the whole interval? :: Because f is not differentiable at the interior point x = 0 (the corner), which violates the theorem's second hypothesis; without differentiability everywhere on the open interval, no point with f'(c) equal to the secant slope is guaranteed to exist, and here none does. ^card-5f66
+Why does $f(x) = |x|$ on $[-1, 1]$ fail to satisfy the Mean Value Theorem's conclusion, despite being continuous on the whole interval? :: Because f is not differentiable at the interior point x = 0 (the corner), which violates the theorem's second hypothesis; without differentiability everywhere on the open interval, no point with f'(c) equal to the secant slope is guaranteed to exist, and here none does. ^card-5f66
 
 The MVT looks like a curiosity about tangent and secant lines until you
 see what it licenses. Because it guarantees an *interior* point matching
@@ -67,11 +67,13 @@ derivative that vanishes everywhere.
 
 The same argument run twice more gives the other two consequences:
 
-```
-f'(x) = 0 on an interval        =>  f is constant there
-f'(x) > 0 on an interval        =>  f is increasing there
-f'(x) = g'(x) on an interval    =>  f(x) - g(x) = C
-```
+$$
+\begin{aligned}
+f'(x) = 0 \text{ on an interval} &\implies f \text{ is constant there} \\
+f'(x) > 0 \text{ on an interval} &\implies f \text{ is increasing there} \\
+f'(x) = g'(x) \text{ on an interval} &\implies f(x) - g(x) = C
+\end{aligned}
+$$
 
 That third consequence is precisely what justifies writing "+ C" every
 time you find an antiderivative: it says two functions with the same

@@ -2,6 +2,7 @@ import type { StoredCard } from '../db/schema.js';
 import type { Choice } from '../../../pipeline/src/types.js';
 import type { IntervalPreview } from '../scheduler/fsrs.js';
 import { categoryLabel } from './labels.js';
+import { renderMath } from './math.js';
 
 /**
  * Fisher-Yates shuffle. Returns a new array; never mutates `items`.
@@ -79,6 +80,128 @@ function applyEmphasis(text: string): string {
   return result;
 }
 
+/**
+ * Stand-in for a backslash-escaped dollar while the tokenizer runs, so `\$`
+ * can never open or close a math span. NUL is legal UTF-8, so a note could in
+ * principle contain this exact byte sequence -- `inlineWithMath` strips NUL
+ * from its input before shielding, which is what makes this substitution
+ * safe by construction rather than merely unlikely to collide.
+ */
+const ESCAPED_DOLLAR = '\u0000d\u0000';
+
+const CODE_SPAN = '`[^`]+`';
+// `$$...$$` is tried before `$...$`, so a display run is never parsed as two
+// empty inline spans. Single-line only: a multi-line display equation is a
+// `math` BLOCK (see pipeline/src/cards.ts), not an inline construct.
+const DISPLAY_MATH_SPAN = String.raw`\$\$(?:[^$]+)\$\$`;
+// Same flanking rules as emphasis, and for the same reason: this deck's prose
+// contains bare dollar signs (prices, `$LATEST`), and a marker that is not
+// properly flanked on both sides must stay literal rather than swallow the
+// rest of the sentence looking for a partner.
+const INLINE_MATH_SPAN = `${OPEN_BEFORE}\\$(?:\\S(?:[^$]*\\S)?)\\$${CLOSE_AFTER}`;
+const MATH_TOKENS = new RegExp(`(${CODE_SPAN}|${DISPLAY_MATH_SPAN}|${INLINE_MATH_SPAN})`, 'gu');
+
+/**
+ * One token of tokenizeForMath's output: the shielded text exactly as
+ * MATH_TOKENS produced it, plus whether it is a math span (display or
+ * inline) as opposed to a code span or a plain-text gap.
+ */
+interface MathToken {
+  text: string;
+  isMath: boolean;
+}
+
+/**
+ * Shields `\$`, splits on MATH_TOKENS, and classifies each resulting part.
+ * This is the one place both inlineWithMath and markFirstBlank tokenize
+ * through now, rather than each running MATH_TOKENS on its own -- that
+ * duplication was exactly how the two drifted apart: inlineWithMath shielded
+ * `\$` before splitting so it could never accidentally open a math span, but
+ * markFirstBlank split the RAW prompt, so an escaped dollar sitting near a
+ * real `$...$` span could make the two carve the same string up differently.
+ * Sharing this helper makes that provably impossible: both now see the same
+ * shielded split, so they agree on where every math span starts and ends.
+ */
+function tokenizeForMath(raw: string): MathToken[] {
+  // Enforce the invariant ESCAPED_DOLLAR depends on rather than asserting it.
+  // NUL is legal UTF-8 and nothing upstream strips it, so a note containing
+  // the sentinel's own bytes would otherwise have them rewritten into a stray
+  // dollar sign on the way out. It is not an escaping bypass -- escapeHtml
+  // still runs on every non-math chunk -- but a sentinel that real content can
+  // forge is not a sentinel.
+  const shielded = raw.replaceAll('\u0000', '').replace(/\\\$/g, ESCAPED_DOLLAR);
+  return shielded.split(MATH_TOKENS).map((part) => {
+    const text = part ?? '';
+    const isDisplay = text.startsWith('$$') && text.endsWith('$$') && text.length >= 4;
+    const isInline = !isDisplay && text.startsWith('$') && text.endsWith('$') && text.length >= 2;
+    return { text, isMath: isDisplay || isInline };
+  });
+}
+
+/**
+ * Entry point for any text that may contain math. Takes RAW, unescaped text
+ * -- unlike `inlineMarkup`, which requires pre-escaped input.
+ *
+ * The inversion is forced by KaTeX: it needs real LaTeX, so `x < y` must
+ * reach it as `x < y` and not as `x &lt; y`, which it would typeset as the
+ * literal entity. Escaping therefore cannot happen up front for the whole
+ * string; it happens per non-math chunk instead.
+ *
+ * Code spans are tokenized in the SAME pass as math and matched first, which
+ * is what keeps `` `$connect` `` (and `` `$$.Task.Token` ``, both real vault
+ * content) code rather than an opened math span. Non-math gaps are handed to
+ * the existing escapeHtml -> inlineMarkup path unchanged; paired code spans
+ * are consumed by this pass, so inlineMarkup only applies emphasis to the
+ * gaps (an unpaired backtick can still reach a gap as a literal character,
+ * which is harmless since escapeHtml runs on it regardless).
+ *
+ * The one piece of unescaped HTML this introduces is KaTeX's own output under
+ * `trust: false`, which cannot emit caller-supplied markup. That is the whole
+ * exception to renderers.ts's escape-first contract -- do not widen it.
+ */
+export function inlineWithMath(raw: string): string {
+  return tokenizeForMath(raw)
+    .map(({ text: part }) => {
+      if (part === '') return '';
+      if (part.startsWith('`') && part.endsWith('`') && part.length >= 2) {
+        // Same output as inlineMarkup's code branch; produced here because
+        // the span was consumed by this pass rather than that one.
+        return `<code>${escapeHtml(unshieldLiteral(part.slice(1, -1)))}</code>`;
+      }
+      if (part.startsWith('$$') && part.endsWith('$$') && part.length >= 4) {
+        return renderMath(unshieldLatex(part.slice(2, -2)).trim(), true);
+      }
+      if (part.startsWith('$') && part.endsWith('$') && part.length >= 2) {
+        return renderMath(unshieldLatex(part.slice(1, -1)).trim(), false);
+      }
+      return inlineMarkup(escapeHtml(unshieldLiteral(part)));
+    })
+    .join('');
+}
+
+/** Outside math, a shielded `\$` was only ever a literal dollar sign. */
+function unshieldLiteral(text: string): string {
+  return text.replaceAll(ESCAPED_DOLLAR, '$');
+}
+
+/** Inside math, `\$` is LaTeX's own escape and must survive as such. */
+function unshieldLatex(text: string): string {
+  return text.replaceAll(ESCAPED_DOLLAR, String.raw`\$`);
+}
+
+/**
+ * Reverses ESCAPED_DOLLAR back to a literal `\$` rather than resolving it.
+ * markFirstBlank's contract is to hand back the RAW prompt with only the
+ * blank replaced -- the result is passed to inlineWithMath again afterward
+ * (see substituteClozeBlank), which needs to see the original escape and
+ * shield it itself. unshieldLiteral/unshieldLatex, by contrast, run at final
+ * render time and resolve the escape for good; this one is an intermediate
+ * round-trip, not a resolution.
+ */
+function unshieldToEscaped(text: string): string {
+  return text.replaceAll(ESCAPED_DOLLAR, String.raw`\$`);
+}
+
 export function normalizeAnswer(value: string): string {
   return value.trim().toLowerCase().replace(/\s+/g, ' ');
 }
@@ -107,6 +230,15 @@ export function isNumericAnswer(answer: string): boolean {
  */
 const CLOZE_BLANK = /_{3,}/;
 
+/**
+ * Stands in for the cloze blank while markup and math rendering run.
+ * Deliberately free of HTML-special and LaTeX-special characters, so it
+ * passes through escapeHtml and KaTeX untouched, and it is stripped from the
+ * incoming prompt first so note content cannot forge it -- the same
+ * discipline ESCAPED_DOLLAR uses, and for the same reason.
+ */
+const BLANK_MARKER = '@@factotum-cloze-blank@@';
+
 export interface ClozeRevealInfo {
   /** How this cloze reveal was reached — mirrors renderActions' clozeOutcome. */
   outcome?: 'correct' | 'wrong' | 'self-graded';
@@ -122,19 +254,77 @@ export interface ClozeRevealInfo {
  * where what's inserted is the answer key, not something the user
  * produced themselves).
  *
- * Runs the substitution on the already-escaped-and-marked-up prompt HTML
- * (not the raw prompt), so it never reopens an injection path: `___`
- * survives both escapeHtml and inlineMarkup untouched, so matching it
- * afterwards is safe. If no blank is found at all (a malformed/legacy
- * card), the filler is appended in parentheses instead of silently
- * dropped.
+ * The blank is marked with BLANK_MARKER in the RAW prompt, before
+ * inlineWithMath runs -- it is NOT matched against the rendered HTML.
+ * KaTeX's MathML annotation echoes its LaTeX source verbatim, so math
+ * containing three or more consecutive underscores (e.g. `\text{a___b}`)
+ * would reintroduce a `___` sequence into the rendered output; matching
+ * CLOZE_BLANK there let that echoed run hijack the substitution instead of
+ * the real blank. Marking the blank first, then running markup over the
+ * whole string in one pass, also keeps emphasis that spans the blank
+ * (`**a ___ b**`) working, since slicing the raw prompt around the blank
+ * would break it instead.
+ *
+ * The raw prompt can ALSO contain a `___`-shaped run inside its own math
+ * source (the same `\text{a___b}` case, before KaTeX ever sees it), so
+ * marking is done via markFirstBlank rather than a bare `.replace` -- it
+ * skips math spans using the same tokenizing inlineWithMath does, so an
+ * underscore run that is really part of a LaTeX source string never
+ * competes with the pipeline's own blank. A code span is deliberately NOT
+ * skipped: the vault already has a real card whose blank lives inside one
+ * (`` `___` `` rendering to `<code>___</code>`), and unlike math, a code
+ * span's content is never echoed a second time elsewhere in the output, so
+ * it carries none of the risk that math does. If no blank is found at all
+ * (a malformed/legacy card), the filler is appended in parentheses instead
+ * of silently dropped.
  */
 function substituteClozeBlank(card: StoredCard, reveal: ClozeRevealInfo): string {
-  const promptHtml = inlineMarkup(escapeHtml(card.prompt));
   const tint = reveal.outcome === 'correct' ? 'is-ok' : 'is-accent';
-  const filler = `<span class="cloze-fill ${tint}">${inlineMarkup(escapeHtml(card.answer ?? ''))}</span>`;
-  if (CLOZE_BLANK.test(promptHtml)) return promptHtml.replace(CLOZE_BLANK, filler);
-  return `${promptHtml} (${filler})`;
+  const filler = `<span class="cloze-fill ${tint}">${inlineWithMath(card.answer ?? '')}</span>`;
+
+  // Strip any literal marker from note content first (forge protection --
+  // the same discipline ESCAPED_DOLLAR uses), then mark the real blank, if
+  // any, before markup/math rendering runs.
+  const unforgedPrompt = card.prompt.replaceAll(BLANK_MARKER, '');
+  const markedPrompt = markFirstBlank(unforgedPrompt);
+  const promptHtml = inlineWithMath(markedPrompt);
+
+  return promptHtml.includes(BLANK_MARKER)
+    ? promptHtml.replaceAll(BLANK_MARKER, filler)
+    : `${promptHtml} (${filler})`;
+}
+
+/**
+ * Replaces the first CLOZE_BLANK found OUTSIDE any math span with
+ * BLANK_MARKER, leaving the rest of the string -- including any math span,
+ * whatever underscores its LaTeX source contains -- untouched. Tokenizes via
+ * tokenizeForMath, the same shield-then-split inlineWithMath uses, so a span
+ * it would hand to renderMath is skipped here too rather than scanned for a
+ * blank that was never meant to be there. Splitting the raw prompt directly
+ * (without that shield) would let an escaped `\$` near a real `$...$` span
+ * make this function and inlineWithMath disagree about where the span
+ * starts; sharing the helper is what rules that out. Code spans are
+ * deliberately left searchable (see substituteClozeBlank's doc comment). The
+ * whole string is still returned as one piece (not sliced into before/after
+ * fragments), so a subsequent single inlineWithMath call over the result
+ * still sees one string and markup spanning the blank still works.
+ */
+function markFirstBlank(prompt: string): string {
+  let marked = false;
+  const shieldedResult = tokenizeForMath(prompt)
+    .map(({ text: part, isMath }) => {
+      if (marked || part === '') return part;
+      if (isMath) return part;
+      if (!CLOZE_BLANK.test(part)) return part;
+      marked = true;
+      return part.replace(CLOZE_BLANK, BLANK_MARKER);
+    })
+    .join('');
+  // tokenizeForMath shields `\$` before splitting so it agrees with
+  // inlineWithMath about where math spans start (see its doc comment); this
+  // reverses that shielding so the return value is still the raw prompt
+  // (blank aside), since the caller hands it to inlineWithMath again.
+  return unshieldToEscaped(shieldedResult);
 }
 
 /**
@@ -179,11 +369,11 @@ export function renderPrompt(card: StoredCard, revealed = false, reveal: ClozeRe
   const chip = `<span class="chip">${escapeHtml(categoryLabel(card.category, card.topic))}</span>`;
 
   const isCloze = card.format === 'cloze';
-  const promptHtml = isCloze && revealed ? substituteClozeBlank(card, reveal) : inlineMarkup(escapeHtml(card.prompt));
+  const promptHtml = isCloze && revealed ? substituteClozeBlank(card, reveal) : inlineWithMath(card.prompt);
 
   const typedWrong =
     isCloze && revealed && reveal.outcome === 'wrong' && reveal.typedAnswer
-      ? `<p class="cloze-typed">You typed: ${inlineMarkup(escapeHtml(reveal.typedAnswer))}</p>`
+      ? `<p class="cloze-typed">You typed: ${inlineWithMath(reveal.typedAnswer)}</p>`
       : '';
 
   // aria-live="polite" so a screen-reader user is told the reveal happened
@@ -199,9 +389,18 @@ export function renderPrompt(card: StoredCard, revealed = false, reveal: ClozeRe
   // mcq's "answer" is its choice buttons (rendered by renderActions), and
   // a cloze's answer is now inline in the prompt above — neither format
   // gets a separate expected-answer paragraph here.
+  // A <div> rather than a <p>: this element can hold a centred display
+  // equation as well as prose, which is not a paragraph in any useful sense.
+  //
+  // It is NOT, as an earlier revision of this code claimed, because block
+  // content forces the browser to close a <p> early. KaTeX display mode emits
+  // <span class="katex-display">, and the optional-end-tag rule for <p> keys
+  // off tag names, never off CSS display -- a <span> never closes a
+  // paragraph. A <p> would in fact have worked; the <div> is a semantic
+  // preference, not a correctness fix.
   const expected =
     revealed && !isCloze && card.format !== 'mcq' && card.answer
-      ? `<p class="expected">${inlineMarkup(escapeHtml(card.answer))}</p>`
+      ? `<div class="expected">${inlineWithMath(card.answer)}</div>`
       : '';
 
   const recallHint =
@@ -333,7 +532,7 @@ export function renderActions(
           `<button class="choice" data-choice="${index}" data-correct="${choice.correct}"
                  ${revealed ? 'disabled' : ''}>
              <span class="choice-badge">${mcqBadge(index)}</span>
-             <span class="choice-text">${inlineMarkup(escapeHtml(choice.text))}</span>
+             <span class="choice-text">${inlineWithMath(choice.text)}</span>
            </button>`
       )
       .join('');

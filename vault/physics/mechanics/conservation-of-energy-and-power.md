@@ -7,22 +7,24 @@ citations: ["Halliday, Resnick & Walker, Fundamentals of Physics 10e, Ch. 8"]
 
 # Conservation of energy and power
 
-`work-and-the-work-energy-theorem.md` gives `W_net = Delta(KE)`, and
+`work-and-the-work-energy-theorem.md` gives $W_{net} = \Delta(KE)$, and
 `potential-energy-and-conservative-forces.md` defines potential energy for
 conservative forces. This note combines the two into a single conserved
 quantity, states the one condition that quantity depends on, and then adds
 a second idea, power, that conservation says nothing about.
 
-**Mechanical energy**, `KE + PE`, is conserved — constant over time — but
+**Mechanical energy**, $KE + PE$, is conserved — constant over time — but
 only under one hypothesis: no non-conservative force does work on the
 system. The instant a non-conservative force like friction or air drag
-does nonzero work, plain `KE + PE = constant` is false, and using it
+does nonzero work, plain $KE + PE = \text{constant}$ is false, and using it
 anyway is the single most common error in this topic.
 
-```
-KE + PE = constant                    (only if W_nonconservative = 0)
-KE_f + PE_f = KE_i + PE_i + W_nc      (general form, any case)
-```
+$$
+\begin{aligned}
+KE + PE &= \text{constant} \quad (\text{only if } W_{nc} = 0) \\
+KE_f + PE_f &= KE_i + PE_i + W_{nc} \quad (\text{general form, any case})
+\end{aligned}
+$$
 
 > [!card] recall
 > State the mechanical energy conservation law together with the
@@ -46,7 +48,7 @@ Why is conservation often faster than tracking forces directly? Because it
 relates two configurations — a start and an end state — without needing
 to know anything about the path connecting them. A ball rolling down any
 frictionless track of a given height arrives at the bottom with the same
-speed regardless of the track's shape, because `PE = m*g*h` only depends
+speed regardless of the track's shape, because $PE = mgh$ only depends
 on height, not on the geometry of the descent — a fact that would take
 integrating a force along an arbitrary curve to establish any other way.
 
@@ -55,22 +57,24 @@ A ball rolls down each of three differently shaped frictionless ramps, all start
 Friction does not destroy energy — that would violate a far broader
 conservation law than the mechanical one. What friction does is convert
 mechanical energy into ==thermal== energy (and sometimes sound), which is ^card-snzg
-exactly why the general form above needs a `W_nc` term rather than energy
+exactly why the general form above needs a $W_{nc}$ term rather than energy
 simply vanishing: the "lost" mechanical energy is accounted for, just not
-as `KE + PE` anymore.
+as $KE + PE$ anymore.
 
 Power is the rate at which energy is transferred or work is done:
 
-```
-P = W/t
-P = F*v          (instantaneous power, force along velocity)
-```
+$$
+\begin{aligned}
+P &= \frac{W}{t} \\
+P &= Fv \quad (\text{instantaneous power, force along velocity})
+\end{aligned}
+$$
 
 measured in watts, where:
 
-```
-W = J/s
-```
+$$
+\mathrm{W} = \mathrm{J/s}
+$$
 
 Power answers a question conservation of energy is silent on. Energy
 conservation tells you whether a given transfer of energy is possible at

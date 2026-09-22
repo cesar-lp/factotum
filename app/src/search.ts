@@ -68,6 +68,7 @@ export function blockText(block: NoteBlock): { text: string; weight: number } {
   switch (block.kind) {
     case 'heading': return { text: block.text, weight: FIELD_WEIGHTS.heading };
     case 'code': return { text: block.text, weight: FIELD_WEIGHTS.code };
+    case 'math': return { text: block.text, weight: FIELD_WEIGHTS.code };
     case 'list': return { text: block.items.join('\n'), weight: FIELD_WEIGHTS.list };
     case 'prose': return { text: block.text, weight: FIELD_WEIGHTS.prose };
     case 'qa': return { text: `${block.prompt}\n${block.answer}`, weight: FIELD_WEIGHTS.prompt };

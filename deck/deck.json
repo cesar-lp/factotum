@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-21T11:40:26.960Z",
+  "generatedAt": "2026-09-22T01:55:01.828Z",
   "cards": [
     {
       "id": "card-hdu0",
@@ -6113,7 +6113,7 @@
         "deques",
         "scheduling"
       ],
-      "prompt": "___ analysis shows randomized work stealing achieves expected running time close to `T1/P + O(T∞)` on P processors, where T1 is the total sequential work and T∞ is the computation's critical path — a provable guarantee that this decentralized, per-worker scheme balances load about as well as an omniscient central scheduler could.",
+      "prompt": "___ analysis shows randomized work stealing achieves expected running time close to $T_1/P + O(T_\\infty)$ on P processors, where T1 is the total sequential work and T∞ is the computation's critical path — a provable guarantee that this decentralized, per-worker scheme balances load about as well as an omniscient central scheduler could.",
       "source": {
         "path": "vault/art-of-multiprocessor-programming/work-stealing.md",
         "block": "card-76qo"
@@ -9673,7 +9673,7 @@
         "origin-request",
         "edge-compute"
       ],
-      "prompt": "Lambda@Edge also associates a specific published ___ with a trigger — never an alias. There's no \"point at $LATEST and let it float\" option; each new deployment has to be published and the trigger's association updated to it by hand.",
+      "prompt": "Lambda@Edge also associates a specific published ___ with a trigger — never an alias. There's no \"point at `$LATEST` and let it float\" option; each new deployment has to be published and the trigger's association updated to it by hand.",
       "source": {
         "path": "vault/aws/edge/edge-functions-and-lambda-at-edge.md",
         "block": "card-ivu1"
@@ -32301,7 +32301,7 @@
         "tabulation",
         "rod-cutting"
       ],
-      "prompt": "Rod cutting fixes this in a concrete example: given a rod of length `n` and prices `p_i` for each length `i`, choose where to cut to maximize revenue. The recurrence is `r_n = max(1 <= i <= n) [p_i + r_(n-i)]`, with `r_0 = 0`. The naive recursive implementation of this recurrence runs in ___ time, because it recomputes `r_k` for the same `k` exponentially many times as `n` grows.",
+      "prompt": "Rod cutting fixes this in a concrete example: given a rod of length `n` and prices `p_i` for each length `i`, choose where to cut to maximize revenue. The recurrence is $r_n = \\max(1 \\leq i \\leq n) [p_i + r_{n-i}]$, with $r_0 = 0$. The naive recursive implementation of this recurrence runs in ___ time, because it recomputes `r_k` for the same `k` exponentially many times as `n` grows.",
       "source": {
         "path": "vault/clrs/design/dynamic-programming-foundations.md",
         "block": "card-wnxd"
@@ -56526,7 +56526,7 @@
         "quotient-rule",
         "exponential"
       ],
-      "prompt": "The power rule takes slightly more work — expanding `(x+h)^n` and watching every term except the linear one vanish as `h -> 0` — but the other two are direct consequences of limit laws you already have, and together they give differentiation the property called ___.",
+      "prompt": "The power rule takes slightly more work — expanding $(x+h)^n$ and watching every term except the linear one vanish as $h \\to 0$ — but the other two are direct consequences of limit laws you already have, and together they give differentiation the property called ___.",
       "source": {
         "path": "vault/math/calculus/differentiation-rules.md",
         "block": "card-3gm4"
@@ -56707,7 +56707,7 @@
         "first-derivative-test",
         "extreme-value-theorem"
       ],
-      "prompt": "`f(x) = x^3` has `f'(0) = 0`. What does this imply about `x = 0`?",
+      "prompt": "$f(x) = x^3$ has $f'(0) = 0$. What does this imply about $x = 0$?",
       "source": {
         "path": "vault/math/calculus/extrema-and-the-first-derivative-test.md",
         "block": "card-elyr"
@@ -56745,7 +56745,7 @@
         "first-derivative-test",
         "extreme-value-theorem"
       ],
-      "prompt": "Why does `f'(c) = 0` fail to guarantee that f has a local extremum at c?",
+      "prompt": "Why does $f'(c) = 0$ fail to guarantee that f has a local extremum at c?",
       "source": {
         "path": "vault/math/calculus/extrema-and-the-first-derivative-test.md",
         "block": "card-bl9j"
@@ -56753,7 +56753,7 @@
       "citations": [
         "Stewart, Calculus: Early Transcendentals 8e, Ch. 4"
       ],
-      "answer": "Fermat's theorem only asserts that a local extremum forces the derivative to vanish (or fail to exist) there — it says nothing about the converse. A vanishing derivative just as easily marks a point where the function keeps increasing or decreasing through a momentary flattening, as `x^3` does at the origin, which is a critical point with no extremum at all."
+      "answer": "Fermat's theorem only asserts that a local extremum forces the derivative to vanish (or fail to exist) there — it says nothing about the converse. A vanishing derivative just as easily marks a point where the function keeps increasing or decreasing through a momentary flattening, as $x^3$ does at the origin, which is a critical point with no extremum at all."
     },
     {
       "id": "card-r2sx",
@@ -56808,7 +56808,7 @@
         "first-derivative-test",
         "extreme-value-theorem"
       ],
-      "prompt": "Both hypotheses of the Extreme Value Theorem are load-bearing. Drop ___ and `f(x) = x` on `(0, 1)` has no maximum — it keeps climbing toward a value it never reaches at the excluded endpoint. Drop continuity and a function can jump upward right before the interval ends, again with no attained maximum, only a supremum it never touches.",
+      "prompt": "Both hypotheses of the Extreme Value Theorem are load-bearing. Drop ___ and $f(x) = x$ on $(0, 1)$ has no maximum — it keeps climbing toward a value it never reaches at the excluded endpoint. Drop continuity and a function can jump upward right before the interval ends, again with no attained maximum, only a supremum it never touches.",
       "source": {
         "path": "vault/math/calculus/extrema-and-the-first-derivative-test.md",
         "block": "card-yzon"
@@ -56911,7 +56911,7 @@
         "logarithm",
         "arcsin"
       ],
-      "prompt": "Differentiating `y^3 = x` implicitly with respect to x, which is the correct next line?",
+      "prompt": "Differentiating $y^3 = x$ implicitly with respect to x, which is the correct next line?",
       "source": {
         "path": "vault/math/calculus/implicit-and-inverse-differentiation.md",
         "block": "card-it6y"
@@ -56921,19 +56921,19 @@
       ],
       "choices": [
         {
-          "text": "`3*y^2 * dy/dx = 1`",
+          "text": "$3y^2 \\cdot \\frac{dy}{dx} = 1$",
           "correct": true
         },
         {
-          "text": "`3*y^2 = 1`",
+          "text": "$3y^2 = 1$",
           "correct": false
         },
         {
-          "text": "`3*y^2 * dy/dx = dy/dx`",
+          "text": "$3y^2 \\cdot \\frac{dy}{dx} = \\frac{dy}{dx}$",
           "correct": false
         },
         {
-          "text": "`y^3 * dy/dx = 1`",
+          "text": "$y^3 \\cdot \\frac{dy}{dx} = 1$",
           "correct": false
         }
       ]
@@ -56980,7 +56980,7 @@
       "citations": [
         "Stewart, Calculus: Early Transcendentals 8e, Ch. 3"
       ],
-      "answer": "`(f^-1)'(y) = 1 / f'(x)` where `y = f(x)`. Reflecting a graph across `y = x` turns a horizontal tangent into a vertical one, and a vertical tangent has undefined (infinite) slope, so the formula's denominator `f'(x)` is zero exactly where the inverse breaks down."
+      "answer": "$(f^{-1})'(y) = 1/f'(x)$ where $y = f(x)$. Reflecting a graph across $y = x$ turns a horizontal tangent into a vertical one, and a vertical tangent has undefined (infinite) slope, so the formula's denominator $f'(x)$ is zero exactly where the inverse breaks down."
     },
     {
       "id": "card-4da1",
@@ -57016,7 +57016,7 @@
         "logarithm",
         "arcsin"
       ],
-      "prompt": "Why is `d/dx[ln(x)] = 1/x` derivable from `d/dx[e^x] = e^x` alone, without evaluating any new limit?",
+      "prompt": "Why is $\\frac{d}{dx}[\\ln(x)] = 1/x$ derivable from $\\frac{d}{dx}[e^x] = e^x$ alone, without evaluating any new limit?",
       "source": {
         "path": "vault/math/calculus/implicit-and-inverse-differentiation.md",
         "block": "card-q2nn"
@@ -57024,7 +57024,7 @@
       "citations": [
         "Stewart, Calculus: Early Transcendentals 8e, Ch. 3"
       ],
-      "answer": "Because ln is the inverse of exp, so its derivative follows directly from the inverse-function formula `(f^-1)'(y) = 1/f'(x)`: since `f'(x) = e^x = y` when `f(x)=e^x`, substituting gives `(ln)'(y) = 1/y`, reusing the already-known derivative of exp rather than computing a new one."
+      "answer": "Because ln is the inverse of exp, so its derivative follows directly from the inverse-function formula $(f^{-1})'(y) = 1/f'(x)$: since $f'(x) = e^x = y$ when $f(x)=e^x$, substituting gives $(\\ln)'(y) = 1/y$, reusing the already-known derivative of exp rather than computing a new one."
     },
     {
       "id": "card-enmu",
@@ -57038,7 +57038,7 @@
         "logarithm",
         "arcsin"
       ],
-      "prompt": "A student computes `d/dx[arcsin(x)]` by starting from `f(x) = sin(x)` and its inverse-function relationship. Which substitution correctly turns `f'(x) = cos(x)` into a function of x (the arcsin's argument) alone?",
+      "prompt": "A student computes $\\frac{d}{dx}[\\arcsin(x)]$ by starting from $f(x) = \\sin(x)$ and its inverse-function relationship. Which substitution correctly turns $f'(x) = \\cos(x)$ into a function of x (the arcsin's argument) alone?",
       "source": {
         "path": "vault/math/calculus/implicit-and-inverse-differentiation.md",
         "block": "card-enmu"
@@ -57048,19 +57048,19 @@
       ],
       "choices": [
         {
-          "text": "`cos(x) = sqrt(1 - sin^2(x)) = sqrt(1 - y^2)`, then substitute `y = x` for the outer variable",
+          "text": "$\\cos(x) = \\sqrt{1 - \\sin^2(x)} = \\sqrt{1 - y^2}$, then substitute $y = x$ for the outer variable",
           "correct": true
         },
         {
-          "text": "`cos(x) = sin(x)`, since both derivatives are cofunctions",
+          "text": "$\\cos(x) = \\sin(x)$, since both derivatives are cofunctions",
           "correct": false
         },
         {
-          "text": "`cos(x)` is left as is; no substitution is needed",
+          "text": "$\\cos(x)$ is left as is; no substitution is needed",
           "correct": false
         },
         {
-          "text": "`cos(x) = 1 - sin^2(x)`, dropping the square root",
+          "text": "$\\cos(x) = 1 - \\sin^2(x)$, dropping the square root",
           "correct": false
         }
       ]
@@ -57177,7 +57177,7 @@
         "partial-fractions",
         "improper-integrals"
       ],
-      "prompt": "An ___ integral — one with an infinite limit of integration, or an integrand that blows up somewhere in the interval — is defined as a limit of ordinary (proper) definite integrals, and that limit is not guaranteed to exist. Whether it does is a genuine question with a real answer, not a formality to wave through: `int_1^inf 1/x^2 dx` converges to a finite value, while `int_1^inf 1/x dx` diverges to infinity, even though the two integrands look superficially similar and both shrink toward zero.",
+      "prompt": "An ___ integral — one with an infinite limit of integration, or an integrand that blows up somewhere in the interval — is defined as a limit of ordinary (proper) definite integrals, and that limit is not guaranteed to exist. Whether it does is a genuine question with a real answer, not a formality to wave through: $\\int_1^\\infty 1/x^2\\, dx$ converges to a finite value, while $\\int_1^\\infty 1/x\\, dx$ diverges to infinity, even though the two integrands look superficially similar and both shrink toward zero.",
       "source": {
         "path": "vault/math/calculus/integration-techniques.md",
         "block": "card-th4a"
@@ -57257,7 +57257,7 @@
         "epsilon-delta",
         "intermediate-value-theorem"
       ],
-      "prompt": "`f(x) = (x^2 - 1)/(x - 1)` is undefined at `x = 1`. What is `lim_{x->1} f(x)`?",
+      "prompt": "$f(x) = (x^2 - 1)/(x - 1)$ is undefined at $x = 1$. What is $\\lim_{x \\to 1} f(x)$?",
       "source": {
         "path": "vault/math/calculus/limits-and-continuity.md",
         "block": "card-bct4"
@@ -57316,7 +57316,7 @@
         "epsilon-delta",
         "intermediate-value-theorem"
       ],
-      "prompt": "State the epsilon-delta definition of `lim_{x->a} f(x) = L`.",
+      "prompt": "State the epsilon-delta definition of $\\lim_{x \\to a} f(x) = L$.",
       "source": {
         "path": "vault/math/calculus/limits-and-continuity.md",
         "block": "card-fnz0"
@@ -57337,7 +57337,7 @@
         "epsilon-delta",
         "intermediate-value-theorem"
       ],
-      "prompt": "That equation quietly demands: the limit on the left side exists, the value on the right side exists (the function is actually defined at `a`), and the two ___.",
+      "prompt": "That equation quietly demands: the limit on the left side exists, the value on the right side exists (the function is actually defined at $a$), and the two ___.",
       "source": {
         "path": "vault/math/calculus/limits-and-continuity.md",
         "block": "card-hr7l"
@@ -57439,7 +57439,7 @@
         "convergence",
         "approximation"
       ],
-      "prompt": "Each coefficient is chosen so that `P_n` and f agree not just in value but in every derivative up to that degree at `x = a`. Adding a higher-degree term buys exactly ___ extra order of local agreement — the whole scheme trades derivatives matched for accuracy close to the center.",
+      "prompt": "Each coefficient is chosen so that $P_n$ and f agree not just in value but in every derivative up to that degree at $x = a$. Adding a higher-degree term buys exactly ___ extra order of local agreement — the whole scheme trades derivatives matched for accuracy close to the center.",
       "source": {
         "path": "vault/math/calculus/taylor-series-and-local-approximation.md",
         "block": "card-tdnf"
@@ -57625,7 +57625,7 @@
         "composition",
         "implicit-differentiation"
       ],
-      "prompt": "That way is plugging one function into another, `f(g(x))`, called ___, and it is the one the chain rule exists for.",
+      "prompt": "That way is plugging one function into another, $f(g(x))$, called ___, and it is the one the chain rule exists for.",
       "source": {
         "path": "vault/math/calculus/the-chain-rule.md",
         "block": "card-5m2j"
@@ -57821,7 +57821,7 @@
         "fundamental-theorem-of-calculus",
         "antiderivative"
       ],
-      "prompt": "The integral is a **signed** area: where f dips below the x-axis, that strip's contribution is negative, so `int_a^b f(x) dx` can come out negative, zero, or positive independent of how much of the curve lies below the axis versus above it. Integrals are also ___ over adjacent intervals — splitting `[a, c]` at any `b` between a and c gives `int_a^c f = int_a^b f + int_b^c f` — which is what makes it sensible to build up an integral over a big interval from pieces.",
+      "prompt": "The integral is a **signed** area: where f dips below the x-axis, that strip's contribution is negative, so $\\int_a^b f(x)\\, dx$ can come out negative, zero, or positive independent of how much of the curve lies below the axis versus above it. Integrals are also ___ over adjacent intervals — splitting $[a, c]$ at any $b$ between a and c gives $\\int_a^c f = \\int_a^b f + \\int_b^c f$ — which is what makes it sensible to build up an integral over a big interval from pieces.",
       "source": {
         "path": "vault/math/calculus/the-definite-integral-and-the-fundamental-theorem.md",
         "block": "card-iz5j"
@@ -58002,7 +58002,7 @@
         "differentiability",
         "tangent-line"
       ],
-      "prompt": "The first reading is physical: if `f(t)` is position at time `t`, the difference quotient is average velocity over `[a, a+h]`, and its limit as `h -> 0` is ___ velocity — the rate of change at a single instant, with no interval left to average over.",
+      "prompt": "The first reading is physical: if $f(t)$ is position at time $t$, the difference quotient is average velocity over $[a, a+h]$, and its limit as $h \\to 0$ is ___ velocity — the rate of change at a single instant, with no interval left to average over.",
       "source": {
         "path": "vault/math/calculus/the-derivative-as-a-limit.md",
         "block": "card-5ty2"
@@ -58263,7 +58263,7 @@
         "monotonicity",
         "antiderivatives"
       ],
-      "prompt": "Why does `f(x) = |x|` on `[-1, 1]` fail to satisfy the Mean Value Theorem's conclusion, despite being continuous on the whole interval?",
+      "prompt": "Why does $f(x) = |x|$ on $[-1, 1]$ fail to satisfy the Mean Value Theorem's conclusion, despite being continuous on the whole interval?",
       "source": {
         "path": "vault/math/calculus/the-mean-value-theorem.md",
         "block": "card-5f66"
@@ -58365,7 +58365,7 @@
         "inflection-points",
         "optimization"
       ],
-      "prompt": "At a critical point c with `f'(c) = 0` and `f''(c) < 0`, what does the second derivative test conclude?",
+      "prompt": "At a critical point c with $f'(c) = 0$ and $f''(c) < 0$, what does the second derivative test conclude?",
       "source": {
         "path": "vault/math/calculus/the-second-derivative-convexity-and-inflection.md",
         "block": "card-o421"
@@ -58443,7 +58443,7 @@
         "inflection-points",
         "optimization"
       ],
-      "prompt": "Why is `f''(c) = 0` correctly described as inconclusive rather than as evidence that c is not an extremum?",
+      "prompt": "Why is $f''(c) = 0$ correctly described as inconclusive rather than as evidence that c is not an extremum?",
       "source": {
         "path": "vault/math/calculus/the-second-derivative-convexity-and-inflection.md",
         "block": "card-7cfo"
@@ -58628,7 +58628,7 @@
         "triple-product",
         "orientation"
       ],
-      "prompt": "swapping the order flips the sign — geometrically, it flips which of the two perpendicular directions the right-hand rule selects, since curling from `y` to `x` reverses the curl direction. A direct consequence: `x × x = 0` for every vector, since swapping x with itself must equal its own negative, and the only vector equal to its own negative is the zero vector. More generally, the cross product of any two ___ vectors is zero, because `sin(theta) = 0` when `theta` is 0 or 180 degrees — which makes `x × y = 0` a direct collinearity test: it succeeds precisely when x and y point along the same line.",
+      "prompt": "swapping the order flips the sign — geometrically, it flips which of the two perpendicular directions the right-hand rule selects, since curling from $y$ to $x$ reverses the curl direction. A direct consequence: $x \\times x = 0$ for every vector, since swapping x with itself must equal its own negative, and the only vector equal to its own negative is the zero vector. More generally, the cross product of any two ___ vectors is zero, because $\\sin(\\theta) = 0$ when $\\theta$ is 0 or 180 degrees — which makes $x \\times y = 0$ a direct collinearity test: it succeeds precisely when x and y point along the same line.",
       "source": {
         "path": "vault/math/linear-algebra/cross-product-and-oriented-area.md",
         "block": "card-8g4l"
@@ -58687,7 +58687,7 @@
         "triple-product",
         "orientation"
       ],
-      "prompt": "The **scalar triple product** `x·(y × z)` combines both products into a single number: it computes the cross product `y × z` (a vector whose length is the area of the base parallelogram, pointing perpendicular to that base) and then dots it with `x`, which projects `x` onto that perpendicular direction and scales by the base area — exactly the volume formula \"base area times height\" for the parallelepiped spanned by `x`, `y`, and `z`. A zero triple product means that parallelepiped has zero volume, which happens exactly when the three vectors are ___ — they don't span a genuine 3-dimensional box, only a flat region.",
+      "prompt": "The **scalar triple product** $x \\cdot (y \\times z)$ combines both products into a single number: it computes the cross product $y \\times z$ (a vector whose length is the area of the base parallelogram, pointing perpendicular to that base) and then dots it with $x$, which projects $x$ onto that perpendicular direction and scales by the base area — exactly the volume formula \"base area times height\" for the parallelepiped spanned by $x$, $y$, and $z$. A zero triple product means that parallelepiped has zero volume, which happens exactly when the three vectors are ___ — they don't span a genuine 3-dimensional box, only a flat region.",
       "source": {
         "path": "vault/math/linear-algebra/cross-product-and-oriented-area.md",
         "block": "card-od7v"
@@ -58772,7 +58772,7 @@
         "orientation",
         "cofactor-expansion"
       ],
-      "prompt": "Feed A the unit square (or unit cube, in higher dimensions) spanned by the standard basis vectors, and look at the volume of the parallelepiped its columns now span. That volume, with a sign attached, is `det(A)` — the ___ scaling factor of the linear map A. A map that doubles all areas has determinant 2; one that leaves volume unchanged (a rotation) has determinant 1.",
+      "prompt": "Feed A the unit square (or unit cube, in higher dimensions) spanned by the standard basis vectors, and look at the volume of the parallelepiped its columns now span. That volume, with a sign attached, is $\\det(A)$ — the ___ scaling factor of the linear map A. A map that doubles all areas has determinant 2; one that leaves volume unchanged (a rotation) has determinant 1.",
       "source": {
         "path": "vault/math/linear-algebra/determinants-and-invertibility.md",
         "block": "card-0q3b"
@@ -58855,7 +58855,7 @@
         "orientation",
         "cofactor-expansion"
       ],
-      "prompt": "The sign of `det(A)` carries information the magnitude alone does not: a negative determinant means A reverses ___ — flips handedness, the way a reflection turns a right hand into what looks like a left hand — while a positive determinant preserves it. Two maps with the same |det(A)| can differ only in this sign, and nothing about volume alone would distinguish them.",
+      "prompt": "The sign of $\\det(A)$ carries information the magnitude alone does not: a negative determinant means A reverses ___ — flips handedness, the way a reflection turns a right hand into what looks like a left hand — while a positive determinant preserves it. Two maps with the same |det(A)| can differ only in this sign, and nothing about volume alone would distinguish them.",
       "source": {
         "path": "vault/math/linear-algebra/determinants-and-invertibility.md",
         "block": "card-oocj"
@@ -58960,7 +58960,7 @@
         "projection",
         "cauchy-schwarz"
       ],
-      "prompt": "A dot product `x·y` is computed as `sum_{i=1}^n x_i*y_i` from a pair of coordinate vectors. Which statement correctly connects this to angle?",
+      "prompt": "A dot product $x \\cdot y$ is computed as $\\sum_{i=1}^n x_i y_i$ from a pair of coordinate vectors. Which statement correctly connects this to angle?",
       "source": {
         "path": "vault/math/linear-algebra/dot-product-and-orthogonality.md",
         "block": "card-opn9"
@@ -58970,11 +58970,11 @@
       ],
       "choices": [
         {
-          "text": "It equals `||x||*||y||*cos(theta)`, so its sign tells you whether the angle between x and y is acute, obtuse, or exactly 90 degrees",
+          "text": "It equals $\\|x\\|\\|y\\|\\cos(\\theta)$, so its sign tells you whether the angle between x and y is acute, obtuse, or exactly 90 degrees",
           "correct": true
         },
         {
-          "text": "It equals `||x||*||y||*sin(theta)`, so it measures the area between x and y",
+          "text": "It equals $\\|x\\|\\|y\\|\\sin(\\theta)$, so it measures the area between x and y",
           "correct": false
         },
         {
@@ -58982,7 +58982,7 @@
           "correct": false
         },
         {
-          "text": "It equals `||x||+||y||*cos(theta)`, combining length and angle additively",
+          "text": "It equals $\\|x\\|+\\|y\\|\\cos(\\theta)$, combining length and angle additively",
           "correct": false
         }
       ]
@@ -59021,7 +59021,7 @@
         "projection",
         "cauchy-schwarz"
       ],
-      "prompt": "The immediate payoff of the geometric form is a sign test: since `||x||` and `||y||` are always nonnegative, the sign of `x·y` is exactly the sign of `cos(theta)`. A positive dot product means the vectors point broadly in the same direction (angle under 90 degrees); negative means broadly opposite; and `x·y = 0` means the vectors are ___ — perpendicular, in the geometric sense, but the algebraic definition extends the idea to any R^n, including dimensions where \"perpendicular\" can no longer be pictured directly.",
+      "prompt": "The immediate payoff of the geometric form is a sign test: since $\\|x\\|$ and $\\|y\\|$ are always nonnegative, the sign of $x \\cdot y$ is exactly the sign of $\\cos(\\theta)$. A positive dot product means the vectors point broadly in the same direction (angle under 90 degrees); negative means broadly opposite; and $x \\cdot y = 0$ means the vectors are ___ — perpendicular, in the geometric sense, but the algebraic definition extends the idea to any R^n, including dimensions where \"perpendicular\" can no longer be pictured directly.",
       "source": {
         "path": "vault/math/linear-algebra/dot-product-and-orthogonality.md",
         "block": "card-75dw"
@@ -59043,7 +59043,7 @@
         "projection",
         "cauchy-schwarz"
       ],
-      "prompt": "Why is the projection of x onto y defined as `((x·y)/(y·y))*y` rather than just `(x·y)*y`?",
+      "prompt": "Why is the projection of x onto y defined as $\\left(\\frac{x \\cdot y}{y \\cdot y}\\right) y$ rather than just $(x \\cdot y) y$?",
       "source": {
         "path": "vault/math/linear-algebra/dot-product-and-orthogonality.md",
         "block": "card-hzsw"
@@ -59051,7 +59051,7 @@
       "citations": [
         "Strang, Introduction to Linear Algebra 5e, Ch. 1"
       ],
-      "answer": "The extra division by `y·y` normalizes for the length of y — without it, scaling y by any factor would change the projection, even though \"how much of x lies along y's direction\" shouldn't depend on how long the vector chosen to represent that direction happens to be. Dividing by `y·y` makes the formula depend only on y's direction, not its magnitude."
+      "answer": "The extra division by $y \\cdot y$ normalizes for the length of y — without it, scaling y by any factor would change the projection, even though \"how much of x lies along y's direction\" shouldn't depend on how long the vector chosen to represent that direction happens to be. Dividing by $y \\cdot y$ makes the formula depend only on y's direction, not its magnitude."
     },
     {
       "id": "card-qpvr",
@@ -59073,7 +59073,7 @@
       "citations": [
         "Strang, Introduction to Linear Algebra 5e, Ch. 1"
       ],
-      "answer": "It bounds the size of a dot product by the product of the two vectors' individual lengths — `|x·y|` can never exceed `||x||*||y||`. Equality holds exactly when the two vectors are parallel (one is a scalar multiple of the other), which is the case where `|cos(theta)|` reaches its maximum value of 1."
+      "answer": "It bounds the size of a dot product by the product of the two vectors' individual lengths — $|x \\cdot y|$ can never exceed $\\|x\\|\\|y\\|$. Equality holds exactly when the two vectors are parallel (one is a scalar multiple of the other), which is the case where $|\\cos(\\theta)|$ reaches its maximum value of 1."
     },
     {
       "id": "card-hrlw",
@@ -59087,7 +59087,7 @@
         "projection",
         "cauchy-schwarz"
       ],
-      "prompt": "`{q_1, ..., q_n}` is an orthonormal basis and x = c_1*q_1 + ... + c_n*q_n. What is the fastest way to find c_3?",
+      "prompt": "$\\{q_1, \\ldots, q_n\\}$ is an orthonormal basis and x = c_1*q_1 + ... + c_n*q_n. What is the fastest way to find c_3?",
       "source": {
         "path": "vault/math/linear-algebra/dot-product-and-orthogonality.md",
         "block": "card-hrlw"
@@ -59134,7 +59134,7 @@
       "citations": [
         "Strang, Introduction to Linear Algebra 5e, Ch. 1"
       ],
-      "answer": "Every pair of distinct basis vectors is orthogonal (dot product zero) and each has norm 1, so when you dot the expansion `x = sum c_i*q_i` with one basis vector `q_j`, every term except the `j`-th vanishes and that one term simplifies to exactly `c_j` — no solving required."
+      "answer": "Every pair of distinct basis vectors is orthogonal (dot product zero) and each has norm 1, so when you dot the expansion $x = \\sum c_i q_i$ with one basis vector $q_j$, every term except the $j$-th vanishes and that one term simplifies to exactly $c_j$ — no solving required."
     },
     {
       "id": "card-lvm5",
@@ -59147,7 +59147,7 @@
         "diagonalization",
         "characteristic-polynomial"
       ],
-      "prompt": "`A*v = lambda*v` holds for a nonzero `v`. Which of the following is true?",
+      "prompt": "$Av = \\lambda v$ holds for a nonzero $v$. Which of the following is true?",
       "source": {
         "path": "vault/math/linear-algebra/eigenvalues-and-eigenvectors.md",
         "block": "card-lvm5"
@@ -59157,19 +59157,19 @@
       ],
       "choices": [
         {
-          "text": "`v` is the eigenvector and `lambda` is the eigenvalue",
+          "text": "$v$ is the eigenvector and $\\lambda$ is the eigenvalue",
           "correct": true
         },
         {
-          "text": "`v` is the eigenvalue and `lambda` is the eigenvector",
+          "text": "$v$ is the eigenvalue and $\\lambda$ is the eigenvector",
           "correct": false
         },
         {
-          "text": "both `v` and `lambda` are called eigenvalues",
+          "text": "both $v$ and $\\lambda$ are called eigenvalues",
           "correct": false
         },
         {
-          "text": "`lambda` is only meaningful if `v` is a unit vector",
+          "text": "$\\lambda$ is only meaningful if $v$ is a unit vector",
           "correct": false
         }
       ]
@@ -59185,7 +59185,7 @@
         "diagonalization",
         "characteristic-polynomial"
       ],
-      "prompt": "Why does the definition of an eigenvector explicitly require `v != 0`?",
+      "prompt": "Why does the definition of an eigenvector explicitly require $v \\neq 0$?",
       "source": {
         "path": "vault/math/linear-algebra/eigenvalues-and-eigenvectors.md",
         "block": "card-ofyo"
@@ -59193,7 +59193,7 @@
       "citations": [
         "Strang, Introduction to Linear Algebra 5e, Ch. 6"
       ],
-      "answer": "Because `v = 0` satisfies `A*v = lambda*v` for every matrix `A` and every scalar `lambda` — it's a trivial solution that carries no information about the map. Excluding it is what makes \"eigenvalue\" a meaningful, matrix-specific quantity rather than a tautology."
+      "answer": "Because $v = 0$ satisfies $Av = \\lambda v$ for every matrix $A$ and every scalar $\\lambda$ — it's a trivial solution that carries no information about the map. Excluding it is what makes \"eigenvalue\" a meaningful, matrix-specific quantity rather than a tautology."
     },
     {
       "id": "card-57a1",
@@ -59206,7 +59206,7 @@
         "diagonalization",
         "characteristic-polynomial"
       ],
-      "prompt": "Write the characteristic equation used to find the eigenvalues of a square matrix `A`, and explain in one sentence why requiring a nonzero `v` forces that particular determinant condition.",
+      "prompt": "Write the characteristic equation used to find the eigenvalues of a square matrix $A$, and explain in one sentence why requiring a nonzero $v$ forces that particular determinant condition.",
       "source": {
         "path": "vault/math/linear-algebra/eigenvalues-and-eigenvectors.md",
         "block": "card-57a1"
@@ -59214,7 +59214,7 @@
       "citations": [
         "Strang, Introduction to Linear Algebra 5e, Ch. 6"
       ],
-      "answer": "`det(A - lambda*I) = 0`. A nonzero `v` solving `(A - lambda*I)*v = 0` means `A - lambda*I` has a nontrivial null space, and a square matrix has a nontrivial null space exactly when it is singular — i.e. its determinant is zero."
+      "answer": "$\\det(A - \\lambda I) = 0$. A nonzero $v$ solving $(A - \\lambda I)v = 0$ means $A - \\lambda I$ has a nontrivial null space, and a square matrix has a nontrivial null space exactly when it is singular — i.e. its determinant is zero."
     },
     {
       "id": "card-9qpv",
@@ -59248,7 +59248,7 @@
         "diagonalization",
         "characteristic-polynomial"
       ],
-      "prompt": "A matrix `A` is diagonalizable as `A = P*D*P^-1`. Describe what `P` and `D` are built from, and why the columns of `P` must be linearly independent for this factorization to exist.",
+      "prompt": "A matrix $A$ is diagonalizable as $A = PDP^{-1}$. Describe what $P$ and $D$ are built from, and why the columns of $P$ must be linearly independent for this factorization to exist.",
       "source": {
         "path": "vault/math/linear-algebra/eigenvalues-and-eigenvectors.md",
         "block": "card-nf9h"
@@ -59256,7 +59256,7 @@
       "citations": [
         "Strang, Introduction to Linear Algebra 5e, Ch. 6"
       ],
-      "answer": "`P`'s columns are the eigenvectors of `A`; `D` is diagonal, holding the corresponding eigenvalues in the same order as `P`'s columns. `P` must be invertible for `P^-1` to exist, and a square matrix is invertible only if its columns are linearly independent — so this factorization requires enough independent eigenvectors to form a full basis, which is exactly the diagonalizability condition."
+      "answer": "$P$'s columns are the eigenvectors of $A$; $D$ is diagonal, holding the corresponding eigenvalues in the same order as $P$'s columns. $P$ must be invertible for $P^{-1}$ to exist, and a square matrix is invertible only if its columns are linearly independent — so this factorization requires enough independent eigenvectors to form a full basis, which is exactly the diagonalizability condition."
     },
     {
       "id": "card-4dpu",
@@ -59307,7 +59307,7 @@
         "diagonalization",
         "characteristic-polynomial"
       ],
-      "prompt": "Two cheap sanity checks come straight from the eigenvalues without ever factoring anything: the ___ of `A` (the sum of its diagonal entries) equals the sum of its eigenvalues, and `det(A)` equals their product.",
+      "prompt": "Two cheap sanity checks come straight from the eigenvalues without ever factoring anything: the ___ of $A$ (the sum of its diagonal entries) equals the sum of its eigenvalues, and $\\det(A)$ equals their product.",
       "source": {
         "path": "vault/math/linear-algebra/eigenvalues-and-eigenvectors.md",
         "block": "card-hogh"
@@ -59592,7 +59592,7 @@
         "linearity",
         "basis"
       ],
-      "prompt": "This is the ___ of matrix-vector multiplication: `A*x` is not \"dot each row of A against x\" so much as it is a recipe for combining columns. Writing x = (x_1, x_2, ..., x_n), the product is a weighted sum of A's own columns:",
+      "prompt": "This is the ___ of matrix-vector multiplication: $Ax$ is not \"dot each row of A against x\" so much as it is a recipe for combining columns. Writing x = (x_1, x_2, ..., x_n), the product is a weighted sum of A's own columns:",
       "source": {
         "path": "vault/math/linear-algebra/matrices-as-linear-maps.md",
         "block": "card-1iv4"
@@ -59846,7 +59846,7 @@
         "transpose",
         "inverse"
       ],
-      "prompt": "The identity matrix I is the composition-theory counterpart of doing nothing: `A*I = I*A = A` for square A. The ___ A^-1, when it exists, is the map that undoes A: `A*A^-1 = A^-1*A = I`. Composing a transformation with the one that reverses it is, by definition, the transformation that changes nothing.",
+      "prompt": "The identity matrix I is the composition-theory counterpart of doing nothing: $AI = IA = A$ for square A. The ___ A^-1, when it exists, is the map that undoes A: $AA^{-1} = A^{-1}A = I$. Composing a transformation with the one that reverses it is, by definition, the transformation that changes nothing.",
       "source": {
         "path": "vault/math/linear-algebra/matrix-multiplication-and-composition.md",
         "block": "card-fl7g"
@@ -59928,7 +59928,7 @@
         "normal-equations",
         "orthogonality"
       ],
-      "prompt": "The **projection** of a vector `b` onto a subspace is the closest point in that subspace to `b` — the point that minimizes the distance `||b - p||` over every `p` in the subspace. The condition that pins down that closest point is orthogonality: the **error** `b - p` must be perpendicular to the entire subspace being projected onto. If the error had any component lying in the subspace, you could move `p` slightly along that component and get closer to `b`, so the error can't have one — it must be ___ to the subspace itself, not just to one vector in it.",
+      "prompt": "The **projection** of a vector $b$ onto a subspace is the closest point in that subspace to $b$ — the point that minimizes the distance $\\|b - p\\|$ over every $p$ in the subspace. The condition that pins down that closest point is orthogonality: the **error** $b - p$ must be perpendicular to the entire subspace being projected onto. If the error had any component lying in the subspace, you could move $p$ slightly along that component and get closer to $b$, so the error can't have one — it must be ___ to the subspace itself, not just to one vector in it.",
       "source": {
         "path": "vault/math/linear-algebra/projections-and-least-squares.md",
         "block": "card-caen"
@@ -59970,7 +59970,7 @@
         "normal-equations",
         "orthogonality"
       ],
-      "prompt": "Starting from the requirement that the residual `b - A*x` be orthogonal to every column of `A`, derive the normal equations.",
+      "prompt": "Starting from the requirement that the residual $b - Ax$ be orthogonal to every column of $A$, derive the normal equations.",
       "source": {
         "path": "vault/math/linear-algebra/projections-and-least-squares.md",
         "block": "card-02pw"
@@ -59978,7 +59978,7 @@
       "citations": [
         "Strang, Introduction to Linear Algebra 5e, Ch. 4"
       ],
-      "answer": "Orthogonality to every column of `A` means `A^T*(b - A*x) = 0`. Distributing gives `A^T*b - A^T*A*x = 0`, i.e. `A^T*A*x = A^T*b` — the normal equations."
+      "answer": "Orthogonality to every column of $A$ means $A^\\top(b - Ax) = 0$. Distributing gives $A^\\top b - A^\\top A x = 0$, i.e. $A^\\top A x = A^\\top b$ — the normal equations."
     },
     {
       "id": "card-afzf",
@@ -59991,7 +59991,7 @@
         "normal-equations",
         "orthogonality"
       ],
-      "prompt": "Why is a projection matrix `P` necessarily idempotent (`P^2 = P`)?",
+      "prompt": "Why is a projection matrix $P$ necessarily idempotent ($P^2 = P$)?",
       "source": {
         "path": "vault/math/linear-algebra/projections-and-least-squares.md",
         "block": "card-afzf"
@@ -60005,7 +60005,7 @@
           "correct": true
         },
         {
-          "text": "because `A^T*A` is always the identity matrix",
+          "text": "because $A^\\top A$ is always the identity matrix",
           "correct": false
         },
         {
@@ -60013,7 +60013,7 @@
           "correct": false
         },
         {
-          "text": "it isn't generally true; it only holds when `A` is square",
+          "text": "it isn't generally true; it only holds when $A$ is square",
           "correct": false
         }
       ]
@@ -60050,7 +60050,7 @@
         "normal-equations",
         "orthogonality"
       ],
-      "prompt": "`A` has linearly dependent columns. What is still guaranteed to be unique?",
+      "prompt": "$A$ has linearly dependent columns. What is still guaranteed to be unique?",
       "source": {
         "path": "vault/math/linear-algebra/projections-and-least-squares.md",
         "block": "card-t92t"
@@ -60060,15 +60060,15 @@
       ],
       "choices": [
         {
-          "text": "the projection of `b` onto `A`'s column space",
+          "text": "the projection of $b$ onto $A$'s column space",
           "correct": true
         },
         {
-          "text": "the least-squares coefficient vector `x`",
+          "text": "the least-squares coefficient vector $x$",
           "correct": false
         },
         {
-          "text": "the inverse of `A^T*A`",
+          "text": "the inverse of $A^\\top A$",
           "correct": false
         },
         {
@@ -60131,7 +60131,7 @@
         "rank-nullity-theorem",
         "column-space"
       ],
-      "prompt": "The **column space** of A lives in the codomain: it's the span of A's columns, which by the column picture is exactly the set of every vector `A*x` can ever equal. Its dimension is the ___ of A — the number of genuinely independent directions the map can reach, no matter how many columns A has. Extra columns that are combinations of earlier ones add no new reachable directions at all.",
+      "prompt": "The **column space** of A lives in the codomain: it's the span of A's columns, which by the column picture is exactly the set of every vector $Ax$ can ever equal. Its dimension is the ___ of A — the number of genuinely independent directions the map can reach, no matter how many columns A has. Extra columns that are combinations of earlier ones add no new reachable directions at all.",
       "source": {
         "path": "vault/math/linear-algebra/rank-nullspace-and-the-rank-nullity-theorem.md",
         "block": "card-xo2a"
@@ -60214,7 +60214,7 @@
         "rank-nullity-theorem",
         "column-space"
       ],
-      "prompt": "The theorem's real payoff is what it says about solving `A*x = b`, where it splits one question people conflate into two genuinely separate ones. Existence — does a solution exist at all — depends entirely on the column space: a solution exists exactly when b lies in the column space of A, since `A*x` can only ever produce vectors from that span. Uniqueness — if a solution exists, is it the only one — depends entirely on the null space: solutions are unique exactly when the null space is ___ (contains only the zero vector), because otherwise any solution plus a null-space vector is another solution.",
+      "prompt": "The theorem's real payoff is what it says about solving $Ax = b$, where it splits one question people conflate into two genuinely separate ones. Existence — does a solution exist at all — depends entirely on the column space: a solution exists exactly when b lies in the column space of A, since $Ax$ can only ever produce vectors from that span. Uniqueness — if a solution exists, is it the only one — depends entirely on the null space: solutions are unique exactly when the null space is ___ (contains only the zero vector), because otherwise any solution plus a null-space vector is another solution.",
       "source": {
         "path": "vault/math/linear-algebra/rank-nullspace-and-the-rank-nullity-theorem.md",
         "block": "card-15c1"
@@ -60318,7 +60318,7 @@
         "low-rank-approximation",
         "condition-number"
       ],
-      "prompt": "Write the SVD of a matrix `A` and describe, in order, what each of the three factors does geometrically.",
+      "prompt": "Write the SVD of a matrix $A$ and describe, in order, what each of the three factors does geometrically.",
       "source": {
         "path": "vault/math/linear-algebra/the-singular-value-decomposition.md",
         "block": "card-nzt0"
@@ -60326,7 +60326,7 @@
       "citations": [
         "Strang, Introduction to Linear Algebra 5e, Ch. 7"
       ],
-      "answer": "`A = U*S*V^T`. Reading right to left: `V^T` rotates/reflects the input space onto a new set of axes, `S` scales along those axes with no rotation (it's diagonal), and `U` rotates the scaled result into the output space."
+      "answer": "$A = USV^\\top$. Reading right to left: $V^\\top$ rotates/reflects the input space onto a new set of axes, $S$ scales along those axes with no rotation (it's diagonal), and $U$ rotates the scaled result into the output space."
     },
     {
       "id": "card-m0yh",
@@ -60353,7 +60353,7 @@
           "correct": true
         },
         {
-          "text": "the eigendecomposition `A = P*D*P^-1`",
+          "text": "the eigendecomposition $A = PDP^{-1}$",
           "correct": false
         },
         {
@@ -60361,7 +60361,7 @@
           "correct": false
         },
         {
-          "text": "neither, without additional assumptions on `A`",
+          "text": "neither, without additional assumptions on $A$",
           "correct": false
         }
       ]
@@ -60377,7 +60377,7 @@
         "low-rank-approximation",
         "condition-number"
       ],
-      "prompt": "The diagonal entries of `S`, the **singular values**, are conventionally listed in decreasing order and are always non-negative — unlike eigenvalues, which can be negative or complex. They relate directly to a quantity from the eigenvalue picture: the singular values of `A` are the ___ of the eigenvalues of `A^T*A` (which is symmetric, so those eigenvalues are real and non-negative, guaranteeing the square root is defined).",
+      "prompt": "The diagonal entries of $S$, the **singular values**, are conventionally listed in decreasing order and are always non-negative — unlike eigenvalues, which can be negative or complex. They relate directly to a quantity from the eigenvalue picture: the singular values of $A$ are the ___ of the eigenvalues of $A^\\top A$ (which is symmetric, so those eigenvalues are real and non-negative, guaranteeing the square root is defined).",
       "source": {
         "path": "vault/math/linear-algebra/the-singular-value-decomposition.md",
         "block": "card-27r5"
@@ -60440,7 +60440,7 @@
         "low-rank-approximation",
         "condition-number"
       ],
-      "prompt": "The **condition number** of `A` is the ratio of its largest to smallest singular value. A large condition number means the map stretches some directions far more than others, which makes the corresponding linear system ___: small errors or noise in the input get amplified enormously in the smallest-singular-value direction before coming out the other side, so a well-conditioned-looking problem on paper can still produce numerically unreliable answers in practice.",
+      "prompt": "The **condition number** of $A$ is the ratio of its largest to smallest singular value. A large condition number means the map stretches some directions far more than others, which makes the corresponding linear system ___: small errors or noise in the input get amplified enormously in the smallest-singular-value direction before coming out the other side, so a well-conditioned-looking problem on paper can still produce numerically unreliable answers in practice.",
       "source": {
         "path": "vault/math/linear-algebra/the-singular-value-decomposition.md",
         "block": "card-8fb3"
@@ -60482,7 +60482,7 @@
         "low-rank-approximation",
         "condition-number"
       ],
-      "prompt": "A matrix has singular values `10, 4, 0.001`. What does this tell you?",
+      "prompt": "A matrix has singular values $10, 4, 0.001$. What does this tell you?",
       "source": {
         "path": "vault/math/linear-algebra/the-singular-value-decomposition.md",
         "block": "card-u7cu"
@@ -60551,7 +60551,7 @@
       "citations": [
         "Strang, Introduction to Linear Algebra 5e, Ch. 1"
       ],
-      "answer": "All three are properties of the set `{c_1*v_1 + ... + c_n*v_n}` formed from a fixed list of vectors: span asks which vectors that set contains, independence asks whether more than one choice of coefficients can produce the same vector (in particular, the zero vector), and basis asks for the smallest list whose combinations already give the whole space. Because they're all views of the same construction, a fact proved about linear combinations — e.g. that they're closed under further combination — applies to all three automatically."
+      "answer": "All three are properties of the set $\\{c_1 v_1 + \\cdots + c_n v_n\\}$ formed from a fixed list of vectors: span asks which vectors that set contains, independence asks whether more than one choice of coefficients can produce the same vector (in particular, the zero vector), and basis asks for the smallest list whose combinations already give the whole space. Because they're all views of the same construction, a fact proved about linear combinations — e.g. that they're closed under further combination — applies to all three automatically."
     },
     {
       "id": "card-3b91",
@@ -60575,15 +60575,15 @@
       ],
       "choices": [
         {
-          "text": "The line `{(x, y) : y = x + 1}`",
+          "text": "The line $\\{(x, y) : y = x + 1\\}$",
           "correct": true
         },
         {
-          "text": "The line `{(x, y) : y = x}`",
+          "text": "The line $\\{(x, y) : y = x\\}$",
           "correct": false
         },
         {
-          "text": "The single point `{(0, 0)}`",
+          "text": "The single point $\\{(0, 0)\\}$",
           "correct": false
         },
         {
@@ -60626,7 +60626,7 @@
         "linear-combinations",
         "basis"
       ],
-      "prompt": "`R^n` — the set of ordered n-tuples of real numbers — is the vector space used constantly in practice, but it's worth keeping a distinction in mind: an element of `R^n` is a list of ___, meaningful only relative to a chosen basis. The same geometric vector gets a different numeric list depending on which basis you measure it against. Conflating \"the vector\" with \"its list in the standard basis\" is harmless until change of basis comes up, at which point the distinction is the entire content of what's being computed — the vector doesn't move, only the numbers describing it do.",
+      "prompt": "$\\mathbb{R}^n$ — the set of ordered n-tuples of real numbers — is the vector space used constantly in practice, but it's worth keeping a distinction in mind: an element of $\\mathbb{R}^n$ is a list of ___, meaningful only relative to a chosen basis. The same geometric vector gets a different numeric list depending on which basis you measure it against. Conflating \"the vector\" with \"its list in the standard basis\" is harmless until change of basis comes up, at which point the distinction is the entire content of what's being computed — the vector doesn't move, only the numbers describing it do.",
       "source": {
         "path": "vault/math/linear-algebra/vectors-and-vector-spaces.md",
         "block": "card-5isu"
@@ -60956,7 +60956,7 @@
         "tangent-plane",
         "linear-approximation"
       ],
-      "prompt": "This is strictly stronger than having all the partial derivatives, or even all the directional derivatives, exist at a point. The standard counterexample has a function built from ratios of coordinates — for instance one that equals `x*y^2/(x^2+y^4)` away from the origin and 0 at it — where every directional derivative at the origin exists and is finite, yet the function isn't even ___ there: approaching along the curve `x = y^2` gives a different limit than approaching along any straight line. No single linear map can match a function that behaves inconsistently depending on which curve you ride in on, so differentiability fails even though every straight-line probe through the point succeeds.",
+      "prompt": "This is strictly stronger than having all the partial derivatives, or even all the directional derivatives, exist at a point. The standard counterexample has a function built from ratios of coordinates — for instance one that equals $xy^2/(x^2+y^4)$ away from the origin and 0 at it — where every directional derivative at the origin exists and is finite, yet the function isn't even ___ there: approaching along the curve $x = y^2$ gives a different limit than approaching along any straight line. No single linear map can match a function that behaves inconsistently depending on which curve you ride in on, so differentiability fails even though every straight-line probe through the point succeeds.",
       "source": {
         "path": "vault/math/multivariable/differentiability-and-the-total-derivative.md",
         "block": "card-sjxe"
@@ -61137,7 +61137,7 @@
         "unit-vector",
         "level-sets"
       ],
-      "prompt": "That formula carries a requirement that is easy to forget and produces a wrong answer, not an error: `u` must be a ___, `||u|| = 1`. The dot product `∇f·u` scales linearly with `||u||`, so plugging in an unnormalized direction — say, (3, 4) instead of (3/5, 4/5) — silently returns a number five times too large, with no warning that anything went wrong. Normalizing u before taking the dot product is the single most common step skipped in this topic.",
+      "prompt": "That formula carries a requirement that is easy to forget and produces a wrong answer, not an error: $u$ must be a ___, $\\|u\\| = 1$. The dot product $\\nabla f \\cdot u$ scales linearly with $\\|u\\|$, so plugging in an unnormalized direction — say, (3, 4) instead of (3/5, 4/5) — silently returns a number five times too large, with no warning that anything went wrong. Normalizing u before taking the dot product is the single most common step skipped in this topic.",
       "source": {
         "path": "vault/math/multivariable/directional-derivatives.md",
         "block": "card-e9ot"
@@ -61357,7 +61357,7 @@
         "level-sets",
         "domain"
       ],
-      "prompt": "A function `f(x, y)` has the same limit L along every straight line through the point (0, 0). What can be concluded about the limit of f(x, y) as (x, y) -> (0, 0)?",
+      "prompt": "A function $f(x, y)$ has the same limit L along every straight line through the point (0, 0). What can be concluded about the limit of f(x, y) as (x, y) -> (0, 0)?",
       "source": {
         "path": "vault/math/multivariable/functions-of-several-variables.md",
         "block": "card-0ks5"
@@ -61418,7 +61418,7 @@
         "level-sets",
         "domain"
       ],
-      "prompt": "A scalar field of two variables has a graph that is a **surface** sitting one dimension higher than its domain: `z = f(x, y)` lives in R^3 even though the input is a point in the plane. Once there are three or more inputs the graph itself stops being drawable, which is exactly why ___ take over as the practical way to picture the function. A level set fixes the output, `f(x, y) = c`, and plots every input that produces it; for two variables these are the contour lines on a topographic map, and for three variables they are level *surfaces* nested like the layers of an onion.",
+      "prompt": "A scalar field of two variables has a graph that is a **surface** sitting one dimension higher than its domain: $z = f(x, y)$ lives in R^3 even though the input is a point in the plane. Once there are three or more inputs the graph itself stops being drawable, which is exactly why ___ take over as the practical way to picture the function. A level set fixes the output, $f(x, y) = c$, and plots every input that produces it; for two variables these are the contour lines on a topographic map, and for three variables they are level *surfaces* nested like the layers of an onion.",
       "source": {
         "path": "vault/math/multivariable/functions-of-several-variables.md",
         "block": "card-1tc4"
@@ -61611,7 +61611,7 @@
         "step-size",
         "condition-number"
       ],
-      "prompt": "What gradient descent guarantees depends entirely on the shape of `f`. For a ___ function, every local minimum is automatically a global minimum, so descent converging to a local minimum has, in that case, actually solved the global problem.",
+      "prompt": "What gradient descent guarantees depends entirely on the shape of $f$. For a ___ function, every local minimum is automatically a global minimum, so descent converging to a local minimum has, in that case, actually solved the global problem.",
       "source": {
         "path": "vault/math/multivariable/gradient-descent-and-why-the-gradient-matters.md",
         "block": "card-0rt4"
@@ -61998,7 +61998,7 @@
         "mixed-partials",
         "higher-order"
       ],
-      "prompt": "A derivative that differentiates with respect to two *different* variables in sequence, such as `∂^2f/(∂x∂y)`, is called a ___.",
+      "prompt": "A derivative that differentiates with respect to two *different* variables in sequence, such as $\\partial^2 f/(\\partial x \\partial y)$, is called a ___.",
       "source": {
         "path": "vault/math/multivariable/partial-derivatives.md",
         "block": "card-hipi"
@@ -62019,7 +62019,7 @@
         "mixed-partials",
         "higher-order"
       ],
-      "prompt": "Geometrically, `∂f/∂x` at a point is the slope of a tangent line drawn on a single ___ of the surface, cut by holding every other variable constant.",
+      "prompt": "Geometrically, $\\partial f/\\partial x$ at a point is the slope of a tangent line drawn on a single ___ of the surface, cut by holding every other variable constant.",
       "source": {
         "path": "vault/math/multivariable/partial-derivatives.md",
         "block": "card-jikg"
@@ -62352,7 +62352,7 @@
         "definiteness",
         "quadratic-form"
       ],
-      "prompt": "Under the hypothesis that the second partials are continuous near the point — the same hypothesis behind the mixed-partials (Clairaut's) result — the Hessian is guaranteed ___: `∂^2f/∂xi∂xj` equals `∂^2f/∂xj∂xi`. This isn't a separate fact to re-derive here; it's the same equality-of-mixed-partials statement applied to every off-diagonal entry at once.",
+      "prompt": "Under the hypothesis that the second partials are continuous near the point — the same hypothesis behind the mixed-partials (Clairaut's) result — the Hessian is guaranteed ___: $\\partial^2 f/\\partial x_i \\partial x_j$ equals $\\partial^2 f/\\partial x_j \\partial x_i$. This isn't a separate fact to re-derive here; it's the same equality-of-mixed-partials statement applied to every off-diagonal entry at once.",
       "source": {
         "path": "vault/math/multivariable/the-hessian-and-second-order-behaviour.md",
         "block": "card-cc0j"
@@ -62413,7 +62413,7 @@
         "definiteness",
         "quadratic-form"
       ],
-      "prompt": "Definiteness reduces entirely to the signs of the Hessian's ___. All positive gives positive definite, all negative gives negative definite, and a mix of signs gives a saddle, curving up in some directions and down in others — so definiteness is checkable without testing every direction `h` by hand.",
+      "prompt": "Definiteness reduces entirely to the signs of the Hessian's ___. All positive gives positive definite, all negative gives negative definite, and a mix of signs gives a saddle, curving up in some directions and down in others — so definiteness is checkable without testing every direction $h$ by hand.",
       "source": {
         "path": "vault/math/multivariable/the-hessian-and-second-order-behaviour.md",
         "block": "card-063p"
@@ -62598,7 +62598,7 @@
         "determinant",
         "inverse-function-theorem"
       ],
-      "prompt": "Two special cases tie this back to material already covered. When `m = 1`, the function is a scalar field and the Jacobian collapses to a single row — the ___ written as a row vector rather than a column. When additionally `n = 1`, both dimensions collapse and the Jacobian is just the ordinary scalar derivative `f'(x)`.",
+      "prompt": "Two special cases tie this back to material already covered. When $m = 1$, the function is a scalar field and the Jacobian collapses to a single row — the ___ written as a row vector rather than a column. When additionally $n = 1$, both dimensions collapse and the Jacobian is just the ordinary scalar derivative $f'(x)$.",
       "source": {
         "path": "vault/math/multivariable/the-jacobian.md",
         "block": "card-e4si"
@@ -62661,7 +62661,7 @@
         "determinant",
         "inverse-function-theorem"
       ],
-      "prompt": "The Jacobian determinant also governs invertibility: the **inverse function theorem** states that if `f` is continuously differentiable near a point and its Jacobian determinant there is ___, then `f` is locally invertible near that point, with a differentiable inverse. A zero Jacobian determinant is exactly the condition that can make local invertibility fail — the map locally collapses some direction to zero volume, so it can't be undone.",
+      "prompt": "The Jacobian determinant also governs invertibility: the **inverse function theorem** states that if $f$ is continuously differentiable near a point and its Jacobian determinant there is ___, then $f$ is locally invertible near that point, with a differentiable inverse. A zero Jacobian determinant is exactly the condition that can make local invertibility fail — the map locally collapses some direction to zero volume, so it can't be undone.",
       "source": {
         "path": "vault/math/multivariable/the-jacobian.md",
         "block": "card-nyi7"
@@ -74201,7 +74201,7 @@
       "citations": [
         "Halliday, Resnick & Walker, Fundamentals of Physics 10e, Ch. 11"
       ],
-      "answer": "Torque depends on both the force and the lever arm — where the force is applied relative to the axis, through r*F*sin(theta). A force whose line of action passes through the axis (zero lever arm, or theta = 0) contributes zero torque about that axis regardless of its magnitude, yet it still contributes fully to the net force and would still change linear momentum. The two conservation laws are governed by genuinely different quantities."
+      "answer": "Torque depends on both the force and the lever arm — where the force is applied relative to the axis, through $rF\\sin(\\theta)$. A force whose line of action passes through the axis (zero lever arm, or $\\theta = 0$) contributes zero torque about that axis regardless of its magnitude, yet it still contributes fully to the net force and would still change linear momentum. The two conservation laws are governed by genuinely different quantities."
     },
     {
       "id": "card-5oal",
@@ -74214,7 +74214,7 @@
         "torque",
         "central-forces"
       ],
-      "prompt": "The **spinning skater** pulling their arms in is the canonical demonstration, and the mechanism is precise, not just qualitative: pulling the arms inward decreases the ___, and since no external torque acts (ignoring the small friction at the skate blades), `L = I*omega` must stay constant, so `omega` has to increase to compensate.",
+      "prompt": "The **spinning skater** pulling their arms in is the canonical demonstration, and the mechanism is precise, not just qualitative: pulling the arms inward decreases the ___, and since no external torque acts (ignoring the small friction at the skate blades), $L = I\\omega$ must stay constant, so $\\omega$ has to increase to compensate.",
       "source": {
         "path": "vault/physics/mechanics/angular-momentum-and-its-conservation.md",
         "block": "card-5oal"
@@ -74235,7 +74235,7 @@
         "torque",
         "central-forces"
       ],
-      "prompt": "A skater spinning with arms outstretched pulls them in. Using `L = I*omega`, explain why the skater's angular velocity increases, and then explain what happens to the skater's rotational kinetic energy — and where that energy comes from or goes.",
+      "prompt": "A skater spinning with arms outstretched pulls them in. Using $L = I\\omega$, explain why the skater's angular velocity increases, and then explain what happens to the skater's rotational kinetic energy — and where that energy comes from or goes.",
       "source": {
         "path": "vault/physics/mechanics/angular-momentum-and-its-conservation.md",
         "block": "card-q2ma"
@@ -74277,7 +74277,7 @@
         "torque",
         "central-forces"
       ],
-      "prompt": "Angular momentum is a vector, `L = I*omega` pointing along the rotation axis by the right-hand rule, and this vector nature is why a rapidly spinning object — a bicycle wheel, a gyroscope — resists having its rotation axis reoriented: changing `L`'s *direction* requires a torque just as changing its magnitude does, via `tau_net = dL/dt` read as a vector equation. Apply a torque perpendicular to a spinning wheel's `L` (trying to tip its axis over) and instead of tipping the way you pushed, the axis slowly sweeps sideways instead — a phenomenon called ___ — because `dL/dt` points in the direction of the applied torque, not in the direction you tried to rotate the wheel.",
+      "prompt": "Angular momentum is a vector, $L = I\\omega$ pointing along the rotation axis by the right-hand rule, and this vector nature is why a rapidly spinning object — a bicycle wheel, a gyroscope — resists having its rotation axis reoriented: changing $L$'s *direction* requires a torque just as changing its magnitude does, via $\\tau_{net} = dL/dt$ read as a vector equation. Apply a torque perpendicular to a spinning wheel's $L$ (trying to tip its axis over) and instead of tipping the way you pushed, the axis slowly sweeps sideways instead — a phenomenon called ___ — because $dL/dt$ points in the direction of the applied torque, not in the direction you tried to rotate the wheel.",
       "source": {
         "path": "vault/physics/mechanics/angular-momentum-and-its-conservation.md",
         "block": "card-m897"
@@ -74344,7 +74344,7 @@
       "citations": [
         "Halliday, Resnick & Walker, Fundamentals of Physics 10e, Ch. 11"
       ],
-      "answer": "Gravity is a central force, always directed along the line to the sun, so it produces zero torque about the sun and the planet's angular momentum L = r x p about the sun is conserved throughout the orbit. As the planet's distance r from the sun decreases near perihelion, conserving L = m*r*v_perp requires the tangential speed to increase to compensate — the same I*omega trade-off as the spinning skater, with r playing the role of the lever arm."
+      "answer": "Gravity is a central force, always directed along the line to the sun, so it produces zero torque about the sun and the planet's angular momentum $L = r \\times p$ about the sun is conserved throughout the orbit. As the planet's distance $r$ from the sun decreases near perihelion, conserving $L = mrv_{perp}$ requires the tangential speed to increase to compensate — the same $I\\omega$ trade-off as the spinning skater, with $r$ playing the role of the lever arm."
     },
     {
       "id": "card-kajx",
@@ -74365,7 +74365,7 @@
       "citations": [
         "Halliday, Resnick & Walker, Fundamentals of Physics 10e, Ch. 6"
       ],
-      "answer": "Acceleration measures the rate of change of velocity, a vector, and velocity changes whenever direction changes — even at constant speed, the car's direction is changing continuously as it goes around the curve, so it has nonzero acceleration. That acceleration points toward the circle's center, with magnitude a_c = v^2/r = omega^2*r."
+      "answer": "Acceleration measures the rate of change of velocity, a vector, and velocity changes whenever direction changes — even at constant speed, the car's direction is changing continuously as it goes around the curve, so it has nonzero acceleration. That acceleration points toward the circle's center, with magnitude $a_c = v^2/r = \\omega^2 r$."
     },
     {
       "id": "card-8pkx",
@@ -74496,7 +74496,7 @@
         "uniform-circular-motion",
         "banked-curve"
       ],
-      "prompt": "Why does v_min = sqrt(g*r) represent the *minimum* speed at the top of a vertical loop rather than some other special value?",
+      "prompt": "Why does $v_{min} = \\sqrt{gr}$ represent the *minimum* speed at the top of a vertical loop rather than some other special value?",
       "source": {
         "path": "vault/physics/mechanics/circular-motion-and-centripetal-force.md",
         "block": "card-q4sb"
@@ -74504,7 +74504,7 @@
       "citations": [
         "Halliday, Resnick & Walker, Fundamentals of Physics 10e, Ch. 6"
       ],
-      "answer": "Below that speed, gravity alone would be more than what's needed to supply the centripetal force at that radius, which is impossible for the track to compensate for (a track can only push, via normal force, never pull) — so the object would fall away from the circular path. At v_min, gravity exactly supplies the required centripetal force with the normal force at zero; at any higher speed, the track adds a positive normal force on top of gravity to supply the extra centripetal force needed."
+      "answer": "Below that speed, gravity alone would be more than what's needed to supply the centripetal force at that radius, which is impossible for the track to compensate for (a track can only push, via normal force, never pull) — so the object would fall away from the circular path. At $v_{min}$, gravity exactly supplies the required centripetal force with the normal force at zero; at any higher speed, the track adds a positive normal force on top of gravity to supply the extra centripetal force needed."
     },
     {
       "id": "card-ctdx",
@@ -74618,7 +74618,7 @@
         "kinetic-energy",
         "restitution"
       ],
-      "prompt": "The **equal-mass** elastic case is worth memorizing on its own, because its result is so clean: when `m1 = m2`, solving the pair above gives `v1' = v2` and `v2' = v1` — the two bodies simply ___.",
+      "prompt": "The **equal-mass** elastic case is worth memorizing on its own, because its result is so clean: when $m_1 = m_2$, solving the pair above gives $v_1' = v_2$ and $v_2' = v_1$ — the two bodies simply ___.",
       "source": {
         "path": "vault/physics/mechanics/collisions-elastic-and-inelastic.md",
         "block": "card-6dgn"
@@ -74647,7 +74647,7 @@
       "citations": [
         "Halliday, Resnick & Walker, Fundamentals of Physics 10e, Ch. 9"
       ],
-      "answer": "With `m1 = m2 = m`, the momentum equation becomes `v1 + v2 = v1' + v2'` and the kinetic energy equation becomes `v1^2 + v2^2 = v1'^2 + v2'^2`. The pair `v1' = v2, v2' = v1` satisfies both trivially (it just swaps the two terms in each sum), and because two equations in two unknowns pin down the solution (excluding the trivial no-collision case `v1'=v1, v2'=v2`), that swap is the unique physical outcome."
+      "answer": "With $m_1 = m_2 = m$, the momentum equation becomes $v_1 + v_2 = v_1' + v_2'$ and the kinetic energy equation becomes $v_1^2 + v_2^2 = v_1'^2 + v_2'^2$. The pair $v_1' = v_2, v_2' = v_1$ satisfies both trivially (it just swaps the two terms in each sum), and because two equations in two unknowns pin down the solution (excluding the trivial no-collision case $v_1'=v_1, v_2'=v_2$), that swap is the unique physical outcome."
     },
     {
       "id": "card-kp4v",
@@ -74660,7 +74660,7 @@
         "kinetic-energy",
         "restitution"
       ],
-      "prompt": "What does a measured coefficient of restitution of `e = 0.6` tell you about a collision, and what would `e = 0` and `e = 1` each mean physically?",
+      "prompt": "What does a measured coefficient of restitution of $e = 0.6$ tell you about a collision, and what would $e = 0$ and $e = 1$ each mean physically?",
       "source": {
         "path": "vault/physics/mechanics/collisions-elastic-and-inelastic.md",
         "block": "card-kp4v"
@@ -74668,7 +74668,7 @@
       "citations": [
         "Halliday, Resnick & Walker, Fundamentals of Physics 10e, Ch. 9"
       ],
-      "answer": "`e = 0.6` means the bodies separate afterward at 60% of the relative speed they approached with — some kinetic energy was lost, but they did not stick. `e = 1` means they separate at the same relative speed they approached with (no kinetic energy lost — elastic). `e = 0` means the relative speed afterward is zero — the bodies move off together, which is the perfectly inelastic case."
+      "answer": "$e = 0.6$ means the bodies separate afterward at 60% of the relative speed they approached with — some kinetic energy was lost, but they did not stick. $e = 1$ means they separate at the same relative speed they approached with (no kinetic energy lost — elastic). $e = 0$ means the relative speed afterward is zero — the bodies move off together, which is the perfectly inelastic case."
     },
     {
       "id": "card-80rc",
@@ -74841,7 +74841,7 @@
         "power",
         "friction"
       ],
-      "prompt": "Friction does not destroy energy — that would violate a far broader conservation law than the mechanical one. What friction does is convert mechanical energy into ___ energy (and sometimes sound), which is exactly why the general form above needs a `W_nc` term rather than energy simply vanishing: the \"lost\" mechanical energy is accounted for, just not as `KE + PE` anymore.",
+      "prompt": "Friction does not destroy energy — that would violate a far broader conservation law than the mechanical one. What friction does is convert mechanical energy into ___ energy (and sometimes sound), which is exactly why the general form above needs a $W_{nc}$ term rather than energy simply vanishing: the \"lost\" mechanical energy is accounted for, just not as $KE + PE$ anymore.",
       "source": {
         "path": "vault/physics/mechanics/conservation-of-energy-and-power.md",
         "block": "card-snzg"
@@ -74961,7 +74961,7 @@
         "tension",
         "inclined-plane"
       ],
-      "prompt": "Why is `f_s = mu_s*N` the wrong general formula for static friction, even though it correctly gives the maximum static friction available?",
+      "prompt": "Why is $f_s = \\mu_s N$ the wrong general formula for static friction, even though it correctly gives the maximum static friction available?",
       "source": {
         "path": "vault/physics/mechanics/friction-and-contact-forces.md",
         "block": "card-bpxx"
@@ -75049,7 +75049,7 @@
         "tension",
         "inclined-plane"
       ],
-      "prompt": "Tension is the pulling force a stretched string, rope, or cable exerts along its length. The standard simplifying idealization is a **massless** string: since `F_net = m*a` with `m = 0` forces the net force on any segment of the string to be zero, tension must be the ___ throughout its length (through an ideal, frictionless pulley too), which is what lets you treat the string as a single connector transmitting one force rather than solving for its internal distribution.",
+      "prompt": "Tension is the pulling force a stretched string, rope, or cable exerts along its length. The standard simplifying idealization is a **massless** string: since $F_{net} = ma$ with $m = 0$ forces the net force on any segment of the string to be zero, tension must be the ___ throughout its length (through an ideal, frictionless pulley too), which is what lets you treat the string as a single connector transmitting one force rather than solving for its internal distribution.",
       "source": {
         "path": "vault/physics/mechanics/friction-and-contact-forces.md",
         "block": "card-angb"
@@ -75092,7 +75092,7 @@
         "projectile-motion",
         "vectors"
       ],
-      "prompt": "A car's acceleration increases steadily from 0 to 4 m/s^2 over 10 seconds (it is not constant). What happens if you use `v = v0 + a*t` with `a` set to the average acceleration to find the final velocity?",
+      "prompt": "A car's acceleration increases steadily from 0 to 4 m/s^2 over 10 seconds (it is not constant). What happens if you use $v = v_0 + at$ with $a$ set to the average acceleration to find the final velocity?",
       "source": {
         "path": "vault/physics/mechanics/kinematics-and-the-equations-of-motion.md",
         "block": "card-5c28"
@@ -75102,7 +75102,7 @@
       ],
       "choices": [
         {
-          "text": "It gives the wrong answer — the equation assumes constant acceleration throughout, and no single \"effective\" value of `a` reproduces the true final velocity from a changing one in general",
+          "text": "It gives the wrong answer — the equation assumes constant acceleration throughout, and no single \"effective\" value of $a$ reproduces the true final velocity from a changing one in general",
           "correct": true
         },
         {
@@ -75110,7 +75110,7 @@
           "correct": false
         },
         {
-          "text": "The equation still applies unchanged, because `v = v0 + a*t` never assumed anything about acceleration in the first place",
+          "text": "The equation still applies unchanged, because $v = v_0 + at$ never assumed anything about acceleration in the first place",
           "correct": false
         },
         {
@@ -75172,7 +75172,7 @@
         "projectile-motion",
         "vectors"
       ],
-      "prompt": "Position, velocity and acceleration are all vectors, and in more than one dimension each component evolves independently under its own acceleration. This is exactly what makes projectile motion tractable: horizontal velocity stays ___ (no horizontal acceleration, ignoring air resistance), while gravity alone governs the vertical component, at `-9.8 m/s^2`.",
+      "prompt": "Position, velocity and acceleration are all vectors, and in more than one dimension each component evolves independently under its own acceleration. This is exactly what makes projectile motion tractable: horizontal velocity stays ___ (no horizontal acceleration, ignoring air resistance), while gravity alone governs the vertical component, at $-9.8 \\text{ m/s}^2$.",
       "source": {
         "path": "vault/physics/mechanics/kinematics-and-the-equations-of-motion.md",
         "block": "card-gsgl"
@@ -75294,7 +75294,7 @@
         "newtons-second-law",
         "conservation-laws"
       ],
-      "prompt": "`F = m*a` is the special case of this law that holds only under the hypothesis of ___ — differentiate `p = m*v` with constant `m` and the mass falls out of the derivative, leaving `F = m*(dv/dt) = m*a`. The general form is what you need whenever mass changes during the motion, such as a rocket burning fuel or a raindrop accreting water as it falls.",
+      "prompt": "$F = ma$ is the special case of this law that holds only under the hypothesis of ___ — differentiate $p = mv$ with constant $m$ and the mass falls out of the derivative, leaving $F = m(dv/dt) = ma$. The general form is what you need whenever mass changes during the motion, such as a rocket burning fuel or a raindrop accreting water as it falls.",
       "source": {
         "path": "vault/physics/mechanics/momentum-and-impulse.md",
         "block": "card-9vjc"
@@ -75315,7 +75315,7 @@
         "newtons-second-law",
         "conservation-laws"
       ],
-      "prompt": "Why does `F_net = dp/dt` reduce to `F = m*a` for a rocket only before it starts burning fuel, and not during the burn?",
+      "prompt": "Why does $F_{net} = dp/dt$ reduce to $F = ma$ for a rocket only before it starts burning fuel, and not during the burn?",
       "source": {
         "path": "vault/physics/mechanics/momentum-and-impulse.md",
         "block": "card-k9vt"
@@ -75323,7 +75323,7 @@
       "citations": [
         "Halliday, Resnick & Walker, Fundamentals of Physics 10e, Ch. 9"
       ],
-      "answer": "During the burn, mass is changing with time, so `dp/dt = d(m*v)/dt` expands by the product rule into `m*(dv/dt) + v*(dm/dt)` — a second term that vanishes only when `dm/dt = 0`. `F = m*a` silently drops that term, so applying it to a rocket mid-burn omits the thrust contribution from expelled mass and gets the dynamics wrong."
+      "answer": "During the burn, mass is changing with time, so $dp/dt = d(mv)/dt$ expands by the product rule into $m(dv/dt) + v(dm/dt)$ — a second term that vanishes only when $dm/dt = 0$. $F = ma$ silently drops that term, so applying it to a rocket mid-burn omits the thrust contribution from expelled mass and gets the dynamics wrong."
     },
     {
       "id": "card-j3ni",
@@ -75344,7 +75344,7 @@
       "citations": [
         "Halliday, Resnick & Walker, Fundamentals of Physics 10e, Ch. 9"
       ],
-      "answer": "Both cases deliver the same impulse `J = Δp`, since the car loses the same momentum either way. `J = F*Δt`, so for fixed `J`, force and time are inversely related: stretching the stopping time over the crumple zone's longer deceleration means a smaller average force is needed to produce that same `Δp`. The rigid wall delivers the same momentum change almost instantly, forcing `F` to be much larger."
+      "answer": "Both cases deliver the same impulse $J = \\Delta p$, since the car loses the same momentum either way. $J = F \\Delta t$, so for fixed $J$, force and time are inversely related: stretching the stopping time over the crumple zone's longer deceleration means a smaller average force is needed to produce that same $\\Delta p$. The rigid wall delivers the same momentum change almost instantly, forcing $F$ to be much larger."
     },
     {
       "id": "card-31bl",
@@ -75496,7 +75496,7 @@
         "force",
         "normal-force"
       ],
-      "prompt": "Why is the first law not just the special case of `F_net = m*a` with `F_net = 0`?",
+      "prompt": "Why is the first law not just the special case of $F_{net} = ma$ with $F_{net} = 0$?",
       "source": {
         "path": "vault/physics/mechanics/newtons-laws-and-free-body-diagrams.md",
         "block": "card-5cxd"
@@ -75504,7 +75504,7 @@
       "citations": [
         "Halliday, Resnick & Walker, Fundamentals of Physics 10e, Ch. 5-6"
       ],
-      "answer": "Because the second law is only true in an inertial frame, and something has to say which frames those are. The first law does that job: it declares that a frame where a force-free object moves at constant velocity is inertial. Read as a special case of the second law it is redundant, but read as a definition it is what licenses applying the second law at all — in a braking car or on a rotating platform, objects accelerate with no real force acting, and `F_net = m*a` simply does not hold there."
+      "answer": "Because the second law is only true in an inertial frame, and something has to say which frames those are. The first law does that job: it declares that a frame where a force-free object moves at constant velocity is inertial. Read as a special case of the second law it is redundant, but read as a definition it is what licenses applying the second law at all — in a braking car or on a rotating platform, objects accelerate with no real force acting, and $F_{net} = ma$ simply does not hold there."
     },
     {
       "id": "card-muhs",
@@ -75517,7 +75517,7 @@
         "force",
         "normal-force"
       ],
-      "prompt": "A box sits on a table under gravity, a normal force, and someone pushing sideways with friction resisting the push. To find the box's acceleration correctly, `F_net` in `F_net = m*a` should be taken as:",
+      "prompt": "A box sits on a table under gravity, a normal force, and someone pushing sideways with friction resisting the push. To find the box's acceleration correctly, $F_{net}$ in $F_{net} = ma$ should be taken as:",
       "source": {
         "path": "vault/physics/mechanics/newtons-laws-and-free-body-diagrams.md",
         "block": "card-muhs"
@@ -75614,7 +75614,7 @@
         "force",
         "normal-force"
       ],
-      "prompt": "An object's weight in newtons on Earth is `m*g` with `g = 9.8 m/s^2`. What happens to its weight, and what happens to its mass, if the same object is moved to the Moon (g ≈ 1.6 m/s^2)?",
+      "prompt": "An object's weight in newtons on Earth is $mg$ with $g = 9.8 \\text{ m/s}^2$. What happens to its weight, and what happens to its mass, if the same object is moved to the Moon (g ≈ 1.6 m/s^2)?",
       "source": {
         "path": "vault/physics/mechanics/newtons-laws-and-free-body-diagrams.md",
         "block": "card-elq9"
@@ -75736,7 +75736,7 @@
         "gravity",
         "springs"
       ],
-      "prompt": "Nothing in physics tells you where to put `h = 0`, and nothing needs to — only ___ in potential energy between two configurations produce a force or do work; the reference point is a free choice that cancels out of every physical prediction. This is exactly why a negative potential energy (an object below your chosen `h = 0`) is not a sign of an error: it just means that position sits below the arbitrary reference, not below some absolute floor of energy.",
+      "prompt": "Nothing in physics tells you where to put $h = 0$, and nothing needs to — only ___ in potential energy between two configurations produce a force or do work; the reference point is a free choice that cancels out of every physical prediction. This is exactly why a negative potential energy (an object below your chosen $h = 0$) is not a sign of an error: it just means that position sits below the arbitrary reference, not below some absolute floor of energy.",
       "source": {
         "path": "vault/physics/mechanics/potential-energy-and-conservative-forces.md",
         "block": "card-ex3n"
@@ -75837,7 +75837,7 @@
         "moment-of-inertia",
         "rotational-kinetic-energy"
       ],
-      "prompt": "The `sin(theta)` factor is the whole content of the ___ idea.",
+      "prompt": "The $\\sin(\\theta)$ factor is the whole content of the ___ idea.",
       "source": {
         "path": "vault/physics/mechanics/torque-and-rotational-dynamics.md",
         "block": "card-ngs5"
@@ -75955,7 +75955,7 @@
         "moment-of-inertia",
         "rotational-kinetic-energy"
       ],
-      "prompt": "Explain, from the definition `I = int r^2 dm`, why a thin rod's moment of inertia about an axis through one end is larger than about an axis through its center — without looking up the standard-forms table.",
+      "prompt": "Explain, from the definition $I = \\int r^2\\, dm$, why a thin rod's moment of inertia about an axis through one end is larger than about an axis through its center — without looking up the standard-forms table.",
       "source": {
         "path": "vault/physics/mechanics/torque-and-rotational-dynamics.md",
         "block": "card-2h0m"
@@ -75963,7 +75963,7 @@
       "citations": [
         "Halliday, Resnick & Walker, Fundamentals of Physics 10e, Ch. 10-11"
       ],
-      "answer": "Every mass element's distance to the axis matters through `r^2`. Measuring from the center, distances range symmetrically from 0 up to `L/2` on both sides. Measuring from one end, every element is farther from that axis — distances now range from 0 to the full `L` — so every `r^2` term is larger, and the integral comes out bigger (in fact `(1/3)*M*L^2` versus `(1/12)*M*L^2`, a factor of 4)."
+      "answer": "Every mass element's distance to the axis matters through $r^2$. Measuring from the center, distances range symmetrically from 0 up to $L/2$ on both sides. Measuring from one end, every element is farther from that axis — distances now range from 0 to the full $L$ — so every $r^2$ term is larger, and the integral comes out bigger (in fact $\\tfrac{1}{3}ML^2$ versus $\\tfrac{1}{12}ML^2$, a factor of 4)."
     },
     {
       "id": "card-f92w",
@@ -76085,7 +76085,7 @@
       "citations": [
         "Halliday, Resnick & Walker, Fundamentals of Physics 10e, Ch. 7"
       ],
-      "answer": "Work depends on the component of force along the direction of motion, `F*cos(theta)`. A perpendicular force has `theta = 90` degrees, so `cos(theta) = 0` no matter how large the force's magnitude is — it can change the object's direction (as centripetal force does) without ever adding or removing energy."
+      "answer": "Work depends on the component of force along the direction of motion, $F\\cos(\\theta)$. A perpendicular force has $\\theta = 90$ degrees, so $\\cos(\\theta) = 0$ no matter how large the force's magnitude is — it can change the object's direction (as centripetal force does) without ever adding or removing energy."
     },
     {
       "id": "card-50gk",
@@ -79633,7 +79633,7 @@
         "0-rtt",
         "replay-attacks"
       ],
-      "prompt": "A payments API accepts a \"transfer $100 from account A to account B\" request as 0-RTT early data. An attacker captures that early data flight and replays it to the server later. What does TLS itself do about this replay?",
+      "prompt": "A payments API accepts a \"transfer \\$100 from account A to account B\" request as 0-RTT early data. An attacker captures that early data flight and replays it to the server later. What does TLS itself do about this replay?",
       "source": {
         "path": "vault/security/tls/session-resumption-and-0-rtt.md",
         "block": "card-wf1c"

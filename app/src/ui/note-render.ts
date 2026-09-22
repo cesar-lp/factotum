@@ -1,13 +1,15 @@
 import type { NoteBlock } from '../../../pipeline/src/types.js';
-import { escapeHtml, inlineMarkup } from './renderers.js';
+import { escapeHtml, inlineWithMath } from './renderers.js';
+import { renderMath } from './math.js';
 
 /**
- * Escape, then apply inline markup. Never the other way round: the inline
- * layer wraps spans in tags and escapes nothing itself, so running it first
- * would reintroduce an injection path. See renderers.ts's own contract.
+ * Inline markup plus math. `inlineWithMath` takes RAW text and escapes each
+ * non-math chunk itself -- it must NOT be handed pre-escaped input, or KaTeX
+ * receives HTML entities where it expects LaTeX operators. See its contract
+ * in renderers.ts.
  */
 function text(value: string): string {
-  return inlineMarkup(escapeHtml(value));
+  return inlineWithMath(value);
 }
 
 function cardIdAttr(cardId: string): string {
@@ -68,6 +70,13 @@ export function renderNoteBlocks(blocks: NoteBlock[], title?: string): string {
       // Escaped only -- never inline markup. Backticks and asterisks inside
       // a code fence are code, not formatting.
       return `<pre class="note-code" ${blockAttr}><code>${escapeHtml(block.text)}</code></pre>`;
+    }
+
+    if (block.kind === 'math') {
+      // Never inline markup, for the same reason the code branch above is
+      // never given it: `*` and `_` are LaTeX operators here, not emphasis
+      // markers. renderMath escapes nothing and needs the LaTeX raw.
+      return `<div class="note-math" ${blockAttr}>${renderMath(block.text, true)}</div>`;
     }
 
     if (block.kind === 'list') {

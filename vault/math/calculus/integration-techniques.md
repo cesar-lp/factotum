@@ -12,19 +12,19 @@ any elementary function, a fixed set of rules produces its derivative,
 always, in finitely many steps. Integration has no such algorithm.
 Reversing a derivative rule only works when you first recognize *which*
 rule produced the expression in front of you, and worse, many perfectly
-ordinary elementary functions — `exp(-x^2)`, `sin(x)/x` — provably have no
+ordinary elementary functions — $e^{-x^2}$, $\sin(x)/x$ — provably have no
 antiderivative expressible in elementary terms at all. "Technique" here
 means a catalogue of patterns to recognize, not a procedure to run.
 
 **Substitution** is the chain rule read backward. If an integrand
-contains some inner function `g(x)` together with a factor equal to its
-derivative `g'(x)`, that factor is exactly what the chain rule would have
-produced when differentiating a composition, and substituting `u = g(x)`
+contains some inner function $g(x)$ together with a factor equal to its
+derivative $g'(x)$, that factor is exactly what the chain rule would have
+produced when differentiating a composition, and substituting $u = g(x)$
 undoes it:
 
-```
-int f(g(x)) * g'(x) dx  =  int f(u) du     where u = g(x)
-```
+$$
+\int f(g(x)) g'(x)\, dx = \int f(u)\, du \quad \text{where } u = g(x)
+$$
 
 The real skill is not the mechanics of the substitution itself but
 **spotting the inner function whose derivative is already sitting in the
@@ -33,12 +33,12 @@ integrand as a factor** — everything after that is just relabeling.
 Why is "the chain rule run backward" a better mental model for substitution than "a change of variables"? :: Because it tells you what to look for: an inner function paired with its own derivative as a multiplicative factor, which is the exact fingerprint the chain rule leaves behind when it produced the original expression. Treating it as an abstract change of variables gives no guidance about which substitution to try; treating it as chain-rule reversal turns the search into pattern matching against a rule you already know. ^card-egxa
 
 **Integration by parts** is the product rule read backward. Differentiating
-a product `u*v` gives `u'*v + u*v'`; integrating that identity and
+a product $uv$ gives $u'v + uv'$; integrating that identity and
 rearranging produces the parts formula:
 
-```
-int u dv  =  u*v  -  int v du
-```
+$$
+\int u\, dv = uv - \int v\, du
+$$
 
 > [!card] recall
 > Write the integration-by-parts formula.
@@ -46,13 +46,13 @@ int u dv  =  u*v  -  int v du
 > int u dv = u*v - int v du, derived by integrating the product rule
 > d/dx(u*v) = u'*v + u*v' and solving for int u * v' dx. ^card-3abz
 
-Parts trades the integral you have for a different one, `int v du`, and
-whether that trade helps depends entirely on which factor you call `u`
-and which you call `dv`. The practical criterion: **pick u to be the
+Parts trades the integral you have for a different one, $\int v\, du$, and
+whether that trade helps depends entirely on which factor you call $u$
+and which you call $dv$. The practical criterion: **pick u to be the
 factor that gets simpler when you differentiate it** — a polynomial
 eventually becomes a constant, a logarithm becomes a power of x — and let
-`dv` be whatever is left, chosen so it's still something you can
-integrate. Choosing it backward produces a `v du` that is no easier than
+$dv$ be whatever is left, chosen so it's still something you can
+integrate. Choosing it backward produces a $v\, du$ that is no easier than
 where you started, or genuinely harder.
 
 > [!card] mcq
@@ -73,8 +73,8 @@ algebraic preprocessing; every piece it produces integrates by rules
 already covered elsewhere in this category.
 
 **Trigonometric substitution** is the pattern-matching case: an
-integrand containing `sqrt(a^2 - x^2)`, `sqrt(a^2 + x^2)`, or
-`sqrt(x^2 - a^2)` is tamed by substituting x as a sine, tangent, or
+integrand containing $\sqrt{a^2 - x^2}$, $\sqrt{a^2 + x^2}$, or
+$\sqrt{x^2 - a^2}$ is tamed by substituting x as a sine, tangent, or
 secant respectively, turning the square root into a single trig factor
 via the Pythagorean identity.
 
@@ -82,8 +82,8 @@ An ==improper== integral — one with an infinite limit of integration, or ^card
 an integrand that blows up somewhere in the interval — is defined as a
 limit of ordinary (proper) definite integrals, and that limit is not
 guaranteed to exist. Whether it does is a genuine question with a real
-answer, not a formality to wave through: `int_1^inf 1/x^2 dx` converges
-to a finite value, while `int_1^inf 1/x dx` diverges to infinity, even
+answer, not a formality to wave through: $\int_1^\infty 1/x^2\, dx$ converges
+to a finite value, while $\int_1^\infty 1/x\, dx$ diverges to infinity, even
 though the two integrands look superficially similar and both shrink
 toward zero.
 

@@ -24,7 +24,7 @@ If a force's work depended on the path, then "the energy stored by being
 at this position" would be ambiguous: an object at a given point could be
 assigned a different stored energy depending on how it got there, and the
 whole idea of energy as a function of position would fall apart. A
-potential energy function `U` can be defined only because a conservative
+potential energy function $U$ can be defined only because a conservative
 force's work depends solely on the endpoints, letting you assign a single
 number to each position.
 
@@ -40,13 +40,15 @@ Why does path-independence of work matter enough to be the defining property of 
 
 Two conservative forces near Earth's surface get standard forms:
 
-```
-PE_grav = m*g*h
-PE_spring = (1/2)*k*x^2
-```
+$$
+\begin{aligned}
+PE_{grav} &= mgh \\
+PE_{spring} &= \tfrac{1}{2}kx^2
+\end{aligned}
+$$
 
-both measured in joules. `h` is height above whatever point you call
-`h = 0`, and `x` is a spring's displacement from its unstretched length.
+both measured in joules. $h$ is height above whatever point you call
+$h = 0$, and $x$ is a spring's displacement from its unstretched length.
 
 > [!card] recall
 > Write the standard forms of gravitational potential energy near Earth's
@@ -57,11 +59,11 @@ both measured in joules. `h` is height above whatever point you call
 > height above a chosen reference, and x is the spring's displacement
 > from its unstretched length. ^card-3x4l
 
-Nothing in physics tells you where to put `h = 0`, and nothing needs to —
+Nothing in physics tells you where to put $h = 0$, and nothing needs to —
 only ==changes== in potential energy between two configurations produce a ^card-ex3n
 force or do work; the reference point is a free choice that cancels out
 of every physical prediction. This is exactly why a negative potential
-energy (an object below your chosen `h = 0`) is not a sign of an error: it
+energy (an object below your chosen $h = 0$) is not a sign of an error: it
 just means that position sits below the arbitrary reference, not below
 some absolute floor of energy.
 
@@ -72,9 +74,9 @@ exists. What does that negative value indicate? :: Nothing physically alarming �
 Potential energy and force are two descriptions of the same conservative
 interaction, related by:
 
-```
-F = -dU/dx
-```
+$$
+F = -\frac{dU}{dx}
+$$
 
 The minus sign is the content of the relation: force points in the
 direction that decreases potential energy fastest — "downhill." A ball on
@@ -82,7 +84,7 @@ a hill, a stretched spring, and a satellite in orbit all accelerate toward
 lower potential energy, never higher, which is what this equation states
 in one line rather than three separate facts about three separate systems.
 
-In more than one dimension, `-dU/dx` generalizes to the gradient of `U`,
+In more than one dimension, $-dU/dx$ generalizes to the gradient of $U$,
 covered as a mathematical object in `vault/math/multivariable/`; this note
 only uses the one-dimensional case.
 

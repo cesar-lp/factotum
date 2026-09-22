@@ -14,14 +14,16 @@ construct in this category — everything from Lagrange multipliers to
 gradient descent is a statement about it. It is simply the vector of
 all first partials:
 
-```
-∇f(x, y) = (∂f/∂x, ∂f/∂y)
-∇f(x, y, z) = (∂f/∂x, ∂f/∂y, ∂f/∂z)
-```
+$$
+\begin{aligned}
+\nabla f(x, y) &= \left(\frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}\right) \\
+\nabla f(x, y, z) &= \left(\frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}, \frac{\partial f}{\partial z}\right)
+\end{aligned}
+$$
 
 Three facts make the gradient worth naming as its own object rather
 than just a bundle of partials: it points in the direction of steepest
-ascent at that point, its magnitude `||∇f||` is the maximum rate of
+ascent at that point, its magnitude $\|\nabla f\|$ is the maximum rate of
 increase in any direction, and it is orthogonal to the level set passing
 through the point.
 
@@ -36,11 +38,11 @@ through the point.
 
 The steepest-ascent property is not a separate assumption bolted onto
 the gradient — it falls straight out of the directional derivative
-formula covered in `directional-derivatives.md`, `D_u f = ∇f·u` for a
-unit vector u. The dot product `∇f·u` equals `||∇f|| ||u|| cos(theta)`,
-where theta is the angle between the two vectors, and since `||u|| = 1`
-this is maximized exactly when `cos(theta) = 1` — that is, when u points
-in the same direction as `∇f`. Steepest ascent is a consequence of the
+formula covered in `directional-derivatives.md`, $D_u f = \nabla f \cdot u$ for a
+unit vector u. The dot product $\nabla f \cdot u$ equals $\|\nabla f\| \|u\| \cos(\theta)$,
+where theta is the angle between the two vectors, and since $\|u\| = 1$
+this is maximized exactly when $\cos(\theta) = 1$ — that is, when u points
+in the same direction as $\nabla f$. Steepest ascent is a consequence of the
 dot product being maximized by alignment, not a fact about gradients
 specifically.
 
@@ -53,11 +55,11 @@ specifically.
 
 The orthogonality-to-level-sets property is the same underlying fact
 viewed from a different angle, not an independent theorem. Moving along
-a level set, by definition, does not change the value of `f` at all —
+a level set, by definition, does not change the value of $f$ at all —
 so the directional derivative along any direction tangent to the level
-set must be zero. Since `D_u f = ∇f·u` and this is zero for every u
-tangent to the level set, `∇f` can have no component along that tangent
-direction, which is exactly what it means for `∇f` to be orthogonal to
+set must be zero. Since $D_u f = \nabla f \cdot u$ and this is zero for every u
+tangent to the level set, $\nabla f$ can have no component along that tangent
+direction, which is exactly what it means for $\nabla f$ to be orthogonal to
 the level set.
 
 Why must the gradient be orthogonal to the level set through a point, rather than this being an independent fact about gradients? :: Because moving along a level set leaves f unchanged, the directional derivative in every direction tangent to that level set is zero. Since D_u f = ∇f·u, a zero directional derivative for every tangent direction u means ∇f has no component in the tangent plane at all, so it must point perpendicular to the level set. ^card-k7h6
@@ -80,7 +82,7 @@ Answering that question takes second-order information, which is the
 subject of two sibling notes later in this category.
 
 One honest caveat, left undeveloped here: the gradient is not purely a
-property of `f` on its own — it is a *covector* in disguise, and its
+property of $f$ on its own — it is a *covector* in disguise, and its
 components depend on the choice of inner product used to measure
 lengths and angles in the domain. Changing that inner product changes
 what "steepest" means, even though the partial derivatives themselves

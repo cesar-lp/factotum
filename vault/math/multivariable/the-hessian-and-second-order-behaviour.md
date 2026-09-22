@@ -11,45 +11,49 @@ citations: ["Stewart, Calculus: Early Transcendentals 8e, Ch. 14.7"]
 does the same for second partials — it is the Jacobian of the gradient,
 the matrix of every second partial derivative of a scalar field:
 
-```
-H = [ ∂^2f/∂x1^2      ∂^2f/∂x1∂x2   ...  ∂^2f/∂x1∂xn ]
-    [ ∂^2f/∂x2∂x1     ∂^2f/∂x2^2    ...  ∂^2f/∂x2∂xn ]
-    [    ...                              ...        ]
-    [ ∂^2f/∂xn∂x1     ∂^2f/∂xn∂x2   ...  ∂^2f/∂xn^2  ]
-```
+$$
+H = \begin{bmatrix}
+\dfrac{\partial^2 f}{\partial x_1^2} & \dfrac{\partial^2 f}{\partial x_1 \partial x_2} & \cdots & \dfrac{\partial^2 f}{\partial x_1 \partial x_n} \\
+\dfrac{\partial^2 f}{\partial x_2 \partial x_1} & \dfrac{\partial^2 f}{\partial x_2^2} & \cdots & \dfrac{\partial^2 f}{\partial x_2 \partial x_n} \\
+\vdots & & \ddots & \vdots \\
+\dfrac{\partial^2 f}{\partial x_n \partial x_1} & \dfrac{\partial^2 f}{\partial x_n \partial x_2} & \cdots & \dfrac{\partial^2 f}{\partial x_n^2}
+\end{bmatrix}
+$$
 
 That's what the Hessian *is*; what it's *for* is the second-order term
 in a multivariable Taylor expansion — the natural generalization of the
-one-variable `f(x+h) ≈ f(x) + f'(x)*h + (1/2)*f''(x)*h^2`, which
+one-variable $f(x+h) \approx f(x) + f'(x)h + \frac{1}{2}f''(x)h^2$, which
 `math-calculus` covers for a single input:
 
-```
-f(a + h) ≈ f(a) + ∇f(a)·h + (1/2)*h^T*H(a)*h
-```
+$$
+f(a + h) \approx f(a) + \nabla f(a) \cdot h + \frac{1}{2} h^\top H(a) h
+$$
 
-The gradient term gives the best *linear* approximation near `a`; the
+The gradient term gives the best *linear* approximation near $a$; the
 Hessian term is the first correction that captures curvature, exactly as
-`f''` does in one variable.
+$f''$ does in one variable.
 
 Why is the Hessian described as "the Jacobian of the gradient"? :: The gradient ∇f is itself a vector-valued function of the input point, mapping R^n to R^n. Taking the Jacobian of that vector-valued function — the matrix of all its first partials — produces exactly the matrix of all second partials of the original scalar field f, which is the Hessian. ^card-1urs
 
 Under the hypothesis that the second partials are continuous near the
 point — the same hypothesis behind the mixed-partials (Clairaut's)
-result — the Hessian is guaranteed ==symmetric==: `∂^2f/∂xi∂xj` equals ^card-cc0j
-`∂^2f/∂xj∂xi`. This isn't a separate fact to re-derive here; it's the
+result — the Hessian is guaranteed ==symmetric==: $\partial^2 f/\partial x_i \partial x_j$ equals ^card-cc0j
+$\partial^2 f/\partial x_j \partial x_i$. This isn't a separate fact to re-derive here; it's the
 same equality-of-mixed-partials statement applied to every off-diagonal
 entry at once.
 
-For a fixed nonzero direction vector `h`, the quadratic form `h^T*H*h`
-is the multivariable stand-in for the sign of `f''` in the one-variable
-second-derivative test, and its behavior across *all* directions `h`
+For a fixed nonzero direction vector $h$, the quadratic form $h^\top H h$
+is the multivariable stand-in for the sign of $f''$ in the one-variable
+second-derivative test, and its behavior across *all* directions $h$
 defines the Hessian's **definiteness**:
 
-```
-positive definite:  h^T*H*h > 0 for every nonzero h   (curves up every way)
-negative definite:  h^T*H*h < 0 for every nonzero h   (curves down every way)
-indefinite:          h^T*H*h > 0 for some h, < 0 for others   (saddle)
-```
+$$
+\begin{aligned}
+\text{positive definite:} &\quad h^\top H h > 0 \text{ for every nonzero } h \quad \text{(curves up every way)} \\
+\text{negative definite:} &\quad h^\top H h < 0 \text{ for every nonzero } h \quad \text{(curves down every way)} \\
+\text{indefinite:} &\quad h^\top H h > 0 \text{ for some } h\text{, } < 0 \text{ for others} \quad \text{(saddle)}
+\end{aligned}
+$$
 
 > [!card] mcq
 > A Hessian H is positive definite at a point. What does this say about
@@ -63,7 +67,7 @@ Definiteness reduces entirely to the signs of the Hessian's
 ==eigenvalues==. All positive gives positive definite, all negative ^card-063p
 gives negative definite, and a mix of signs gives a saddle, curving up
 in some directions and down in others — so definiteness is checkable
-without testing every direction `h` by hand.
+without testing every direction $h$ by hand.
 
 Eigenvalues themselves, and how to compute them, belong to
 `math-linear-algebra`; this note only uses their signs as the
@@ -85,9 +89,9 @@ This note sets up definiteness as a concept; turning it into a working
 test for classifying a specific critical point as a max, min, or saddle
 is covered separately.
 
-The Hessian's practical cost is worth stating honestly: for `n` input
-variables it has `n^2` entries (n*(n+1)/2 distinct ones, by symmetry),
-so computing and storing it becomes expensive fast as `n` grows — a
+The Hessian's practical cost is worth stating honestly: for $n$ input
+variables it has $n^2$ entries (n*(n+1)/2 distinct ones, by symmetry),
+so computing and storing it becomes expensive fast as $n$ grows — a
 model with a million parameters has a Hessian with a trillion entries.
 This is exactly why second-order optimization methods, which use the
 Hessian to choose a search direction, are reserved for small problems,

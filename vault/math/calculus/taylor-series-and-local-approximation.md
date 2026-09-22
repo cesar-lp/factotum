@@ -13,17 +13,17 @@ there. A Taylor polynomial is the same idea pushed further — instead of
 matching one derivative, match n of them, and each extra term buys one
 more order of agreement with f near that point.
 
-The **linear approximation** `L(x) = f(a) + f'(a)*(x-a)` matches f and f'
-at `x = a` but generally nothing higher, so it drifts from f as soon as
+The **linear approximation** $L(x) = f(a) + f'(a)(x-a)$ matches f and f'
+at $x = a$ but generally nothing higher, so it drifts from f as soon as
 curvature matters. The **degree-n Taylor polynomial** fixes that by
 construction:
 
-```
-P_n(x) = sum_{k=0}^n  f^(k)(a)/k!  *  (x-a)^k
-```
+$$
+P_n(x) = \sum_{k=0}^n \frac{f^{(k)}(a)}{k!} (x-a)^k
+$$
 
-Each coefficient is chosen so that `P_n` and f agree not just in value but
-in every derivative up to that degree at `x = a`. Adding a higher-degree
+Each coefficient is chosen so that $P_n$ and f agree not just in value but
+in every derivative up to that degree at $x = a$. Adding a higher-degree
 term buys exactly ==one== extra order of local agreement — the whole ^card-tdnf
 scheme trades derivatives matched for accuracy close to the center.
 
@@ -33,17 +33,17 @@ scheme trades derivatives matched for accuracy close to the center.
 > P_n(x) = sum_{k=0}^n f^(k)(a)/k! * (x-a)^k — the k-th term uses the
 > k-th derivative at a divided by k-factorial, times (x-a) to the k. ^card-qluz
 
-Centering at `a = 0` gives the **Maclaurin series**, and three of these
+Centering at $a = 0$ gives the **Maclaurin series**, and three of these
 recur constantly enough to be worth fixing in memory rather than
 re-deriving:
 
-```
-exp(x) = sum_{k=0}^inf  x^k / k!
-
-sin(x) = sum_{k=0}^inf  (-1)^k * x^(2k+1) / (2k+1)!
-
-cos(x) = sum_{k=0}^inf  (-1)^k * x^(2k)   / (2k)!
-```
+$$
+\begin{aligned}
+e^x &= \sum_{k=0}^\infty \frac{x^k}{k!} \\
+\sin(x) &= \sum_{k=0}^\infty (-1)^k \frac{x^{2k+1}}{(2k+1)!} \\
+\cos(x) &= \sum_{k=0}^\infty (-1)^k \frac{x^{2k}}{(2k)!}
+\end{aligned}
+$$
 
 > [!card] recall
 > Write the Maclaurin series for exp(x).
@@ -58,14 +58,14 @@ cos(x) = sum_{k=0}^inf  (-1)^k * x^(2k)   / (2k)!
 > - [ ] x^(2k) / k! ^card-l7e8
 
 A degree-n Taylor polynomial by itself is only half a claim. Stopping at n
-terms leaves a **remainder** `R_n(x) = f(x) - P_n(x)`, and without a bound
+terms leaves a **remainder** $R_n(x) = f(x) - P_n(x)$, and without a bound
 on that remainder, "P_n approximates f" is a guess, not a result. The
 remainder is exactly what turns Taylor's construction into **Taylor's
 theorem**: the theorem's content is a bound of the form
 
-```
-R_n(x) = f^(n+1)(c) / (n+1)!  *  (x-a)^(n+1)      for some c between a and x
-```
+$$
+R_n(x) = \frac{f^{(n+1)}(c)}{(n+1)!} (x-a)^{n+1} \quad \text{for some } c \text{ between } a \text{ and } x
+$$
 
 Why does a Taylor polynomial without a remainder bound tell you nothing about how good the approximation actually is? :: Matching n derivatives at the center only guarantees the two functions look alike infinitesimally close to a; it says nothing about how fast they diverge as x moves away. Two functions can share the same degree-n Taylor polynomial and still differ by an arbitrarily large amount a short distance from the center. The remainder term is the only part of the statement that quantifies that gap, which is why it is what makes the claim a theorem rather than a formal rearrangement of derivatives. ^card-aaad
 
@@ -75,14 +75,14 @@ outside that radius the partial sums diverge instead of approaching f. The
 sharpest illustration is a series whose own function has a nearby
 singularity:
 
-```
-1/(1-x) = sum_{k=0}^inf x^k          converges only for |x| < 1
-```
+$$
+\frac{1}{1-x} = \sum_{k=0}^\infty x^k \quad \text{converges only for } |x| < 1
+$$
 
-Even though `1/(1-x)` is perfectly smooth at `x = 0`, its series fails to
-represent it for any `x` with `|x| >= 1` — the singularity at `x = 1`
+Even though $1/(1-x)$ is perfectly smooth at $x = 0$, its series fails to
+represent it for any $x$ with $|x| \ge 1$ — the singularity at $x = 1$
 caps how far the approximation can reach, even along the real line where
-nothing visibly goes wrong at `x = -1` or beyond.
+nothing visibly goes wrong at $x = -1$ or beyond.
 
 > [!card] mcq
 > The Maclaurin series for 1/(1-x) is sum x^k. For which x does it converge to 1/(1-x)?

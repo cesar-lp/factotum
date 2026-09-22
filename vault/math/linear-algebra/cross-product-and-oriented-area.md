@@ -14,20 +14,20 @@ than a scalar. That combination (dimension-specific, vector-valued) is
 unusual enough that it's worth being explicit about what makes the cross
 product special and where that specialness stops paying off.
 
-For `x, y` in R^3, the cross product `x × y` is the vector with
+For $x, y$ in R^3, the cross product $x \times y$ is the vector with
 
 ```
 ||x × y|| = ||x|| * ||y|| * sin(theta)
 ```
 
-where `theta` is the angle between `x` and `y`. That magnitude is exactly
-the area of the parallelogram spanned by `x` and `y` — two sides of length
-`||x||` and `||y||` meeting at angle `theta` enclose a parallelogram of
+where $\theta$ is the angle between $x$ and $y$. That magnitude is exactly
+the area of the parallelogram spanned by $x$ and $y$ — two sides of length
+$\|x\|$ and $\|y\|$ meeting at angle $\theta$ enclose a parallelogram of
 that area, which is the standard formula "base times height" written in
-terms of sine. The direction of `x × y` is perpendicular to both `x` and
-`y`, with which of the two perpendicular directions decided by the
-**right-hand rule**: curl the fingers of the right hand from `x` toward
-`y`, and the thumb points along `x × y`. So the cross product packs two
+terms of sine. The direction of $x \times y$ is perpendicular to both $x$ and
+$y$, with which of the two perpendicular directions decided by the
+**right-hand rule**: curl the fingers of the right hand from $x$ toward
+$y$, and the thumb points along $x \times y$. So the cross product packs two
 different pieces of geometric information into one object — magnitude
 measures the size of the area spanned, direction encodes the orientation
 of that spanning (which vector comes "first").
@@ -50,12 +50,12 @@ x × y = -(y × x)
 
 swapping the order flips the sign — geometrically, it flips which of the
 two perpendicular directions the right-hand rule selects, since curling
-from `y` to `x` reverses the curl direction. A direct consequence: `x × x
-= 0` for every vector, since swapping x with itself must equal its own
+from $y$ to $x$ reverses the curl direction. A direct consequence:
+$x \times x = 0$ for every vector, since swapping x with itself must equal its own
 negative, and the only vector equal to its own negative is the zero
 vector. More generally, the cross product of any two ==parallel== vectors ^card-8g4l
-is zero, because `sin(theta) = 0` when `theta` is 0 or 180 degrees — which
-makes `x × y = 0` a direct collinearity test: it succeeds precisely when
+is zero, because $\sin(\theta) = 0$ when $\theta$ is 0 or 180 degrees — which
+makes $x \times y = 0$ a direct collinearity test: it succeeds precisely when
 x and y point along the same line.
 
 > [!card] mcq
@@ -65,7 +65,7 @@ x and y point along the same line.
 > - [ ] x × x is undefined
 > - [ ] x × x always points along the z-axis ^card-mia5
 
-In coordinates, for `x = (x1, x2, x3)` and `y = (y1, y2, y3)`:
+In coordinates, for $x = (x_1, x_2, x_3)$ and $y = (y_1, y_2, y_3)$:
 
 ```
 x × y = ( x2*y3 - x3*y2,
@@ -78,13 +78,13 @@ x × y = | x1  x2  x3 |
         | y1  y2  y3 |
 ```
 
-The **scalar triple product** `x·(y × z)` combines both products into a
-single number: it computes the cross product `y × z` (a vector whose
+The **scalar triple product** $x \cdot (y \times z)$ combines both products into a
+single number: it computes the cross product $y \times z$ (a vector whose
 length is the area of the base parallelogram, pointing perpendicular to
-that base) and then dots it with `x`, which projects `x` onto that
+that base) and then dots it with $x$, which projects $x$ onto that
 perpendicular direction and scales by the base area — exactly the volume
-formula "base area times height" for the parallelepiped spanned by `x`,
-`y`, and `z`. A zero triple product means that parallelepiped has zero
+formula "base area times height" for the parallelepiped spanned by $x$,
+$y$, and $z$. A zero triple product means that parallelepiped has zero
 volume, which happens exactly when the three vectors are ==coplanar== — ^card-od7v
 they don't span a genuine 3-dimensional box, only a flat region.
 

@@ -22,7 +22,7 @@ certainty for some input.
 CLRS bounds the expected running time using indicator random variables
 `X_k` for each pair of elements, tracking whether the k-th and l-th
 smallest elements are ever compared during the whole run. Summing
-`E[X_k]` over all pairs gives the expected number of comparisons.
+$E[X_k]$ over all pairs gives the expected number of comparisons.
 
 What is the key property CLRS exploits about when two elements get compared in quicksort? :: Two elements are compared at most once in the entire run, and only if one of them is chosen as a pivot before any element with a rank strictly between them is — so the total comparison count over the run is exactly the sum of these Theta(n^2) pairwise indicator variables. ^card-rtrh
 

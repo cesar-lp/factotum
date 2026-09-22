@@ -62,10 +62,57 @@ function hasExecutableTag(html: string): boolean {
   // produce, plus the renderer's own known structural tags, is suspect.
   // We specifically check for a real, unescaped <script> (or any other
   // tag not in the allowed set) surviving end to end.
-  const allowed = new Set([
-    'code', '/code', 'em', '/em', 'strong', '/strong',
-    'div', '/div', 'span', '/span', 'p', '/p', 'button', '/button', 'input'
-  ]);
+  //
+  // These groups exist for different reasons and are kept separate rather
+  // than merged into one undifferentiated list:
+  //
+  //   RENDERER_TAGS is the renderer's own vocabulary -- inlineMarkup,
+  //   escapeHtml, and the structural markup in renderers.ts never produce
+  //   anything outside this set.
+  //
+  //   KATEX_MATHML_TAGS is KaTeX's MathML vocabulary. `renderMath` (see
+  //   math.ts) calls KaTeX with `output: 'htmlAndMathml'`, which emits a
+  //   parallel MathML tree alongside the presentational HTML -- that's the
+  //   part a screen reader actually reads, so it isn't optional.
+  //
+  //   KATEX_SVG_TAGS is KaTeX's OWN presentational half, not MathML: `svg`,
+  //   `path` and `line` are how KaTeX draws stretchy wide elements (radical
+  //   signs, braces, tall delimiters -- see SvgNode/PathNode/LineNode in
+  //   katex's source). They read as more alarming than the MathML tags
+  //   (an `<svg>` can carry a `<script>` in general), but KaTeX's own
+  //   `toMarkup()` for these three types takes no caller-controlled markup
+  //   -- only numeric attributes and `d`/path-data strings it looks up
+  //   itself or computes, run through KaTeX's own attribute escaper. They
+  //   cannot carry an executable child.
+  //
+  //   Widening the allowlist to include either group is safe: every piece
+  //   of note-derived content reaching this HTML has already been through
+  //   `escapeHtml`, so a `<mi>` or `<svg>` typed literally in a note
+  //   arrives as `&lt;mi&gt;` / `&lt;svg&gt;` and never matches the tag
+  //   regex below. The only way a RAW tag from either group reaches this
+  //   string is the renderer itself, or KaTeX running under `trust: false`
+  //   (see math.ts) -- never note content. So the invariant this check
+  //   exists to enforce -- no executable tag survives end to end from note
+  //   content -- is unaffected by admitting KaTeX's inert, presentational
+  //   output.
+  //
+  //   Enumerated explicitly (not "anything starting with m", or a blanket
+  //   allowance for svg) so a future KaTeX version emitting an element
+  //   outside these exact sets still trips this test.
+  const RENDERER_TAGS = [
+    'code', 'em', 'strong', 'div', 'span', 'p', 'button', 'input'
+  ];
+  const KATEX_MATHML_TAGS = [
+    'math', 'semantics', 'annotation', 'mrow', 'mi', 'mn', 'mo', 'ms',
+    'mtext', 'mspace', 'msub', 'msup', 'msubsup', 'munder', 'mover',
+    'munderover', 'mfrac', 'msqrt', 'mroot', 'mstyle', 'mpadded',
+    'mphantom', 'menclose', 'mtable', 'mtr', 'mtd', 'mlabeledtr', 'merror',
+    'maction', 'mmultiscripts', 'mprescripts', 'none'
+  ];
+  const KATEX_SVG_TAGS = ['svg', 'path', 'line'];
+  const allowed = new Set(
+    [...RENDERER_TAGS, ...KATEX_MATHML_TAGS, ...KATEX_SVG_TAGS].flatMap((tag) => [tag, `/${tag}`])
+  );
   const tagRe = /<\/?([a-zA-Z0-9-]+)(?:\s[^>]*)?>/g;
   let m: RegExpExecArray | null;
   while ((m = tagRe.exec(html))) {
@@ -299,6 +346,49 @@ describe('deck corpus render invariants', () => {
       expect(html, `already-entity-looking text was not double-escaped:\n${html}`).toContain(
         '&amp;lt;script&amp;gt;'
       );
+    }
+  });
+
+  it('hasExecutableTag still rejects real threats after widening for KaTeX (script, iframe, img)', () => {
+    // The hostile-content test above proves the end-to-end pipeline never
+    // lets a raw <script> through, because escapeHtml runs on note content
+    // before hasExecutableTag ever sees it -- that test would pass even if
+    // hasExecutableTag's allowlist were "anything goes", since escaping is
+    // what actually neutralizes the input in that path.
+    //
+    // This test is narrower and more direct: it calls hasExecutableTag on
+    // synthetic, ALREADY-RAW markup, the way it would see a tag that
+    // reached it unescaped (the failure mode the whole check exists to
+    // catch). It exists specifically because this file just added two new
+    // groups of tags to the allowlist (KaTeX's MathML vocabulary and its
+    // svg/path/line presentational vocabulary) -- this confirms that
+    // widening did not also, even accidentally, admit an executable tag,
+    // and that a real attack shape is still caught regardless of what else
+    // happens to be in the markup around it (including legitimate KaTeX
+    // output).
+    const katexShapedSnippet =
+      '<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML">' +
+      '<semantics><mrow><mi>x</mi></mrow></semantics></math>' +
+      '<svg xmlns="http://www.w3.org/2000/svg"><path d="M0 0"/></svg></span>';
+
+    // Sanity check: legitimate KaTeX-shaped markup alone is not flagged --
+    // otherwise the "still rejects" assertions below would be meaningless
+    // (a check that flags everything "rejects" every threat trivially).
+    expect(hasExecutableTag(katexShapedSnippet)).toBe(false);
+
+    for (const threat of [
+      '<script>alert(1)</script>',
+      '<iframe src="javascript:alert(1)"></iframe>',
+      '<img src=x onerror=alert(1)>'
+    ]) {
+      expect(hasExecutableTag(threat), `threat not caught in isolation: ${threat}`).toBe(true);
+      // And the same threat still trips the check when it arrives alongside
+      // genuine, allowed KaTeX markup -- proving the newly-widened allowlist
+      // doesn't somehow mask it.
+      expect(
+        hasExecutableTag(katexShapedSnippet + threat),
+        `threat not caught alongside KaTeX markup: ${threat}`
+      ).toBe(true);
     }
   });
 });

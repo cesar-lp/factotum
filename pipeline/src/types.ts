@@ -72,6 +72,7 @@ export interface ResolvedCloze {
 export type RawBlock =
   | { kind: 'heading'; level: number; text: string }
   | { kind: 'code'; lang: string | null; text: string }
+  | { kind: 'math'; text: string }
   | { kind: 'list'; items: string[] }
   | { kind: 'prose'; text: string; clozes: RawCloze[] }
   | { kind: 'qa'; cardIndex: number; prompt: string; answer: string }
@@ -81,6 +82,7 @@ export type RawBlock =
 export type NoteBlock =
   | { kind: 'heading'; level: number; text: string }
   | { kind: 'code'; lang: string | null; text: string }
+  | { kind: 'math'; text: string }
   | { kind: 'list'; items: string[] }
   | { kind: 'prose'; text: string; clozes: ResolvedCloze[] }
   | { kind: 'qa'; cardId: string; prompt: string; answer: string }

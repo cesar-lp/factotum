@@ -7,11 +7,11 @@ citations: ["Strang, Introduction to Linear Algebra 5e, Ch. 2"]
 
 # Matrix Multiplication and Composition
 
-The previous note treated a matrix as a function, `A*x`. This one asks
+The previous note treated a matrix as a function, $Ax$. This one asks
 what it means to apply two of them in a row — first B, then A — and the
 answer is the whole reason matrix multiplication is defined the way it
 is. The row-times-column rule looks arbitrary the first time you see
-it; it stops looking arbitrary once you require that `A*B` represent
+it; it stops looking arbitrary once you require that $AB$ represent
 "do B, then do A" and nothing else.
 
 > [!card] recall
@@ -29,15 +29,15 @@ it; it stops looking arbitrary once you require that `A*B` represent
 > exactly, which is why the row-times-column recipe is not a separate
 > assumption but a consequence. ^card-ngfz
 
-```
-(A*B)_{ij} = sum_{k=1}^n A_{ik} * B_{kj}
-```
+$$
+(AB)_{ij} = \sum_{k=1}^n A_{ik} B_{kj}
+$$
 
 That derivation also explains the shape requirement that trips people
 up: B's number of columns must equal A's number of rows, because B's
 columns are vectors landing in B's codomain, and that codomain has to
 be exactly the space A accepts as input. If B is m-by-n and A is p-by-m,
-`A*B` is defined and is p-by-n; if the inner dimensions don't match,
+$AB$ is defined and is p-by-n; if the inner dimensions don't match,
 composition — feeding B's output into A — is asking A to accept a
 vector of the wrong size.
 
@@ -54,7 +54,7 @@ different map from first A then B — is not a quirk of the notation; it
 is a fact about functions that matrix multiplication merely inherits.
 Rotating a vector and then stretching it does not, in general, produce
 the same result as stretching it first and then rotating it, so there
-is no reason to expect `A*B = B*A`, and it usually fails.
+is no reason to expect $AB = BA$, and it usually fails.
 
 In general, matrices ==do not commute==: A*B and B*A are usually ^card-wqsk
 different matrices, and treating them as interchangeable is one of the
@@ -63,7 +63,7 @@ most common algebra errors with matrices.
 Why should A*B differ from B*A in general, given what A*B represents? :: A*B represents doing B first and then A, while the other order represents doing A first and then B — two different orders of two different operations, and composing functions in a different order generically produces a different function. Matrix multiplication inherits this from composition itself rather than introducing it; agreeing on both orders is the special case, not the default. ^card-vwhh
 
 Associativity, by contrast, does hold without qualification:
-`(A*B)*C = A*(B*C)` for any matrices with compatible shapes. This is
+$(AB)C = A(BC)$ for any matrices with compatible shapes. This is
 also inherited from function composition — applying C, then B, then A
 gives the same final map no matter how you parenthesize the middle
 step — and it is what licenses treating a chain of transformations as a
@@ -84,16 +84,16 @@ rather than needing to fix a grouping in advance.
 > amount of arithmetic done, not the answer, depends on the grouping. ^card-ke6q
 
 The identity matrix I is the composition-theory counterpart of doing
-nothing: `A*I = I*A = A` for square A. The ==inverse== A^-1, when it ^card-fl7g
-exists, is the map that undoes A: `A*A^-1 = A^-1*A = I`. Composing a
+nothing: $AI = IA = A$ for square A. The ==inverse== A^-1, when it ^card-fl7g
+exists, is the map that undoes A: $AA^{-1} = A^{-1}A = I$. Composing a
 transformation with the one that reverses it is, by definition, the
 transformation that changes nothing.
 
 When two invertible transformations are composed and then undone, the individual inverses have to be applied in the opposite order to actually cancel — why does undoing "first B, then A" require applying A^-1 before B^-1, rather than the other way around? :: To undo a composed map you have to peel off its outermost operation first. If the forward map applies B and then A, the last thing that happened to any input is A, so undoing it starts by applying A^-1, and only then B^-1 to get back to the true starting point; applying B^-1 first would try to undo an operation, A, that has not been reversed yet. This is exactly why (A*B)^-1 = B^-1*A^-1 and not A^-1*B^-1. ^card-9b6q
 
 The transpose obeys the same order-reversing rule, for a related but
-distinct reason: `(A*B)^T = B^T*A^T`. Transposing swaps the roles of
-rows and columns, and the row-times-column computation in `A*B` only
+distinct reason: $(AB)^\top = B^\top A^\top$. Transposing swaps the roles of
+rows and columns, and the row-times-column computation in $AB$ only
 lines up correctly after the pieces are transposed if their order is
 also flipped.
 

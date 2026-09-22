@@ -7,25 +7,25 @@ citations: ["Stewart, Calculus: Early Transcendentals 8e, Ch. 4"]
 
 # The second derivative, convexity, and inflection
 
-`extrema-and-the-first-derivative-test.md` reads the sign of `f'` to find
+`extrema-and-the-first-derivative-test.md` reads the sign of $f'$ to find
 where f is increasing or decreasing. This note takes the same idea up one
-derivative: reading the sign of `f''` to find where the *slope itself* is
+derivative: reading the sign of $f''$ to find where the *slope itself* is
 increasing or decreasing, and what that shape tells you that the first
 derivative alone cannot.
 
-`f''(x)` is the rate of change of `f'(x)` — literally the derivative of the
-derivative. Where `f''(x) > 0`, the slope is increasing as x increases,
+$f''(x)$ is the rate of change of $f'(x)$ — literally the derivative of the
+derivative. Where $f''(x) > 0$, the slope is increasing as x increases,
 which bends the curve so that it lies above each of its own tangent
-lines; this shape is called **convex** (or concave up). Where `f''(x) <
-0`, the slope is decreasing, the curve bends the other way, and it lies
+lines; this shape is called **convex** (or concave up). Where
+$f''(x) < 0$, the slope is decreasing, the curve bends the other way, and it lies
 below its tangents — **concave** (concave down).
 
 The **second derivative test** uses this to classify a critical point c
-where `f'(c) = 0`: if `f''(c) > 0`, c is a local minimum (the curve
-scoops upward around it); if `f''(c) < 0`, c is a local maximum.
+where $f'(c) = 0$: if $f''(c) > 0$, c is a local minimum (the curve
+scoops upward around it); if $f''(c) < 0$, c is a local maximum.
 
 > [!card] mcq
-> At a critical point c with `f'(c) = 0` and `f''(c) < 0`, what does the second derivative test conclude?
+> At a critical point c with $f'(c) = 0$ and $f''(c) < 0$, what does the second derivative test conclude?
 > - [x] c is a local maximum
 > - [ ] c is a local minimum
 > - [ ] c is an inflection point
@@ -39,19 +39,19 @@ scoops upward around it); if `f''(c) < 0`, c is a local maximum.
 > - [ ] Tangent lines are undefined wherever a function is convex ^card-yrl4
 
 The case the test does not cover is the one worth dwelling on: when
-`f''(c) = 0`, the test gives no answer at all, and this is not a gap to be
+$f''(c) = 0$, the test gives no answer at all, and this is not a gap to be
 patched with a cleverer rule — it reflects a genuine absence of
-information at that order. Three functions make the point at `x = 0`,
-where all three have `f' = f'' = 0`: `f(x) = x^4` has a local minimum
-there, `f(x) = -x^4` has a local maximum, and `f(x) = x^3` has neither.
+information at that order. Three functions make the point at $x = 0$,
+where all three have $f' = f'' = 0$: $f(x) = x^4$ has a local minimum
+there, $f(x) = -x^4$ has a local maximum, and $f(x) = x^3$ has neither.
 Identical second-derivative data, three different outcomes.
 
-Why is `f''(c) = 0` correctly described as inconclusive rather than as evidence that c is not an extremum? :: Because functions sharing the value f''(c) = 0 at a critical point can behave in genuinely different ways — x^4, -x^4, and x^3 all have f'=f''=0 at the origin, yet the origin is a minimum, a maximum, and neither, respectively — so f''=0 simply carries no information about which case holds, rather than pointing toward any one of them. ^card-7cfo
+Why is $f''(c) = 0$ correctly described as inconclusive rather than as evidence that c is not an extremum? :: Because functions sharing the value f''(c) = 0 at a critical point can behave in genuinely different ways — x^4, -x^4, and x^3 all have f'=f''=0 at the origin, yet the origin is a minimum, a maximum, and neither, respectively — so f''=0 simply carries no information about which case holds, rather than pointing toward any one of them. ^card-7cfo
 
 An **inflection point** is a point where concavity changes — where f goes
 from convex to concave or back. Exactly as with critical points and
-extrema, `f''(x) = 0` is necessary for an inflection point but not
-sufficient: `f(x) = x^4` has `f''(0) = 0` but no inflection at the origin,
+extrema, $f''(x) = 0$ is necessary for an inflection point but not
+sufficient: $f(x) = x^4$ has $f''(0) = 0$ but no inflection at the origin,
 because the curve is convex on both sides.
 
 > [!card] recall

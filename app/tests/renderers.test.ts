@@ -7,7 +7,8 @@ import {
   renderActions,
   shuffle,
   inlineMarkup,
-  escapeHtml
+  escapeHtml,
+  inlineWithMath
 } from '../src/ui/renderers.js';
 import { issueUrl } from '../src/ui/flag.js';
 import type { StoredCard } from '../src/db/schema.js';
@@ -454,5 +455,166 @@ describe('issueUrl', () => {
     expect(url).toContain('https://github.com/cesar-lp/factotum/issues/new');
     expect(decodeURIComponent(url)).toContain('card-aaaa');
     expect(decodeURIComponent(url)).toContain('vault/a.md');
+  });
+});
+
+describe('inlineWithMath', () => {
+  it('renders an inline math span', () => {
+    const html = inlineWithMath('the residual $b - Ax$ is orthogonal');
+    expect(html).toContain('class="katex"');
+    expect(html).toContain('the residual ');
+    expect(html).toContain(' is orthogonal');
+  });
+
+  it('renders a $$...$$ run inside card text as display math', () => {
+    expect(inlineWithMath('gives $$A^\\top A x = A^\\top b$$ exactly')).toContain('katex-display');
+  });
+
+  it('gives code spans precedence, so `$connect` stays code', () => {
+    const html = inlineWithMath('reserved routes (`$connect`, `$disconnect`)');
+    expect(html).toContain('<code>$connect</code>');
+    expect(html).toContain('<code>$disconnect</code>');
+    expect(html).not.toContain('katex');
+  });
+
+  it('treats \\$ as a literal dollar, not a delimiter', () => {
+    const html = inlineWithMath('transfer \\$100 from account A to account B');
+    expect(html).toContain('transfer $100 from account A');
+    expect(html).not.toContain('katex');
+  });
+
+  it('leaves an unpaired $ completely literal', () => {
+    const html = inlineWithMath('point at $LATEST and let it float');
+    expect(html).toBe('point at $LATEST and let it float');
+  });
+
+  it('escapes the non-math gaps', () => {
+    expect(inlineWithMath('a <b> & $x$')).toContain('&lt;b&gt; &amp;');
+  });
+
+  it('does not escape the math itself -- KaTeX needs raw LaTeX', () => {
+    // If "<" reached KaTeX as "&lt;" it would typeset the entity text.
+    const html = inlineWithMath('$x < y$');
+    expect(html).toContain('katex');
+    expect(html).not.toContain('&amp;lt;');
+  });
+
+  it('still applies emphasis in the gaps', () => {
+    expect(inlineWithMath('**bold** and $x$')).toContain('<strong>bold</strong>');
+  });
+
+  it('does not mistake multiplication asterisks for emphasis', () => {
+    expect(inlineWithMath('O(E * |f*|)')).not.toContain('<em>');
+  });
+
+  it('leaves a lone $ inside an otherwise plain sentence alone', () => {
+    expect(inlineWithMath('costs $5')).toBe('costs $5');
+  });
+
+  it('cannot have its escape sentinel forged by note content', () => {
+    // The sentinel is NUL + "d" + NUL. Content containing it must not come
+    // back out as a dollar sign.
+    const html = inlineWithMath('literal \u0000d\u0000 sequence');
+    expect(html).not.toContain('$');
+  });
+});
+
+describe('math in review cards', () => {
+  const mathCard: StoredCard = {
+    ...base, id: 'card-math', format: 'qa', due: 0, reps: 0, lapses: 0,
+    prompt: 'Derive the normal equations from $b - Ax$ being orthogonal to every column of $A$.',
+    answer: 'Orthogonality means $A^\\top(b - Ax) = 0$, i.e. $$A^\\top A x = A^\\top b$$'
+  } as StoredCard;
+
+  it('typesets math in an unrevealed prompt', () => {
+    expect(renderPrompt(mathCard, false)).toContain('class="katex"');
+  });
+
+  it('typesets math in the revealed answer', () => {
+    expect(renderPrompt(mathCard, true)).toContain('katex');
+  });
+
+  it('renders the answer in a div, since katex-display is block content', () => {
+    const html = renderPrompt(mathCard, true);
+    expect(html).toContain('<div class="expected">');
+    expect(html).not.toContain('<p class="expected">');
+  });
+
+  it('still fills a cloze blank when the prompt also contains math', () => {
+    const clozeCard: StoredCard = {
+      ...base, id: 'card-cl', format: 'cloze', due: 0, reps: 0, lapses: 0,
+      prompt: 'The projection matrix $P$ satisfies ___ for any projection.',
+      answer: 'P^2 = P'
+    } as StoredCard;
+    const html = renderPrompt(clozeCard, true, { outcome: 'correct' });
+    expect(html).toContain('cloze-fill');
+    expect(html).not.toContain('___');
+    expect(html).not.toContain('(<span class="cloze-fill');  // not the append fallback
+  });
+
+  it('fills the real blank, not underscores inside rendered math', () => {
+    const card: StoredCard = {
+      ...base, id: 'card-u', format: 'cloze', due: 0, reps: 0, lapses: 0,
+      prompt: 'In $\\text{a___b}$ the notation marks ___ explicitly.',
+      answer: 'the gap'
+    } as StoredCard;
+    const html = renderPrompt(card, true, { outcome: 'correct' });
+    // Exactly one filler, and the math span is still intact around it.
+    expect(html.match(/cloze-fill/g)).toHaveLength(1);
+    expect(html).toContain('katex');
+  });
+
+  it('keeps emphasis that spans the blank working', () => {
+    const card: StoredCard = {
+      ...base, id: 'card-e', format: 'cloze', due: 0, reps: 0, lapses: 0,
+      prompt: 'It is **very ___ indeed**.', answer: 'odd'
+    } as StoredCard;
+    expect(renderPrompt(card, true, { outcome: 'correct' })).toContain('<strong>');
+  });
+
+  it('cannot have its blank marker forged by note content', () => {
+    const card: StoredCard = {
+      ...base, id: 'card-f', format: 'cloze', due: 0, reps: 0, lapses: 0,
+      prompt: 'Literal @@factotum-cloze-blank@@ then the real ___ blank.',
+      answer: 'filled'
+    } as StoredCard;
+    const html = renderPrompt(card, true, { outcome: 'correct' });
+    expect(html.match(/cloze-fill/g)).toHaveLength(1);
+    expect(html).not.toContain('@@factotum-cloze-blank@@');
+  });
+
+  it('agrees with inlineWithMath about math-span boundaries near an escaped dollar', () => {
+    // Regression test for markFirstBlank and inlineWithMath tokenizing
+    // inconsistently on escaped dollars. `$note___\$` has no real closing
+    // `$` once `\$` is shielded (the shielded second dollar can't pair), so
+    // inlineWithMath treats the whole thing as literal text, not math -- and
+    // markFirstBlank must agree, finding the blank in place there, rather
+    // than mistaking `$note___\$` for a matched math span (it starts and
+    // ends with an unshielded `$`) and skipping over the only blank in the
+    // prompt entirely.
+    const card: StoredCard = {
+      ...base, id: 'card-g', format: 'cloze', due: 0, reps: 0, lapses: 0,
+      prompt: 'A real span $y$ is fine, but $note___\\$ trails after it.',
+      answer: 'filled'
+    } as StoredCard;
+    const html = renderPrompt(card, true, { outcome: 'correct' });
+    // Filled exactly once, in place -- not the parenthetical append fallback
+    // that would fire if markFirstBlank found no blank at all.
+    expect(html.match(/cloze-fill/g)).toHaveLength(1);
+    expect(html).not.toContain('(<span class="cloze-fill');
+    expect(html).not.toContain('___');
+    // The genuine math span still typesets, and the literal dollar in
+    // `\$note___` (rendered outside math) survives as a plain `$`.
+    expect(html).toContain('katex');
+    expect(html).toContain('$note');
+  });
+
+  it('typesets math in an mcq choice', () => {
+    const mcqCard: StoredCard = {
+      ...base, id: 'card-mcq', format: 'mcq', due: 0, reps: 0, lapses: 0,
+      prompt: 'Which is the projection?',
+      choices: [{ text: '$A(A^\\top A)^{-1}A^\\top$', correct: true }, { text: '$A^\\top A$', correct: false }]
+    } as StoredCard;
+    expect(renderActions(mcqCard, false)).toContain('katex');
   });
 });

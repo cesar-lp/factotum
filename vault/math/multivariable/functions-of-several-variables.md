@@ -9,13 +9,13 @@ citations: ["Stewart, Calculus: Early Transcendentals 8e, Ch. 14.1-14.2"]
 
 `math-calculus` builds derivatives for a single input variable; this
 category rebuilds every one of those ideas for a **scalar field**
-`f: R^n -> R`, a function of several real inputs producing one real
+$f: \mathbb{R}^n \to \mathbb{R}$, a function of several real inputs producing one real
 output. That rebuild is not bookkeeping — it is the subject of this
 whole category, because moving from one input to several changes what
 a limit even means.
 
-With one variable, `x` can only approach a point from the left or the
-right, so checking a limit means checking two directions. With `n`
+With one variable, $x$ can only approach a point from the left or the
+right, so checking a limit means checking two directions. With $n$
 inputs, a point can be approached along infinitely many paths — straight
 lines, parabolas, spirals — and every one of them has to agree for the
 limit to exist. This is the concrete surprise that trips up anyone
@@ -26,7 +26,7 @@ different value. Checking finitely many lines can never prove a limit
 exists; it can only fail to disprove it.
 
 > [!card] mcq
-> A function `f(x, y)` has the same limit L along every straight line
+> A function $f(x, y)$ has the same limit L along every straight line
 > through the point (0, 0). What can be concluded about the limit of
 > f(x, y) as (x, y) -> (0, 0)?
 > - [x] Nothing yet — a curved path of approach (e.g. a parabola) could still give a different limit
@@ -37,11 +37,11 @@ exists; it can only fail to disprove it.
 Why does agreement along every straight line through a point fail to prove that a limit exists at that point in two or more variables? :: A point in R^n (n >= 2) can be approached along infinitely many curves, not just lines, and checking lines alone never rules out a curved path — such as y = x^2 approaching along a parabola — landing on a different value. Only single-variable limits reduce to two directions of approach. ^card-axxj
 
 A scalar field of two variables has a graph that is a **surface** sitting
-one dimension higher than its domain: `z = f(x, y)` lives in R^3 even
+one dimension higher than its domain: $z = f(x, y)$ lives in R^3 even
 though the input is a point in the plane. Once there are three or more
 inputs the graph itself stops being drawable, which is exactly why
 ==level sets== take over as the practical way to picture the function. ^card-1tc4
-A level set fixes the output, `f(x, y) = c`, and plots every input that
+A level set fixes the output, $f(x, y) = c$, and plots every input that
 produces it; for two variables these are the contour lines on a
 topographic map, and for three variables they are level *surfaces*
 nested like the layers of an onion.
@@ -53,9 +53,9 @@ encodes steepness the same way elevation lines do on a map.
 
 On a contour plot, what does it mean for the contour lines to be tightly clustered together in some region, versus widely spaced apart? :: Tightly clustered contours mean the function's value changes rapidly as you move through that region — a steep slope — while widely spaced contours mean the function is nearly flat there, changing slowly over the same distance. ^card-sl0q
 
-The domain of a scalar field of `n` variables is a subset of R^n, and
+The domain of a scalar field of $n$ variables is a subset of R^n, and
 because inputs are now points rather than numbers, domain restrictions
-take on geometric shape: `f(x, y) = sqrt(1 - x^2 - y^2)` is defined only
+take on geometric shape: $f(x, y) = \sqrt{1 - x^2 - y^2}$ is defined only
 on the closed unit disk, not on an interval. The range is still just a
 subset of R, exactly as in the single-variable case — only the domain
 gets more interesting.

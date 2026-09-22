@@ -9,7 +9,7 @@ citations: ["Strang, Introduction to Linear Algebra 5e, Ch. 1"]
 
 Vectors, dot products, and bases give you objects to manipulate; this
 note gives you the thing that does the manipulating. A matrix is not
-primarily a grid of numbers — it's a function. Writing `A*x` means "feed
+primarily a grid of numbers — it's a function. Writing $Ax$ means "feed
 x into the linear map A," and everything else in this category, from
 multiplication to eigenvalues, is a fact about that function rather
 than about the entries themselves.
@@ -17,10 +17,12 @@ than about the entries themselves.
 The property that makes a matrix worth studying as a *linear* map is
 linearity itself:
 
-```
-A*(x + y) = A*x + A*y
-A*(c*x) = c*(A*x)
-```
+$$
+\begin{aligned}
+A(x + y) &= Ax + Ay \\
+A(cx) &= c(Ax)
+\end{aligned}
+$$
 
 That pair of identities looks modest, but it has a strong consequence:
 a linear map is completely determined by what it does to a basis. Any
@@ -44,8 +46,8 @@ everything.
 
 That fact is what makes the columns of a matrix so informative. The
 standard basis vector e_1 is 1 in the first slot and 0 elsewhere, so
-`A*e_1` picks out exactly the first column of A — nothing else in the
-matrix contributes. The same holds for every e_i: `A*e_i` is the i-th
+$Ae_1$ picks out exactly the first column of A — nothing else in the
+matrix contributes. The same holds for every e_i: $Ae_i$ is the i-th
 column of A. So the columns of A are literally the images of the basis
 vectors, and you can read off what the transformation does just by
 looking at where it sends each e_i.
@@ -59,17 +61,17 @@ looking at where it sends each e_i.
 > - [ ] Stretches both axes by 3 and leaves y unchanged
 > - [ ] Projects every vector onto the x-axis ^card-qpmg
 
-This is the ==column picture== of matrix-vector multiplication: `A*x` ^card-1iv4
+This is the ==column picture== of matrix-vector multiplication: $Ax$ ^card-1iv4
 is not "dot each row of A against x" so much as it is a recipe for
 combining columns. Writing x = (x_1, x_2, ..., x_n), the product is a
 weighted sum of A's own columns:
 
-```
-A*x = x_1*a_1 + x_2*a_2 + ... + x_n*a_n
-```
+$$
+Ax = x_1 a_1 + x_2 a_2 + \cdots + x_n a_n
+$$
 
 where a_1, ..., a_n are the columns of A. The row picture — computing
-each output entry as a dot product `row_i(A)·x` — gives the identical
+each output entry as a dot product $\operatorname{row}_i(A) \cdot x$ — gives the identical
 numbers, but it answers a different question. The row picture tells
 you one output coordinate at a time; the column picture tells you that
 every output is built from the *same* set of directions, the columns,

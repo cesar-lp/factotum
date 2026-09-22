@@ -1,5 +1,6 @@
 import './theme.css';
 import './styles.css';
+import 'katex/dist/katex.min.css';
 import { openDb, type FactotumDb, type StoredCard } from './db/schema.js';
 import { getSettings, saveSettings } from './db/settings.js';
 import { mergeDeck } from './db/deck.js';
@@ -14,6 +15,7 @@ import { renderTopics } from './ui/topics.js';
 import { startReview, type ReviewController } from './ui/review.js';
 import { renderSettings } from './ui/settings.js';
 import { renderNote } from './ui/note.js';
+import { preloadMathFonts } from './ui/math.js';
 import { renderSearch } from './ui/search.js';
 import { loadNotes, findNote, prefetchNotes } from './db/notes.js';
 import { loadNoteReads, recordNoteRead } from './db/note-reads.js';
@@ -392,6 +394,7 @@ async function boot(appRoot: HTMLElement): Promise<void> {
 
 const appRoot = document.querySelector<HTMLElement>('#app');
 if (!appRoot) throw new Error('#app missing');
+preloadMathFonts();
 void boot(appRoot);
 
 // Registered as './sw.js' (the production bundle emitted by vite.config.ts's
