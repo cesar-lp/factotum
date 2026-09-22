@@ -514,7 +514,7 @@ describe('inlineWithMath', () => {
   it('cannot have its escape sentinel forged by note content', () => {
     // The sentinel is NUL + "d" + NUL. Content containing it must not come
     // back out as a dollar sign.
-    const html = inlineWithMath('literal  d  sequence');
+    const html = inlineWithMath('literal \u0000d\u0000 sequence');
     expect(html).not.toContain('$');
   });
 });
