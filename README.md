@@ -214,7 +214,9 @@ Results are notes, not cards: a row opens the note, a chevron expands it
 in place to show the matching snippets, and tapping a snippet opens the
 note scrolled to that block. The scan covers note titles, tags, topic and
 category, citations, headings, prose (which includes cloze answers),
-list items, qa/mcq/recall prompts and answers, and code fences. Query
+list items, qa/mcq/recall prompts and answers, code fences, and
+display-math blocks (matched against their raw LaTeX source, so
+`nabla` finds an equation that uses `\nabla`). Query
 terms are split on whitespace and must **all** match (AND, not OR), each
 at a word boundary with an **open right edge** — `hash` finds `hashing`,
 but `ip` does not match inside `multiple`.

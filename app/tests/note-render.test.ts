@@ -202,3 +202,23 @@ describe('inline math in notes', () => {
     expect(html).toContain('>idempotence<');
   });
 });
+
+describe('display math blocks', () => {
+  it('renders a math block as display-mode KaTeX', () => {
+    const html = renderNoteBlocks([{ kind: 'math', text: 'A^\\top A x = A^\\top b' }]);
+    expect(html).toContain('note-math');
+    expect(html).toContain('katex-display');
+  });
+
+  it('never applies inline markup to a math block', () => {
+    // `*` and `_` are LaTeX operators here, not emphasis markers.
+    const html = renderNoteBlocks([{ kind: 'math', text: 'a_1 * b_2 * c_3' }]);
+    expect(html).not.toContain('<em>');
+    expect(html).not.toContain('<strong>');
+  });
+
+  it('carries the block index like every other block', () => {
+    const html = renderNoteBlocks([{ kind: 'prose', text: 'x', clozes: [] }, { kind: 'math', text: 'y' }]);
+    expect(html).toContain('data-block="1"');
+  });
+});

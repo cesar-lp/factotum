@@ -1,5 +1,6 @@
 import type { NoteBlock } from '../../../pipeline/src/types.js';
 import { escapeHtml, inlineWithMath } from './renderers.js';
+import { renderMath } from './math.js';
 
 /**
  * Inline markup plus math. `inlineWithMath` takes RAW text and escapes each
@@ -69,6 +70,13 @@ export function renderNoteBlocks(blocks: NoteBlock[], title?: string): string {
       // Escaped only -- never inline markup. Backticks and asterisks inside
       // a code fence are code, not formatting.
       return `<pre class="note-code" ${blockAttr}><code>${escapeHtml(block.text)}</code></pre>`;
+    }
+
+    if (block.kind === 'math') {
+      // Never inline markup, for the same reason the code branch above is
+      // never given it: `*` and `_` are LaTeX operators here, not emphasis
+      // markers. renderMath escapes nothing and needs the LaTeX raw.
+      return `<div class="note-math" ${blockAttr}>${renderMath(block.text, true)}</div>`;
     }
 
     if (block.kind === 'list') {

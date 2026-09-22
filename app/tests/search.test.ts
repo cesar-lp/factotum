@@ -220,3 +220,10 @@ describe('search over the real notes corpus', () => {
     }
   });
 });
+
+describe('math block indexing', () => {
+  it('indexes a math block on its raw LaTeX source', () => {
+    const { text } = blockText({ kind: 'math', text: '\\nabla f(x) = 0' });
+    expect(text).toBe('\\nabla f(x) = 0');
+  });
+});
