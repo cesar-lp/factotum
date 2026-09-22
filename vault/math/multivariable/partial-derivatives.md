@@ -10,19 +10,19 @@ citations: ["Stewart, Calculus: Early Transcendentals 8e, Ch. 14.3"]
 `functions-of-several-variables.md` established that a scalar field
 takes several inputs at once; a **partial derivative** is the first,
 smallest step toward differentiating one — and it works by cheating the
-multivariable problem away entirely. To compute `∂f/∂x`, freeze every
+multivariable problem away entirely. To compute $\partial f/\partial x$, freeze every
 other variable at a constant value and take the ordinary single-variable
-derivative with respect to `x` alone. Nothing new is required: every
+derivative with respect to $x$ alone. Nothing new is required: every
 differentiation rule from `math-calculus` applies unchanged, because
-once the other variables are frozen, `f` is a function of one variable
+once the other variables are frozen, $f$ is a function of one variable
 again.
 
-```
-∂f/∂x = lim_{h->0} [f(x+h, y) - f(x, y)] / h
-```
+$$
+\frac{\partial f}{\partial x} = \lim_{h \to 0} \frac{f(x+h, y) - f(x, y)}{h}
+$$
 
 That same cheapness is also the partial derivative's limitation. Because
-`∂f/∂x` only asks what happens as `x` moves and `y` stays fixed, it
+$\partial f/\partial x$ only asks what happens as $x$ moves and $y$ stays fixed, it
 describes the function's behavior along a single coordinate direction —
 one slice through the surface — and says nothing about what happens
 along any other direction. Two functions can have identical partials at
@@ -39,13 +39,13 @@ slopes, which is exactly the gap `directional-derivatives.md` and
 > - [ ] 2*x + cos(y) ^card-vh5g
 
 Notation varies across sources but always means the same object:
-`∂f/∂x`, `f_x`, and `D_x f` are interchangeable. Taking a partial
-derivative again produces a **higher-order** partial: `∂^2f/∂x^2` (also
-written `f_xx`) differentiates twice with respect to `x`.
+$\partial f/\partial x$, $f_x$, and $D_x f$ are interchangeable. Taking a partial
+derivative again produces a **higher-order** partial: $\partial^2 f/\partial x^2$ (also
+written $f_{xx}$) differentiates twice with respect to $x$.
 
-A derivative that differentiates with respect to two *different* variables in sequence, such as `∂^2f/(∂x∂y)`, is called a ==mixed partial==. ^card-hipi
+A derivative that differentiates with respect to two *different* variables in sequence, such as $\partial^2 f/(\partial x \partial y)$, is called a ==mixed partial==. ^card-hipi
 
-Geometrically, `∂f/∂x` at a point is the slope of a tangent line drawn
+Geometrically, $\partial f/\partial x$ at a point is the slope of a tangent line drawn
 on a single ==cross-section== of the surface, cut by holding every ^card-jikg
 other variable constant.
 
@@ -67,7 +67,7 @@ Holding "every other variable" fixed is a modelling choice, and treating
 it as free of consequences is the most common way a partial derivative
 gets misapplied. In a real system the other variables are frequently
 *not* independent of the one being varied — raising a gas's temperature
-in a sealed container also changes its pressure, so `∂V/∂T` computed as
+in a sealed container also changes its pressure, so $\partial V/\partial T$ computed as
 if pressure stays put describes a slice of the equation of state, not
 what actually happens physically when you heat the gas. A partial
 derivative answers a question about one cross-section of the function;

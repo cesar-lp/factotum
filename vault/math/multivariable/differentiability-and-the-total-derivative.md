@@ -39,10 +39,10 @@ no other linear map does better as you zoom in.
 This is strictly stronger than having all the partial derivatives, or
 even all the directional derivatives, exist at a point. The standard
 counterexample has a function built from ratios of coordinates — for
-instance one that equals `x*y^2/(x^2+y^4)` away from the origin and 0 at
+instance one that equals $xy^2/(x^2+y^4)$ away from the origin and 0 at
 it — where every directional derivative at the origin exists and is
 finite, yet the function isn't even ==continuous== there: approaching ^card-sjxe
-along the curve `x = y^2` gives a different limit than approaching along
+along the curve $x = y^2$ gives a different limit than approaching along
 any straight line. No single linear map can match a function that
 behaves inconsistently depending on which curve you ride in on, so
 differentiability fails even though every straight-line probe through
@@ -71,26 +71,25 @@ formality automatically granted by "the partials exist."
 
 When f is differentiable at a, the linear map L in the definition is
 called the **total derivative**, and it's given by the gradient acting
-as a dot product: `L(h) = ∇f(a)·h`. Its graph, shifted to pass through
+as a dot product: $L(h) = \nabla f(a) \cdot h$. Its graph, shifted to pass through
 the point, is the **tangent plane** — the flat surface that best hugs
-the surface `z = f(x, y)` at that point:
+the surface $z = f(x, y)$ at that point:
 
-```
-tangent plane at (a, b):
-z = f(a, b) + ∂f/∂x(a, b)*(x - a) + ∂f/∂y(a, b)*(y - b)
-```
+$$
+z = f(a, b) + \frac{\partial f}{\partial x}(a, b)(x - a) + \frac{\partial f}{\partial y}(a, b)(y - b)
+$$
 
-The **total differential** `df = ∂f/∂x*dx + ∂f/∂y*dy + ...` is the same
+The **total differential** $df = \frac{\partial f}{\partial x} dx + \frac{\partial f}{\partial y} dy + \cdots$ is the same
 linear map written in the notation used for estimating how much the
 output changes for a small, named change in each input — the
-multivariable replacement for `dy = f'(x)*dx`.
+multivariable replacement for $dy = f'(x)\, dx$.
 
 Why is the total derivative, restricted to two variables, called a "tangent plane" rather than just a linear approximation? :: Because the graph of the linear map L, shifted to sit at the point (a, f(a)), is literally a plane in R^3 that touches the surface z = f(x, y) at that point and matches its instantaneous rate of change in every direction — geometrically it plays exactly the role a tangent line plays for a single-variable curve. ^card-56wr
 
 Differentiability sits at the top of a one-way chain of implications:
 differentiable implies continuous, and differentiable implies every
-directional derivative exists (with each one recoverable as `∇f·u` for
-unit vector `u`). Neither converse holds — continuity doesn't force
+directional derivative exists (with each one recoverable as $\nabla f \cdot u$ for
+unit vector $u$). Neither converse holds — continuity doesn't force
 differentiability, and having every directional derivative doesn't
 either, as the counterexample above shows.
 

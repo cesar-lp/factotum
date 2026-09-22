@@ -9,23 +9,23 @@ citations: ["Stewart, Calculus: Early Transcendentals 8e, Ch. 14.6"]
 
 `partial-derivatives.md` computes the rate of change along the
 coordinate axes only. The **directional derivative** answers the more
-general question those axes can't: the rate of change of `f` along an
+general question those axes can't: the rate of change of $f$ along an
 *arbitrary* direction, specified by a vector u.
 
-```
-D_u f(x, y) = lim_{h->0} [f(x + h*u1, y + h*u2) - f(x, y)] / h
-```
+$$
+D_u f(x, y) = \lim_{h \to 0} \frac{f(x + hu_1, y + hu_2) - f(x, y)}{h}
+$$
 
 In practice this limit is never computed directly — it reduces to a
 single dot product with the gradient:
 
-```
-D_u f = ∇f·u
-```
+$$
+D_u f = \nabla f \cdot u
+$$
 
 That formula carries a requirement that is easy to forget and produces
-a wrong answer, not an error: `u` must be a ==unit vector==, `||u|| = 1`. ^card-e9ot
-The dot product `∇f·u` scales linearly with `||u||`, so plugging in an
+a wrong answer, not an error: $u$ must be a ==unit vector==, $\|u\| = 1$. ^card-e9ot
+The dot product $\nabla f \cdot u$ scales linearly with $\|u\|$, so plugging in an
 unnormalized direction — say, (3, 4) instead of (3/5, 4/5) — silently
 returns a number five times too large, with no warning that anything
 went wrong. Normalizing u before taking the dot product is the single
@@ -42,9 +42,9 @@ most common step skipped in this topic.
 Why does using an unnormalized direction vector in D_u f = ∇f·u give a numerically wrong answer rather than triggering an obvious error? :: The dot product ∇f·u scales linearly with ||u||, so an unnormalized vector just rescales the result by its own magnitude — the computation still runs and produces a plausible-looking number, it's simply the rate of change along that vector's actual length rather than per unit distance, with nothing to flag the mistake. ^card-dr4x
 
 The coordinate partials are not a separate idea from the directional
-derivative — they are its special case. `∂f/∂x` is exactly `D_u f` when
-`u` is the unit basis vector `(1, 0)`, and `∂f/∂y` is `D_u f` for
-`u = (0, 1)`. Every partial derivative is a directional derivative in
+derivative — they are its special case. $\partial f/\partial x$ is exactly $D_u f$ when
+$u$ is the unit basis vector $(1, 0)$, and $\partial f/\partial y$ is $D_u f$ for
+$u = (0, 1)$. Every partial derivative is a directional derivative in
 one of finitely many special directions; the directional derivative
 generalizes to all the rest.
 
@@ -57,10 +57,10 @@ generalizes to all the rest.
 > ∂f/∂x. So the ordinary partial with respect to x is D_u f evaluated
 > along the x-axis basis direction, not a different kind of object. ^card-cnjg
 
-Because `D_u f = ∇f·u = ||∇f|| cos(theta)` for a unit vector u (with
+Because $D_u f = \nabla f \cdot u = \|\nabla f\| \cos(\theta)$ for a unit vector u (with
 theta the angle between u and the gradient), the directional derivative
-is bounded: it ranges from `-||∇f||`, when u points directly opposite
-the gradient, up to `+||∇f||`, when u points along it. It is exactly
+is bounded: it ranges from $-\|\nabla f\|$, when u points directly opposite
+the gradient, up to $+\|\nabla f\|$, when u points along it. It is exactly
 zero whenever u is tangent to the level set through the point — the
 same orthogonality fact from `the-gradient-and-steepest-ascent.md`,
 now stated as a property of D_u f rather than of ∇f.
@@ -82,7 +82,7 @@ be differentiable there in the fuller sense.
 The existence of all directional derivatives at a point is a weaker
 condition than differentiability, precisely because computing each one
 separately never checks that they vary continuously or consistently
-with direction — a single formula like `D_u f = ∇f·u` might not even
+with direction — a single formula like $D_u f = \nabla f \cdot u$ might not even
 hold for such a function. Making that fuller notion precise is exactly
 the job of a sibling note later in this category.
 

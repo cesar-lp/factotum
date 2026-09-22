@@ -8,20 +8,20 @@ citations: ["Stewart, Calculus: Early Transcendentals 8e, Ch. 14"]
 # Gradient descent and why the gradient matters
 
 Every earlier note in this category built toward one destination:
-`the-gradient-and-steepest-ascent.md` established that `∇f` points toward
-the fastest local increase of `f`. This note is the payoff — turning that
+`the-gradient-and-steepest-ascent.md` established that $\nabla f$ points toward
+the fastest local increase of $f$. This note is the payoff — turning that
 one fact into an algorithm that finds minima of functions with far too
-many variables to solve `∇f = 0` by hand.
+many variables to solve $\nabla f = 0$ by hand.
 
-If `∇f` is the direction of fastest increase, then `-∇f` is the direction
+If $\nabla f$ is the direction of fastest increase, then $-\nabla f$ is the direction
 of fastest decrease, at that point, to first order. Gradient descent does
 nothing more clever than stepping repeatedly in that direction:
 
-```
-x_{k+1} = x_k - alpha * ∇f(x_k)
-```
+$$
+x_{k+1} = x_k - \alpha \nabla f(x_k)
+$$
 
-where `alpha > 0` is the step size (also called the learning rate).
+where $\alpha > 0$ is the step size (also called the learning rate).
 
 > [!card] recall
 > Write the gradient descent update rule, and explain in one sentence why the gradient is subtracted rather than added.
@@ -35,7 +35,7 @@ where `alpha > 0` is the step size (also called the learning rate).
 > - [ ] Perpendicular to the gradient
 > - [ ] Toward the nearest critical point in a straight line, regardless of the gradient's direction ^card-rst5
 
-The step size `alpha` is not a minor tuning knob — it's the central
+The step size $\alpha$ is not a minor tuning knob — it's the central
 practical difficulty of the whole method, and there is no universally
 correct value. Too small, and convergence is technically guaranteed under
 mild conditions but painfully slow, taking many more steps than the
@@ -45,13 +45,13 @@ that justifies "step opposite the gradient" only holds locally.
 
 Why is choosing the gradient descent step size alpha described as a genuine trade-off with no universally right answer, rather than a detail to tune once and forget? :: Because the two failure modes pull in opposite directions and the right balance depends on the specific function's curvature: too small a step wastes enormous numbers of iterations converging slowly, while too large a step causes the linear approximation behind the update to break down, leading to overshoot, oscillation, or outright divergence — no fixed alpha is safe across different problems or even across regions of the same problem. ^card-aohc
 
-What gradient descent guarantees depends entirely on the shape of `f`.
+What gradient descent guarantees depends entirely on the shape of $f$.
 For a ==convex== function, every local minimum is automatically a global ^card-0rt4
 minimum, so descent converging to a local minimum has, in that case,
 actually solved the global problem.
 
 Without that shape assumption, no such guarantee holds: descent still
-converges to a critical point where `∇f = 0`, but that point could be a
+converges to a critical point where $\nabla f = 0$, but that point could be a
 saddle or a shallow, poor local minimum rather than the function's true
 minimum anywhere nearby.
 
@@ -70,13 +70,13 @@ What does convexity of f buy you that makes gradient descent's convergence to a 
 Large-scale optimization (fitting a model with millions of parameters)
 uses the gradient rather than the Hessian for the same reason
 `the-hessian-and-second-order-behaviour.md` gives for preferring
-first-order information generally: a gradient in `n` dimensions costs
-`n` numbers, while a Hessian costs `n^2` — for large `n`, forming and
+first-order information generally: a gradient in $n$ dimensions costs
+$n$ numbers, while a Hessian costs $n^2$ — for large $n$, forming and
 inverting it is simply too expensive to do at every step.
 
 Even with a well-chosen step size, descent can be slow for a structural
-reason that has nothing to do with `alpha`: a poorly **conditioned**
-landscape, where `f` curves much more sharply in some directions than
+reason that has nothing to do with $\alpha$: a poorly **conditioned**
+landscape, where $f$ curves much more sharply in some directions than
 others, makes the steepest-descent direction at a point sit almost
 perpendicular to the actual direction toward the minimum. The path zigzags
 back and forth across the narrow direction while making slow progress
@@ -91,11 +91,11 @@ curvature itself — they change how the update uses past information.
 **Momentum** accumulates a running average of past gradient directions so
 that consistent progress along the shallow direction reinforces itself
 while oscillation across the narrow direction partially cancels out.
-**Adaptive step sizes** (as in Adam or AdaGrad) scale `alpha` separately
+**Adaptive step sizes** (as in Adam or AdaGrad) scale $\alpha$ separately
 per coordinate, shrinking it where the gradient has been large and
 volatile and growing it where the gradient has been small and steady.
 
-The single idea underlying every difficulty in this note is that `∇f` is
+The single idea underlying every difficulty in this note is that $\nabla f$ is
 a **local** object — it describes the slope exactly at one point and
 nothing about the function's shape anywhere else. Step size, non-convex
 critical points, and zigzagging under poor conditioning are three

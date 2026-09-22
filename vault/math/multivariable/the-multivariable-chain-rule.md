@@ -12,22 +12,22 @@ derivative as a linear map. The chain rule is what that buys you: the
 derivative of a composition of differentiable functions is the
 **product of their derivative matrices**, taken in the same order the
 functions compose. The familiar single-variable chain rule
-`(f(g(x)))' = f'(g(x))*g'(x)` is just the case where every matrix
+$(f(g(x)))' = f'(g(x))g'(x)$ is just the case where every matrix
 involved is 1-by-1, so multiplication of numbers and multiplication of
 matrices happen to look identical.
 
-```
-matrix form:  D(f o g)(a) = Df(g(a)) * Dg(a)
-```
+$$
+\text{matrix form:} \quad D(f \circ g)(a) = Df(g(a)) \, Dg(a)
+$$
 
 When the inner functions are themselves functions of a single parameter
-`t` — say `z = f(x, y)` with `x = x(t)` and `y = y(t)` — the matrix
-product expands into a sum, because `Df` is a row vector (the gradient)
-and `Dg` is a column, and their product is a dot product:
+$t$ — say $z = f(x, y)$ with $x = x(t)$ and $y = y(t)$ — the matrix
+product expands into a sum, because $Df$ is a row vector (the gradient)
+and $Dg$ is a column, and their product is a dot product:
 
-```
-tree form:  dz/dt = (∂f/∂x)*(dx/dt) + (∂f/∂y)*(dy/dt)
-```
+$$
+\text{tree form:} \quad \frac{dz}{dt} = \frac{\partial f}{\partial x}\frac{dx}{dt} + \frac{\partial f}{\partial y}\frac{dy}{dt}
+$$
 
 > [!card] recall
 > Write the multivariable chain rule (tree form) for z = f(x, y) where
@@ -66,8 +66,8 @@ Why does a variable that reaches the output of a composed function through two d
 
 A second confusion is specifically about **partial vs. total** derivatives
 when the "independent" variables are secretly related to each other. If
-`z = f(x, y)` but `y` itself depends on `x`, then `∂z/∂x` (holding y fixed,
-ignoring the dependency) and `dz/dx` (the total derivative, accounting for
+$z = f(x, y)$ but $y$ itself depends on $x$, then $\partial z/\partial x$ (holding y fixed,
+ignoring the dependency) and $dz/dx$ (the total derivative, accounting for
 y's dependence on x through the chain rule) are genuinely different
 numbers, and using the wrong one is where sign and term errors in applied
 problems usually come from.
@@ -75,9 +75,9 @@ problems usually come from.
 What is the practical difference between ∂z/∂x and dz/dx when z = f(x, y) and y itself depends on x? :: ∂z/∂x treats y as fixed and measures only the direct effect of x on z, ignoring that a change in x also drags y along with it. dz/dx is the total derivative, and by the chain rule equals ∂z/∂x + (∂z/∂y)*(dy/dx) — it accounts for both the direct path through x and the indirect path through y. ^card-lpcp
 
 A related trap is purely notational: reusing the same symbol for both
-the outer function and the inner variable it depends on, writing `z =
-z(x, y)` and `x = x(t)` and then asking for `dz/dt`, makes it easy to
-lose track of which `z` or `x` a given derivative symbol refers to at
+the outer function and the inner variable it depends on, writing
+$z = z(x, y)$ and $x = x(t)$ and then asking for $dz/dt$, makes it easy to
+lose track of which $z$ or $x$ a given derivative symbol refers to at
 each step of the chain. Keeping the intermediate variables named
 distinctly — or at minimum tracking a dependency diagram before writing
 any derivative — avoids conflating the two.

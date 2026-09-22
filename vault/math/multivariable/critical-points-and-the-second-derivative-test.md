@@ -7,14 +7,14 @@ citations: ["Stewart, Calculus: Early Transcendentals 8e, Ch. 14"]
 
 # Critical points and the second-derivative test
 
-`the-gradient-and-steepest-ascent.md` establishes `∇f` as the direction of
+`the-gradient-and-steepest-ascent.md` establishes $\nabla f$ as the direction of
 fastest increase. A critical point is where that direction stops being
-well defined in the way that matters for optimization: `∇f = 0`, so there
+well defined in the way that matters for optimization: $\nabla f = 0$, so there
 is no direction of steepest increase left to point in. This note asks what
 a critical point can actually *be* once you find one — and the answer has
 one more case than the single-variable story does.
 
-A critical point of `f` is a point where `∇f = 0`, or where `∇f` fails to
+A critical point of $f$ is a point where $\nabla f = 0$, or where $\nabla f$ fails to
 exist at all. In one variable, a critical point of a smooth function is a
 minimum, a maximum, or an inflection point along the only direction there
 is. In several variables the same zero gradient can sit underneath a
@@ -58,16 +58,20 @@ the geometric picture above exactly.
 
 For two variables the full definiteness test collapses to a single
 number, cheap enough to compute by hand, using the second partials
-`f_xx`, `f_yy`, `f_xy` at the critical point:
+$f_{xx}$, $f_{yy}$, $f_{xy}$ at the critical point:
 
-```
-D = f_xx*f_yy - f_xy^2
+$$
+D = f_{xx}f_{yy} - f_{xy}^2
+$$
 
-D > 0 and f_xx > 0  ->  local minimum
-D > 0 and f_xx < 0  ->  local maximum
-D < 0               ->  saddle point
-D = 0               ->  test is inconclusive
-```
+$$
+\begin{aligned}
+D > 0 \text{ and } f_{xx} > 0 &\implies \text{local minimum} \\
+D > 0 \text{ and } f_{xx} < 0 &\implies \text{local maximum} \\
+D < 0 &\implies \text{saddle point} \\
+D = 0 &\implies \text{test is inconclusive}
+\end{aligned}
+$$
 
 > [!card] mcq
 > At a critical point, D = f_xx*f_yy - f_xy^2 comes out negative. What does that tell you?
@@ -83,8 +87,8 @@ D = 0               ->  test is inconclusive
 > - [ ] The point is definitely a degenerate minimum
 > - [ ] D = 0 is impossible at a genuine critical point ^card-raua
 
-`D = 0` means the Hessian is only semidefinite: the quadratic
-approximation is flat along some direction, and the sign of `f` along
+$D = 0$ means the Hessian is only semidefinite: the quadratic
+approximation is flat along some direction, and the sign of $f$ along
 that direction is decided by third- or higher-order terms the Hessian
 doesn't see at all. The two-variable discriminant simply has no
 information left to give at that point.
@@ -92,9 +96,9 @@ information left to give at that point.
 When D = 0 at a critical point and the discriminant is silent, how do you actually determine the point's type? :: Fall back to direct analysis along the flat direction — check the sign of f - f(critical point) explicitly, using higher-order Taylor terms or the specific algebraic form of f, since the second-order test alone cannot distinguish min, max, or saddle when the Hessian is only semidefinite. ^card-owxe
 
 Both the discriminant test and the full definiteness test are inherently
-**local**: they describe the shape of `f` in a neighborhood of one
-critical point and say nothing about how `f` compares to its values
-elsewhere. Finding the true global maximum or minimum of `f` over a
+**local**: they describe the shape of $f$ in a neighborhood of one
+critical point and say nothing about how $f$ compares to its values
+elsewhere. Finding the true global maximum or minimum of $f$ over a
 closed, bounded region requires also checking the region's boundary,
 since the global extremum can sit there instead of at any interior
 critical point. That boundary search, with a constraint equation
