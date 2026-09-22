@@ -15,15 +15,15 @@ is often worth making.
 
 For a constant force acting over a straight-line displacement, work is:
 
-```
-W = F*d*cos(theta)
-```
+$$
+W = Fd\cos(\theta)
+$$
 
-where `theta` is the angle between the force vector and the displacement
-vector, and `d` is the displacement's magnitude. `theta` is not decoration
+where $\theta$ is the angle between the force vector and the displacement
+vector, and $d$ is the displacement's magnitude. $\theta$ is not decoration
 — it is the entire content of the definition. Only the component of force
 **along** the direction of motion does work; the component perpendicular
-to the motion contributes nothing, because `cos(90) = 0`.
+to the motion contributes nothing, because $\cos(90^\circ) = 0$.
 
 That single fact explains two results that otherwise look like separate
 rules to memorize: the normal force on a block sliding across a floor does
@@ -41,7 +41,7 @@ what "zero work" predicts.
 > - [ ] Gravity, because the block is on a horizontal surface
 > - [ ] The applied force pushing the block forward ^card-r5eu
 
-Why does a force perpendicular to an object's displacement do zero work on it, regardless of how large that force is? :: Work depends on the component of force along the direction of motion, `F*cos(theta)`. A perpendicular force has `theta = 90` degrees, so `cos(theta) = 0` no matter how large the force's magnitude is — it can change the object's direction (as centripetal force does) without ever adding or removing energy. ^card-aem5
+Why does a force perpendicular to an object's displacement do zero work on it, regardless of how large that force is? :: Work depends on the component of force along the direction of motion, $F\cos(\theta)$. A perpendicular force has $\theta = 90$ degrees, so $\cos(\theta) = 0$ no matter how large the force's magnitude is — it can change the object's direction (as centripetal force does) without ever adding or removing energy. ^card-aem5
 
 Work is a ==scalar==, not a vector, and unlike distance or speed it can be ^card-50gk
 negative: a force with a component opposite the displacement does negative
@@ -61,25 +61,27 @@ When the force varies over the path — a spring, gravity along a curved
 path, anything not constant — work is the integral of the force along the
 path:
 
-```
-W = int F dx        (one dimension)
-W = int F . dr       (general path, dot product with displacement)
-```
+$$
+\begin{aligned}
+W &= \int F\, dx \quad \text{(one dimension)} \\
+W &= \int F \cdot dr \quad \text{(general path, dot product with displacement)}
+\end{aligned}
+$$
 
 Units of work are joules, and one joule is exactly the work done by one
 newton acting over one meter in the direction of motion:
 
-```
-J = N*m
-```
+$$
+\mathrm{J} = \mathrm{N} \cdot \mathrm{m}
+$$
 
 All of that machinery earns its keep through one theorem. The **work-energy
 theorem** states that the net work done on an object by all forces equals
 its change in kinetic energy:
 
-```
-W_net = KE_final - KE_initial = Delta(KE)
-```
+$$
+W_{net} = KE_{final} - KE_{initial} = \Delta(KE)
+$$
 
 > [!card] recall
 > State the work-energy theorem, and explain why it lets you find a
@@ -94,11 +96,11 @@ W_net = KE_final - KE_initial = Delta(KE)
 
 Kinetic energy itself is:
 
-```
-KE = (1/2)*m*v^2
-```
+$$
+KE = \tfrac{1}{2}mv^2
+$$
 
-The `v^2` dependence is not a minor detail — it is why braking distance
+The $v^2$ dependence is not a minor detail — it is why braking distance
 grows the way it does. Doubling an object's speed quadruples its kinetic
 energy, so a car that needs a given amount of negative work from its
 brakes and tires to stop needs roughly four times as much stopping

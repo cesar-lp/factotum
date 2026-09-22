@@ -20,10 +20,12 @@ changing velocity means there is an acceleration, even though speed never
 changes — and that acceleration points toward the center of the circle,
 which is why it's called centripetal ("center-seeking") acceleration.
 
-```
-a_c = v^2/r         (v = speed, r = radius)
-a_c = omega^2*r      (omega = angular velocity, rad/s)
-```
+$$
+\begin{aligned}
+a_c &= v^2/r \quad (v = \text{speed}, r = \text{radius}) \\
+a_c &= \omega^2 r \quad (\omega = \text{angular velocity, rad/s})
+\end{aligned}
+$$
 
 > [!card] recall
 > A car moves around a circular track at constant speed. Explain why it
@@ -34,7 +36,7 @@ a_c = omega^2*r      (omega = angular velocity, rad/s)
 > velocity changes whenever direction changes — even at constant speed,
 > the car's direction is changing continuously as it goes around the
 > curve, so it has nonzero acceleration. That acceleration points toward
-> the circle's center, with magnitude a_c = v^2/r = omega^2*r. ^card-kajx
+> the circle's center, with magnitude $a_c = v^2/r = \omega^2 r$. ^card-kajx
 
 This is the note's central point: **centripetal force is not a fifth
 fundamental force.** It is simply the name given to whatever net force
@@ -56,25 +58,29 @@ switch to an inertial frame outside the car.
 
 Why is calling something "the centripetal force" different from naming a force like gravity or tension — what category of thing is it? :: It's a role, not a distinct type of force with its own source. "Centripetal" describes the direction and effect of whatever net real force (tension, gravity, friction, a normal force, or some combination) happens to be pointing toward the center of the circular path; it never appears as an extra term added on top of the real forces already in a free-body diagram. ^card-0lj2
 
-Period `T` (time for one full revolution) and frequency `f` (revolutions
+Period $T$ (time for one full revolution) and frequency $f$ (revolutions
 per unit time) are reciprocals, and both relate to angular velocity:
 
-```
-T = 1/f
-omega = 2*pi/T = 2*pi*f
-v = omega*r
-```
+$$
+\begin{aligned}
+T &= \frac{1}{f} \\
+\omega &= \frac{2\pi}{T} = 2\pi f \\
+v &= \omega r
+\end{aligned}
+$$
 
-A car rounding a flat, unbanked curve of radius `r` relies entirely on
+A car rounding a flat, unbanked curve of radius $r$ relies entirely on
 static friction to supply the centripetal force, and that friction is
-capped at `mu_s*N`. Setting the maximum available friction equal to the
+capped at $\mu_s N$. Setting the maximum available friction equal to the
 required centripetal force gives the fastest speed the car can take the
 curve without sliding:
 
-```
-mu_s*m*g = m*v^2/r
-v_max = sqrt(mu_s*g*r)
-```
+$$
+\begin{aligned}
+\mu_s m g &= \frac{m v^2}{r} \\
+v_{max} &= \sqrt{\mu_s g r}
+\end{aligned}
+$$
 
 On a banked curve, the roadway is tilted so that a component of the
 **normal** force itself points toward the center, reducing or (at the
@@ -97,17 +103,19 @@ contact with the track is the speed at which gravity alone, with the
 track supplying zero normal force, exactly equals the required
 centripetal force:
 
-```
-m*g = m*v_min^2/r
-v_min = sqrt(g*r)
-```
+$$
+\begin{aligned}
+mg &= \frac{m v_{min}^2}{r} \\
+v_{min} &= \sqrt{gr}
+\end{aligned}
+$$
 
-Why does v_min = sqrt(g*r) represent the *minimum* speed at the top of a vertical loop rather than some other special value? :: Below that speed, gravity alone would be more than what's needed to supply the centripetal force at that radius, which is impossible for the track to compensate for (a track can only push, via normal force, never pull) — so the object would fall away from the circular path. At v_min, gravity exactly supplies the required centripetal force with the normal force at zero; at any higher speed, the track adds a positive normal force on top of gravity to supply the extra centripetal force needed. ^card-q4sb
+Why does $v_{min} = \sqrt{gr}$ represent the *minimum* speed at the top of a vertical loop rather than some other special value? :: Below that speed, gravity alone would be more than what's needed to supply the centripetal force at that radius, which is impossible for the track to compensate for (a track can only push, via normal force, never pull) — so the object would fall away from the circular path. At $v_{min}$, gravity exactly supplies the required centripetal force with the normal force at zero; at any higher speed, the track adds a positive normal force on top of gravity to supply the extra centripetal force needed. ^card-q4sb
 
 Everything so far assumes uniform circular motion — constant speed. When
 speed also changes along the circular path, there is a second,
 **tangential** component of acceleration (along the direction of motion,
-`a_t = dv/dt`) in addition to the centripetal component, and the two are
+$a_t = dv/dt$) in addition to the centripetal component, and the two are
 perpendicular: centripetal acceleration changes the direction of motion,
 tangential acceleration changes its speed.
 

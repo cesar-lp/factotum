@@ -17,13 +17,15 @@ it does not re-teach it.
 Velocity is the rate of change of position, and acceleration is the rate
 of change of velocity:
 
-```
-v = dx/dt
-a = dv/dt
-```
+$$
+\begin{aligned}
+v &= \frac{dx}{dt} \\
+a &= \frac{dv}{dt}
+\end{aligned}
+$$
 
 Nothing about that chain requires acceleration to be constant. But the
-moment you write down `v = v0 + a*t` or any of its relatives, you have
+moment you write down $v = v_0 + at$ or any of its relatives, you have
 smuggled in an assumption, and stating it is not optional — it is the
 single most common source of error in this topic. Someone plugs a
 changing acceleration into a constant-acceleration formula and gets a
@@ -31,23 +33,25 @@ confident, wrong number, with no error message to catch it.
 
 > [!card] mcq
 > A car's acceleration increases steadily from 0 to 4 m/s^2 over 10
-> seconds (it is not constant). What happens if you use `v = v0 + a*t`
-> with `a` set to the average acceleration to find the final velocity?
-> - [x] It gives the wrong answer — the equation assumes constant acceleration throughout, and no single "effective" value of `a` reproduces the true final velocity from a changing one in general
+> seconds (it is not constant). What happens if you use $v = v_0 + at$
+> with $a$ set to the average acceleration to find the final velocity?
+> - [x] It gives the wrong answer — the equation assumes constant acceleration throughout, and no single "effective" value of $a$ reproduces the true final velocity from a changing one in general
 > - [ ] It gives the exact right answer, since averaging the acceleration always compensates for it changing
-> - [ ] The equation still applies unchanged, because `v = v0 + a*t` never assumed anything about acceleration in the first place
+> - [ ] The equation still applies unchanged, because $v = v_0 + at$ never assumed anything about acceleration in the first place
 > - [ ] It works as long as you also average the initial velocity ^card-5c28
 
 Under that one hypothesis — acceleration constant over the interval — the
-four equations relating displacement `x - x0`, initial velocity `v0`,
-final velocity `v`, acceleration `a`, and elapsed time `t` are:
+four equations relating displacement $x - x_0$, initial velocity $v_0$,
+final velocity $v$, acceleration $a$, and elapsed time $t$ are:
 
-```
-v  = v0 + a*t                      (omits x - x0)
-x - x0 = v0*t + (1/2)*a*t^2        (omits v)
-v^2 = v0^2 + 2*a*(x - x0)          (omits t)
-x - x0 = (1/2)*(v0 + v)*t          (omits a)
-```
+$$
+\begin{aligned}
+v &= v_0 + at \quad \text{(omits } x - x_0\text{)} \\
+x - x_0 &= v_0 t + \tfrac{1}{2}at^2 \quad \text{(omits } v\text{)} \\
+v^2 &= v_0^2 + 2a(x - x_0) \quad \text{(omits } t\text{)} \\
+x - x_0 &= \tfrac{1}{2}(v_0 + v)t \quad \text{(omits } a\text{)}
+\end{aligned}
+$$
 
 > [!card] recall
 > Write the four constant-acceleration kinematic equations, and state the
@@ -70,7 +74,7 @@ dimension each component evolves independently under its own
 acceleration. This is exactly what makes projectile motion tractable:
 horizontal velocity stays ==constant== (no horizontal acceleration, ignoring ^card-gsgl
 air resistance), while gravity alone governs the vertical component,
-at `-9.8 m/s^2`.
+at $-9.8 \text{ m/s}^2$.
 
 What lets you analyze horizontal and vertical motion in a projectile separately, using the same time variable t, instead of solving one coupled two-dimensional problem? :: Acceleration in one perpendicular direction has no effect on velocity or position in the other. Horizontal and vertical motion are governed by independent equations of the same t, which is why a projectile's horizontal velocity component never changes while its vertical component follows ordinary free-fall kinematics. ^card-px7r
 

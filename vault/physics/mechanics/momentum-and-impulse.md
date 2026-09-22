@@ -17,9 +17,9 @@ possible.
 
 Momentum is a vector, the product of mass and velocity:
 
-```
-p = m*v          [kg*m/s]
-```
+$$
+p = mv \qquad [\mathrm{kg \cdot m/s}]
+$$
 
 It points the same direction as velocity, and doubling either the mass
 or the speed doubles it.
@@ -27,29 +27,29 @@ or the speed doubles it.
 Newton's second law, as Newton actually stated it, is a law about
 momentum, not acceleration:
 
-```
-F_net = dp/dt
-```
+$$
+F_{net} = \frac{dp}{dt}
+$$
 
-`F = m*a` is the special case of this law that holds only under the
-hypothesis of ==constant mass== — differentiate `p = m*v` with constant ^card-9vjc
-`m` and the mass falls out of the derivative, leaving
-`F = m*(dv/dt) = m*a`. The general form is what you need whenever mass
+$F = ma$ is the special case of this law that holds only under the
+hypothesis of ==constant mass== — differentiate $p = mv$ with constant ^card-9vjc
+$m$ and the mass falls out of the derivative, leaving
+$F = m(dv/dt) = ma$. The general form is what you need whenever mass
 changes during the motion, such as a rocket burning fuel or a raindrop
 accreting water as it falls.
 
-Why does `F_net = dp/dt` reduce to `F = m*a` for a rocket only before it starts burning fuel, and not during the burn? :: During the burn, mass is changing with time, so `dp/dt = d(m*v)/dt` expands by the product rule into `m*(dv/dt) + v*(dm/dt)` — a second term that vanishes only when `dm/dt = 0`. `F = m*a` silently drops that term, so applying it to a rocket mid-burn omits the thrust contribution from expelled mass and gets the dynamics wrong. ^card-k9vt
+Why does $F_{net} = dp/dt$ reduce to $F = ma$ for a rocket only before it starts burning fuel, and not during the burn? :: During the burn, mass is changing with time, so $dp/dt = d(mv)/dt$ expands by the product rule into $m(dv/dt) + v(dm/dt)$ — a second term that vanishes only when $dm/dt = 0$. $F = ma$ silently drops that term, so applying it to a rocket mid-burn omits the thrust contribution from expelled mass and gets the dynamics wrong. ^card-k9vt
 
-Integrating `F_net = dp/dt` over the time a force acts gives the
+Integrating $F_{net} = dp/dt$ over the time a force acts gives the
 **impulse-momentum theorem**: a net force applied for a duration produces
 a change in momentum equal to the impulse delivered.
 
-```
-J = F*Δt = Δp        [kg*m/s, equivalently N*s]
-```
+$$
+J = F \Delta t = \Delta p \qquad [\mathrm{kg \cdot m/s}, \text{equivalently } \mathrm{N \cdot s}]
+$$
 
-For a fixed `Δp` — say, a body's momentum going to zero on impact — `J`
-is fixed too, so `F` and `Δt` trade off against each other: stretching
+For a fixed $\Delta p$ — say, a body's momentum going to zero on impact — $J$
+is fixed too, so $F$ and $\Delta t$ trade off against each other: stretching
 out the collision time lowers the peak force needed to produce the same
 change in momentum. That single relationship is the entire physics
 behind airbags, crumple zones, catching a fast ball with a give in your
@@ -63,12 +63,12 @@ momentum has to change, all of them buy more time to change it in.
 > theorem, why the occupant experiences a smaller peak force in the
 > second case.
 > ---
-> Both cases deliver the same impulse `J = Δp`, since the car loses the
-> same momentum either way. `J = F*Δt`, so for fixed `J`, force and time
+> Both cases deliver the same impulse $J = \Delta p$, since the car loses the
+> same momentum either way. $J = F \Delta t$, so for fixed $J$, force and time
 > are inversely related: stretching the stopping time over the crumple
 > zone's longer deceleration means a smaller average force is needed to
-> produce that same `Δp`. The rigid wall delivers the same momentum
-> change almost instantly, forcing `F` to be much larger. ^card-j3ni
+> produce that same $\Delta p$. The rigid wall delivers the same momentum
+> change almost instantly, forcing $F$ to be much larger. ^card-j3ni
 
 For a system of bodies, Newton's third law makes every internal
 interaction cancel: whatever momentum one body loses to another inside
@@ -76,11 +76,11 @@ the system, the other gains, so those forces contribute nothing to the
 system's total momentum change. What's left is only the **net external**
 force on the system as a whole.
 
-```
-F_ext,net = dp_total/dt
-```
+$$
+F_{ext,net} = \frac{dp_{total}}{dt}
+$$
 
-**Conservation of momentum** is the case `F_ext,net = 0`: an isolated
+**Conservation of momentum** is the case $F_{ext,net} = 0$: an isolated
 system's total momentum is constant. This is why momentum is conserved
 in a collision even though the colliding bodies exert forces on each
 other large enough to crumple metal — those forces are internal to the

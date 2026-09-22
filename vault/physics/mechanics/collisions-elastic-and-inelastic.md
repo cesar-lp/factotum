@@ -37,9 +37,9 @@ A **perfectly inelastic** collision is the opposite extreme: the bodies
 
 Momentum conservation alone fixes that common velocity:
 
-```
-m1*v1 + m2*v2 = (m1 + m2)*v_f
-```
+$$
+m_1 v_1 + m_2 v_2 = (m_1 + m_2) v_f
+$$
 
 Sticking together is not just *an* inelastic case — it is the case of
 **maximum** possible kinetic energy loss consistent with momentum
@@ -54,15 +54,16 @@ Why is a perfectly inelastic collision, where the bodies stick together, the cas
 For a general one-dimensional elastic collision, both conservation laws
 hold simultaneously and can be solved for the final velocities:
 
-```
-m1*v1 + m2*v2 = m1*v1' + m2*v2'                 (momentum)
-(1/2)*m1*v1^2 + (1/2)*m2*v2^2
-    = (1/2)*m1*v1'^2 + (1/2)*m2*v2'^2            (KE)
-```
+$$
+\begin{aligned}
+m_1 v_1 + m_2 v_2 &= m_1 v_1' + m_2 v_2' \quad \text{(momentum)} \\
+\tfrac{1}{2} m_1 v_1^2 + \tfrac{1}{2} m_2 v_2^2 &= \tfrac{1}{2} m_1 v_1'^2 + \tfrac{1}{2} m_2 v_2'^2 \quad \text{(KE)}
+\end{aligned}
+$$
 
 The **equal-mass** elastic case is worth memorizing on its own, because
-its result is so clean: when `m1 = m2`, solving the pair above gives
-`v1' = v2` and `v2' = v1` — the two bodies simply ==exchange velocities==. ^card-6dgn
+its result is so clean: when $m_1 = m_2$, solving the pair above gives
+$v_1' = v_2$ and $v_2' = v_1$ — the two bodies simply ==exchange velocities==. ^card-6dgn
 
 A moving billiard ball striking an identical stationary one elastically
 stops dead, handing off all its velocity to the other.
@@ -72,26 +73,26 @@ stops dead, handing off all its velocity to the other.
 > equal-mass bodies in a one-dimensional elastic collision exchange
 > velocities rather than ending up with some other pair of final speeds.
 > ---
-> With `m1 = m2 = m`, the momentum equation becomes `v1 + v2 = v1' + v2'`
-> and the kinetic energy equation becomes `v1^2 + v2^2 = v1'^2 + v2'^2`.
-> The pair `v1' = v2, v2' = v1` satisfies both trivially (it just swaps
+> With $m_1 = m_2 = m$, the momentum equation becomes $v_1 + v_2 = v_1' + v_2'$
+> and the kinetic energy equation becomes $v_1^2 + v_2^2 = v_1'^2 + v_2'^2$.
+> The pair $v_1' = v_2, v_2' = v_1$ satisfies both trivially (it just swaps
 > the two terms in each sum), and because two equations in two unknowns
 > pin down the solution (excluding the trivial no-collision case
-> `v1'=v1, v2'=v2`), that swap is the unique physical outcome. ^card-txzn
+> $v_1'=v_1, v_2'=v_2$), that swap is the unique physical outcome. ^card-txzn
 
-Between the two extremes, the **coefficient of restitution** `e`
+Between the two extremes, the **coefficient of restitution** $e$
 measures how elastic an actual collision is, as the ratio of relative
 speed after to relative speed before:
 
-```
-e = (v2' - v1') / (v1 - v2)
-```
+$$
+e = \frac{v_2' - v_1'}{v_1 - v_2}
+$$
 
-`e = 1` recovers the elastic case; `e = 0` recovers perfectly inelastic
+$e = 1$ recovers the elastic case; $e = 0$ recovers perfectly inelastic
 (the bodies have zero relative speed afterward — they move together).
-Most real collisions fall strictly between, `0 < e < 1`.
+Most real collisions fall strictly between, $0 < e < 1$.
 
-What does a measured coefficient of restitution of `e = 0.6` tell you about a collision, and what would `e = 0` and `e = 1` each mean physically? :: `e = 0.6` means the bodies separate afterward at 60% of the relative speed they approached with — some kinetic energy was lost, but they did not stick. `e = 1` means they separate at the same relative speed they approached with (no kinetic energy lost — elastic). `e = 0` means the relative speed afterward is zero — the bodies move off together, which is the perfectly inelastic case. ^card-kp4v
+What does a measured coefficient of restitution of $e = 0.6$ tell you about a collision, and what would $e = 0$ and $e = 1$ each mean physically? :: $e = 0.6$ means the bodies separate afterward at 60% of the relative speed they approached with — some kinetic energy was lost, but they did not stick. $e = 1$ means they separate at the same relative speed they approached with (no kinetic energy lost — elastic). $e = 0$ means the relative speed afterward is zero — the bodies move off together, which is the perfectly inelastic case. ^card-kp4v
 
 > [!card] mcq
 > A dropped ball bounces back to exactly the height it was dropped from,
