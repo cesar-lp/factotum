@@ -510,4 +510,11 @@ describe('inlineWithMath', () => {
   it('leaves a lone $ inside an otherwise plain sentence alone', () => {
     expect(inlineWithMath('costs $5')).toBe('costs $5');
   });
+
+  it('cannot have its escape sentinel forged by note content', () => {
+    // The sentinel is NUL + "d" + NUL. Content containing it must not come
+    // back out as a dollar sign.
+    const html = inlineWithMath('literal  d  sequence');
+    expect(html).not.toContain('$');
+  });
 });
