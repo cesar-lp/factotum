@@ -518,3 +518,46 @@ describe('inlineWithMath', () => {
     expect(html).not.toContain('$');
   });
 });
+
+describe('math in review cards', () => {
+  const mathCard: StoredCard = {
+    ...base, id: 'card-math', format: 'qa', due: 0, reps: 0, lapses: 0,
+    prompt: 'Derive the normal equations from $b - Ax$ being orthogonal to every column of $A$.',
+    answer: 'Orthogonality means $A^\\top(b - Ax) = 0$, i.e. $$A^\\top A x = A^\\top b$$'
+  } as StoredCard;
+
+  it('typesets math in an unrevealed prompt', () => {
+    expect(renderPrompt(mathCard, false)).toContain('class="katex"');
+  });
+
+  it('typesets math in the revealed answer', () => {
+    expect(renderPrompt(mathCard, true)).toContain('katex');
+  });
+
+  it('renders the answer in a div, since katex-display is block content', () => {
+    const html = renderPrompt(mathCard, true);
+    expect(html).toContain('<div class="expected">');
+    expect(html).not.toContain('<p class="expected">');
+  });
+
+  it('still fills a cloze blank when the prompt also contains math', () => {
+    const clozeCard: StoredCard = {
+      ...base, id: 'card-cl', format: 'cloze', due: 0, reps: 0, lapses: 0,
+      prompt: 'The projection matrix $P$ satisfies ___ for any projection.',
+      answer: 'P^2 = P'
+    } as StoredCard;
+    const html = renderPrompt(clozeCard, true, { outcome: 'correct' });
+    expect(html).toContain('cloze-fill');
+    expect(html).not.toContain('___');
+    expect(html).not.toContain('(<span class="cloze-fill');  // not the append fallback
+  });
+
+  it('typesets math in an mcq choice', () => {
+    const mcqCard: StoredCard = {
+      ...base, id: 'card-mcq', format: 'mcq', due: 0, reps: 0, lapses: 0,
+      prompt: 'Which is the projection?',
+      choices: [{ text: '$A(A^\\top A)^{-1}A^\\top$', correct: true }, { text: '$A^\\top A$', correct: false }]
+    } as StoredCard;
+    expect(renderActions(mcqCard, false)).toContain('katex');
+  });
+});
