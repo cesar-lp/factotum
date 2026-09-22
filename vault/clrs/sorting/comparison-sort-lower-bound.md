@@ -20,9 +20,9 @@ from root to leaf is one execution of the algorithm on some input.
 
 Why must a correct comparison-sort decision tree have at least n! leaves? :: Every one of the n! possible orderings of n distinct elements is a permutation the algorithm must be able to output on some input, and each leaf can correspond to at most one output permutation, so a tree with fewer than n! leaves would leave some permutation unreachable — meaning the algorithm would sort at least one input wrong. ^card-97ks
 
-A binary tree of height `h` has at most `2^h` leaves, so a tree with at
-least n! leaves must have height h with `2^h >= n!`, giving
-`h >= lg(n!)`.
+A binary tree of height $h$ has at most $2^h$ leaves, so a tree with at
+least n! leaves must have height h with $2^h \geq n!$, giving
+$h \geq \lg(n!)$.
 
 What does Stirling's approximation let us conclude about lg(n!), and what bound on comparisons does that give? :: lg(n!) is Omega(n lg n), so any comparison-sort decision tree has height Omega(n lg n) — and since the tree's height is exactly the worst-case number of comparisons on some input, every comparison sort makes Omega(n lg n) comparisons in the worst case. ^card-rfgv
 

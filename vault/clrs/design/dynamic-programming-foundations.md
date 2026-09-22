@@ -29,7 +29,7 @@ Why does dynamic programming need both optimal substructure and overlapping subp
 
 Rod cutting fixes this in a concrete example: given a rod of length `n` and
 prices `p_i` for each length `i`, choose where to cut to maximize revenue.
-The recurrence is `r_n = max(1 <= i <= n) [p_i + r_(n-i)]`, with `r_0 = 0`.
+The recurrence is $r_n = \max(1 \leq i \leq n) [p_i + r_{n-i}]$, with $r_0 = 0$.
 The naive recursive implementation of this recurrence runs in
 ==Θ(2^n)== time, because it recomputes `r_k` for the same `k` exponentially ^card-wnxd
 many times as `n` grows.
