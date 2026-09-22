@@ -35,7 +35,7 @@ with a concurrent steal.
 > - [ ] There is no real performance difference; it is purely a naming convention ^card-7vjx
 
 ==Blumofe and Leiserson's== analysis shows randomized work stealing ^card-76qo
-achieves expected running time close to `T1/P + O(T∞)` on P processors,
+achieves expected running time close to $T_1/P + O(T_\infty)$ on P processors,
 where T1 is the total sequential work and T∞ is the computation's
 critical path — a provable guarantee that this decentralized, per-worker
 scheme balances load about as well as an omniscient central scheduler
