@@ -8,6 +8,20 @@ const BARE_ANCHOR = /^\s*\^(card-[a-z0-9]{4})\s*$/;
 export const HIGHLIGHT = /==(\S[^=]*?\S|\S)==/g;
 export const QA = /^(.+?)\s+::\s+(.+)$/;
 export const FENCE = /^\s*(```|~~~)/;
+/**
+ * Opens and closes a display-math block: `$$` alone on a line.
+ *
+ * Exported and shared for the same reason FENCE is: parseCards and
+ * parseBlocks are two independent walks over the same body, and a
+ * hand-copied lookalike in one of them is exactly how they drift. Both
+ * MUST honour this, or resolveBlocks' total-zip assertion fails the build.
+ *
+ * Own-line only, never `$$inline$$`. That keeps it the same branch shape the
+ * fence already has in both walks, and it means no prose `$$` can be
+ * mistaken for an opener -- vault/aws/step-functions writes `$$.Task.Token`,
+ * which is inside a code span but would be an unpleasant near-miss.
+ */
+export const DISPLAY_MATH_FENCE = /^\s*\$\$\s*$/;
 export const CALLOUT_OPEN = /^>\s*\[!card\]\s*(mcq|recall)\s*$/i;
 export const CALLOUT_LINE = /^>\s?(.*)$/;
 export const CHOICE = /^-\s*\[( |x)\]\s*(.+)$/i;
@@ -264,6 +278,7 @@ export function parseCards(body: string, bodyStartLine: number): ParsedCard[] {
   const cards: ParsedCard[] = [];
   const lines = body.split('\n');
   let inFence = false;
+  let inMath = false;
   let i = 0;
 
   while (i < lines.length) {
@@ -275,6 +290,16 @@ export function parseCards(body: string, bodyStartLine: number): ParsedCard[] {
       continue;
     }
     if (inFence) {
+      i++;
+      continue;
+    }
+
+    if (DISPLAY_MATH_FENCE.test(rawLine)) {
+      inMath = !inMath;
+      i++;
+      continue;
+    }
+    if (inMath) {
       i++;
       continue;
     }
@@ -311,6 +336,7 @@ export function parseCards(body: string, bodyStartLine: number): ParsedCard[] {
     while (j < lines.length) {
       const candidate = lines[j] ?? '';
       if (FENCE.test(candidate)) break;
+      if (DISPLAY_MATH_FENCE.test(candidate)) break;
       if (BARE_ANCHOR.test(candidate)) {
         j++;
         continue;
@@ -418,6 +444,19 @@ export function parseBlocks(body: string): RawBlock[] {
       }
       i++; // consume the closing fence (or run off the end on an unclosed one)
       blocks.push({ kind: 'code', lang, text: content.join('\n') });
+      continue;
+    }
+
+    if (DISPLAY_MATH_FENCE.test(rawLine)) {
+      flushProse(prose); prose = []; flushList();
+      const content: string[] = [];
+      i++;
+      while (i < lines.length && !DISPLAY_MATH_FENCE.test(lines[i] ?? '')) {
+        content.push(lines[i] ?? '');
+        i++;
+      }
+      i++; // consume the closing delimiter (or run off the end on an unclosed one)
+      blocks.push({ kind: 'math', text: content.join('\n') });
       continue;
     }
 

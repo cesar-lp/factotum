@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseBlocks } from '../src/cards.js';
+import { parseBlocks, parseCards } from '../src/cards.js';
 
 describe('parseBlocks', () => {
   it('emits a heading with its level', () => {
@@ -116,5 +116,57 @@ describe('parseBlocks', () => {
       : []
     );
     expect(indices).toEqual([0, 1, 2]);
+  });
+});
+
+describe('display math blocks', () => {
+  const body = [
+    'Orthogonality to every column of A means:',
+    '',
+    '$$',
+    'A^\\top (b - Ax) = 0',
+    '$$',
+    '',
+    'which distributes to the normal equations.'
+  ].join('\n');
+
+  it('emits a math block holding the raw LaTeX', () => {
+    const blocks = parseBlocks(body);
+    const math = blocks.find((b) => b.kind === 'math');
+    expect(math).toEqual({ kind: 'math', text: 'A^\\top (b - Ax) = 0' });
+  });
+
+  it('keeps the surrounding prose in its own blocks', () => {
+    expect(parseBlocks(body).map((b) => b.kind)).toEqual(['prose', 'math', 'prose']);
+  });
+
+  it('joins a multi-line equation with newlines', () => {
+    const blocks = parseBlocks(['$$', '\\begin{aligned}', 'x &= 1', '\\end{aligned}', '$$'].join('\n'));
+    expect(blocks).toEqual([{ kind: 'math', text: '\\begin{aligned}\nx &= 1\n\\end{aligned}' }]);
+  });
+
+  it('mints no cards from a display block', () => {
+    expect(parseCards(body, 0)).toEqual([]);
+  });
+
+  it('leaves $$ inside a code fence to the fence', () => {
+    const fenced = ['```', '$$', 'not math', '$$', '```'].join('\n');
+    expect(parseBlocks(fenced).map((b) => b.kind)).toEqual(['code']);
+  });
+
+  it('agrees with parseCards on card count for a note mixing math and clozes', () => {
+    const mixed = [
+      'A projection is ==idempotent==.',
+      '',
+      '$$',
+      'P^2 = P',
+      '$$',
+      '',
+      'Its rank equals its ==trace==.'
+    ].join('\n');
+    const blocks = parseBlocks(mixed);
+    const ordinals = blocks.flatMap((b) => (b.kind === 'prose' ? b.clozes.map((c) => c.cardIndex) : []));
+    expect(ordinals).toEqual([0, 1]);
+    expect(parseCards(mixed, 0)).toHaveLength(2);
   });
 });
