@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { renderMath } from '../src/ui/math.js';
+import { renderMath, MATH_FONT_URLS } from '../src/ui/math.js';
 
 describe('renderMath', () => {
   it('renders inline math as KaTeX HTML', () => {
@@ -34,5 +34,18 @@ describe('renderMath', () => {
   it('never emits a live tag from markup in the source', () => {
     const html = renderMath('\\text{<script>alert(1)</script>}');
     expect(html).not.toMatch(/<script[\s>]/);
+  });
+});
+
+describe('MATH_FONT_URLS', () => {
+  it('names the two faces this vault actually needs', () => {
+    expect(MATH_FONT_URLS).toHaveLength(2);
+  });
+
+  it('resolves each one to a bundled .woff2 asset URL', () => {
+    for (const url of MATH_FONT_URLS) {
+      expect(typeof url).toBe('string');
+      expect(url).toMatch(/\.woff2($|\?)/);
+    }
   });
 });
