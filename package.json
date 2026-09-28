@@ -19,15 +19,15 @@
     "@types/katex": "^0.16.8",
     "@types/node": "^22.10.0",
     "fake-indexeddb": "^6.2.5",
-    "tsx": "^4.16.0",
+    "tsx": "^4.23.15",
     "typescript": "^7.0.2",
-    "vite": "^8.3.0",
-    "vitest": "^5.0.1"
+    "vite": "^8.3.1",
+    "vitest": "^5.0.2"
   },
   "dependencies": {
     "gray-matter": "^4.0.3",
     "idb": "^8.0.0",
-    "katex": "^0.16.47",
+    "katex": "^0.18.9",
     "ts-fsrs": "^5.4.2"
   }
 }
